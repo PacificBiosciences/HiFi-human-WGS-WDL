@@ -1,0 +1,9 @@
+{
+  "smrtcell_analysis.sample": {
+    "sample_id": "String",
+    "movie_bams": "Array[File]"
+  },
+  "smrtcell_analysis.reference": "File",
+  "smrtcell_analysis.reference_index": "File",
+  "smrtcell_analysis.container_registry": "String"
+}
