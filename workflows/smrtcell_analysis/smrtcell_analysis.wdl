@@ -1,34 +1,32 @@
 version 1.0
 
-struct Sample {
-	String sample_id
-	Array[File] movie_bams
-}
+import "../structs.wdl"
 
 workflow smrtcell_analysis {
 	input {
 		Sample sample
 
-		File reference
-		File reference_index
+		IndexData reference_genome
+		String reference_name
 
 		String container_registry
 	}
 
-	scatter (unaligned_bam in sample.movie_bams) {
+	scatter (movie_bam in sample.movie_bams) {
 		call smrtcell_stats {
 			input:
 				sample_id = sample.sample_id,
-				bam = unaligned_bam,
+				bam = movie_bam.data,
 				container_registry = container_registry
 		}
 
 		call pbmm2_align {
 			input:
 				sample_id = sample.sample_id,
-				bam = unaligned_bam,
-				reference = reference,
-				reference_index = reference_index,
+				bam = movie_bam.data,
+				reference = reference_genome.data,
+				reference_index = reference_genome.data_index,
+				reference_name = reference_name,
 				container_registry = container_registry
 		}
 
@@ -38,14 +36,18 @@ workflow smrtcell_analysis {
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
 				container_registry = container_registry
 		}
+
+		IndexData aligned_bam = {
+			"data": pbmm2_align.aligned_bam,
+			"data_index": pbmm2_align.aligned_bam_index
+		}
 	}
 
 	output {
 		Array[File] bam_stats = smrtcell_stats.bam_stats
 		Array[File] read_length_summary = smrtcell_stats.read_length_summary
 		Array[File] read_quality_summary = smrtcell_stats.read_quality_summary
-		Array[File] aligned_bam = pbmm2_align.aligned_bam
-		Array[File] aligned_bam_index = pbmm2_align.aligned_bam_index
+		Array[IndexData] aligned_bams = aligned_bam
 		Array[File] mosdepth_global = mosdepth.global
 		Array[File] mosdepth_region = mosdepth.region
 		Array[File] mosdepth_summary = mosdepth.summary
@@ -53,10 +55,9 @@ workflow smrtcell_analysis {
 	}
 
 	parameter_meta {
-		sample: {help: "Sample ID"}
-		unaligned_bam: {help: "Unaligned movie BAM output by the sequencer"}
-		reference: {help: "Reference genome to align reads to"}
-		reference_index: {help: "Index for the reference genome"}
+		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
+		reference_genome: {help: "Reference genome and index to align reads to"}
+		reference_name: {help: "Basename of the reference genome; used for file naming"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }
@@ -121,15 +122,15 @@ task pbmm2_align {
 
 		File reference
 		File reference_index
+		String reference_name
 
 		String container_registry
 	}
 
 	String movie = basename(bam, ".bam")
-	String ref_name = basename(reference, ".fasta")
 
 	Int threads = 24
-	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -145,12 +146,12 @@ task pbmm2_align {
 			-y 70 \
 			~{reference} \
 			~{bam} \
-			~{sample_id}.~{movie}.~{ref_name}.aligned.bam
+			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
 	>>>
 
 	output {
-		File aligned_bam = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam"
-		File aligned_bam_index = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai"
+		File aligned_bam = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam"
+		File aligned_bam_index = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam.bai"
 	}
 
 	runtime {

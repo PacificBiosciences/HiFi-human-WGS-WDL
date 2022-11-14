@@ -1,0 +1,13 @@
+{
+  "sample_analysis.sample_id": "String",
+  "sample_analysis.aligned_bams": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]",
+  "sample_analysis.reference_genome": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "sample_analysis.reference_name": "String",
+  "sample_analysis.reference_tandem_repeat_bed": "File",
+  "sample_analysis.deepvariant_version": "String",
+  "sample_analysis.deepvariant_model": "File? (optional)",
+  "sample_analysis.container_registry": "String"
+}

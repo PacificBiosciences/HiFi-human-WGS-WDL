@@ -1,0 +1,29 @@
+{
+  "sample_analysis.sample_id": "HG002",
+  "sample_analysis.aligned_bams": [
+    {
+      "data": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-0/execution/HG002.m64012_190920_173625.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam",
+      "data_index": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-0/execution/HG002.m64012_190920_173625.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam.bai"
+    },
+    {
+      "data": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-1/execution/HG002.m64012_190921_234837.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam",
+      "data_index": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-1/execution/HG002.m64012_190921_234837.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam.bai"
+    },
+    {
+      "data": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-2/execution/HG002.m64015_190920_185703.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam",
+      "data_index": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-2/execution/HG002.m64015_190920_185703.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam.bai"
+    },
+    {
+      "data": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-3/execution/HG002.m64015_190922_010918.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam",
+      "data_index": "/cromwell-executions/humanwgs/aa62dd36-3912-48a5-880b-409d599fe37b/call-smrtcell_analysis/smrtcell_analysis/79e81f62-7e88-4c48-b67e-288b26236921/call-pbmm2_align/shard-3/execution/HG002.m64015_190922_010918.ccs.human_GRCh38_no_alt_analysis_set.aligned.bam.bai"
+    }
+  ],
+  "sample_analysis.reference_genome": {
+    "data": "/wbprod0ac6072021ca9/inputs/pacbio_resources/reference/human_GRCh38_no_alt_analysis_set.fasta",
+    "data_index": "/wbprod0ac6072021ca9/inputs/pacbio_resources/reference/human_GRCh38_no_alt_analysis_set.fasta.fai"
+  },
+  "sample_analysis.reference_name": "human_GRCh38_no_alt_analysis_set",
+  "sample_analysis.reference_tandem_repeat_bed": "/wbprod0ac6072021ca9/inputs/pacbio_resources/reference/human_GRCh38_no_alt_analysis_set.trf.bed",
+  "sample_analysis.deepvariant_version": "1.4.0",
+  "sample_analysis.container_registry": "superclustercontainerregistry.azurecr.io"
+}
