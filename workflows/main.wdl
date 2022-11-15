@@ -1,8 +1,8 @@
 version 1.0
 
-import "./common/structs.wdl"
-import "./smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
-import "./sample_analysis/sample_analysis.wdl" as SampleAnalysis
+import "common/structs.wdl"
+import "smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
+import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 
 workflow humanwgs {
 	input {
@@ -56,7 +56,7 @@ workflow humanwgs {
 		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
 
 		# sample_analysis output
-		File pbsv_vcf = sample_analysis.pbsv_vcf
+		IndexData pbsv_vcf = sample_analysis.pbsv_vcf
 		IndexData deepvariant_vcf = sample_analysis.deepvariant_vcf
 		IndexData deepvariant_gvcf = sample_analysis.deepvariant_gvcf
 		File deepvariant_vcf_stats = sample_analysis.deepvariant_vcf_stats

@@ -45,6 +45,12 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	call common.zip_index_vcf {
+		input:
+			vcf = pbsv_call.pbsv_vcf,
+			container_registry = container_registry
+	}
+
 	call deepvariant_make_examples {
 		input:
 			sample_id = sample_id,
@@ -177,7 +183,7 @@ workflow sample_analysis {
 	}
 
 	output {
-		File pbsv_vcf = pbsv_call.pbsv_vcf
+		IndexData pbsv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
 		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
 		IndexData deepvariant_gvcf = {"data": deepvariant_postprocess_variants.gvcf, "data_index": deepvariant_postprocess_variants.gvcf_index}
 		File deepvariant_vcf_stats = bcftools_stats.stats
@@ -841,6 +847,8 @@ task cpg_pileup {
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		/opt/scripts/pb-CpG-tools/aligned_bam_to_cpg_scores.py \
 			--bam ~{bam} \
 			--fasta ~{reference} \
