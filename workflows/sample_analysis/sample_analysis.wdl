@@ -349,8 +349,8 @@ task deepvariant_make_examples {
 	>>>
 
 	output {
-		Array[File] example_tfrecords = glob("~{sample_id}.examples.tfrecord.*.gz")
-		Array[File] nonvariant_site_tfrecords = glob("~{sample_id}.gvcf.tfrecord.*.gz")
+		Array[File] example_tfrecords = glob("~{sample_id}.examples.tfrecord*.gz")
+		Array[File] nonvariant_site_tfrecords = glob("~{sample_id}.gvcf.tfrecord*.gz")
 	}
 
 	runtime {
