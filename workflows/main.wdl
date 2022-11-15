@@ -3,6 +3,7 @@ version 1.0
 import "common/structs.wdl"
 import "smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
+import "de_novo_assembly/de_novo_assembly.wdl" as DeNovoAssembly
 
 workflow humanwgs {
 	input {
@@ -44,6 +45,12 @@ workflow humanwgs {
 			container_registry = container_registry
 	}
 
+	call DeNovoAssembly.de_novo_assembly {
+		input:
+			sample = sample,
+			container_registry = container_registry
+	}
+
 	output {
 		# smrtcells_analysis output
 		Array[File] bam_stats = smrtcell_analysis.bam_stats
@@ -72,6 +79,7 @@ workflow humanwgs {
 		File haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
 		IndexData trgt_spanning_reads = sample_analysis.trgt_spanning_reads
 		IndexData trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
+		File trgt_dropouts = sample_analysis.trgt_dropouts
 		Array[File] cpg_pileups = sample_analysis.cpg_pileups
 	}
 

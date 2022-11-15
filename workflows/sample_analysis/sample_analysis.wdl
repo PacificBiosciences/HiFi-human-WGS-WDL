@@ -172,6 +172,15 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	call trgt_coverage_dropouts {
+		input:
+			bam = merge_bams.merged_bam,
+			bam_index = merge_bams.merged_bam_index,
+			output_prefix = "~{sample_id}.~{reference_name}",
+			tandem_repeat_bed = tandem_repeat_bed,
+			container_registry = container_registry
+	}
+
 	call cpg_pileup {
 		input:
 			bam = merge_bams.merged_bam,
@@ -199,6 +208,7 @@ workflow sample_analysis {
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
+		File trgt_dropouts = trgt_coverage_dropouts.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
 	}
 
@@ -823,6 +833,43 @@ task trgt {
 	runtime {
 		docker: "~{container_registry}/trgt:v0.3.4"
 		cpu: threads
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task trgt_coverage_dropouts {
+	input {
+		File bam
+		File bam_index
+
+		String output_prefix
+
+		File tandem_repeat_bed
+
+		String container_registry
+	}
+
+	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		check_trgt_coverage.py \
+			~{tandem_repeat_bed} \
+			~{bam} \
+		> ~{output_prefix}.trgt.dropouts.txt
+	>>>
+
+	output {
+		File trgt_dropouts = "~{output_prefix}.trgt.dropouts.txt"
+	}
+
+	runtime {
+		docker: "~{container_registry}/tandem-genotypes:b1a46c6"
+		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
 		preemptible: true
