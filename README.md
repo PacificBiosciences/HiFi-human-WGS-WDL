@@ -31,3 +31,7 @@ Calls and phases small and large variants and structural variants.
 
 **Workflow**: [workflows/sample_analysis/sample_analysis.wdl](workflows/sample_analysis/sample_analysis.wdl)
 **Inputs**: [workflows/sample_analysis.inputs.json](workflows/sample_analysis/inputs.json)
+
+### [Common](workflows/common)
+
+These are resources that are used across workflows, including structs and common tasks.

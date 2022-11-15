@@ -13,6 +13,7 @@ workflow sample_analysis {
 		File reference_tandem_repeat_bed
 		Array[String] chromosomes
 		File reference_chromosome_lengths
+		File tandem_repeat_bed
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -29,8 +30,6 @@ workflow sample_analysis {
 			input:
 				aligned_bam = aligned_bam,
 				aligned_bam_index = aligned_bam_index,
-				reference = reference_genome.data,
-				reference_index = reference_genome.data_index,
 				reference_tandem_repeat_bed = reference_tandem_repeat_bed,
 				container_registry = container_registry
 		}
@@ -41,6 +40,7 @@ workflow sample_analysis {
 			sample_id = sample_id,
 			svsigs = pbsv_discover.svsig,
 			reference = reference_genome.data,
+			reference_index = reference_genome.data_index,
 			reference_name = reference_name,
 			container_registry = container_registry
 	}
@@ -108,6 +108,7 @@ workflow sample_analysis {
 				aligned_bams = aligned_bam,
 				aligned_bam_indices = aligned_bam_index,
 				reference = reference_genome.data,
+				reference_index = reference_genome.data_index,
 				container_registry = container_registry
 		}
 	}
@@ -155,6 +156,16 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	call trgt {
+		input:
+			bam = merge_bams.merged_bam,
+			bam_index = merge_bams.merged_bam_index,
+			reference = reference_genome.data,
+			reference_index = reference_genome.data_index,
+			tandem_repeat_bed = tandem_repeat_bed,
+			container_registry = container_registry
+	}
+
 	output {
 		File pbsv_vcf = pbsv_call.pbsv_vcf
 		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
@@ -170,6 +181,8 @@ workflow sample_analysis {
 		File haplotagged_bam_mosdepth_region = mosdepth.region
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
+		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
+		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 	}
 
 	parameter_meta {
@@ -180,6 +193,7 @@ workflow sample_analysis {
 		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
 		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
 		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
+		tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
@@ -191,15 +205,13 @@ task pbsv_discover {
 		File aligned_bam
 		File aligned_bam_index
 
-		File reference
-		File reference_index
 		File reference_tandem_repeat_bed
 
 		String container_registry
 	}
 
 	String prefix = basename(aligned_bam, ".bam")
-	Int disk_size = ceil((size(aligned_bam, "GB") + size(reference, "GB") + size(reference_tandem_repeat_bed, "GB")) * 2 + 20)
+	Int disk_size = ceil((size(aligned_bam, "GB") + size(reference_tandem_repeat_bed, "GB")) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -232,6 +244,7 @@ task pbsv_call {
 		Array[File] svsigs
 
 		File reference
+		File reference_index
 		String reference_name
 
 		String container_registry
@@ -537,6 +550,7 @@ task whatshap_phase {
 		Array[File] aligned_bam_indices
 
 		File reference
+		File reference_index
 
 		String container_registry
 	}
@@ -730,6 +744,67 @@ task merge_bams {
 
 	runtime {
 		docker: "~{container_registry}/samtools:b1a46c6"
+		cpu: threads
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task trgt {
+	input {
+		File bam
+		File bam_index
+
+		File reference
+		File reference_index
+		File tandem_repeat_bed
+
+		String container_registry
+	}
+
+	String bam_basename = basename(bam, ".bam")
+	Int threads = 4
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		trgt \
+			--genome ~{reference} \
+			--repeats ~{tandem_repeat_bed} \
+			--reads ~{bam} \
+			--output-prefix ~{bam_basename}.trgt
+
+		bcftools sort \
+			--output-type z \
+			--output ~{bam_basename}.trgt.sorted.vcf.gz \
+			~{bam_basename}.trgt.vcf.gz
+
+		bcftools index \
+			--tbi \
+			~{bam_basename}.trgt.sorted.vcf.gz
+
+		samtools sort \
+			-@ ~{threads - 1} \
+			-o ~{bam_basename}.trgt.spanning.sorted.bam \
+			~{bam_basename}.trgt.spanning.bam
+
+		samtools index \
+			-@ ~{threads - 1} \
+			~{bam_basename}.trgt.spanning.sorted.bam
+	>>>
+
+	output {
+		File spanning_reads = "~{bam_basename}.trgt.spanning.sorted.bam"
+		File spanning_reads_index = "~{bam_basename}.trgt.spanning.sorted.bam.bai"
+		File repeat_vcf = "~{bam_basename}.trgt.sorted.vcf.gz"
+		File repeat_vcf_index = "~{bam_basename}.trgt.sorted.vcf.gz.tbi"
+	}
+
+	runtime {
+		docker: "~{container_registry}/trgt:v0.3.4"
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"

@@ -52,6 +52,7 @@
     "chrM"
   ],
   "sample_analysis.reference_chromosome_lengths": "/wbprod0ac6072021ca9/inputs/pacbio_resources/reference/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
+  "sample_analysis.tandem_repeat_bed": "/wbprod0ac6072021ca9/inputs/pacbio_resources/heather/trgt_repeats.bed",
   "sample_analysis.deepvariant_version": "1.4.0",
   "sample_analysis.container_registry": "superclustercontainerregistry.azurecr.io"
 }

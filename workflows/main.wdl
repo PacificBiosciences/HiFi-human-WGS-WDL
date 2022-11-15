@@ -12,6 +12,7 @@ workflow humanwgs {
 		File reference_tandem_repeat_bed
 		Array[String] chromosomes
 		File reference_chromosome_lengths
+		File tandem_repeat_bed
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -37,6 +38,7 @@ workflow humanwgs {
 			reference_tandem_repeat_bed = reference_tandem_repeat_bed,
 			chromosomes = chromosomes,
 			reference_chromosome_lengths = reference_chromosome_lengths,
+			tandem_repeat_bed = tandem_repeat_bed,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
 			container_registry = container_registry
@@ -68,7 +70,8 @@ workflow humanwgs {
 		File haplotagged_bam_mosdepth_region = sample_analysis.haplotagged_bam_mosdepth_region
 		File haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
 		File haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
-
+		IndexData trgt_spanning_reads = sample_analysis.trgt_spanning_reads
+		IndexData trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
 	}
 
 	parameter_meta {
@@ -77,6 +80,7 @@ workflow humanwgs {
 		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
 		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
 		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
+		tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
