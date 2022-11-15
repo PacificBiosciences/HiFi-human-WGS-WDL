@@ -166,6 +166,16 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	call cpg_pileup {
+		input:
+			bam = merge_bams.merged_bam,
+			bam_index = merge_bams.merged_bam_index,
+			output_prefix = "~{sample_id}.~{reference_name}",
+			reference = reference_genome.data,
+			reference_index = reference_genome.data_index,
+			container_registry = container_registry
+	}
+
 	output {
 		File pbsv_vcf = pbsv_call.pbsv_vcf
 		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
@@ -183,6 +193,7 @@ workflow sample_analysis {
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
+		Array[File] cpg_pileups = cpg_pileup.pileups
 	}
 
 	parameter_meta {
@@ -807,6 +818,49 @@ task trgt {
 		docker: "~{container_registry}/trgt:v0.3.4"
 		cpu: threads
 		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task cpg_pileup {
+	input {
+		File bam
+		File bam_index
+
+		String output_prefix
+
+		File reference
+		File reference_index
+
+		String container_registry
+	}
+
+	Int threads = 48
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
+
+	command <<<
+		/opt/scripts/pb-CpG-tools/aligned_bam_to_cpg_scores.py \
+			--bam ~{bam} \
+			--fasta ~{reference} \
+			--output_label ~{output_prefix} \
+			--threads ~{threads} \
+			--min_mapq 1 \
+			--modsites denovo \
+			--pileup_mode model \
+			--model_dir /opt/scripts/pb-CpG-tools/pileup_calling_model \
+			--min_coverage 10
+	>>>
+
+	output {
+		Array[File] pileups = glob("~{output_prefix}.{combined,hap1,hap2}.denovo.{bed,bw,mincov10.bed,mincov10.bw}")
+	}
+
+	runtime {
+		docker: "~{container_registry}/pb-cpg-tools:b1a46c6"
+		cpu: threads
+		memory: "192 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3

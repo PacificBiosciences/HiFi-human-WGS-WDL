@@ -72,6 +72,7 @@ workflow humanwgs {
 		File haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
 		IndexData trgt_spanning_reads = sample_analysis.trgt_spanning_reads
 		IndexData trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
+		Array[File] cpg_pileups = sample_analysis.cpg_pileups
 	}
 
 	parameter_meta {
