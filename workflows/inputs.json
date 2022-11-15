@@ -8,6 +8,8 @@
   	"data_index": "File"
   },
   "humanwgs.reference_tandem_repeat_bed": "File",
+  "humanwgs.chromosomes": "Array[String]",
+  "humanwgs.reference_chromosome_lengths": "File",
   "humanwgs.deepvariant_version": "String",
   "humanwgs.deepvariant_model": "File? (optional)",
   "humanwgs.container_registry": "String"

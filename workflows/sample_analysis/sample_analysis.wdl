@@ -10,6 +10,8 @@ workflow sample_analysis {
 		IndexData reference_genome
 		String reference_name
 		File reference_tandem_repeat_bed
+		Array[String] chromosomes
+		File reference_chromosome_lengths
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -89,12 +91,73 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	scatter (chromosome in chromosomes) {
+		call split_vcf {
+			input:
+				vcf = deepvariant_postprocess_variants.vcf,
+				region = chromosome,
+				container_registry = container_registry
+		}
+
+		call whatshap_phase {
+			input:
+				vcf = split_vcf.region_vcf,
+				vcf_index = split_vcf.region_vcf_index,
+				chromosome = chromosome,
+				aligned_bams = aligned_bam,
+				aligned_bam_indices = aligned_bam_index,
+				reference = reference_genome.data,
+				container_registry = container_registry
+		}
+	}
+
+	call bcftools_concat {
+		input:
+			vcfs = whatshap_phase.phased_vcf,
+			vcf_indices = whatshap_phase.phased_vcf_index,
+			output_vcf_name = "~{sample_id}.~{reference_name}.deepvariant.phased.vcf.gz",
+			container_registry = container_registry
+	}
+
+	call whatshap_stats {
+		input:
+			phased_vcf = bcftools_concat.concatenated_vcf,
+			phased_vcf_index = bcftools_concat.concatenated_vcf_index,
+			reference_chromosome_lengths = reference_chromosome_lengths,
+			container_registry = container_registry
+	}
+
+	scatter (bam_object in aligned_bams) {
+		call whatshap_haplotag {
+			input:
+				phased_vcf = bcftools_concat.concatenated_vcf,
+				phased_vcf_index = bcftools_concat.concatenated_vcf_index,
+				aligned_bam = bam_object.data,
+				aligned_bam_index = bam_object.data_index,
+				output_bam_name = basename(bam_object.data, ".aligned.bam") + ".deepvariant.haplotagged.bam",
+				reference = reference_genome.data,
+				container_registry = container_registry
+		}
+	}
+
+	call merge_bams {
+		input:
+			bams = whatshap_haplotag.haplotagged_bam,
+			output_bam_name = "~{sample_id}.~{reference_name}.deepvariant.haplotagged.bam",
+			container_registry = container_registry
+	}
+
 	output {
 		File pbsv_vcf = pbsv_call.pbsv_vcf
 		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
 		IndexData deepvariant_gvcf = {"data": deepvariant_postprocess_variants.gvcf, "data_index": deepvariant_postprocess_variants.gvcf_index}
 		File deepvariant_vcf_stats = bcftools_stats.stats
 		File deepvariant_roh_bed = bcftools_roh.roh_bed
+		IndexData phased_vcf = {"data": bcftools_concat.concatenated_vcf, "data_index": bcftools_concat.concatenated_vcf_index}
+		File whatshap_stats_gtf = whatshap_stats.gtf
+		File whatshap_stats_tsv = whatshap_stats.tsv
+		File whatshap_stats_blocklist = whatshap_stats.blocklist
+		File merged_haplotagged_bam = merge_bams.merged_bam
 	}
 
 	parameter_meta {
@@ -103,6 +166,8 @@ workflow sample_analysis {
 		reference_genome: {help: "Reference genome and index to align reads to"}
 		reference_name: {help: "Basename of the reference genome; used for file naming"}
 		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
+		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
+		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
@@ -405,6 +470,253 @@ task bcftools_roh {
 		docker: "~{container_registry}/bcftools:b1a46c6"
 		cpu: 2
 		memory: "4 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task split_vcf {
+	input {
+		File vcf
+		String region
+
+		String container_registry
+	}
+
+	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		tabix \
+			-h \
+			~{vcf} \
+			~{region} \
+		> ~{vcf_basename}.~{region}.vcf
+
+		bgzip ~{vcf_basename}.~{region}.vcf
+		tabix ~{vcf_basename}.~{region}.vcf.gz
+	>>>
+
+	output {
+		File region_vcf = "~{vcf_basename}.~{region}.vcf.gz"
+		File region_vcf_index = "~{vcf_basename}.~{region}.vcf.gz.tbi"
+	}
+
+	runtime {
+		docker: "~{container_registry}/htslib:b1a46c6"
+		cpu: 4
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task whatshap_phase {
+	input {
+		File vcf
+		File vcf_index
+		String chromosome
+
+		Array[File] aligned_bams
+		Array[File] aligned_bam_indices
+
+		File reference
+
+		String container_registry
+	}
+
+	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB") + size(aligned_bams[0], "GB") * length(aligned_bams)) * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		whatshap phase \
+			--indels \
+			--reference ~{reference} \
+			--chromosome ~{chromosome} \
+			--output ~{vcf_basename}.phased.vcf.gz \
+			~{vcf} \
+			~{sep=' ' aligned_bams}
+
+		tabix ~{vcf_basename}.phased.vcf.gz
+	>>>
+
+	output {
+		File phased_vcf = "~{vcf_basename}.phased.vcf.gz"
+		File phased_vcf_index = "~{vcf_basename}.phased.vcf.gz.tbi"
+	}
+
+	# TODO doesn't whatshap phase run single-threaded? why the giant machine?
+	runtime {
+		docker: "~{container_registry}/whatshap:b1a46c6"
+		cpu: 32
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task bcftools_concat {
+	input {
+		Array[File] vcfs
+		Array[File] vcf_indices
+		String output_vcf_name
+
+		String container_registry
+	}
+
+	Int disk_size = ceil(size(vcfs[0], "GB") * length(vcfs) * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		bcftools concat \
+			--allow-overlaps \
+			--output ~{output_vcf_name} \
+			--output-type z \
+			~{sep=' ' vcfs}
+
+		tabix "~{output_vcf_name}"
+	>>>
+
+	output {
+		File concatenated_vcf = "~{output_vcf_name}"
+		File concatenated_vcf_index = "~{output_vcf_name}.tbi"
+	}
+
+	runtime {
+		docker: "~{container_registry}/bcftools:b1a46c6"
+		cpu: 4
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task whatshap_stats {
+	input {
+		File phased_vcf
+		File phased_vcf_index
+
+		File reference_chromosome_lengths
+
+		String container_registry
+	}
+
+	String output_basename = basename(phased_vcf, ".vcf.gz")
+	Int disk_size = ceil(size(phased_vcf, "GB") * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		whatshap stats \
+			--gtf ~{output_basename}.gtf \
+			--tsv ~{output_basename}.tsv \
+			--block-list ~{output_basename}.blocklist \
+			--chr-lengths ~{reference_chromosome_lengths} \
+			~{phased_vcf}
+	>>>
+
+	output {
+		File gtf = "~{output_basename}.gtf"
+		File tsv = "~{output_basename}.tsv"
+		File blocklist = "~{output_basename}.blocklist"
+	}
+
+	runtime {
+		docker: "~{container_registry}/whatshap:b1a46c6"
+		cpu: 4
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task whatshap_haplotag {
+	input {
+		File phased_vcf
+		File phased_vcf_index
+
+		File aligned_bam
+		File aligned_bam_index
+
+		String output_bam_name
+
+		File reference
+
+		String container_registry
+	}
+
+	Int threads = 8
+	Int disk_size = ceil((size(phased_vcf, "GB") + size(aligned_bam, "GB") + size(reference, "GB")) * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		whatshap haplotag \
+			--tag-supplementary \
+			--output-threads ~{threads} \
+			--reference ~{reference} \
+			--output ~{output_bam_name} \
+			~{phased_vcf} \
+			~{aligned_bam}
+	>>>
+
+	output {
+		File haplotagged_bam = "~{output_bam_name}"
+	}
+
+	runtime {
+		docker: "~{container_registry}/whatshap:b1a46c6"
+		cpu: threads
+		memory: "30 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task merge_bams {
+	input {
+		Array[File] bams
+
+		String output_bam_name
+
+		String container_registry
+	}
+
+	Int threads = 8
+	Int disk_size = ceil(size(bams[0], "GB") * length(bams) * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		if [[ "~{length(bams)}" -eq 1 ]]; then
+			mv ~{bams[0]} ~{output_bam_name}
+		else
+			samtools merge \
+				-@ ~{threads - 1} \
+				-o ~{output_bam_name} \
+				~{sep=' ' bams}
+		fi
+	>>>
+
+	output {
+		File merged_bam = "~{output_bam_name}"
+	}
+
+	runtime {
+		docker: "~{container_registry}/samtools:b1a46c6"
+		cpu: threads
+		memory: "14 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3

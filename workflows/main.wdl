@@ -10,6 +10,8 @@ workflow humanwgs {
 
 		IndexData reference_genome
 		File reference_tandem_repeat_bed
+		Array[String] chromosomes
+		File reference_chromosome_lengths
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -33,6 +35,8 @@ workflow humanwgs {
 			reference_genome = reference_genome,
 			reference_name = reference_name,
 			reference_tandem_repeat_bed = reference_tandem_repeat_bed,
+			chromosomes = chromosomes,
+			reference_chromosome_lengths = reference_chromosome_lengths,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
 			container_registry = container_registry
@@ -61,6 +65,8 @@ workflow humanwgs {
 		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
 		reference_genome: {help: "Reference genome and index to align reads to"}
 		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
+		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
+		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
