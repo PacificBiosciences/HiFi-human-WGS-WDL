@@ -125,6 +125,8 @@ task pbsv_discover {
 	Int disk_size = ceil((size(aligned_bam, "GB") + size(reference, "GB") + size(reference_tandem_repeat_bed, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		pbsv discover \
 			--log-level INFO \
 			--hifi \
@@ -162,6 +164,8 @@ task pbsv_call {
 	Int disk_size = ceil((size(svsigs[0], "GB") * length(svsigs) + size(reference, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		pbsv call \
 			--hifi \
 			-m 20 \
@@ -201,6 +205,8 @@ task deepvariant_make_examples {
 	Int disk_size = 500
 
 	command <<<
+		set -euo pipefail
+
 		seq 0 ~{deepvariant_threads} \
 		| parallel \
 			--jobs ~{deepvariant_threads} \
@@ -255,6 +261,8 @@ task deepvariant_call_variants {
 	Int disk_size = 500
 
 	command <<<
+		set -euo pipefail
+
 		if [[ -n "~{deepvariant_model}" ]]; then
 			DEEPVARIANT_MODEL="~{deepvariant_model}"
 		else
@@ -299,6 +307,8 @@ task deepvariant_postprocess_variants {
 	Int disk_size = ceil((size(tfrecord, "GB") + size(reference, "GB") + size(nonvariant_site_tfrecords[0], "GB") * length(nonvariant_site_tfrecords)) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		/opt/deepvariant/bin/postprocess_variants \
 			--ref ~{reference} \
 			--infile ~{tfrecord} \
@@ -341,6 +351,8 @@ task bcftools_stats {
 	Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		bcftools stats \
 			--threads ~{threads - 1} \
 			~{params} \
@@ -375,6 +387,8 @@ task bcftools_roh {
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		echo -e "#chr\tstart\tend\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
 			--AF-dflt 0.4 \

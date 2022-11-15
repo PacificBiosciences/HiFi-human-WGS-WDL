@@ -177,6 +177,8 @@ task mosdepth {
 	Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		mosdepth \
 			--threads ~{threads} \
 			--by 500 \

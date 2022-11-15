@@ -11,7 +11,6 @@ workflow humanwgs {
 		IndexData reference_genome
 		File reference_tandem_repeat_bed
 
-		# TODO implement gpu version of DV
 		String deepvariant_version
 		File? deepvariant_model
 		String container_registry
