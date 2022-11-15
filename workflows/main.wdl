@@ -48,6 +48,7 @@ workflow humanwgs {
 	call DeNovoAssembly.de_novo_assembly {
 		input:
 			sample = sample,
+			reference_genome = reference_genome,
 			container_registry = container_registry
 	}
 
@@ -81,6 +82,10 @@ workflow humanwgs {
 		IndexData trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
 		File trgt_dropouts = sample_analysis.trgt_dropouts
 		Array[File] cpg_pileups = sample_analysis.cpg_pileups
+
+		# de_novo_assembly output
+		Array[File] zipped_assembly_fastas = de_novo_assembly.zipped_assembly_fastas
+		Array[File] assembly_stats = de_novo_assembly.assembly_stats
 	}
 
 	parameter_meta {
