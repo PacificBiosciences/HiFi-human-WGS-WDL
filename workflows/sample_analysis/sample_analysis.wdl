@@ -1,6 +1,7 @@
 version 1.0
 
-import "../structs.wdl"
+import "../common/structs.wdl"
+import "../common/common.wdl" as common
 
 workflow sample_analysis {
 	input {
@@ -147,6 +148,13 @@ workflow sample_analysis {
 			container_registry = container_registry
 	}
 
+	call common.mosdepth {
+		input:
+			aligned_bam = merge_bams.merged_bam,
+			aligned_bam_index = merge_bams.merged_bam_index,
+			container_registry = container_registry
+	}
+
 	output {
 		File pbsv_vcf = pbsv_call.pbsv_vcf
 		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
@@ -157,7 +165,11 @@ workflow sample_analysis {
 		File whatshap_stats_gtf = whatshap_stats.gtf
 		File whatshap_stats_tsv = whatshap_stats.tsv
 		File whatshap_stats_blocklist = whatshap_stats.blocklist
-		File merged_haplotagged_bam = merge_bams.merged_bam
+		IndexData merged_haplotagged_bam = {"data": merge_bams.merged_bam, "data_index": merge_bams.merged_bam_index}
+		File haplotagged_bam_mosdepth_global = mosdepth.global
+		File haplotagged_bam_mosdepth_region = mosdepth.region
+		File haplotagged_bam_mosdepth_summary = mosdepth.summary
+		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 	}
 
 	parameter_meta {
@@ -707,10 +719,13 @@ task merge_bams {
 				-o ~{output_bam_name} \
 				~{sep=' ' bams}
 		fi
+
+		samtools index ~{output_bam_name}
 	>>>
 
 	output {
 		File merged_bam = "~{output_bam_name}"
+		File merged_bam_index = "~{output_bam_name}.tbi"
 	}
 
 	runtime {

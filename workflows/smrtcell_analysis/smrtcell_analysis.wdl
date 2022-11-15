@@ -1,6 +1,7 @@
 version 1.0
 
-import "../structs.wdl"
+import "../common/structs.wdl"
+import "../common/common.wdl" as common
 
 workflow smrtcell_analysis {
 	input {
@@ -30,7 +31,7 @@ workflow smrtcell_analysis {
 				container_registry = container_registry
 		}
 
-		call mosdepth {
+		call common.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
@@ -48,10 +49,10 @@ workflow smrtcell_analysis {
 		Array[File] read_length_summary = smrtcell_stats.read_length_summary
 		Array[File] read_quality_summary = smrtcell_stats.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
-		Array[File] mosdepth_global = mosdepth.global
-		Array[File] mosdepth_region = mosdepth.region
-		Array[File] mosdepth_summary = mosdepth.summary
-		Array[File] mosdepth_region_bed = mosdepth.region_bed
+		Array[File] aligned_bam_mosdepth_global = mosdepth.global
+		Array[File] aligned_bam_mosdepth_region = mosdepth.region
+		Array[File] aligned_bam_mosdepth_summary = mosdepth.summary
+		Array[File] aligned_bam_mosdepth_region_bed = mosdepth.region_bed
 	}
 
 	parameter_meta {
@@ -158,47 +159,6 @@ task pbmm2_align {
 		docker: "~{container_registry}/pbmm2:b1a46c6"
 		cpu: threads
 		memory: "256 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task mosdepth {
-	input {
-		File aligned_bam
-		File aligned_bam_index
-
-		String container_registry
-	}
-
-	String prefix = basename(aligned_bam, ".bam")
-	Int threads = 4
-	Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		mosdepth \
-			--threads ~{threads} \
-			--by 500 \
-			--no-per-base \
-			--use-median \
-			~{prefix} \
-			~{aligned_bam}
-	>>>
-
-	output {
-		File global = "~{prefix}.mosdepth.global.dist.txt"
-		File region = "~{prefix}.mosdepth.region.dist.txt"
-		File summary = "~{prefix}.mosdepth.summary.txt"
-		File region_bed = "~{prefix}.regions.bed.gz"
-	}
-
-	runtime {
-		docker: "~{container_registry}/mosdepth:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3

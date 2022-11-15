@@ -24,7 +24,7 @@
   },
   "sample_analysis.reference_name": "human_GRCh38_no_alt_analysis_set",
   "sample_analysis.reference_tandem_repeat_bed": "/wbprod0ac6072021ca9/inputs/pacbio_resources/reference/human_GRCh38_no_alt_analysis_set.trf.bed",
-  "humanwgs.chromosomes": [
+  "sample_analysis.chromosomes": [
     "chr1",
     "chr2",
     "chr3",

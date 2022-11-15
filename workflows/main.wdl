@@ -1,6 +1,6 @@
 version 1.0
 
-import "./structs.wdl"
+import "./common/structs.wdl"
 import "./smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "./sample_analysis/sample_analysis.wdl" as SampleAnalysis
 
@@ -48,10 +48,10 @@ workflow humanwgs {
 		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
 		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
 		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] mosdepth_global = smrtcell_analysis.mosdepth_global
-		Array[File] mosdepth_region = smrtcell_analysis.mosdepth_region
-		Array[File] mosdepth_summary = smrtcell_analysis.mosdepth_summary
-		Array[File] mosdepth_region_bed = smrtcell_analysis.mosdepth_region_bed
+		Array[File] aligned_bam_mosdepth_global = smrtcell_analysis.aligned_bam_mosdepth_global
+		Array[File] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
+		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
+		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
 
 		# sample_analysis output
 		File pbsv_vcf = sample_analysis.pbsv_vcf
@@ -59,6 +59,16 @@ workflow humanwgs {
 		IndexData deepvariant_gvcf = sample_analysis.deepvariant_gvcf
 		File deepvariant_vcf_stats = sample_analysis.deepvariant_vcf_stats
 		File deepvariant_roh_bed = sample_analysis.deepvariant_roh_bed
+		IndexData phased_vcf = sample_analysis.phased_vcf
+		File whatshap_stats_gtf = sample_analysis.whatshap_stats_gtf
+		File whatshap_stats_tsv = sample_analysis.whatshap_stats_tsv
+		File whatshap_stats_blocklist = sample_analysis.whatshap_stats_blocklist
+		IndexData merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
+		File haplotagged_bam_mosdepth_global = sample_analysis.haplotagged_bam_mosdepth_global
+		File haplotagged_bam_mosdepth_region = sample_analysis.haplotagged_bam_mosdepth_region
+		File haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
+		File haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
+
 	}
 
 	parameter_meta {
