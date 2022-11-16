@@ -324,7 +324,7 @@ task deepvariant_make_examples {
 	command <<<
 		set -euo pipefail
 
-		seq 0 ~{deepvariant_threads} \
+		seq 0 ~{deepvariant_threads - 1} \
 		| parallel \
 			--jobs ~{deepvariant_threads} \
 			/opt/deepvariant/bin/make_examples \
