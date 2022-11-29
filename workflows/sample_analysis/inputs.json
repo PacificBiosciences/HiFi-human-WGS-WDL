@@ -9,7 +9,7 @@
   "sample_analysis.reference_tandem_repeat_bed": "File",
   "sample_analysis.chromosomes": "Array[String]",
   "sample_analysis.reference_chromosome_lengths": "File",
-  "sample_analysis.tandem_repeat_bed": "File",
+  "sample_analysis.trgt_tandem_repeat_bed": "File",
   "sample_analysis.deepvariant_version": "String",
   "sample_analysis.deepvariant_model": "File? (optional)",
   "sample_analysis.container_registry": "String"

@@ -13,7 +13,7 @@ workflow sample_analysis {
 		File reference_tandem_repeat_bed
 		Array[String] chromosomes
 		File reference_chromosome_lengths
-		File tandem_repeat_bed
+		File trgt_tandem_repeat_bed
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -102,6 +102,7 @@ workflow sample_analysis {
 		call split_vcf {
 			input:
 				vcf = deepvariant_postprocess_variants.vcf,
+				vcf_index = deepvariant_postprocess_variants.vcf_index,
 				region = chromosome,
 				container_registry = container_registry
 		}
@@ -144,6 +145,7 @@ workflow sample_analysis {
 				aligned_bam_index = bam_object.data_index,
 				output_bam_name = basename(bam_object.data, ".aligned.bam") + ".deepvariant.haplotagged.bam",
 				reference = reference_genome.data,
+				reference_index = reference_genome.data_index,
 				container_registry = container_registry
 		}
 	}
@@ -168,7 +170,7 @@ workflow sample_analysis {
 			bam_index = merge_bams.merged_bam_index,
 			reference = reference_genome.data,
 			reference_index = reference_genome.data_index,
-			tandem_repeat_bed = tandem_repeat_bed,
+			tandem_repeat_bed = trgt_tandem_repeat_bed,
 			container_registry = container_registry
 	}
 
@@ -177,7 +179,7 @@ workflow sample_analysis {
 			bam = merge_bams.merged_bam,
 			bam_index = merge_bams.merged_bam_index,
 			output_prefix = "~{sample_id}.~{reference_name}",
-			tandem_repeat_bed = tandem_repeat_bed,
+			tandem_repeat_bed = trgt_tandem_repeat_bed,
 			container_registry = container_registry
 	}
 
@@ -220,7 +222,7 @@ workflow sample_analysis {
 		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
 		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
 		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
-		tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
+		trgt_tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
@@ -531,6 +533,7 @@ task bcftools_roh {
 task split_vcf {
 	input {
 		File vcf
+		File vcf_index
 		String region
 
 		String container_registry
@@ -704,6 +707,7 @@ task whatshap_haplotag {
 		String output_bam_name
 
 		File reference
+		File reference_index
 
 		String container_registry
 	}
@@ -766,7 +770,7 @@ task merge_bams {
 
 	output {
 		File merged_bam = "~{output_bam_name}"
-		File merged_bam_index = "~{output_bam_name}.tbi"
+		File merged_bam_index = "~{output_bam_name}.bai"
 	}
 
 	runtime {
@@ -868,7 +872,7 @@ task trgt_coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{container_registry}/tandem-genotypes:b1a46c6"
+		docker: "~{container_registry}/tandem-genotypes:07f9162"
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
