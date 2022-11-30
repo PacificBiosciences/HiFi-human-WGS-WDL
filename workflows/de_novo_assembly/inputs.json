@@ -1,0 +1,12 @@
+{
+  "de_novo_assembly.sample": {
+    "sample_id": "String",
+    "movie_bams": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]"
+  },
+  "de_novo_assembly.reference_genome": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "de_novo_assembly.reference_name": "String",
+  "de_novo_assembly.container_registry": "String"
+}

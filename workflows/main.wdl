@@ -17,6 +17,9 @@ workflow humanwgs {
 
 		String deepvariant_version
 		File? deepvariant_model
+
+		Boolean run_de_novo_assembly = false
+
 		String container_registry
 	}
 
@@ -45,11 +48,14 @@ workflow humanwgs {
 			container_registry = container_registry
 	}
 
-	call DeNovoAssembly.de_novo_assembly {
-		input:
-			sample = sample,
-			reference_genome = reference_genome,
-			container_registry = container_registry
+	if (run_de_novo_assembly) {
+		call DeNovoAssembly.de_novo_assembly {
+			input:
+				sample = sample,
+				reference_genome = reference_genome,
+				reference_name = reference_name,
+				container_registry = container_registry
+		}
 	}
 
 	output {
@@ -84,8 +90,13 @@ workflow humanwgs {
 		Array[File] cpg_pileups = sample_analysis.cpg_pileups
 
 		# de_novo_assembly output
-		Array[File] zipped_assembly_fastas = de_novo_assembly.zipped_assembly_fastas
-		Array[File] assembly_stats = de_novo_assembly.assembly_stats
+		Array[File]? assembly_noseq_gfas = de_novo_assembly.assembly_noseq_gfas
+		Array[File]? assembly_lowQ_beds = de_novo_assembly.assembly_lowQ_beds
+		Array[File]? zipped_assembly_fastas = de_novo_assembly.zipped_assembly_fastas
+		Array[File]? assembly_stats = de_novo_assembly.assembly_stats
+		IndexData? asm_bam = de_novo_assembly.asm_bam
+		IndexData? htsbox_vcf = de_novo_assembly.htsbox_vcf
+		File? htsbox_vcf_stats = de_novo_assembly.htsbox_vcf_stats
 	}
 
 	parameter_meta {
@@ -97,6 +108,7 @@ workflow humanwgs {
 		trgt_tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		run_de_novo_assembly: {help: "Run the de novo assembly pipeline [false]"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }
