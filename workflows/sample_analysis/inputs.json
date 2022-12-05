@@ -1,16 +1,29 @@
 {
   "sample_analysis.sample_id": "String",
-  "sample_analysis.aligned_bams": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]",
-  "sample_analysis.reference_genome": {
+  "sample_analysis.small_variant_vcf": {
     "data": "File",
     "data_index": "File"
   },
-  "sample_analysis.reference_name": "String",
-  "sample_analysis.reference_tandem_repeat_bed": "File",
-  "sample_analysis.chromosomes": "Array[String]",
-  "sample_analysis.reference_chromosome_lengths": "File",
-  "sample_analysis.trgt_tandem_repeat_bed": "File",
-  "sample_analysis.deepvariant_version": "String",
-  "sample_analysis.deepvariant_model": "File? (optional)",
+  "sample_analysis.aligned_bams": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "sample_analysis.svsigs": "Array[File]",
+  "sample_analysis.reference_genome": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File"
+  },
   "sample_analysis.container_registry": "String"
 }

@@ -7,8 +7,7 @@ workflow de_novo_assembly {
 	input {
 		Sample sample
 
-		IndexData reference_genome
-		String reference_name
+		ReferenceData reference
 
 		String container_registry
 	}
@@ -44,7 +43,7 @@ workflow de_novo_assembly {
 		call asm_stats {
 			input:
 				zipped_fasta = bgzip_fasta.zipped_fasta,
-				reference_index = reference_genome.data_index,
+				reference_index = reference.fasta.data_index,
 				container_registry = container_registry
 		}
 	}
@@ -53,8 +52,8 @@ workflow de_novo_assembly {
 		input:
 			sample_id = sample.sample_id,
 			query_sequences = bgzip_fasta.zipped_fasta,
-			reference = reference_genome.data,
-			reference_name = reference_name,
+			reference = reference.fasta.data,
+			reference_name = reference.name,
 			container_registry = container_registry
 	}
 
@@ -62,7 +61,7 @@ workflow de_novo_assembly {
 		input:
 			bam = align_hifiasm.asm_bam,
 			bam_index = align_hifiasm.asm_bam_index,
-			reference = reference_genome.data,
+			reference = reference.fasta.data,
 			container_registry = container_registry
 	}
 
@@ -76,7 +75,7 @@ workflow de_novo_assembly {
 		input:
 			vcf = zip_index_vcf.zipped_vcf,
 			bam = align_hifiasm.asm_bam,
-			reference = reference_genome.data,
+			reference = reference.fasta.data,
 			container_registry = container_registry
 	}
 
@@ -92,8 +91,7 @@ workflow de_novo_assembly {
 
 	parameter_meta {
 		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
-		reference_genome: {help: "Reference genome and index to align reads to"}
-		reference_name: {help: "Basename of the reference genome; used for file naming"}
+		reference: {help: "ReferenceData"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }

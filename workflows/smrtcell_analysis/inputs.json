@@ -1,12 +1,32 @@
 {
-  "humanwgs.sample": {
+  "smrtcell_analysis.sample": {
     "sample_id": "String",
-    "movie_bams": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]"
+    "movie_bams": [
+      {
+        "data": "File",
+        "data_index": "File"
+      }
+    ],
+    "phenotypes": "Array[String]?",
+    "affected": "Boolean?",
+    "mother_id": "String?",
+    "father_id": "String?"
   },
-  "humanwgs.reference_genome": {
-  	"data": "File",
-  	"data_index": "File"
+  "smrtcell_analysis.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File"
   },
-  "humanwgs.reference_name": "String",
-  "humanwgs.container_registry": "String"
+  "smrtcell_analysis.deepvariant_version": "String",
+  "smrtcell_analysis.deepvariant_model": "File? (optional)",
+  "smrtcell_analysis.container_registry": "String"
 }

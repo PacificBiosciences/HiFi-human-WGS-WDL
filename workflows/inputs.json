@@ -1,16 +1,38 @@
 {
-  "humanwgs.sample": {
-    "sample_id": "String",
-    "movie_bams": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]"
+  "humanwgs.cohort": {
+    "cohort_id": "String",
+    "samples": [
+      {
+        "sample_id": "String",
+        "movie_bams": [
+          {
+            "data": "File",
+            "data_index": "File"
+          }
+        ],
+        "phenotypes": "Array[String]?",
+        "affected": "Boolean?",
+        "mother_id": "String?",
+        "father_id": "String?"
+      }
+    ],
+    "pedigree": "File"
   },
-  "humanwgs.reference_genome": {
-  	"data": "File",
-  	"data_index": "File"
+  "humanwgs.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File"
   },
-  "humanwgs.reference_tandem_repeat_bed": "File",
-  "humanwgs.chromosomes": "Array[String]",
-  "humanwgs.reference_chromosome_lengths": "File",
-  "humanwgs.trgt_tandem_repeat_bed": "File",
+  "humanwgs.slivar_js": "File",
   "humanwgs.deepvariant_version": "String",
   "humanwgs.deepvariant_model": "File? (optional)",
   "humanwgs.run_de_novo_assembly": "Boolean (optional, default = false)",

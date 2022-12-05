@@ -4,16 +4,16 @@ import "common/structs.wdl"
 import "smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "de_novo_assembly/de_novo_assembly.wdl" as DeNovoAssembly
+import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
 
 workflow humanwgs {
 	input {
-		Sample sample
+		Cohort cohort
 
-		IndexData reference_genome
-		File reference_tandem_repeat_bed
-		Array[String] chromosomes
-		File reference_chromosome_lengths
-		File trgt_tandem_repeat_bed
+		# TODO host these and import the default values so users don't need to define them?
+		ReferenceData reference
+
+		File slivar_js
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -23,73 +23,89 @@ workflow humanwgs {
 		String container_registry
 	}
 
-	String reference_name = basename(reference_genome.data, ".fasta")
-
-	call SmrtcellAnalysis.smrtcell_analysis {
-		input:
-			sample = sample,
-			reference_genome = reference_genome,
-			reference_name = reference_name,
-			container_registry = container_registry
-	}
-
-	call SampleAnalysis.sample_analysis {
-		input:
-			sample_id = sample.sample_id,
-			aligned_bams = smrtcell_analysis.aligned_bams,
-			reference_genome = reference_genome,
-			reference_name = reference_name,
-			reference_tandem_repeat_bed = reference_tandem_repeat_bed,
-			chromosomes = chromosomes,
-			reference_chromosome_lengths = reference_chromosome_lengths,
-			trgt_tandem_repeat_bed = trgt_tandem_repeat_bed,
-			deepvariant_version = deepvariant_version,
-			deepvariant_model = deepvariant_model,
-			container_registry = container_registry
-	}
-
-	if (run_de_novo_assembly) {
-		call DeNovoAssembly.de_novo_assembly {
+	scatter (sample in cohort.samples) {
+		call SmrtcellAnalysis.smrtcell_analysis {
 			input:
 				sample = sample,
-				reference_genome = reference_genome,
-				reference_name = reference_name,
+				reference = reference,
+				deepvariant_version = deepvariant_version,
+				deepvariant_model = deepvariant_model,
+				container_registry = container_registry
+		}
+
+		# TODO if this is run for every sample, move it into smrtcellAnalysis?
+		call SampleAnalysis.sample_analysis {
+			input:
+				sample_id = sample.sample_id,
+				small_variant_vcf = smrtcell_analysis.deepvariant_vcf,
+				aligned_bams = smrtcell_analysis.aligned_bams,
+				svsigs = smrtcell_analysis.svsigs,
+				reference = reference,
 				container_registry = container_registry
 		}
 	}
 
+	if (length(cohort.samples) == 1 && run_de_novo_assembly) {
+		call DeNovoAssembly.de_novo_assembly {
+			input:
+				sample = cohort.samples[0],
+				reference = reference,
+				container_registry = container_registry
+		}
+	}
+
+	call CohortAnalysis.cohort_analysis {
+		input:
+			cohort_id = cohort.cohort_id,
+			pedigree = cohort.pedigree,
+			aligned_bams = flatten(smrtcell_analysis.aligned_bams),
+			svsigs = flatten(smrtcell_analysis.svsigs),
+			gvcfs = smrtcell_analysis.deepvariant_gvcf,
+			reference = reference,
+			slivar_js = slivar_js,
+			container_registry = container_registry
+	}
+
 	output {
 		# smrtcells_analysis output
-		Array[File] bam_stats = smrtcell_analysis.bam_stats
-		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
-		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
-		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] aligned_bam_mosdepth_global = smrtcell_analysis.aligned_bam_mosdepth_global
-		Array[File] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
-		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
-		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
+		Array[Array[File]] bam_stats = smrtcell_analysis.bam_stats
+		Array[Array[File]] read_length_summary = smrtcell_analysis.read_length_summary
+		Array[Array[File]] read_quality_summary = smrtcell_analysis.read_quality_summary
+		Array[Array[IndexData]] aligned_bams = smrtcell_analysis.aligned_bams
+		Array[Array[File]] aligned_bam_mosdepth_global = smrtcell_analysis.aligned_bam_mosdepth_global
+		Array[Array[File]] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
+		Array[Array[File]] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
+		Array[Array[File]] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
+		Array[IndexData] deepvariant_vcfs = smrtcell_analysis.deepvariant_vcf
+		Array[IndexData] deepvariant_gvcf = smrtcell_analysis.deepvariant_gvcf
+		Array[File] deepvariant_vcf_stats = smrtcell_analysis.deepvariant_vcf_stats
+		Array[File] deepvariant_roh_bed = smrtcell_analysis.deepvariant_roh_bed
 
 		# sample_analysis output
-		IndexData pbsv_vcf = sample_analysis.pbsv_vcf
-		IndexData deepvariant_vcf = sample_analysis.deepvariant_vcf
-		IndexData deepvariant_gvcf = sample_analysis.deepvariant_gvcf
-		File deepvariant_vcf_stats = sample_analysis.deepvariant_vcf_stats
-		File deepvariant_roh_bed = sample_analysis.deepvariant_roh_bed
-		IndexData phased_vcf = sample_analysis.phased_vcf
-		File whatshap_stats_gtf = sample_analysis.whatshap_stats_gtf
-		File whatshap_stats_tsv = sample_analysis.whatshap_stats_tsv
-		File whatshap_stats_blocklist = sample_analysis.whatshap_stats_blocklist
-		IndexData merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
-		File haplotagged_bam_mosdepth_global = sample_analysis.haplotagged_bam_mosdepth_global
-		File haplotagged_bam_mosdepth_region = sample_analysis.haplotagged_bam_mosdepth_region
-		File haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
-		File haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
-		IndexData trgt_spanning_reads = sample_analysis.trgt_spanning_reads
-		IndexData trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
-		File trgt_dropouts = sample_analysis.trgt_dropouts
-		Array[File] cpg_pileups = sample_analysis.cpg_pileups
+		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
+		Array[File] haplotagged_bam_mosdepth_global = sample_analysis.haplotagged_bam_mosdepth_global
+		Array[File] haplotagged_bam_mosdepth_region = sample_analysis.haplotagged_bam_mosdepth_region
+		Array[File] haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
+		Array[File] haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
+		Array[IndexData] trgt_spanning_reads = sample_analysis.trgt_spanning_reads
+		Array[IndexData] trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
+		Array[File] trgt_dropouts = sample_analysis.trgt_dropouts
+		Array[Array[File]] cpg_pileups = sample_analysis.cpg_pileups
 
-		# de_novo_assembly output
+		# output by sample_analysis and cohort_analysis
+		## TODO might separate these into sample_ and cohort_ outputs for clarity
+		Array[IndexData] sv_vcfs = flatten([sample_analysis.sv_vcf, [cohort_analysis.sv_vcf]])
+		Array[IndexData] phased_small_variant_vcfs = flatten([sample_analysis.phased_small_variant_vcf, [cohort_analysis.phased_joint_called_vcf]])
+		Array[File] whatshap_stats_gtfs = flatten([sample_analysis.whatshap_stats_gtf, [cohort_analysis.whatshap_stats_gtf]])
+		Array[File] whatshap_stats_tsvs = flatten([sample_analysis.whatshap_stats_tsv, [cohort_analysis.whatshap_stats_tsv]])
+		Array[File] whatshap_stats_blocklists = flatten([sample_analysis.whatshap_stats_blocklist, [cohort_analysis.whatshap_stats_blocklist]])
+
+
+		# cohort_analysis output
+
+
+
+		## singleton de_novo_assembly output
 		Array[File]? assembly_noseq_gfas = de_novo_assembly.assembly_noseq_gfas
 		Array[File]? assembly_lowQ_beds = de_novo_assembly.assembly_lowQ_beds
 		Array[File]? zipped_assembly_fastas = de_novo_assembly.zipped_assembly_fastas
@@ -100,12 +116,9 @@ workflow humanwgs {
 	}
 
 	parameter_meta {
-		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
-		reference_genome: {help: "Reference genome and index to align reads to"}
-		reference_tandem_repeat_bed: {help: "Tandem repeat locations in the reference genome"}
-		chromosomes: {help: "Chromosomes to phase during WhatsHap phasing"}
-		reference_chromosome_lengths: {help: "File specifying the lengths of each of the reference chromosomes"}
-		trgt_tandem_repeat_bed: {help: "Repeat bed used by TRGT to output spanning reads and a repeat VCF"}
+		cohort: {help: "Sample information for the cohort"}
+		reference: {help: "ReferenceData"}
+		slivar_js: {help: "Additional javascript functions for slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		run_de_novo_assembly: {help: "Run the de novo assembly pipeline [false]"}
