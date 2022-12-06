@@ -132,7 +132,7 @@ task bcf_to_vcf {
 			--output ~{bcf_basename}.vcf.gz \
 			~{bcf}
 
-		bcftoosl index ~{bcf_basename}.vcf.gz
+		tabix ~{bcf_basename}.vcf.gz
 	>>>
 
 	output {

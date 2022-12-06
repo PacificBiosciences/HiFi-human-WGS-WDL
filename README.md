@@ -15,17 +15,17 @@ A cohort can include one or more samples. Samples need not be related.
 
 - `String cohort_id`: A unique name for the cohort; used to name outputs
 - `Array[Sample] samples`: The set of samples for the cohort; see [samples](#samples)
-- `File pedigree`: The pedigree for the cohort
+- `Array[String] phenotypes`: [HPO phenotypes](https://hpo.jax.org/app/) associated with the cohort
 
 
 #### Samples
 
 - `String sample_id`: A unique name for the sample; used to name outputs
 - `Array[IndexData] movie_bams`: The set of movie bams associated with this sample
-- `Array[String] phenotypes`: [HPO phenotypes](https://hpo.jax.org/app/) associated with the sample
+- `String sex`: One of ["MALE", "FEMALE"]
 - `Boolean affected`: The affected status for the sample
-- `String? mother_id`: Maternal `sample_id`, if available
 - `String? father_id`: Paternal `sample_id`, if available
+- `String? mother_id`: Maternal `sample_id`, if available
 
 
 ### `ReferenceData reference`
@@ -78,13 +78,13 @@ Aligns reads to a reference genome and generates statistics on alignment depth, 
 
 ### Sample analysis
 
-Calls and phases small and large variants and structural variants.
+Calls and phases small and structural variants.
 
 **Workflow**: [workflows/sample_analysis/sample_analysis.wdl](workflows/sample_analysis/sample_analysis.wdl)
 **Inputs**: [workflows/sample_analysis.inputs.json](workflows/sample_analysis/inputs.json)
 
 
-### Single-sample _de novo_ assembly
+### Single sample _de novo_ assembly
 
 Assembles a single genome.
 
@@ -94,6 +94,23 @@ Assembles a single genome.
 
 ### Cohort analysis
 
-Runs joint genotyping and annotation for a cohort.
+Runs joint genotyping for a cohort.
 
 **Workflow**: [workflows/cohort_analysis/cohort_analysis.wdl](workflows/cohort_analysis/cohort_analysis.wdl)
+**Inputs**: [workflows/cohort_analysis/inputs.json](workflows/cohort_analysis/inputs.json)
+
+
+## VCF phasing
+
+Phase a VCF using WhatsHap. Also calculates stats. This step is run on both single-sample small variant VCFs and joint-called VCFs (if the number of samples in the cohort is > 1).
+
+**Workflow**: [workflows/phase_vcf/phase_vcf.wdl](workflows/phase_vcf/phase_vcf.wdl)
+**Inputs**: [workflows/phase_vcf.inputs.json](workflows/phase_vcf.inputs.json)
+
+
+## VCF annotation
+
+Annotate a VCF using slivar. Outputs annotated VCFs and TSVs. This workflow is run on a phased single-sample VCF if there is only a single individual in the coort, otherwise it's run on the joint-called phased VCF.
+
+**Workflow**: [workflows/slivar/slivar.wdl](workflows/slivar/slivar.wdl)
+**Inputs**: [workflows/slivar/inputs.json](workflows/slivar/inputs.json)
