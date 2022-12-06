@@ -44,6 +44,9 @@ A cohort can include one or more samples. Samples need not be related.
 ### Other inputs
 
 - `File slivar_js`: Additional javascript functions for slivar
+- `HpoData hpo`: HPO annotation lookups (terms, dag, annotations)
+- `File ensembl_to_hgnc`: Ensembl to HGNC gene mapping
+- `File lof_lookup`, `File clinvar_lookup`: LOF and ClinVar lookup files for slivar annotations
 - `String deepvariant_version`: Version of deepvariant to use
 - `File? deepvariant_model`: Optional alternate deepvariant model file to use
 - `Boolean run_de_novo_assembly`: Run the de novo assembly pipeline [false]

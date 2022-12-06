@@ -2,19 +2,16 @@ version 1.0
 
 import "../common/structs.wdl"
 import "../common/common.wdl" as common
-import "../common/phase_vcf.wdl" as PhaseVCF
+import "../phase_vcf/phase_vcf.wdl" as PhaseVCF
 
 workflow cohort_analysis {
 	input {
 		String cohort_id
-		File pedigree
 		Array[IndexData] aligned_bams
 		Array[File] svsigs
 		Array[IndexData] gvcfs
 
 		ReferenceData reference
-
-		File slivar_js
 
 		String container_registry
 	}
@@ -62,27 +59,6 @@ workflow cohort_analysis {
 			container_registry = container_registry
 	}
 
-	call bcftools_norm {
-		input:
-			vcf = phase_vcf.phased_vcf.data,
-			vcf_index = phase_vcf.phased_vcf.data_index,
-			reference = reference.fasta.data,
-			container_registry = container_registry
-	}
-
-	call slivar_small_variant {
-		input:
-			bcf = bcftools_norm.normalized_bcf,
-			bcf_index = bcftools_norm.normalized_bcf_index,
-			pedigree = pedigree,
-			reference = reference.fasta.data,
-			slivar_js = slivar_js,
-			gnomad_af = reference.gnomad_af,
-			hprc_af = reference.hprc_af,
-			gff = reference.gff,
-			container_registry = container_registry
-	}
-
 	output {
 		IndexData sv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
 		IndexData phased_joint_called_vcf = phase_vcf.phased_vcf
@@ -93,12 +69,10 @@ workflow cohort_analysis {
 
 	parameter_meta {
 		cohort_id: {help: "Sample ID for the cohort; used for naming files"}
-		pedigree: {help: "Pedigree for the cohort"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
 		svsigs: {help: "pbsv svsig files for each sample and movie bam in the cohort"}
 		gvcfs: {help: "gVCFs and indices for each sample in the cohort"}
-		reference: {help: "ReferenceData"}
-		slivar_js: {help: "Additional javascript functions for slivar"}
+		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }
@@ -171,107 +145,6 @@ task bcf_to_vcf {
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task bcftools_norm {
-	input {
-		File vcf
-		File vcf_index
-
-		File reference
-
-		String container_registry
-	}
-
-	String vcf_basename = basename(vcf, ".vcf.gz")
-	Int threads = 4
-	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
-
-	command <<<
-		bcftools norm \
-			--multiallelics \
-			- \
-			--output-type b \
-			--fasta-ref ~{reference} \
-			~{vcf} \
-		| bcftools sort \
-			--threads ~{threads} \
-			--output-type b \
-			-o ~{vcf_basename}.norm.bcf
-
-		bcftools index ~{vcf_basename}.norm.bcf
-	>>>
-
-	output {
-		File normalized_bcf = "~{vcf_basename}.norm.bcf"
-		File normalized_bcf_index = "~{vcf_basename}.norm.bcf.csi"
-	}
-
-	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task slivar_small_variant {
-	input {
-		File bcf
-		File bcf_index
-		File pedigree
-
-		File reference
-
-		File slivar_js
-		File gnomad_af
-		File hprc_af
-		File gff
-
-		String container_registry
-	}
-
-	String bcf_basename = basename(bcf, ".bcf")
-	Int threads = 12
-
-	command <<<
-		pslivar \
-			--process ~{threads} \
-			--pass-only \
-			--js ~{slivar_js} \
-			# TODO filters
-			--gnotate ~{gnomad_af} \
-			--gnotate ~{hprc_af} \
-			--vcf ~{bcf} \
-			--ped ~{pedigree} \
-		| bcftools csq \
-			--local-csq \
-			--samples - \
-			--ncsq 40 \
-			--gff-annot ~{gff} \
-			--fasta-ref ~{reference} \
-			- \
-			--output-type z \
-			--output ~{bcf_basename}.slivar.vcf.gz
-
-		tabix ~{bcf_basename}.slivar.vcf.gz
-	>>>
-
-	output {
-		File slivar_vcf = "~{bcf_basename}.slivar.vcf.gz"
-		File slivar_vcf_index = "~{bcf_basename}.slivar.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{container_registry}/slivar:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: "500 GB"
 		preemptible: true
 		maxRetries: 3
 	}

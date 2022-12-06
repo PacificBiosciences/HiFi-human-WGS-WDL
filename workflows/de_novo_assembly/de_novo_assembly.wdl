@@ -91,7 +91,7 @@ workflow de_novo_assembly {
 
 	parameter_meta {
 		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
-		reference: {help: "ReferenceData"}
+		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }

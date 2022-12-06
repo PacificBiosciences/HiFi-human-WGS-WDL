@@ -2,7 +2,7 @@ version 1.0
 
 import "../common/structs.wdl"
 import "../common/common.wdl" as common
-import "../common/phase_vcf.wdl" as PhaseVCF
+import "../phase_vcf/phase_vcf.wdl" as PhaseVCF
 
 workflow sample_analysis {
 	input {
@@ -44,7 +44,7 @@ workflow sample_analysis {
 		call whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
-				phased_vcf_index = phase_vcf.phased_vcf.data,
+				phased_vcf_index = phase_vcf.phased_vcf.data_index,
 				aligned_bam = bam_object.data,
 				aligned_bam_index = bam_object.data_index,
 				reference = reference.fasta.data,
@@ -118,7 +118,7 @@ workflow sample_analysis {
 		small_variant_vcf: {help: "Small variant calls for this sample"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
 		svsigs: {help: "pbsv svsig files for all sample movies"}
-		reference: {help: "ReferenceData"}
+		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }

@@ -1,5 +1,5 @@
 {
-  "humanwgs.cohort": {
+  "slivar.cohort": {
     "cohort_id": "String",
     "samples": [
       {
@@ -18,7 +18,11 @@
     ],
     "phenotypes": "Array[String]? (optional)"
   },
-  "humanwgs.reference": {
+  "slivar.vcf": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "slivar.reference": {
     "name": "String",
     "fasta": {
       "data": "File",
@@ -32,17 +36,14 @@
     "hprc_af": "File",
     "gff": "File"
   },
-  "humanwgs.slivar_js": "File",
-  "humanwgs.hpo": {
+  "slivar.slivar_js": "File",
+  "slivar.hpo": {
     "terms": "File",
     "dag": "File",
     "annotations": "File"
   },
-  "humanwgs.ensembl_to_hgnc": "File",
-  "humanwgs.clinvar_lookup": "File",
-  "humanwgs.lof_lookup": "File",
-  "humanwgs.deepvariant_version": "String",
-  "humanwgs.deepvariant_model": "File? (optional)",
-  "humanwgs.run_de_novo_assembly": "Boolean (optional, default = false)",
-  "humanwgs.container_registry": "String"
+  "slivar.ensembl_to_hgnc": "File",
+  "slivar.lof_lookup": "File",
+  "slivar.clinvar_lookup": "File",
+  "slivar.container_registry": "String"
 }

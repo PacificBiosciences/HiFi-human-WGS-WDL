@@ -122,7 +122,7 @@ workflow smrtcell_analysis {
 
 	parameter_meta {
 		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
-		reference: {help: "ReferenceData"}
+		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}

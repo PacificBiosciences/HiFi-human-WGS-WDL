@@ -1,6 +1,6 @@
 version 1.0
 
-import "structs.wdl"
+import "../common/structs.wdl"
 
 workflow phase_vcf {
 	input {
@@ -67,7 +67,7 @@ workflow phase_vcf {
 	parameter_meta {
 		vcf: {help: "VCF and index to phase"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
-		reference: {help: "ReferenceData"}
+		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }

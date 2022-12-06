@@ -1,0 +1,31 @@
+{
+  "cohort_analysis.cohort_id": "String",
+  "cohort_analysis.aligned_bams": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "cohort_analysis.svsigs": "Array[File]",
+  "cohort_analysis.gvcfs": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "cohort_analysis.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File"
+  },
+  "cohort_analysis.container_registry": "String"
+}

@@ -5,6 +5,7 @@ import "smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "de_novo_assembly/de_novo_assembly.wdl" as DeNovoAssembly
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
+import "slivar/slivar.wdl" as Slivar
 
 workflow humanwgs {
 	input {
@@ -13,7 +14,12 @@ workflow humanwgs {
 		# TODO host these and import the default values so users don't need to define them?
 		ReferenceData reference
 
+		# TODO organize into annotations struct?
 		File slivar_js
+		HpoData hpo
+		File ensembl_to_hgnc
+		File clinvar_lookup
+		File lof_lookup
 
 		String deepvariant_version
 		File? deepvariant_model
@@ -45,24 +51,41 @@ workflow humanwgs {
 		}
 	}
 
-	if (length(cohort.samples) == 1 && run_de_novo_assembly) {
-		call DeNovoAssembly.de_novo_assembly {
+	if (length(cohort.samples) == 1) {
+		if (run_de_novo_assembly) {
+			call DeNovoAssembly.de_novo_assembly {
+				input:
+					sample = cohort.samples[0],
+					reference = reference,
+					container_registry = container_registry
+			}
+		}
+	}
+
+	if (length(cohort.samples) > 1) {
+		call CohortAnalysis.cohort_analysis {
 			input:
-				sample = cohort.samples[0],
+				cohort_id = cohort.cohort_id,
+				aligned_bams = flatten(smrtcell_analysis.aligned_bams),
+				svsigs = flatten(smrtcell_analysis.svsigs),
+				gvcfs = smrtcell_analysis.deepvariant_gvcf,
 				reference = reference,
 				container_registry = container_registry
 		}
 	}
 
-	call CohortAnalysis.cohort_analysis {
+	IndexData slivar_input_vcf = select_first([cohort_analysis.phased_joint_called_vcf, sample_analysis.phased_small_variant_vcf[0]])
+
+	call Slivar.slivar {
 		input:
-			cohort_id = cohort.cohort_id,
-			pedigree = cohort.pedigree,
-			aligned_bams = flatten(smrtcell_analysis.aligned_bams),
-			svsigs = flatten(smrtcell_analysis.svsigs),
-			gvcfs = smrtcell_analysis.deepvariant_gvcf,
+			cohort = cohort,
+			vcf = slivar_input_vcf,
 			reference = reference,
+			hpo = hpo,
+			ensembl_to_hgnc = ensembl_to_hgnc,
 			slivar_js = slivar_js,
+			lof_lookup = lof_lookup,
+			clinvar_lookup = clinvar_lookup,
 			container_registry = container_registry
 	}
 
@@ -94,18 +117,19 @@ workflow humanwgs {
 
 		# output by sample_analysis and cohort_analysis
 		## TODO might separate these into sample_ and cohort_ outputs for clarity
-		Array[IndexData] sv_vcfs = flatten([sample_analysis.sv_vcf, [cohort_analysis.sv_vcf]])
-		Array[IndexData] phased_small_variant_vcfs = flatten([sample_analysis.phased_small_variant_vcf, [cohort_analysis.phased_joint_called_vcf]])
-		Array[File] whatshap_stats_gtfs = flatten([sample_analysis.whatshap_stats_gtf, [cohort_analysis.whatshap_stats_gtf]])
-		Array[File] whatshap_stats_tsvs = flatten([sample_analysis.whatshap_stats_tsv, [cohort_analysis.whatshap_stats_tsv]])
-		Array[File] whatshap_stats_blocklists = flatten([sample_analysis.whatshap_stats_blocklist, [cohort_analysis.whatshap_stats_blocklist]])
+		Array[IndexData] sv_vcfs = select_all(flatten([sample_analysis.sv_vcf, [cohort_analysis.sv_vcf]]))
+		Array[IndexData] phased_small_variant_vcfs = select_all(flatten([sample_analysis.phased_small_variant_vcf, [cohort_analysis.phased_joint_called_vcf]]))
+		Array[File] whatshap_stats_gtfs = select_all(flatten([sample_analysis.whatshap_stats_gtf, [cohort_analysis.whatshap_stats_gtf]]))
+		Array[File] whatshap_stats_tsvs = select_all(flatten([sample_analysis.whatshap_stats_tsv, [cohort_analysis.whatshap_stats_tsv]]))
+		Array[File] whatshap_stats_blocklists = select_all(flatten([sample_analysis.whatshap_stats_blocklist, [cohort_analysis.whatshap_stats_blocklist]]))
 
+		# slivar output
+		IndexData filterd_vcf = slivar.filterd_vcf
+		IndexData compound_het_vcf = slivar.compound_het_vcf
+		File filtered_tsv = slivar.filtered_tsv
+		File compound_het_tsv = slivar.compound_het_tsv
 
-		# cohort_analysis output
-
-
-
-		## singleton de_novo_assembly output
+		# singleton de_novo_assembly output
 		Array[File]? assembly_noseq_gfas = de_novo_assembly.assembly_noseq_gfas
 		Array[File]? assembly_lowQ_beds = de_novo_assembly.assembly_lowQ_beds
 		Array[File]? zipped_assembly_fastas = de_novo_assembly.zipped_assembly_fastas
@@ -117,8 +141,12 @@ workflow humanwgs {
 
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
-		reference: {help: "ReferenceData"}
+		reference: {help: "Reference genome data"}
 		slivar_js: {help: "Additional javascript functions for slivar"}
+		hpo: {help: "HPO annotation lookups"}
+		ensembl_to_hgnc: {help: "Ensembl to HGNC gene mapping"}
+		lof_lookup: {help: "LOF lookup for slivar annotations"}
+		clinvar_lookup: {help: "ClinVar lookup for slivar annotations"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		run_de_novo_assembly: {help: "Run the de novo assembly pipeline [false]"}

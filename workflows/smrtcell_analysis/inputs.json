@@ -7,10 +7,10 @@
         "data_index": "File"
       }
     ],
-    "phenotypes": "Array[String]?",
-    "affected": "Boolean?",
-    "mother_id": "String?",
-    "father_id": "String?"
+    "sex": "String",
+    "affected": "Boolean",
+    "father_id": "String?",
+    "mother_id": "String?"
   },
   "smrtcell_analysis.reference": {
     "name": "String",

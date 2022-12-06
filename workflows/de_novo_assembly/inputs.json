@@ -7,8 +7,8 @@
         "data_index": "File"
       }
     ],
-    "phenotypes": "Array[String]?",
-    "affected": "Boolean?",
+    "sex": "String",
+    "affected": "Boolean",
     "mother_id": "String?",
     "father_id": "String?"
   },

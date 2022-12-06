@@ -24,19 +24,23 @@ struct Sample {
 	String sample_id
 	Array[IndexData] movie_bams
 
-	# TODO non-optional?
-	Array[String]? phenotypes
-	Boolean? affected
+	String sex
+	Boolean affected
 
-	# TODO keep this info in a PED?
-	String? mother_id
 	String? father_id
+	String? mother_id
 }
 
 struct Cohort {
 	String cohort_id
 	Array[Sample] samples
 
-	# TODO auto-generate this file based on the cohort information?
-	File pedigree
+	# TODO non-optional?
+	Array[String]? phenotypes
+}
+
+struct HpoData {
+	File terms
+	File dag
+	File annotations
 }
