@@ -43,7 +43,7 @@ workflow humanwgs {
 		call SampleAnalysis.sample_analysis {
 			input:
 				sample_id = sample.sample_id,
-				small_variant_vcf = smrtcell_analysis.deepvariant_vcf,
+				small_variant_vcf = smrtcell_analysis.small_variant_vcf,
 				aligned_bams = smrtcell_analysis.aligned_bams,
 				svsigs = smrtcell_analysis.svsigs,
 				reference = reference,
@@ -68,18 +68,21 @@ workflow humanwgs {
 				cohort_id = cohort.cohort_id,
 				aligned_bams = flatten(smrtcell_analysis.aligned_bams),
 				svsigs = flatten(smrtcell_analysis.svsigs),
-				gvcfs = smrtcell_analysis.deepvariant_gvcf,
+				gvcfs = smrtcell_analysis.small_variant_gvcf,
 				reference = reference,
 				container_registry = container_registry
 		}
 	}
 
-	IndexData slivar_input_vcf = select_first([cohort_analysis.phased_joint_called_vcf, sample_analysis.phased_small_variant_vcf[0]])
+	IndexData slivar_small_variant_input_vcf = select_first([cohort_analysis.phased_joint_called_vcf, sample_analysis.phased_small_variant_vcf[0]])
+
+	IndexData slivar_sv_input_vcf = select_first([cohort_analysis.sv_vcf, sample_analysis.sv_vcf[0]])
 
 	call Slivar.slivar {
 		input:
 			cohort = cohort,
-			vcf = slivar_input_vcf,
+			small_variant_vcf = slivar_small_variant_input_vcf,
+			sv_vcf = slivar_sv_input_vcf,
 			reference = reference,
 			hpo = hpo,
 			ensembl_to_hgnc = ensembl_to_hgnc,
@@ -99,10 +102,10 @@ workflow humanwgs {
 		Array[Array[File]] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
 		Array[Array[File]] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
 		Array[Array[File]] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
-		Array[IndexData] deepvariant_vcfs = smrtcell_analysis.deepvariant_vcf
-		Array[IndexData] deepvariant_gvcf = smrtcell_analysis.deepvariant_gvcf
-		Array[File] deepvariant_vcf_stats = smrtcell_analysis.deepvariant_vcf_stats
-		Array[File] deepvariant_roh_bed = smrtcell_analysis.deepvariant_roh_bed
+		Array[IndexData] small_variant_vcfs = smrtcell_analysis.small_variant_vcf
+		Array[IndexData] small_variant_gvcfs = smrtcell_analysis.small_variant_gvcf
+		Array[File] small_variant_vcf_stats = smrtcell_analysis.small_variant_vcf_stats
+		Array[File] small_variant_roh_bed = smrtcell_analysis.small_variant_roh_bed
 
 		# sample_analysis output
 		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
@@ -124,10 +127,12 @@ workflow humanwgs {
 		Array[File] whatshap_stats_blocklists = select_all(flatten([sample_analysis.whatshap_stats_blocklist, [cohort_analysis.whatshap_stats_blocklist]]))
 
 		# slivar output
-		IndexData filterd_vcf = slivar.filterd_vcf
-		IndexData compound_het_vcf = slivar.compound_het_vcf
-		File filtered_tsv = slivar.filtered_tsv
-		File compound_het_tsv = slivar.compound_het_tsv
+		IndexData filtered_small_variant_vcf = slivar.filtered_small_variant_vcf
+		IndexData compound_het_small_variant_vcf = slivar.compound_het_small_variant_vcf
+		File filtered_small_variant_tsv = slivar.filtered_small_variant_tsv
+		File compound_het_small_variant_tsv = slivar.compound_het_small_variant_tsv
+		IndexData filtered_svpack_vcf = slivar.filtered_svpack_vcf
+		File filtered_svpack_tsv = slivar.filtered_svpack_tsv
 
 		# singleton de_novo_assembly output
 		Array[File]? assembly_noseq_gfas = de_novo_assembly.assembly_noseq_gfas

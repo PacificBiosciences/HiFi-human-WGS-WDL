@@ -114,10 +114,10 @@ workflow smrtcell_analysis {
 		Array[File] aligned_bam_mosdepth_summary = mosdepth.summary
 		Array[File] aligned_bam_mosdepth_region_bed = mosdepth.region_bed
 		Array[File] svsigs = pbsv_discover.svsig
-		IndexData deepvariant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
-		IndexData deepvariant_gvcf = {"data": deepvariant_postprocess_variants.gvcf, "data_index": deepvariant_postprocess_variants.gvcf_index}
-		File deepvariant_vcf_stats = bcftools_stats.stats
-		File deepvariant_roh_bed = bcftools_roh.roh_bed
+		IndexData small_variant_vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
+		IndexData small_variant_gvcf = {"data": deepvariant_postprocess_variants.gvcf, "data_index": deepvariant_postprocess_variants.gvcf_index}
+		File small_variant_vcf_stats = bcftools_stats.stats
+		File small_variant_roh_bed = bcftools_roh.roh_bed
 	}
 
 	parameter_meta {

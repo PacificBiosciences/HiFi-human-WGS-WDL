@@ -36,9 +36,13 @@ A cohort can include one or more samples. Samples need not be related.
 - `File chromosome_lengths`: File specifying the lengths of each of the reference chromosomes
 - `File tandem_repeat_bed`: Tandem repeat locations in the reference genome
 - `File trgt_tandem_repeat_bed`: Repeat bed used by TRGT to output spanning reads and a repeat VCF
-- `File gnomad_af`: gnomAD allele frequencies; used for annotation
-- `File hprc_af`: Allele frequences from the Human Pangenome Reference Consortium
+- `File gnomad_af`: gnomAD allele frequencies; used for annotate the small variant VCF
+- `File hprc_af`: Allele frequences from the Human Pangenome Reference Consortium (HPRC); used to annotate the small variant VCF
 - `File gff`: GFF3 annotation file
+- `IndexData eee_vcf`: Structural variant population calls from 1000 genomes
+- `IndexData gnomad_sv_vcf`: Structural variants from gnomAD; used to annotate the SV VCF
+- `IndexData hprc_pbsv_vcf`: Structural variants from the HPRC; used to annotate the SV VCF
+- `IndexData decode_vcf`: Structural variants from deCODe; used to annotate the SV VCF
 
 
 ### Other inputs

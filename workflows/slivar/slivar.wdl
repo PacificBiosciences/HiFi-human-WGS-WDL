@@ -1,11 +1,13 @@
 version 1.0
 
 import "../common/structs.wdl"
+import "../common/common.wdl" as common
 
 workflow slivar {
 	input {
 		Cohort cohort
-		IndexData vcf
+		IndexData small_variant_vcf
+		IndexData sv_vcf
 
 		ReferenceData reference
 
@@ -44,8 +46,8 @@ workflow slivar {
 
 	call bcftools_norm {
 		input:
-			vcf = vcf.data,
-			vcf_index = vcf.data_index,
+			vcf = small_variant_vcf.data,
+			vcf_index = small_variant_vcf.data_index,
 			reference = reference.fasta.data,
 			container_registry = container_registry
 	}
@@ -83,11 +85,40 @@ workflow slivar {
 			container_registry = container_registry
 	}
 
+	call svpack_filter_annotated {
+		input:
+			sv_vcf = sv_vcf.data,
+			eee_vcf = reference.eee_vcf.data,
+			gnomad_sv_vcf = reference.gnomad_sv_vcf.data,
+			hprc_pbsv_vcf = reference.hprc_pbsv_vcf.data,
+			decode_vcf = reference.decode_vcf.data,
+			gff = reference.gff,
+			container_registry = container_registry
+	}
+
+	call common.zip_index_vcf as zip_index_svpack_vcf {
+		input:
+			vcf = svpack_filter_annotated.svpack_vcf,
+			container_registry = container_registry
+	}
+
+	call slivar_svpack_tsv {
+		input:
+			filtered_vcf = zip_index_svpack_vcf.zipped_vcf,
+			pedigree = write_ped.pedigree,
+			lof_lookup = lof_lookup,
+			clinvar_lookup = clinvar_lookup,
+			phrank_lookup = calculate_phrank.phrank_lookup,
+			container_registry = container_registry
+	}
+
 	output {
-		IndexData filterd_vcf = {"data": slivar_small_variant.filtered_vcf, "data_index": slivar_small_variant.filtered_vcf_index}
-		IndexData compound_het_vcf = {"data": slivar_compound_hets.compound_het_vcf, "data_index": slivar_compound_hets.compound_het_vcf_index}
-		File filtered_tsv = slivar_tsv.filtered_tsv
-		File compound_het_tsv = slivar_tsv.compound_het_tsv
+		IndexData filtered_small_variant_vcf = {"data": slivar_small_variant.filtered_vcf, "data_index": slivar_small_variant.filtered_vcf_index}
+		IndexData compound_het_small_variant_vcf = {"data": slivar_compound_hets.compound_het_vcf, "data_index": slivar_compound_hets.compound_het_vcf_index}
+		File filtered_small_variant_tsv = slivar_tsv.filtered_tsv
+		File compound_het_small_variant_tsv = slivar_tsv.compound_het_tsv
+		IndexData filtered_svpack_vcf = {"data": zip_index_svpack_vcf.zipped_vcf, "data_index": zip_index_svpack_vcf.zipped_vcf_index}
+		File filtered_svpack_tsv = slivar_svpack_tsv.svpack_tsv
 	}
 
 	parameter_meta {
@@ -186,7 +217,9 @@ task calculate_phrank {
 			~{hpo_dag} \
 			~{hpo_annotations} \
 			~{ensembl_to_hgnc} \
-			~{cohort_yaml}
+			~{cohort_yaml} \
+			~{cohort_id} \
+			~{cohort_id}_phrank.tsv
 	>>>
 
 	output {
@@ -305,7 +338,7 @@ task slivar_small_variant {
 	]
 
 	String bcf_basename = basename(bcf, ".bcf")
-	Int threads = 12
+	Int threads = 8
 
 	command <<<
 		set -euo pipefail
@@ -346,8 +379,8 @@ task slivar_small_variant {
 	runtime {
 		docker: "~{container_registry}/slivar:b1a46c6"
 		cpu: threads
-		memory: "14 GB"
-		disk: "200 GB"
+		memory: "32 GB"
+		disk: "300 GB"
 		preemptible: true
 		maxRetries: 3
 	}
@@ -388,8 +421,9 @@ task slivar_compound_hets {
 			--ped ~{pedigree} \
 			--allow-non-trios \
 		| python3 /opt/scripts/add_comphet_phase.py \
-		> ~{vcf_basename}.compound_hets.vcf.gz
+		> ~{vcf_basename}.compound_hets.vcf
 
+		bgzip ~{vcf_basename}.compound_hets.vcf
 		tabix ~{vcf_basename}.compound_hets.vcf.gz
 	>>>
 
@@ -469,6 +503,127 @@ task slivar_tsv {
 	output {
 		File filtered_tsv = "~{filtered_vcf_basename}.tsv"
 		File compound_het_tsv = "~{compound_het_vcf_basename}.tsv"
+	}
+
+	runtime {
+		docker: "~{container_registry}/slivar:b1a46c6"
+		cpu: 4
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task svpack_filter_annotated {
+	input {
+		File sv_vcf
+
+		File eee_vcf
+		File gnomad_sv_vcf
+		File hprc_pbsv_vcf
+		File decode_vcf
+
+		File gff
+
+		String container_registry
+	}
+
+	String sv_vcf_basename = basename(sv_vcf, ".vcf.gz")
+	Int disk_size = ceil((size(sv_vcf, "GB") + size(eee_vcf, "GB") + size(gnomad_sv_vcf, "GB") + size(hprc_pbsv_vcf, "GB") + size(decode_vcf, "GB")) * 2 + 20)
+
+	command <<<
+		python /opt/scripts/svpack/svpack \
+			filter \
+			--pass-only \
+			--min-svlen 50 \
+			~{sv_vcf} \
+		| python /opt/scripts/svpack/svpack \
+			match \
+			-v \
+			- \
+			~{eee_vcf} \
+		| python /opt/scripts/svpack/svpack \
+			match \
+			-v \
+			- \
+			~{gnomad_sv_vcf} \
+		| python /opt/scripts/svpack/svpack \
+			match \
+			-v \
+			- \
+			~{hprc_pbsv_vcf} \
+		| python /opt/scripts/svpack/svpack \
+			match \
+			-v \
+			- \
+			~{decode_vcf} \
+		| python /opt/scripts/svpack/svpack \
+			consequence \
+			- \
+			~{gff} \
+		| python /opt/scripts/svpack/svpack \
+			tagzygosity \
+			- \
+		> ~{sv_vcf_basename}.svpack.vcf
+	>>>
+
+	output {
+		File svpack_vcf = "~{sv_vcf_basename}.svpack.vcf"
+	}
+
+	runtime {
+		docker: "~{container_registry}/svpack:b1a46c6"
+		cpu: 4
+		memory: "14 GB"
+		disk: disk_size + " GB"
+		preemptible: true
+		maxRetries: 3
+	}
+}
+
+task slivar_svpack_tsv {
+	input {
+		File filtered_vcf
+
+		File pedigree
+		File lof_lookup
+		File clinvar_lookup
+		File phrank_lookup
+
+		String container_registry
+	}
+
+	Array[String] info_fields = [
+		'SVTYPE',
+		'SVLEN',
+		'SVANN',
+		'CIPOS',
+		'MATEID',
+		'END'
+	]
+
+	String filtered_vcf_basename = basename(filtered_vcf, ".vcf.gz")
+	Int disk_size = ceil((size(filtered_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
+
+	command <<<
+		slivar tsv \
+			--info-field ~{sep=' --info-field ' info_fields} \
+			--sample-field hetalt \
+			--sample-field homalt \
+			--csq-field BCSQ \
+			--gene-description ~{lof_lookup} \
+			--gene-description ~{clinvar_lookup} \
+			--gene-description ~{phrank_lookup} \
+			--ped ~{pedigree} \
+			--out /dev/stdout \
+			~{filtered_vcf} \
+		| sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
+		> ~{filtered_vcf_basename}.tsv
+	>>>
+
+	output {
+		File svpack_tsv = "~{filtered_vcf_basename}.tsv"
 	}
 
 	runtime {

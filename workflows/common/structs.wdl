@@ -18,6 +18,11 @@ struct ReferenceData {
 	File gnomad_af
 	File hprc_af
 	File gff
+
+	IndexData eee_vcf
+	IndexData gnomad_sv_vcf
+	IndexData hprc_pbsv_vcf
+	IndexData decode_vcf
 }
 
 struct Sample {
