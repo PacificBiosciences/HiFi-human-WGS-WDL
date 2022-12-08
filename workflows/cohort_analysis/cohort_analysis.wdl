@@ -1,8 +1,9 @@
 version 1.0
 
 import "../common/structs.wdl"
-import "../common/common.wdl" as common
-import "../phase_vcf/phase_vcf.wdl" as PhaseVCF
+import "../common/tasks/pbsv_call.wdl" as PbsvCall
+import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow cohort_analysis {
 	input {
@@ -21,7 +22,7 @@ workflow cohort_analysis {
 		File gvcf_index = gvcf_object.data_index
 	}
 
-	call common.pbsv_call {
+	call PbsvCall.pbsv_call {
 		input:
 			sample_id = cohort_id,
 			svsigs = svsigs,
@@ -31,7 +32,7 @@ workflow cohort_analysis {
 			container_registry = container_registry
 	}
 
-	call common.zip_index_vcf {
+	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
 			container_registry = container_registry
@@ -51,7 +52,7 @@ workflow cohort_analysis {
 			container_registry = container_registry
 	}
 
-	call PhaseVCF.phase_vcf {
+	call PhaseVcf.phase_vcf {
 		input:
 			vcf = {"data": bcf_to_vcf.vcf, "data_index": bcf_to_vcf.vcf_index},
 			aligned_bams = aligned_bams,
@@ -69,9 +70,9 @@ workflow cohort_analysis {
 
 	parameter_meta {
 		cohort_id: {help: "Sample ID for the cohort; used for naming files"}
-		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
+		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with all samples in the cohort"}
 		svsigs: {help: "pbsv svsig files for each sample and movie bam in the cohort"}
-		gvcfs: {help: "gVCFs and indices for each sample in the cohort"}
+		gvcfs: {help: "gVCF for each sample in the cohort"}
 		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
@@ -91,6 +92,8 @@ task glnexus {
 	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		glnexus_cli \
 			--threads ~{threads} \
 			--mem-gbytes ~{mem_gbytes} \
@@ -126,6 +129,8 @@ task bcf_to_vcf {
 	Int disk_size = ceil(size(bcf, "GB") * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		bcftools view \
 			--threads ~{threads} \
 			--output-type z \

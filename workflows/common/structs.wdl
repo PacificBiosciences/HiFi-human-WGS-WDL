@@ -34,18 +34,25 @@ struct Sample {
 
 	String? father_id
 	String? mother_id
+
+	Boolean run_de_novo_assembly
 }
 
 struct Cohort {
 	String cohort_id
 	Array[Sample] samples
 
-	# TODO non-optional?
-	Array[String]? phenotypes
+	Array[String] phenotypes
+
+	Boolean run_de_novo_assembly_trio
 }
 
-struct HpoData {
-	File terms
-	File dag
-	File annotations
+struct SlivarData {
+	File slivar_js
+	File hpo_terms
+	File hpo_dag
+	File hpo_annotations
+	File ensembl_to_hgnc
+	File lof_lookup
+	File clinvar_lookup
 }

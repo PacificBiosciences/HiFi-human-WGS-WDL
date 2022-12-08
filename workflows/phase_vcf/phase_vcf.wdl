@@ -65,7 +65,7 @@ workflow phase_vcf {
 	}
 
 	parameter_meta {
-		vcf: {help: "VCF and index to phase"}
+		vcf: {help: "VCF to phase"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
 		reference: {help: "Reference genome data"}
 		container_registry: {help: "Container registry where docker images are hosted"}
@@ -149,7 +149,6 @@ task whatshap_phase {
 		File phased_vcf_index = "~{vcf_basename}.phased.vcf.gz.tbi"
 	}
 
-	# TODO doesn't whatshap phase run single-threaded? why the giant machine?
 	runtime {
 		docker: "~{container_registry}/whatshap:b1a46c6"
 		cpu: 32

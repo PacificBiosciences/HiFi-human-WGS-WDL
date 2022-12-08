@@ -1,5 +1,5 @@
 {
-  "humanwgs.cohort": {
+  "de_novo_assembly_trio.cohort": {
     "cohort_id": "String",
     "samples": [
       {
@@ -20,7 +20,7 @@
     "phenotypes": "Array[String]",
     "run_de_novo_assembly_trio": "Boolean"
   },
-  "humanwgs.reference": {
+  "de_novo_assembly_trio.reference": {
     "name": "String",
     "fasta": {
       "data": "File",
@@ -50,16 +50,5 @@
       "data_index": "File"
     }
   },
-  "humanwgs.slivar_data": {
-    "slivar_js": "File",
-    "hpo_terms": "File",
-    "hpo_dag": "File",
-    "hpo_annotations": "File",
-    "ensembl_to_hgnc": "File",
-    "lof_lookup": "File",
-    "clinvar_lookup": "File"
-  },
-  "humanwgs.deepvariant_version": "String",
-  "humanwgs.deepvariant_model": "File? (optional)",
-  "humanwgs.container_registry": "String"
+  "de_novo_assembly_trio.container_registry": "String"
 }

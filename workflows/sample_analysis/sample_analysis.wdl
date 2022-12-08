@@ -1,46 +1,58 @@
 version 1.0
 
 import "../common/structs.wdl"
-import "../common/common.wdl" as common
-import "../phase_vcf/phase_vcf.wdl" as PhaseVCF
+import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
+import "../common/tasks/mosdepth.wdl" as Mosdepth
+import "../common/tasks/pbsv_call.wdl" as PbsvCall
+import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow sample_analysis {
 	input {
-		String sample_id
-		IndexData small_variant_vcf
-		Array[IndexData] aligned_bams
-		Array[File] svsigs
+		Sample sample
 
 		ReferenceData reference
+
+		String deepvariant_version
+		File? deepvariant_model
 
 		String container_registry
 	}
 
-	call common.pbsv_call {
+	call SmrtcellAnalysis.smrtcell_analysis {
 		input:
-			sample_id = sample_id,
-			svsigs = svsigs,
+			sample = sample,
+			reference = reference,
+			deepvariant_version = deepvariant_version,
+			deepvariant_model = deepvariant_model,
+			container_registry = container_registry
+	}
+
+	call PbsvCall.pbsv_call {
+		input:
+			sample_id = sample.sample_id,
+			svsigs = smrtcell_analysis.svsigs,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
 			container_registry = container_registry
 	}
 
-	call common.zip_index_vcf {
+	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
 			container_registry = container_registry
 	}
 
-	call PhaseVCF.phase_vcf {
+	call PhaseVcf.phase_vcf {
 		input:
-			vcf = small_variant_vcf,
-			aligned_bams = aligned_bams,
+			vcf = smrtcell_analysis.small_variant_vcf,
+			aligned_bams = smrtcell_analysis.aligned_bams,
 			reference = reference,
 			container_registry = container_registry
 	}
 
-	scatter (bam_object in aligned_bams) {
+	scatter (bam_object in smrtcell_analysis.aligned_bams) {
 		call whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
@@ -56,11 +68,11 @@ workflow sample_analysis {
 	call merge_bams {
 		input:
 			bams = whatshap_haplotag.haplotagged_bam,
-			output_bam_name = "~{sample_id}.~{reference.name}.haplotagged.bam",
+			output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
 			container_registry = container_registry
 	}
 
-	call common.mosdepth {
+	call Mosdepth.mosdepth {
 		input:
 			aligned_bam = merge_bams.merged_bam,
 			aligned_bam_index = merge_bams.merged_bam_index,
@@ -81,7 +93,7 @@ workflow sample_analysis {
 		input:
 			bam = merge_bams.merged_bam,
 			bam_index = merge_bams.merged_bam_index,
-			output_prefix = "~{sample_id}.~{reference.name}",
+			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
 			container_registry = container_registry
 	}
@@ -90,13 +102,28 @@ workflow sample_analysis {
 		input:
 			bam = merge_bams.merged_bam,
 			bam_index = merge_bams.merged_bam_index,
-			output_prefix = "~{sample_id}.~{reference.name}",
+			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			container_registry = container_registry
 	}
 
 	output {
+		# smrtcell_analysis output
+		Array[File] bam_stats = smrtcell_analysis.bam_stats
+		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
+		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
+		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
+		Array[File] aligned_bam_mosdepth_global = smrtcell_analysis.aligned_bam_mosdepth_global
+		Array[File] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
+		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
+		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
+		Array[File] svsigs = smrtcell_analysis.svsigs
+		IndexData small_variant_vcf = smrtcell_analysis.small_variant_vcf
+		IndexData small_variant_gvcf = smrtcell_analysis.small_variant_gvcf
+		File small_variant_vcf_stats = smrtcell_analysis.small_variant_vcf_stats
+		File small_variant_roh_bed = smrtcell_analysis.small_variant_roh_bed
+
 		IndexData sv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
 		IndexData phased_small_variant_vcf = phase_vcf.phased_vcf
 		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
@@ -114,11 +141,10 @@ workflow sample_analysis {
 	}
 
 	parameter_meta {
-		sample_id: {help: "Sample ID"}
-		small_variant_vcf: {help: "Small variant calls for this sample"}
-		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
-		svsigs: {help: "pbsv svsig files for all sample movies"}
+		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
+		deepvariant_version: {help: "Version of deepvariant to use"}
+		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }

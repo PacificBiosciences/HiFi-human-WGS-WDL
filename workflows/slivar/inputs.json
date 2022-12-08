@@ -13,10 +13,12 @@
         "sex": "String",
         "affected": "Boolean",
         "father_id": "String?",
-        "mother_id": "String?"
+        "mother_id": "String?",
+        "run_de_novo_assembly": "Boolean"
       }
     ],
-    "phenotypes": "Array[String]? (optional)"
+    "phenotypes": "Array[String]",
+    "run_de_novo_assembly_trio": "Boolean"
   },
   "slivar.small_variant_vcf": {
     "data": "File",
@@ -56,14 +58,14 @@
       "data_index": "File"
     }
   },
-  "slivar.slivar_js": "File",
-  "slivar.hpo": {
-    "terms": "File",
-    "dag": "File",
-    "annotations": "File"
+  "slivar.slivar_data": {
+    "slivar_js": "File",
+    "hpo_terms": "File",
+    "hpo_dag": "File",
+    "hpo_annotations": "File",
+    "ensembl_to_hgnc": "File",
+    "lof_lookup": "File",
+    "clinvar_lookup": "File"
   },
-  "slivar.ensembl_to_hgnc": "File",
-  "slivar.lof_lookup": "File",
-  "slivar.clinvar_lookup": "File",
   "slivar.container_registry": "String"
 }

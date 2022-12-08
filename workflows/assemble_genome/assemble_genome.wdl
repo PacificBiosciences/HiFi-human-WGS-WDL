@@ -1,29 +1,28 @@
 version 1.0
 
-import "../common/common.wdl" as common
 import "../common/structs.wdl"
 
-workflow de_novo_assembly {
+workflow assemble_genome {
 	input {
-		Sample sample
+		String sample_id
+		Array[File] reads_fastas
 
 		ReferenceData reference
+
+		String? hifiasm_extra_params
+		File? father_yak
+		File? mother_yak
 
 		String container_registry
 	}
 
-	scatter (movie_bam in sample.movie_bams) {
-		call samtools_fasta {
-			input:
-				bam = movie_bam.data,
-				container_registry = container_registry
-		}
-	}
-
 	call hifiasm_assemble {
 		input:
-			sample_id = sample.sample_id,
-			reads_fastas = samtools_fasta.reads_fasta,
+			sample_id = sample_id,
+			reads_fastas = reads_fastas,
+			extra_params = hifiasm_extra_params,
+			father_yak = father_yak,
+			mother_yak = mother_yak,
 			container_registry = container_registry
 	}
 
@@ -50,32 +49,10 @@ workflow de_novo_assembly {
 
 	call align_hifiasm {
 		input:
-			sample_id = sample.sample_id,
+			sample_id = sample_id,
 			query_sequences = bgzip_fasta.zipped_fasta,
 			reference = reference.fasta.data,
 			reference_name = reference.name,
-			container_registry = container_registry
-	}
-
-	call htsbox {
-		input:
-			bam = align_hifiasm.asm_bam,
-			bam_index = align_hifiasm.asm_bam_index,
-			reference = reference.fasta.data,
-			container_registry = container_registry
-	}
-
-	call common.zip_index_vcf {
-		input:
-			vcf = htsbox.htsbox_vcf,
-			container_registry = container_registry
-	}
-
-	call bcftools_stats {
-		input:
-			vcf = zip_index_vcf.zipped_vcf,
-			bam = align_hifiasm.asm_bam,
-			reference = reference.fasta.data,
 			container_registry = container_registry
 	}
 
@@ -85,48 +62,16 @@ workflow de_novo_assembly {
 		Array[File] zipped_assembly_fastas = bgzip_fasta.zipped_fasta
 		Array[File] assembly_stats = asm_stats.assembly_stats
 		IndexData asm_bam = {"data": align_hifiasm.asm_bam, "data_index": align_hifiasm.asm_bam_index}
-		IndexData htsbox_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
-		File htsbox_vcf_stats = bcftools_stats.vcf_stats
 	}
 
 	parameter_meta {
-		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
+		sample_id: {help: "Sample ID; used for naming files"}
+		reads_fastas: {help: "Reads in fasta format to be used for assembly; one for each movie bam to be used in assembly. Reads fastas from one or more sample may be combined to use in the assembly"}
 		reference: {help: "Reference genome data"}
+		hiiasm_extra_params: {help: "[OPTIONAL] Additional parameters to pass to hifiasm assembly"}
+		father_yak: {help: "[OPTIONAL] kmer counts for the father; required if running trio-based assembly"}
+		mother_yak: {help: "[OPTIONAL] kmer counts for the mother; required if running trio-based assembly"}
 		container_registry: {help: "Container registry where docker images are hosted"}
-	}
-}
-
-task samtools_fasta {
-	input {
-		File bam
-
-		String container_registry
-	}
-
-	String bam_basename = basename(bam, ".bam")
-	Int threads = 4
-	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		samtools fasta \
-			-@ ~{threads - 1} \
-			~{bam} \
-		> ~{bam_basename}.fasta
-	>>>
-
-	output {
-		File reads_fasta = "~{bam_basename}.fasta"
-	}
-
-	runtime {
-		docker: "~{container_registry}/samtools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
 	}
 }
 
@@ -134,6 +79,10 @@ task hifiasm_assemble {
 	input {
 		String sample_id
 		Array[File] reads_fastas
+
+		String? extra_params
+		File? father_yak
+		File? mother_yak
 
 		String container_registry
 	}
@@ -148,13 +97,22 @@ task hifiasm_assemble {
 		hifiasm \
 			-o ~{prefix} \
 			-t ~{threads} \
+			~{extra_params} \
+			~{"-1" + father_yak} \
+			~{"-2" + mother_yak} \
 			~{sep=' ' reads_fastas}
 	>>>
 
 	output {
-		Array[File] assembly_hap_gfas = glob("~{prefix}.bp.hap[12].p_ctg.gfa")
-		Array[File] assembly_noseq_gfas = glob("~{prefix}.bp.hap[12].p_ctg.noseq.gfa")
-		Array[File] assembly_lowQ_beds = glob("~{prefix}.bp.hap[12].p_ctg.lowQ.bed")
+		Array[File] assembly_hap_gfas = glob("~{prefix}.*.hap[12].p_ctg.gfa")
+		Array[File] assembly_noseq_gfas = flatten([
+			glob("~{prefix}.*.hap[12].p_ctg.noseq.gfa"),
+			glob("~{prefix}.dip.[pr]_utg.noseq.gfa")
+		])
+		Array[File] assembly_lowQ_beds = flatten([
+			glob("~{prefix}.*.hap[12].p_ctg.lowQ.bed"),
+			glob("~{prefix}.dip.[pr]_utg.lowQ.bed")
+		])
 	}
 
 	runtime {
@@ -285,6 +243,8 @@ task align_hifiasm {
 	Int disk_size = ceil((size(query_sequences[0], "GB") * length(query_sequences) + size(reference, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		minimap2 \
 			-t ~{threads - 4} \
 			-L \
@@ -313,81 +273,6 @@ task align_hifiasm {
 		docker: "~{container_registry}/align_hifiasm:b1a46c6"
 		cpu: threads
 		memory: "256 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task htsbox {
-	input {
-		File bam
-		File bam_index
-
-		File reference
-
-		String container_registry
-	}
-
-	String bam_basename = basename(bam, ".bam")
-	Int threads = 4
-	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
-
-	command <<<
-		htsbox pileup \
-			-q20 \
-			-c \
-			-f \
-			~{reference} \
-			~{bam} \
-		> ~{bam_basename}.htsbox.vcf
-	>>>
-
-	output {
-		File htsbox_vcf = "~{bam_basename}.htsbox.vcf"
-	}
-
-	runtime {
-		docker: "~{container_registry}/htsbox:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task bcftools_stats {
-	input {
-		File vcf
-		File bam
-
-		File reference
-
-		String container_registry
-	}
-
-	String vcf_basename = basename(vcf, ".gz")
-	Int threads = 4
-	Int disk_size = ceil((size(vcf, "GB") + size(bam, "GB")) * 2 + 20)
-
-	command <<<
-		bcftools stats \
-			--threads ~{threads - 1} \
-			--fasta-ref ~{reference} \
-			--samples ~{bam} \
-			~{vcf} \
-		> ~{vcf_basename}.stats.txt
-	>>>
-
-	output {
-		File vcf_stats = "~{vcf_basename}.stats.txt"
-	}
-
-	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3

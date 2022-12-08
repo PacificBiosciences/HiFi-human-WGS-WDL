@@ -1,7 +1,7 @@
 version 1.0
 
 import "../common/structs.wdl"
-import "../common/common.wdl" as common
+import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 
 workflow slivar {
 	input {
@@ -11,11 +11,7 @@ workflow slivar {
 
 		ReferenceData reference
 
-		File slivar_js
-		HpoData hpo
-		File ensembl_to_hgnc
-		File lof_lookup
-		File clinvar_lookup
+		SlivarData slivar_data
 
 		String container_registry
 	}
@@ -37,10 +33,10 @@ workflow slivar {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_yaml = write_cohort_yaml.cohort_yaml,
-			hpo_terms = hpo.terms,
-			hpo_dag = hpo.dag,
-			hpo_annotations = hpo.annotations,
-			ensembl_to_hgnc = ensembl_to_hgnc,
+			hpo_terms = slivar_data.hpo_terms,
+			hpo_dag = slivar_data.hpo_dag,
+			hpo_annotations = slivar_data.hpo_annotations,
+			ensembl_to_hgnc = slivar_data.ensembl_to_hgnc,
 			container_registry = container_registry
 	}
 
@@ -59,7 +55,7 @@ workflow slivar {
 			pedigree = write_ped.pedigree,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
-			slivar_js = slivar_js,
+			slivar_js = slivar_data.slivar_js,
 			gnomad_af = reference.gnomad_af,
 			hprc_af = reference.hprc_af,
 			gff = reference.gff,
@@ -79,8 +75,8 @@ workflow slivar {
 			filtered_vcf = slivar_small_variant.filtered_vcf,
 			compound_het_vcf = slivar_compound_hets.compound_het_vcf,
 			pedigree = write_ped.pedigree,
-			lof_lookup = lof_lookup,
-			clinvar_lookup = clinvar_lookup,
+			lof_lookup = slivar_data.lof_lookup,
+			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
 			container_registry = container_registry
 	}
@@ -96,7 +92,7 @@ workflow slivar {
 			container_registry = container_registry
 	}
 
-	call common.zip_index_vcf as zip_index_svpack_vcf {
+	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = svpack_filter_annotated.svpack_vcf,
 			container_registry = container_registry
@@ -104,10 +100,10 @@ workflow slivar {
 
 	call slivar_svpack_tsv {
 		input:
-			filtered_vcf = zip_index_svpack_vcf.zipped_vcf,
+			filtered_vcf = zip_index_vcf.zipped_vcf,
 			pedigree = write_ped.pedigree,
-			lof_lookup = lof_lookup,
-			clinvar_lookup = clinvar_lookup,
+			lof_lookup = slivar_data.lof_lookup,
+			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
 			container_registry = container_registry
 	}
@@ -117,19 +113,16 @@ workflow slivar {
 		IndexData compound_het_small_variant_vcf = {"data": slivar_compound_hets.compound_het_vcf, "data_index": slivar_compound_hets.compound_het_vcf_index}
 		File filtered_small_variant_tsv = slivar_tsv.filtered_tsv
 		File compound_het_small_variant_tsv = slivar_tsv.compound_het_tsv
-		IndexData filtered_svpack_vcf = {"data": zip_index_svpack_vcf.zipped_vcf, "data_index": zip_index_svpack_vcf.zipped_vcf_index}
+		IndexData filtered_svpack_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
 		File filtered_svpack_tsv = slivar_svpack_tsv.svpack_tsv
 	}
 
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
-		vcf: {help: "VCF and index to annotate using slivar"}
+		small_variant_vcf: {help: "Small variant VCF to annotate using slivar"}
+		sv_vcf: {help: "Structural variant VCF to annotate using slivar"}
 		reference: {help: "Reference genome data"}
-		slivar_js: {help: "Additional javascript functions for slivar"}
-		hpo: {help: "HPO annotation lookups"}
-		ensembl_to_hgnc: {help: "Ensembl to HGNC gene mapping"}
-		lof_lookup: {help: "LOF lookup for slivar annotations"}
-		clinvar_lookup: {help: "ClinVar lookup for slivar annotations"}
+		slivar_data: {help: "Data files used for annotation with slivar"}
 		container_registry: {help: "Container registry where docker images are hosted"}
 	}
 }
@@ -144,9 +137,9 @@ task write_cohort_yaml {
 	command <<<
 		set -euo pipefail
 
-		write_config_yml.py \
+		parse_cohort.py \
 			--cohort_json ~{write_json(cohort)} \
-			--output_yml ~{cohort.cohort_id}.yml
+			--write_cohort_yaml ~{cohort.cohort_id}.yml
 	>>>
 
 	output {
@@ -154,7 +147,7 @@ task write_cohort_yaml {
 	}
 
 	runtime {
-		docker: "~{container_registry}/write_config_yml:0.0.1"
+		docker: "~{container_registry}/parse_cohort:0.0.1"
 		cpu: 4
 		memory: "14 GB"
 		disk: "20 GB"
@@ -298,7 +291,6 @@ task slivar_small_variant {
 		String container_registry
 	}
 
-	# TODO allow the user to configure cutoffs?
 	Float max_gnomad_af = 0.01
 	Float max_hprc_af = 0.01
 	Int max_gnomad_nhomalt = 4
@@ -469,6 +461,8 @@ task slivar_tsv {
 	Int disk_size = ceil((size(filtered_vcf, "GB") + size(compound_het_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
 			--sample-field dominant \
@@ -533,6 +527,8 @@ task svpack_filter_annotated {
 	Int disk_size = ceil((size(sv_vcf, "GB") + size(eee_vcf, "GB") + size(gnomad_sv_vcf, "GB") + size(hprc_pbsv_vcf, "GB") + size(decode_vcf, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		python /opt/scripts/svpack/svpack \
 			filter \
 			--pass-only \
@@ -607,6 +603,8 @@ task slivar_svpack_tsv {
 	Int disk_size = ceil((size(filtered_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
 	command <<<
+		set -euo pipefail
+
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
 			--sample-field hetalt \

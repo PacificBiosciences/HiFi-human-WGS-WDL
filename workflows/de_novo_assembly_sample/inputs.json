@@ -1,5 +1,5 @@
 {
-  "de_novo_assembly.sample": {
+  "de_novo_assembly_sample.sample": {
     "sample_id": "String",
     "movie_bams": [
       {
@@ -10,9 +10,10 @@
     "sex": "String",
     "affected": "Boolean",
     "mother_id": "String?",
-    "father_id": "String?"
+    "father_id": "String?",
+    "run_de_novo_assembly": "Boolean"
   },
-  "de_novo_assembly.reference": {
+  "de_novo_assembly_sample.reference": {
     "name": "String",
     "fasta": {
       "data": "File",
@@ -42,5 +43,5 @@
       "data_index": "File"
     }
   },
-  "de_novo_assembly.container_registry": "String"
+  "de_novo_assembly_sample.container_registry": "String"
 }

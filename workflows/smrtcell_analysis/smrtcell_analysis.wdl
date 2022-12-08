@@ -1,7 +1,7 @@
 version 1.0
 
 import "../common/structs.wdl"
-import "../common/common.wdl" as common
+import "../common/tasks/mosdepth.wdl" as Mosdepth
 
 workflow smrtcell_analysis {
 	input {
@@ -35,7 +35,7 @@ workflow smrtcell_analysis {
 				container_registry = container_registry
 		}
 
-		call common.mosdepth {
+		call Mosdepth.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
@@ -103,7 +103,6 @@ workflow smrtcell_analysis {
 			container_registry = container_registry
 	}
 
-
 	output {
 		Array[File] bam_stats = smrtcell_stats.bam_stats
 		Array[File] read_length_summary = smrtcell_stats.read_length_summary
@@ -121,7 +120,7 @@ workflow smrtcell_analysis {
 	}
 
 	parameter_meta {
-		sample: {help: "Sample ID and unaligned movie bams and indices associated with the sample"}
+		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
@@ -269,7 +268,6 @@ task pbsv_discover {
 	}
 }
 
-
 task deepvariant_make_examples {
 	input {
 		String sample_id
@@ -415,7 +413,6 @@ task deepvariant_postprocess_variants {
 		maxRetries: 3
 	}
 }
-
 
 task bcftools_stats {
 	input {
