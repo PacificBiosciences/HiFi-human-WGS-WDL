@@ -98,8 +98,8 @@ task hifiasm_assemble {
 			-o ~{prefix} \
 			-t ~{threads} \
 			~{extra_params} \
-			~{"-1" + father_yak} \
-			~{"-2" + mother_yak} \
+			~{"-1 " + father_yak} \
+			~{"-2 " + mother_yak} \
 			~{sep=' ' reads_fastas}
 	>>>
 
