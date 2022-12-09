@@ -103,15 +103,13 @@ task parse_trio {
 
 		parse_cohort.py \
 			--cohort_json ~{write_json(cohort)} \
-			--get_trio_information \
-			--write_haplotype_key ~{cohort.cohort_id}.asm.key.txt
+			--parse_trio
 	>>>
 
 	output {
 		Int child_index = read_int("child_index.txt")
 		Int father_index = read_int("father_index.txt")
 		Int mother_index = read_int("mother_index.txt")
-		File haplotype_key = "~{cohort.cohort_id}.asm.key.txt"
 	}
 
 	runtime {
