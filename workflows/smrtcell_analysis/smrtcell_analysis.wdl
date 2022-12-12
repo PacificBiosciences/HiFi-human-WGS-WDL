@@ -10,7 +10,7 @@ workflow smrtcell_analysis {
 		ReferenceData reference
 
 		String deepvariant_version
-		File? deepvariant_model
+		DeepVariantModel? deepvariant_model
 
 		String container_registry
 	}
@@ -330,28 +330,23 @@ task deepvariant_call_variants {
 		String sample_id
 		String reference_name
 		Array[File] example_tfrecords
-		File? deepvariant_model
+		DeepVariantModel? deepvariant_model
 
 		Int deepvariant_threads
 		String deepvariant_version
 	}
 
+	String deepvariant_model_path = if (defined(deepvariant_model)) then sub(select_first([deepvariant_model]).model.data, "\\.data.*", "") else "/opt/models/pacbio/model.ckpt"
 	String example_tfrecord_path = sub(example_tfrecords[0], "/" + basename(example_tfrecords[0]), "")
 	Int disk_size = 500
 
 	command <<<
 		set -euo pipefail
 
-		if [[ -n "~{deepvariant_model}" ]]; then
-			DEEPVARIANT_MODEL="~{deepvariant_model}"
-		else
-			DEEPVARIANT_MODEL=/opt/models/pacbio/model.ckpt
-		fi
-
 		/opt/deepvariant/bin/call_variants \
 			--outfile ~{sample_id}.~{reference_name}.call_variants_output.tfrecord.gz \
 			--examples ~{example_tfrecord_path}/~{sample_id}.examples.tfrecord@~{deepvariant_threads}.gz \
-			--checkpoint "$DEEPVARIANT_MODEL"
+			--checkpoint ~{deepvariant_model_path}
 	>>>
 
 	output {

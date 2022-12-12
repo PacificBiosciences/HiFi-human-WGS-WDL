@@ -15,7 +15,7 @@ workflow humanwgs {
 		SlivarData slivar_data
 
 		String deepvariant_version
-		File? deepvariant_model
+		DeepVariantModel? deepvariant_model
 
 		String container_registry
 	}

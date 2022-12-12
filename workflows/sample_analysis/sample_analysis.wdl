@@ -14,7 +14,7 @@ workflow sample_analysis {
 		ReferenceData reference
 
 		String deepvariant_version
-		File? deepvariant_model
+		DeepVariantModel? deepvariant_model
 
 		String container_registry
 	}

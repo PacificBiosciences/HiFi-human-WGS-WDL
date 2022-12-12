@@ -171,7 +171,7 @@ Files associated with `slivar` annotation.
 ### Other inputs
 
 - `String deepvariant_version`: Version of deepvariant to use
-- `File? deepvariant_model`: Optional alternate deepvariant model file to use
+- `DeepVariantModel? deepvariant_model`: Optional alternate DeepVariant model file to use; includes the model, model index, and model metadata
 - `String container_registry`: Container registry where docker images are hosted
 
 

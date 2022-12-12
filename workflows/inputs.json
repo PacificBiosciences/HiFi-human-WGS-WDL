@@ -60,6 +60,6 @@
     "clinvar_lookup": "File"
   },
   "humanwgs.deepvariant_version": "String",
-  "humanwgs.deepvariant_model": "File? (optional)",
+  "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
   "humanwgs.container_registry": "String"
 }

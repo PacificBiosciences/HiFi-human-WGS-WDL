@@ -18,7 +18,8 @@ workflow slivar {
 
 	call write_cohort_yaml {
 		input:
-			cohort = cohort,
+			cohort_id = cohort.cohort_id,
+			cohort_json = write_json(cohort),
 			container_registry = container_registry
 	}
 
@@ -129,7 +130,8 @@ workflow slivar {
 
 task write_cohort_yaml {
 	input {
-		Cohort cohort
+		String cohort_id
+		File cohort_json
 
 		String container_registry
 	}
@@ -138,12 +140,12 @@ task write_cohort_yaml {
 		set -euo pipefail
 
 		parse_cohort.py \
-			--cohort_json ~{write_json(cohort)} \
-			--write_cohort_yaml ~{cohort.cohort_id}.yml
+			--cohort_json ~{cohort_json} \
+			--write_cohort_yaml ~{cohort_id}.yml
 	>>>
 
 	output {
-		File cohort_yaml = "~{cohort.cohort_id}.yml"
+		File cohort_yaml = "~{cohort_id}.yml"
 	}
 
 	runtime {

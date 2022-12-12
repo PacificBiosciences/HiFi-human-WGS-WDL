@@ -27,6 +27,6 @@
     "gff": "File"
   },
   "smrtcell_analysis.deepvariant_version": "String",
-  "smrtcell_analysis.deepvariant_model": "File? (optional)",
+  "smrtcell_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
   "smrtcell_analysis.container_registry": "String"
 }

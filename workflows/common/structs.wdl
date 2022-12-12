@@ -56,3 +56,8 @@ struct SlivarData {
 	File lof_lookup
 	File clinvar_lookup
 }
+
+struct DeepVariantModel {
+	IndexData model
+	File metadata
+}

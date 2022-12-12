@@ -15,7 +15,7 @@ workflow de_novo_assembly_trio {
 
 	call parse_trio {
 		input:
-			cohort = cohort,
+			cohort_json = write_json(cohort),
 			container_registry = container_registry
 	}
 
@@ -93,7 +93,7 @@ workflow de_novo_assembly_trio {
 
 task parse_trio {
 	input {
-		Cohort cohort
+		File cohort_json
 
 		String container_registry
 	}
@@ -102,7 +102,7 @@ task parse_trio {
 		set -euo pipefail
 
 		parse_cohort.py \
-			--cohort_json ~{write_json(cohort)} \
+			--cohort_json ~{cohort_json} \
 			--parse_trio
 	>>>
 
