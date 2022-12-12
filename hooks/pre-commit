@@ -47,8 +47,10 @@ fi
 
 # Write graph visualizations for each workflow named workflows/${wf_name}/${wf_name}.wdl or workflows/main.wdl
 echo "Generating workflow graphs"
-echo "workflows/main.wdl
-$(find workflows -type f -name "*.wdl" | sed 's~.wdl~~' | awk -F '/' '{if ($2 == $3) print $0".wdl"}')" \
+git diff --cached --name-only \
+| grep -E '.wdl$' \
+| sed 's~.wdl~~' \
+| awk -F '/' '{if ($2 == $3 || $2 == "main") print $0".wdl"}' \
 | while read -r workflow || [ -n "${workflow}" ]; do
 	./hooks/scripts/wdlviz.py "${workflow}"
 	workflow_graph=$(echo "${workflow}" | sed 's~.wdl~.graphviz.svg~')
