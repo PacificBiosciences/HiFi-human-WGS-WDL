@@ -86,8 +86,6 @@ workflow humanwgs {
 		Array[Array[File]] read_length_summary = sample_analysis.read_length_summary
 		Array[Array[File]] read_quality_summary = sample_analysis.read_quality_summary
 		Array[Array[IndexData]] aligned_bams = sample_analysis.aligned_bams
-		Array[Array[File]] aligned_bam_mosdepth_global = sample_analysis.aligned_bam_mosdepth_global
-		Array[Array[File]] aligned_bam_mosdepth_region = sample_analysis.aligned_bam_mosdepth_region
 		Array[Array[File]] aligned_bam_mosdepth_summary = sample_analysis.aligned_bam_mosdepth_summary
 		Array[Array[File]] aligned_bam_mosdepth_region_bed = sample_analysis.aligned_bam_mosdepth_region_bed
 		Array[IndexData] small_variant_vcfs = sample_analysis.small_variant_vcf
@@ -102,8 +100,6 @@ workflow humanwgs {
 		Array[File] sample_whatshap_stats_tsvs = sample_analysis.whatshap_stats_tsv
 		Array[File] sample_whatshap_stats_blocklists = sample_analysis.whatshap_stats_blocklist
 		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
-		Array[File] haplotagged_bam_mosdepth_global = sample_analysis.haplotagged_bam_mosdepth_global
-		Array[File] haplotagged_bam_mosdepth_region = sample_analysis.haplotagged_bam_mosdepth_region
 		Array[File] haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
 		Array[File] haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
 		Array[IndexData] trgt_spanning_reads = sample_analysis.trgt_spanning_reads

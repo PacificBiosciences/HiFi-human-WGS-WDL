@@ -25,8 +25,6 @@ task mosdepth {
 	>>>
 
 	output {
-		File global = "~{prefix}.mosdepth.global.dist.txt"
-		File region = "~{prefix}.mosdepth.region.dist.txt"
 		File summary = "~{prefix}.mosdepth.summary.txt"
 		File region_bed = "~{prefix}.regions.bed.gz"
 	}

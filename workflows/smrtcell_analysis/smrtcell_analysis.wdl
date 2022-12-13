@@ -108,8 +108,6 @@ workflow smrtcell_analysis {
 		Array[File] read_length_summary = smrtcell_stats.read_length_summary
 		Array[File] read_quality_summary = smrtcell_stats.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
-		Array[File] aligned_bam_mosdepth_global = mosdepth.global
-		Array[File] aligned_bam_mosdepth_region = mosdepth.region
 		Array[File] aligned_bam_mosdepth_summary = mosdepth.summary
 		Array[File] aligned_bam_mosdepth_region_bed = mosdepth.region_bed
 		Array[File] svsigs = pbsv_discover.svsig

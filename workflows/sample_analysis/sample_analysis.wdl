@@ -114,8 +114,6 @@ workflow sample_analysis {
 		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
 		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
 		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] aligned_bam_mosdepth_global = smrtcell_analysis.aligned_bam_mosdepth_global
-		Array[File] aligned_bam_mosdepth_region = smrtcell_analysis.aligned_bam_mosdepth_region
 		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
 		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
 		Array[File] svsigs = smrtcell_analysis.svsigs
@@ -130,8 +128,6 @@ workflow sample_analysis {
 		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
 		File whatshap_stats_blocklist = phase_vcf.whatshap_stats_blocklist
 		IndexData merged_haplotagged_bam = {"data": merge_bams.merged_bam, "data_index": merge_bams.merged_bam_index}
-		File haplotagged_bam_mosdepth_global = mosdepth.global
-		File haplotagged_bam_mosdepth_region = mosdepth.region
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
