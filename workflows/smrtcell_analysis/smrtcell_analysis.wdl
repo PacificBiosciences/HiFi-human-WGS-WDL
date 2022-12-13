@@ -18,13 +18,6 @@ workflow smrtcell_analysis {
 	Int deepvariant_threads = 64
 
 	scatter (movie_bam in sample.movie_bams) {
-		call smrtcell_stats {
-			input:
-				sample_id = sample.sample_id,
-				bam = movie_bam.data,
-				container_registry = container_registry
-		}
-
 		call pbmm2_align {
 			input:
 				sample_id = sample.sample_id,
@@ -104,9 +97,9 @@ workflow smrtcell_analysis {
 	}
 
 	output {
-		Array[File] bam_stats = smrtcell_stats.bam_stats
-		Array[File] read_length_summary = smrtcell_stats.read_length_summary
-		Array[File] read_quality_summary = smrtcell_stats.read_quality_summary
+		Array[File] bam_stats = pbmm2_align.bam_stats
+		Array[File] read_length_summary = pbmm2_align.read_length_summary
+		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
 		Array[File] aligned_bam_mosdepth_summary = mosdepth.summary
 		Array[File] aligned_bam_mosdepth_region_bed = mosdepth.region_bed
@@ -123,59 +116,6 @@ workflow smrtcell_analysis {
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
-	}
-}
-
-task smrtcell_stats {
-	input {
-		String sample_id
-		File bam
-
-		String container_registry
-	}
-
-	String movie = basename(bam, ".bam")
-	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		extract_read_length_and_qual.py \
-			~{bam} \
-		> ~{sample_id}.~{movie}.read_length_and_quality.tsv
-
-		awk '{{ b=int($2/1000); b=(b>39?39:b); print 1000*b "\t" $2; }}' \
-			~{sample_id}.~{movie}.read_length_and_quality.tsv \
-			| sort -k1,1g \
-			| datamash -g 1 count 1 sum 2 \
-			| awk 'BEGIN {{ for(i=0;i<=39;i++) {{ print 1000*i"\t0\t0"; }} }} {{ print; }}' \
-			| sort -k1,1g \
-			| datamash -g 1 sum 2 sum 3 \
-		> ~{sample_id}.~{movie}.read_length_summary.tsv
-
-		awk '{{ print ($3>50?50:$3) "\t" $2; }}' \
-				~{sample_id}.~{movie}.read_length_and_quality.tsv \
-			| sort -k1,1g \
-			| datamash -g 1 count 1 sum 2 \
-			| awk 'BEGIN {{ for(i=0;i<=60;i++) {{ print i"\t0\t0"; }} }} {{ print; }}' \
-			| sort -k1,1g \
-			| datamash -g 1 sum 2 sum 3 \
-		> ~{sample_id}.~{movie}.read_quality_summary.tsv
-	>>>
-
-	output {
-		File bam_stats = "~{sample_id}.~{movie}.read_length_and_quality.tsv"
-		File read_length_summary = "~{sample_id}.~{movie}.read_length_summary.tsv"
-		File read_quality_summary = "~{sample_id}.~{movie}.read_quality_summary.tsv"
-	}
-
-	runtime {
-		docker: "~{container_registry}/smrtcell_stats:b1a46c6"
-		cpu: 4
-		memory: "24 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
 	}
 }
 
@@ -211,11 +151,37 @@ task pbmm2_align {
 			~{reference} \
 			~{bam} \
 			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
+
+		# movie stats
+		extract_read_length_and_qual.py \
+			~{bam} \
+		> ~{sample_id}.~{movie}.read_length_and_quality.tsv
+
+		awk '{{ b=int($2/1000); b=(b>39?39:b); print 1000*b "\t" $2; }}' \
+			~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=39;i++) {{ print 1000*i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_length_summary.tsv
+
+		awk '{{ print ($3>50?50:$3) "\t" $2; }}' \
+				~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=60;i++) {{ print i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_quality_summary.tsv
 	>>>
 
 	output {
 		File aligned_bam = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam"
 		File aligned_bam_index = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam.bai"
+		File bam_stats = "~{sample_id}.~{movie}.read_length_and_quality.tsv"
+		File read_length_summary = "~{sample_id}.~{movie}.read_length_summary.tsv"
+		File read_quality_summary = "~{sample_id}.~{movie}.read_quality_summary.tsv"
 	}
 
 	runtime {
