@@ -19,7 +19,13 @@
     "trgt_tandem_repeat_bed": "File",
     "gnomad_af": "File",
     "hprc_af": "File",
-    "gff": "File"
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
   },
   "smrtcell_analysis.deepvariant_version": "String",
   "smrtcell_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",

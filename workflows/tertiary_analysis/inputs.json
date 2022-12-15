@@ -36,22 +36,12 @@
     "gnomad_af": "File",
     "hprc_af": "File",
     "gff": "File",
-    "eee_vcf": {
-      "data": "File",
-      "data_index": "File"
-    },
-    "gnomad_sv_vcf": {
-      "data": "File",
-      "data_index": "File"
-    },
-    "hprc_pbsv_vcf": {
-      "data": "File",
-      "data_index": "File"
-    },
-    "decode_vcf": {
-      "data": "File",
-      "data_index": "File"
-    }
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
   },
   "tertiary_analysis.slivar_data": {
     "slivar_js": "File",

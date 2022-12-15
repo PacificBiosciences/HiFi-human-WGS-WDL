@@ -19,10 +19,7 @@ struct ReferenceData {
 	File hprc_af
 	File gff
 
-	IndexData eee_vcf
-	IndexData gnomad_sv_vcf
-	IndexData hprc_pbsv_vcf
-	IndexData decode_vcf
+	Array[IndexData] population_vcfs
 }
 
 struct Sample {

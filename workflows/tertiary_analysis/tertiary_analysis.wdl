@@ -82,13 +82,16 @@ workflow tertiary_analysis {
 			container_registry = container_registry
 	}
 
+	scatter (vcf_object in reference.population_vcfs) {
+		File population_vcf = vcf_object.data
+		File population_vcf_index = vcf_object.data_index
+	}
+
 	call svpack_filter_annotated {
 		input:
 			sv_vcf = sv_vcf.data,
-			eee_vcf = reference.eee_vcf.data,
-			gnomad_sv_vcf = reference.gnomad_sv_vcf.data,
-			hprc_pbsv_vcf = reference.hprc_pbsv_vcf.data,
-			decode_vcf = reference.decode_vcf.data,
+			population_vcfs = population_vcf,
+			population_vcf_indices = population_vcf_index,
 			gff = reference.gff,
 			container_registry = container_registry
 	}
@@ -515,10 +518,8 @@ task svpack_filter_annotated {
 	input {
 		File sv_vcf
 
-		File eee_vcf
-		File gnomad_sv_vcf
-		File hprc_pbsv_vcf
-		File decode_vcf
+		Array[File] population_vcfs
+		Array[File] population_vcf_indices
 
 		File gff
 
@@ -526,7 +527,7 @@ task svpack_filter_annotated {
 	}
 
 	String sv_vcf_basename = basename(sv_vcf, ".vcf.gz")
-	Int disk_size = ceil((size(sv_vcf, "GB") + size(eee_vcf, "GB") + size(gnomad_sv_vcf, "GB") + size(hprc_pbsv_vcf, "GB") + size(decode_vcf, "GB")) * 2 + 20)
+	Int disk_size = ceil(size(sv_vcf, "GB") * 2 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -536,26 +537,7 @@ task svpack_filter_annotated {
 			--pass-only \
 			--min-svlen 50 \
 			~{sv_vcf} \
-		| python /opt/scripts/svpack/svpack \
-			match \
-			-v \
-			- \
-			~{eee_vcf} \
-		| python /opt/scripts/svpack/svpack \
-			match \
-			-v \
-			- \
-			~{gnomad_sv_vcf} \
-		| python /opt/scripts/svpack/svpack \
-			match \
-			-v \
-			- \
-			~{hprc_pbsv_vcf} \
-		| python /opt/scripts/svpack/svpack \
-			match \
-			-v \
-			- \
-			~{decode_vcf} \
+		~{sep=' ' prefix('| python /opt/scripts/svpack/svpack match -v - ', population_vcfs)} \
 		| python /opt/scripts/svpack/svpack \
 			consequence \
 			- \
