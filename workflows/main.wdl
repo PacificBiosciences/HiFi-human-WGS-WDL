@@ -130,7 +130,6 @@ workflow humanwgs {
 		Array[Array[File]]? trio_zipped_assembly_fastas = de_novo_assembly_trio.zipped_assembly_fastas
 		Array[Array[File]]? trio_assembly_stats = de_novo_assembly_trio.assembly_stats
 		Array[IndexData]? trio_asm_bams = de_novo_assembly_trio.asm_bams
-		Array[Array[File]]? yak_trioeval = de_novo_assembly_trio.trioeval
 
 		# tertiary_analysis output
 		IndexData filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf

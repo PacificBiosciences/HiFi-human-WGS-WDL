@@ -86,16 +86,6 @@ workflow de_novo_assembly_trio {
 					mother_yak = yak_count_mother.yak,
 					container_registry = container_registry
 			}
-
-			scatter (zipped_assembly_fasta in assemble_genome.zipped_assembly_fastas) {
-				call yak_trioeval {
-					input:
-						zipped_assembly_fasta = zipped_assembly_fasta,
-						father_yak = yak_count_father.yak,
-						mother_yak = yak_count_mother.yak,
-						container_registry = container_registry
-				}
-			}
 		}
 	}
 
@@ -106,7 +96,6 @@ workflow de_novo_assembly_trio {
 		Array[Array[File]] zipped_assembly_fastas = flatten(assemble_genome.zipped_assembly_fastas)
 		Array[Array[File]] assembly_stats = flatten(assemble_genome.assembly_stats)
 		Array[IndexData] asm_bams = flatten(assemble_genome.asm_bam)
-		Array[Array[File]] trioeval = flatten(yak_trioeval.trioeval)
 	}
 
 	parameter_meta {
@@ -173,45 +162,6 @@ task yak_count {
 		docker: "~{container_registry}/yak:b1a46c6"
 		cpu: threads
 		memory: "96 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task yak_trioeval {
-	input {
-		File zipped_assembly_fasta
-
-		File father_yak
-		File mother_yak
-
-		String container_registry
-	}
-
-	String zipped_assembly_fasta_basename = basename(zipped_assembly_fasta, ".gz")
-	Int threads = 16
-	Int disk_size = ceil(size(zipped_assembly_fasta, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		yak trioeval \
-			-t ~{threads} \
-			~{father_yak} \
-			~{mother_yak} \
-			~{zipped_assembly_fasta} \
-		> ~{zipped_assembly_fasta_basename}.trioeval.txt
-	>>>
-
-	output {
-		File trioeval = "~{zipped_assembly_fasta_basename}.trioeval.txt"
-	}
-
-	runtime {
-		docker: "~{container_registry}/yak:b1a46c6"
-		cpu: threads
-		memory: "48 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3
