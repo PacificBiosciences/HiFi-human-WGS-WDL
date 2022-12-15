@@ -15,8 +15,6 @@ workflow smrtcell_analysis {
 		String container_registry
 	}
 
-	Int deepvariant_threads = 64
-
 	scatter (movie_bam in sample.movie_bams) {
 		call pbmm2_align {
 			input:
@@ -49,24 +47,38 @@ workflow smrtcell_analysis {
 		}
 	}
 
-	call deepvariant_make_examples {
-		input:
-			sample_id = sample.sample_id,
-			aligned_bams = pbmm2_align.aligned_bam,
-			aligned_bam_indices = pbmm2_align.aligned_bam_index,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			deepvariant_threads = deepvariant_threads,
-			deepvariant_version = deepvariant_version
+	# Run deepvariant_make_examples in parallel
+	## The total number of tasks to split deepvariant_make_examples into
+	Int deepvariant_total_num_tasks = 64
+	## The number of workers to split tasks across; each worker will run (total_num_tasks / num_shards) tasks
+	Int deepvariant_num_shards = 8
+	Int deepvariant_num_tasks_per_shard = deepvariant_total_num_tasks / deepvariant_num_shards
+
+	scatter (shard_index in range(deepvariant_num_shards)) {
+		Int task_start_index = shard_index * deepvariant_num_tasks_per_shard
+		Int task_end_index = (shard_index + 1) * deepvariant_num_tasks_per_shard - 1
+
+		call deepvariant_make_examples {
+			input:
+				sample_id = sample.sample_id,
+				aligned_bams = pbmm2_align.aligned_bam,
+				aligned_bam_indices = pbmm2_align.aligned_bam_index,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				task_start_index = task_start_index,
+				task_end_index = task_end_index,
+				total_num_tasks = deepvariant_total_num_tasks,
+				num_tasks_per_shard = deepvariant_num_tasks_per_shard,
+				deepvariant_version = deepvariant_version
+		}
 	}
 
 	call deepvariant_call_variants {
 		input:
 			sample_id = sample.sample_id,
 			reference_name = reference.name,
-			example_tfrecords = deepvariant_make_examples.example_tfrecords,
+			example_tfrecords = flatten(deepvariant_make_examples.example_tfrecords),
 			deepvariant_model = deepvariant_model,
-			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version
 	}
 
@@ -74,11 +86,10 @@ workflow smrtcell_analysis {
 		input:
 			sample_id = sample.sample_id,
 			tfrecord = deepvariant_call_variants.tfrecord,
-			nonvariant_site_tfrecords = deepvariant_make_examples.nonvariant_site_tfrecords,
+			nonvariant_site_tfrecords = flatten(deepvariant_make_examples.nonvariant_site_tfrecords),
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version
 	}
 
@@ -241,18 +252,22 @@ task deepvariant_make_examples {
 		File reference
 		File reference_index
 
-		Int deepvariant_threads
+		Int task_start_index
+		Int task_end_index
+		Int total_num_tasks
+		Int num_tasks_per_shard
 		String deepvariant_version
 	}
 
-	Int disk_size = 500
+	Int disk_size = ceil(size(aligned_bams[0], "GB") * length(aligned_bams) * total_num_tasks * 2 + 400)
 
 	command <<<
 		set -euo pipefail
 
-		seq 0 ~{deepvariant_threads - 1} \
+		seq ~{task_start_index} ~{task_end_index} \
 		| parallel \
-			--jobs ~{deepvariant_threads} \
+			--jobs ~{num_tasks_per_shard} \
+			--halt 2 \
 			/opt/deepvariant/bin/make_examples \
 				--norealign_reads \
 				--vsc_min_fraction_indels 0.12 \
@@ -269,8 +284,8 @@ task deepvariant_make_examples {
 				--mode calling \
 				--ref ~{reference} \
 				--reads ~{sep="," aligned_bams} \
-				--examples ~{sample_id}.examples.tfrecord@~{deepvariant_threads}.gz \
-				--gvcf ~{sample_id}.gvcf.tfrecord@~{deepvariant_threads}.gz \
+				--examples ~{sample_id}.examples.tfrecord@~{total_num_tasks}.gz \
+				--gvcf ~{sample_id}.gvcf.tfrecord@~{total_num_tasks}.gz \
 				--task {}
 	>>>
 
@@ -281,7 +296,7 @@ task deepvariant_make_examples {
 
 	runtime {
 		docker: "gcr.io/deepvariant-docker/deepvariant:~{deepvariant_version}"
-		cpu: deepvariant_threads
+		cpu: num_tasks_per_shard
 		memory: "256 GB"
 		disk: disk_size + " GB"
 		preemptible: true
@@ -296,20 +311,18 @@ task deepvariant_call_variants {
 		Array[File] example_tfrecords
 		DeepVariantModel? deepvariant_model
 
-		Int deepvariant_threads
 		String deepvariant_version
 	}
 
 	String deepvariant_model_path = if (defined(deepvariant_model)) then sub(select_first([deepvariant_model]).model.data, "\\.data.*", "") else "/opt/models/pacbio/model.ckpt"
-	String example_tfrecord_path = sub(example_tfrecords[0], "/" + basename(example_tfrecords[0]), "")
-	Int disk_size = 500
+	Int disk_size = ceil(size(example_tfrecords[0], "GB") * length(example_tfrecords) * 2 + 200)
 
 	command <<<
 		set -euo pipefail
 
 		/opt/deepvariant/bin/call_variants \
 			--outfile ~{sample_id}.~{reference_name}.call_variants_output.tfrecord.gz \
-			--examples ~{example_tfrecord_path}/~{sample_id}.examples.tfrecord@~{deepvariant_threads}.gz \
+			--examples ~{sep=' ' example_tfrecords} \
 			--checkpoint ~{deepvariant_model_path}
 	>>>
 
@@ -319,7 +332,7 @@ task deepvariant_call_variants {
 
 	runtime {
 		docker: "gcr.io/deepvariant-docker/deepvariant:~{deepvariant_version}"
-		cpu: deepvariant_threads
+		cpu: 64
 		memory: "256 GB"
 		disk: disk_size + " GB"
 		preemptible: true
@@ -337,11 +350,9 @@ task deepvariant_postprocess_variants {
 		File reference_index
 		String reference_name
 
-		Int deepvariant_threads
 		String deepvariant_version
 	}
 
-	String nonvariant_site_tfrecord_path = sub(nonvariant_site_tfrecords[0], "/" + basename(nonvariant_site_tfrecords[0]), "")
 	Int disk_size = ceil((size(tfrecord, "GB") + size(reference, "GB") + size(nonvariant_site_tfrecords[0], "GB") * length(nonvariant_site_tfrecords)) * 2 + 20)
 
 	command <<<
@@ -351,7 +362,7 @@ task deepvariant_postprocess_variants {
 			--ref ~{reference} \
 			--infile ~{tfrecord} \
 			--outfile ~{sample_id}.~{reference_name}.deepvariant.vcf.gz \
-			--nonvariant_site_tfrecord_path ~{nonvariant_site_tfrecord_path}/~{sample_id}.gvcf.tfrecord@~{deepvariant_threads}.gz \
+			--nonvariant_site_tfrecord_path ~{sep=' ' nonvariant_site_tfrecords} \
 			--gvcf_outfile ~{sample_id}.~{reference_name}.deepvariant.g.vcf.gz
 	>>>
 
@@ -365,8 +376,8 @@ task deepvariant_postprocess_variants {
 
 	runtime {
 		docker: "gcr.io/deepvariant-docker/deepvariant:~{deepvariant_version}"
-		cpu: 4
-		memory: "30 GB"
+		cpu: 2
+		memory: "32 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3
