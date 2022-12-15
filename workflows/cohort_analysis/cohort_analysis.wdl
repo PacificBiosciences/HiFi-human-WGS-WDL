@@ -46,15 +46,9 @@ workflow cohort_analysis {
 			reference_name = reference.name
 	}
 
-	call bcf_to_vcf {
-		input:
-			bcf = glnexus.bcf,
-			container_registry = container_registry
-	}
-
 	call PhaseVcf.phase_vcf {
 		input:
-			vcf = {"data": bcf_to_vcf.vcf, "data_index": bcf_to_vcf.vcf_index},
+			vcf = {"data": glnexus.vcf, "data_index": glnexus.vcf_index},
 			aligned_bams = aligned_bams,
 			reference = reference,
 			container_registry = container_registry
@@ -89,7 +83,7 @@ task glnexus {
 
 	Int threads = 24
 	Int mem_gbytes = 30
-	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 20)
+	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 1200)
 
 	command <<<
 		set -euo pipefail
@@ -101,54 +95,25 @@ task glnexus {
 			--config DeepVariant_unfiltered \
 			~{sep=' ' gvcfs} \
 		> ~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
+
+		bcftools view \
+			--threads ~{threads} \
+			--output-type z \
+			--output ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz \
+			~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
+
+		tabix ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz
 	>>>
 
 	output {
-		File bcf = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf"
+		File vcf = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz"
+		File vcf_index = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz.tbi"
 	}
 
 	runtime {
 		docker: "ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
 		cpu: threads
 		memory: mem_gbytes + " GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task bcf_to_vcf {
-	input {
-		File bcf
-
-		String container_registry
-	}
-
-	String bcf_basename = basename(bcf, ".bcf")
-	Int threads = 4
-	Int disk_size = ceil(size(bcf, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		bcftools view \
-			--threads ~{threads} \
-			--output-type z \
-			--output ~{bcf_basename}.vcf.gz \
-			~{bcf}
-
-		tabix ~{bcf_basename}.vcf.gz
-	>>>
-
-	output {
-		File vcf = "~{bcf_basename}.vcf.gz"
-		File vcf_index = "~{bcf_basename}.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
 		disk: disk_size + " GB"
 		preemptible: true
 		maxRetries: 3
