@@ -27,21 +27,10 @@ workflow assemble_genome {
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {
+		# Convert gfa to zipped fasta; calculate assembly stats
 		call gfa2fa {
 			input:
 				gfa = gfa,
-				container_registry = container_registry
-		}
-
-		call bgzip_fasta {
-			input:
-				fasta = gfa2fa.fasta,
-				container_registry = container_registry
-		}
-
-		call asm_stats {
-			input:
-				zipped_fasta = bgzip_fasta.zipped_fasta,
 				reference_index = reference.fasta.data_index,
 				container_registry = container_registry
 		}
@@ -50,7 +39,7 @@ workflow assemble_genome {
 	call align_hifiasm {
 		input:
 			sample_id = sample_id,
-			query_sequences = bgzip_fasta.zipped_fasta,
+			query_sequences = gfa2fa.zipped_fasta,
 			reference = reference.fasta.data,
 			reference_name = reference.name,
 			container_registry = container_registry
@@ -59,8 +48,8 @@ workflow assemble_genome {
 	output {
 		Array[File] assembly_noseq_gfas = hifiasm_assemble.assembly_noseq_gfas
 		Array[File] assembly_lowQ_beds = hifiasm_assemble.assembly_lowQ_beds
-		Array[File] zipped_assembly_fastas = bgzip_fasta.zipped_fasta
-		Array[File] assembly_stats = asm_stats.assembly_stats
+		Array[File] zipped_assembly_fastas = gfa2fa.zipped_fasta
+		Array[File] assembly_stats = gfa2fa.assembly_stats
 		IndexData asm_bam = {"data": align_hifiasm.asm_bam, "data_index": align_hifiasm.asm_bam_index}
 	}
 
@@ -129,11 +118,14 @@ task gfa2fa {
 	input {
 		File gfa
 
+		File reference_index
+
 		String container_registry
 	}
 
 	String gfa_basename = basename(gfa, ".gfa")
-	Int disk_size = ceil(size(gfa, "GB") * 2 + 20)
+	Int disk_size = ceil(size(gfa, "GB") * 3 + 20)
+	Int threads = 2
 
 	command <<<
 		set -euo pipefail
@@ -141,86 +133,30 @@ task gfa2fa {
 		gfatools gfa2fa \
 			~{gfa} \
 		> ~{gfa_basename}.fasta
-	>>>
-
-	output {
-		File fasta = "~{gfa_basename}.fasta"
-	}
-
-	runtime {
-		docker: "~{container_registry}/gfatools:b1a46c6"
-		cpu: 2
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task bgzip_fasta {
-	input {
-		File fasta
-
-		String container_registry
-	}
-
-	String fasta_basename = basename(fasta)
-	Int threads = 4
-	Int disk_size = ceil(size(fasta, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
 
 		bgzip \
 			--threads ~{threads} \
 			--stdout \
-			~{fasta} \
-		> ~{fasta_basename}.gz
-	>>>
+			~{gfa_basename}.fasta \
+		> ~{gfa_basename}.fasta.gz
 
-	output {
-		File zipped_fasta = "~{fasta_basename}.gz"
-	}
-
-	runtime {
-		docker: "~{container_registry}/htslib:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: true
-		maxRetries: 3
-	}
-}
-
-task asm_stats {
-	input {
-		File zipped_fasta
-
-		File reference_index
-
-		String container_registry
-	}
-
-	String zipped_fasta_basename = basename(zipped_fasta, ".gz")
-	Int disk_size = ceil(size(zipped_fasta, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
+		# Calculate assembly stats
 		k8 \
 			/opt/scripts/calN50/calN50.js \
 			-f ~{reference_index} \
-			~{zipped_fasta} \
-		> ~{zipped_fasta_basename}.stats.txt
+			~{gfa_basename}.fasta.gz \
+		> ~{gfa_basename}.fasta.stats.txt
 	>>>
 
 	output {
-		File assembly_stats = "~{zipped_fasta_basename}.stats.txt"
+		File fasta = "~{gfa_basename}.fasta"
+		File zipped_fasta = "~{gfa_basename}.fasta.gz"
+		File assembly_stats = "~{gfa_basename}.fasta.stats.txt"
 	}
 
 	runtime {
-		docker: "~{container_registry}/k8:b1a46c6"
-		cpu: 2
+		docker: "~{container_registry}/gfatools:b1a46c6"
+		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		preemptible: true
