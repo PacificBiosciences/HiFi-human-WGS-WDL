@@ -124,13 +124,13 @@ workflow humanwgs {
 		File? cohort_whatshap_stats_blocklists = cohort_analysis.whatshap_stats_blocklist
 
 		# de_novo_assembly_trio output
-		Map[String, String]? haplotype_key = de_novo_assembly_trio.haplotype_key
-		Array[File]? trio_assembly_noseq_gfas = de_novo_assembly_trio.assembly_noseq_gfas
-		Array[File]? trio_assembly_lowQ_beds = de_novo_assembly_trio.assembly_lowQ_beds
-		Array[File]? trio_zipped_assembly_fastas = de_novo_assembly_trio.zipped_assembly_fastas
-		Array[File]? trio_assembly_stats = de_novo_assembly_trio.assembly_stats
-		IndexData? trio_asm_bam = de_novo_assembly_trio.asm_bam
-		Array[File]? yak_trioeval = de_novo_assembly_trio.trioeval
+		Array[Map[String, String]]? haplotype_key = de_novo_assembly_trio.haplotype_key
+		Array[Array[File]]? trio_assembly_noseq_gfas = de_novo_assembly_trio.assembly_noseq_gfas
+		Array[Array[File]]? trio_assembly_lowQ_beds = de_novo_assembly_trio.assembly_lowQ_beds
+		Array[Array[File]]? trio_zipped_assembly_fastas = de_novo_assembly_trio.zipped_assembly_fastas
+		Array[Array[File]]? trio_assembly_stats = de_novo_assembly_trio.assembly_stats
+		Array[IndexData]? trio_asm_bams = de_novo_assembly_trio.asm_bams
+		Array[Array[File]]? yak_trioeval = de_novo_assembly_trio.trioeval
 
 		# slivar output
 		IndexData filtered_small_variant_vcf = slivar.filtered_small_variant_vcf

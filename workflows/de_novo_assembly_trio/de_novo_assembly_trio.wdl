@@ -13,75 +13,100 @@ workflow de_novo_assembly_trio {
 		String container_registry
 	}
 
-	call parse_trio {
+	call parse_families {
 		input:
 			cohort_json = write_json(cohort),
 			container_registry = container_registry
 	}
 
-	Sample child = cohort.samples[parse_trio.child_index]
-	Sample father = cohort.samples[parse_trio.father_index]
-	Sample mother = cohort.samples[parse_trio.mother_index]
+	# Run de_novo_assembly for each child with mother and father samples present in the cohort
+	# Multiple children per family and multiple unrelated families can be included in the cohort and will each produce separate child assemblies
+	scatter (family in parse_families.families) {
+		Sample father = cohort.samples[family.father_index]
+		Sample mother = cohort.samples[family.mother_index]
 
-	scatter (sample in [child, father, mother]) {
-		scatter (movie_bam in sample.movie_bams) {
-			call SamtoolsFasta.samtools_fasta {
+		scatter (movie_bam in father.movie_bams) {
+			call SamtoolsFasta.samtools_fasta as samtools_fasta_father {
 				input:
 					bam = movie_bam,
 					container_registry = container_registry
 			}
 		}
-	}
 
-	call yak_count as yak_count_father {
-		input:
-			sample_id = father.sample_id,
-			reads_fastas = samtools_fasta.reads_fasta[1],
-			container_registry = container_registry
-	}
-
-	call yak_count as yak_count_mother {
-		input:
-			sample_id = mother.sample_id,
-			reads_fastas = samtools_fasta.reads_fasta[2],
-			container_registry = container_registry
-	}
-
-	# Father is haplotype 1; mother is haplotype 2
-	Map[String, String] haplotype_key_map = {
-		"hap1": father.sample_id,
-		"hap2": mother.sample_id
-	}
-
-	call AssembleGenome.assemble_genome {
-		input:
-			sample_id = cohort.cohort_id,
-			reads_fastas = flatten(samtools_fasta.reads_fasta),
-			reference = reference,
-			hifiasm_extra_params = "-c1 -d1",
-			father_yak = yak_count_father.yak,
-			mother_yak = yak_count_mother.yak,
-			container_registry = container_registry
-	}
-
-	scatter (zipped_assembly_fasta in assemble_genome.zipped_assembly_fastas) {
-		call yak_trioeval {
+		call yak_count as yak_count_father {
 			input:
-				zipped_assembly_fasta = zipped_assembly_fasta,
-				father_yak = yak_count_father.yak,
-				mother_yak = yak_count_mother.yak,
+				sample_id = father.sample_id,
+				reads_fastas = samtools_fasta_father.reads_fasta,
 				container_registry = container_registry
+		}
+
+		scatter (movie_bam in mother.movie_bams) {
+			call SamtoolsFasta.samtools_fasta as samtools_fasta_mother {
+				input:
+					bam = movie_bam,
+					container_registry = container_registry
+			}
+		}
+
+		call yak_count as yak_count_mother {
+			input:
+				sample_id = mother.sample_id,
+				reads_fastas = samtools_fasta_mother.reads_fasta,
+				container_registry = container_registry
+		}
+
+		# Father is haplotype 1; mother is haplotype 2
+		Map[String, String] haplotype_key_map = {
+			"hap1": father.sample_id,
+			"hap2": mother.sample_id
+		}
+
+		scatter (child_index in family.child_indices) {
+			Sample child = cohort.samples[child_index]
+
+			scatter (movie_bam in child.movie_bams) {
+				call SamtoolsFasta.samtools_fasta as samtools_fasta_child {
+					input:
+						bam = movie_bam,
+						container_registry = container_registry
+				}
+			}
+
+			call AssembleGenome.assemble_genome {
+				input:
+					sample_id = "~{cohort.cohort_id}.~{child.sample_id}",
+					reads_fastas = flatten([
+							samtools_fasta_child.reads_fasta,
+							samtools_fasta_father.reads_fasta,
+							samtools_fasta_mother.reads_fasta
+						]),
+					reference = reference,
+					hifiasm_extra_params = "-c1 -d1",
+					father_yak = yak_count_father.yak,
+					mother_yak = yak_count_mother.yak,
+					container_registry = container_registry
+			}
+
+			scatter (zipped_assembly_fasta in assemble_genome.zipped_assembly_fastas) {
+				call yak_trioeval {
+					input:
+						zipped_assembly_fasta = zipped_assembly_fasta,
+						father_yak = yak_count_father.yak,
+						mother_yak = yak_count_mother.yak,
+						container_registry = container_registry
+				}
+			}
 		}
 	}
 
 	output {
-		Map[String, String] haplotype_key = haplotype_key_map
-		Array[File] assembly_noseq_gfas = assemble_genome.assembly_noseq_gfas
-		Array[File] assembly_lowQ_beds = assemble_genome.assembly_lowQ_beds
-		Array[File] zipped_assembly_fastas = assemble_genome.zipped_assembly_fastas
-		Array[File] assembly_stats = assemble_genome.assembly_stats
-		IndexData asm_bam = assemble_genome.asm_bam
-		Array[File] trioeval = yak_trioeval.trioeval
+		Array[Map[String, String]] haplotype_key = haplotype_key_map
+		Array[Array[File]] assembly_noseq_gfas = flatten(assemble_genome.assembly_noseq_gfas)
+		Array[Array[File]] assembly_lowQ_beds = flatten(assemble_genome.assembly_lowQ_beds)
+		Array[Array[File]] zipped_assembly_fastas = flatten(assemble_genome.zipped_assembly_fastas)
+		Array[Array[File]] assembly_stats = flatten(assemble_genome.assembly_stats)
+		Array[IndexData] asm_bams = flatten(assemble_genome.asm_bam)
+		Array[Array[File]] trioeval = flatten(yak_trioeval.trioeval)
 	}
 
 	parameter_meta {
@@ -91,7 +116,7 @@ workflow de_novo_assembly_trio {
 	}
 }
 
-task parse_trio {
+task parse_families {
 	input {
 		File cohort_json
 
@@ -103,17 +128,15 @@ task parse_trio {
 
 		parse_cohort.py \
 			--cohort_json ~{cohort_json} \
-			--parse_trio
+			--parse_families
 	>>>
 
 	output {
-		Int child_index = read_int("child_index.txt")
-		Int father_index = read_int("father_index.txt")
-		Int mother_index = read_int("mother_index.txt")
+		Array[FamilySampleIndices] families = read_json("families.json")
 	}
 
 	runtime {
-		docker: "~{container_registry}/parse_cohort:0.0.1"
+		docker: "~{container_registry}/parse_cohort:1.0.0"
 		cpu: 4
 		memory: "14 GB"
 		disk: "20 GB"

@@ -47,6 +47,12 @@ struct Cohort {
 	Boolean run_de_novo_assembly_trio
 }
 
+struct FamilySampleIndices {
+	Array[Int] child_indices
+	Int father_index
+	Int mother_index
+}
+
 struct SlivarData {
 	File slivar_js
 	File hpo_terms
