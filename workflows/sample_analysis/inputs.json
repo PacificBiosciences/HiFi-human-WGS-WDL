@@ -1,17 +1,13 @@
 {
-  "sample_analysis.sample_id": "String",
-  "sample_analysis.small_variant_vcf": {
-    "data": "File",
-    "data_index": "File"
+  "sample_analysis.sample": {
+    "sample_id": "String",
+    "movie_bams": "Array[File]",
+    "sex": "String",
+    "affected": "Boolean",
+    "father_id": "String?",
+    "mother_id": "String?"
   },
-  "sample_analysis.aligned_bams": [
-    {
-      "data": "File",
-      "data_index": "File"
-    }
-  ],
-  "sample_analysis.svsigs": "Array[File]",
-  "sample_analysis.reference_genome": {
+  "sample_analysis.reference": {
     "name": "String",
     "fasta": {
       "data": "File",

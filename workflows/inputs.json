@@ -4,12 +4,7 @@
     "samples": [
       {
         "sample_id": "String",
-        "movie_bams": [
-          {
-            "data": "File",
-            "data_index": "File"
-          }
-        ],
+        "movie_bams": "Array[File]",
         "sex": "String",
         "affected": "Boolean",
         "father_id": "String?",

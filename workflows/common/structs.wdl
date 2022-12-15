@@ -27,7 +27,7 @@ struct ReferenceData {
 
 struct Sample {
 	String sample_id
-	Array[IndexData] movie_bams
+	Array[File] movie_bams
 
 	String sex
 	Boolean affected

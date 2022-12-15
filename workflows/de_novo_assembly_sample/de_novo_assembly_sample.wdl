@@ -17,7 +17,7 @@ workflow de_novo_assembly_sample {
 	scatter (movie_bam in sample.movie_bams) {
 		call SamtoolsFasta.samtools_fasta {
 			input:
-				bam = movie_bam.data,
+				bam = movie_bam,
 				container_registry = container_registry
 		}
 	}

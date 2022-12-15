@@ -21,7 +21,7 @@ workflow smrtcell_analysis {
 		call pbmm2_align {
 			input:
 				sample_id = sample.sample_id,
-				bam = movie_bam.data,
+				bam = movie_bam,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
