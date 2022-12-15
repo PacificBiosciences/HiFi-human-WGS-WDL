@@ -3,7 +3,7 @@ version 1.0
 import "../common/structs.wdl"
 import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 
-workflow slivar {
+workflow tertiary_analysis {
 	input {
 		Cohort cohort
 		IndexData small_variant_vcf

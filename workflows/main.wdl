@@ -5,7 +5,7 @@ import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "de_novo_assembly_sample/de_novo_assembly_sample.wdl" as DeNovoAssemblySample
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
 import "de_novo_assembly_trio/de_novo_assembly_trio.wdl" as DeNovoAssemblyTrio
-import "slivar/slivar.wdl" as Slivar
+import "tertiary_analysis/tertiary_analysis.wdl" as TertiaryAnalysis
 
 workflow humanwgs {
 	input {
@@ -70,7 +70,7 @@ workflow humanwgs {
 		sample_analysis.sv_vcf[0]
 	])
 
-	call Slivar.slivar {
+	call TertiaryAnalysis.tertiary_analysis {
 		input:
 			cohort = cohort,
 			small_variant_vcf = slivar_small_variant_input_vcf,
@@ -132,13 +132,13 @@ workflow humanwgs {
 		Array[IndexData]? trio_asm_bams = de_novo_assembly_trio.asm_bams
 		Array[Array[File]]? yak_trioeval = de_novo_assembly_trio.trioeval
 
-		# slivar output
-		IndexData filtered_small_variant_vcf = slivar.filtered_small_variant_vcf
-		IndexData compound_het_small_variant_vcf = slivar.compound_het_small_variant_vcf
-		File filtered_small_variant_tsv = slivar.filtered_small_variant_tsv
-		File compound_het_small_variant_tsv = slivar.compound_het_small_variant_tsv
-		IndexData filtered_svpack_vcf = slivar.filtered_svpack_vcf
-		File filtered_svpack_tsv = slivar.filtered_svpack_tsv
+		# tertiary_analysis output
+		IndexData filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf
+		IndexData compound_het_small_variant_vcf = tertiary_analysis.compound_het_small_variant_vcf
+		File filtered_small_variant_tsv = tertiary_analysis.filtered_small_variant_tsv
+		File compound_het_small_variant_tsv = tertiary_analysis.compound_het_small_variant_tsv
+		IndexData filtered_svpack_vcf = tertiary_analysis.filtered_svpack_vcf
+		File filtered_svpack_tsv = tertiary_analysis.filtered_svpack_tsv
 	}
 
 	parameter_meta {

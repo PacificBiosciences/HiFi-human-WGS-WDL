@@ -67,15 +67,15 @@ Performs _de novo_ assembly on a trio. Uses parental information and phasing to 
 ![Trio _de novo_ assembly workflow diagram](workflows/de_novo_assembly_trio/de_novo_assembly_trio.graphviz.svg)
 
 
-### Slivar VCF annotation (`slivar`)
+### Tertiary analysis (`tertiary_analysis`)
 
 Annotate small and structural variant VCFs using slivar. Outputs annotated VCFs and TSVs. This workflow is run on a phased single-sample VCF if there is only a single individual in the cohort, otherwise it is run on the joint-called phased VCF.
 
-**Workflow**: [workflows/slivar/slivar.wdl](workflows/slivar/slivar.wdl)
+**Workflow**: [workflows/tertiary_analysis/tertiary_analysis.wdl](workflows/tertiary_analysis/tertiary_analysis.wdl)
 
-**Inputs**: [workflows/slivar/inputs.json](workflows/slivar/inputs.json)
+**Inputs**: [workflows/tertiary_analysis/inputs.json](workflows/tertiary_analysis/inputs.json)
 
-![Slivar workflow diagram](workflows/slivar/slivar.graphviz.svg)
+![Tertiary analysis workflow diagram](workflows/tertiary_analysis/tertiary_analysis.graphviz.svg)
 
 
 ### Other workflows

@@ -1,5 +1,5 @@
 {
-  "slivar.cohort": {
+  "tertiary_analysis.cohort": {
     "cohort_id": "String",
     "samples": [
       {
@@ -15,15 +15,15 @@
     "phenotypes": "Array[String]",
     "run_de_novo_assembly_trio": "Boolean"
   },
-  "slivar.small_variant_vcf": {
+  "tertiary_analysis.small_variant_vcf": {
     "data": "File",
     "data_index": "File"
   },
-  "slivar.sv_vcf": {
+  "tertiary_analysis.sv_vcf": {
     "data": "File",
     "data_index": "File"
   },
-  "slivar.reference": {
+  "tertiary_analysis.reference": {
     "name": "String",
     "fasta": {
       "data": "File",
@@ -53,7 +53,7 @@
       "data_index": "File"
     }
   },
-  "slivar.slivar_data": {
+  "tertiary_analysis.slivar_data": {
     "slivar_js": "File",
     "hpo_terms": "File",
     "hpo_dag": "File",
@@ -62,5 +62,5 @@
     "lof_lookup": "File",
     "clinvar_lookup": "File"
   },
-  "slivar.container_registry": "String"
+  "tertiary_analysis.container_registry": "String"
 }
