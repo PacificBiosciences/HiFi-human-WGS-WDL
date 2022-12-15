@@ -104,13 +104,13 @@
 <text text-anchor="middle" x="219.5" y="-14.3" font-family="Times,serif" font-size="14.00">tertiary_analysis</text>
 </g>
 <!-- decl&#45;slivar_small_variant_input_vcf&#45;&gt;call&#45;tertiary_analysis -->
-<g id="edge7" class="edge">
+<g id="edge6" class="edge">
 <title>decl&#45;slivar_small_variant_input_vcf&#45;&gt;call&#45;tertiary_analysis</title>
 <path fill="none" stroke="black" d="M140.94,-71.88C154.29,-62.89 170.82,-51.76 185.28,-42.03"/>
 <polygon fill="black" stroke="black" points="187.62,-44.68 193.96,-36.19 183.71,-38.87 187.62,-44.68"/>
 </g>
 <!-- decl&#45;slivar_sv_input_vcf&#45;&gt;call&#45;tertiary_analysis -->
-<g id="edge6" class="edge">
+<g id="edge7" class="edge">
 <title>decl&#45;slivar_sv_input_vcf&#45;&gt;call&#45;tertiary_analysis</title>
 <path fill="none" stroke="black" d="M298.81,-71.88C285.21,-62.81 268.33,-51.55 253.64,-41.76"/>
 <polygon fill="black" stroke="black" points="255.55,-38.82 245.28,-36.19 251.66,-44.65 255.55,-38.82"/>

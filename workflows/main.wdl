@@ -88,12 +88,12 @@ workflow humanwgs {
 		Array[Array[IndexData]] aligned_bams = sample_analysis.aligned_bams
 		Array[Array[File]] aligned_bam_mosdepth_summary = sample_analysis.aligned_bam_mosdepth_summary
 		Array[Array[File]] aligned_bam_mosdepth_region_bed = sample_analysis.aligned_bam_mosdepth_region_bed
+
+		# sample_analysis output
 		Array[IndexData] small_variant_vcfs = sample_analysis.small_variant_vcf
 		Array[IndexData] small_variant_gvcfs = sample_analysis.small_variant_gvcf
 		Array[File] small_variant_vcf_stats = sample_analysis.small_variant_vcf_stats
 		Array[File] small_variant_roh_bed = sample_analysis.small_variant_roh_bed
-
-		# sample_analysis output
 		Array[IndexData] sample_sv_vcfs = sample_analysis.sv_vcf
 		Array[IndexData] sample_phased_small_variant_vcfs = sample_analysis.phased_small_variant_vcf
 		Array[File] sample_whatshap_stats_gtfs = sample_analysis.whatshap_stats_gtf
