@@ -15,6 +15,7 @@ workflow cohort_analysis {
 		ReferenceData reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	scatter (gvcf_object in gvcfs) {
@@ -29,13 +30,15 @@ workflow cohort_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call glnexus {
@@ -43,7 +46,8 @@ workflow cohort_analysis {
 			cohort_id = cohort_id,
 			gvcfs = gvcf,
 			gvcf_indices = gvcf_index,
-			reference_name = reference.name
+			reference_name = reference.name,
+			preemptible = preemptible
 	}
 
 	call PhaseVcf.phase_vcf {
@@ -51,7 +55,8 @@ workflow cohort_analysis {
 			vcf = {"data": glnexus.vcf, "data_index": glnexus.vcf_index},
 			aligned_bams = aligned_bams,
 			reference = reference,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {
@@ -79,11 +84,12 @@ task glnexus {
 		Array[File] gvcf_indices
 
 		String reference_name
+		Boolean preemptible
 	}
 
 	Int threads = 24
 	Int mem_gbytes = 30
-	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 1200)
+	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 100)
 
 	command <<<
 		set -euo pipefail
@@ -99,7 +105,7 @@ task glnexus {
 		bcftools view \
 			--threads ~{threads} \
 			--output-type z \
-			--output ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz \
+			--output-file ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz \
 			~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
 
 		tabix ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz
@@ -115,7 +121,7 @@ task glnexus {
 		cpu: threads
 		memory: mem_gbytes + " GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

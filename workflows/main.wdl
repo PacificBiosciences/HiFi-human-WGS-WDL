@@ -18,6 +18,7 @@ workflow humanwgs {
 		DeepVariantModel? deepvariant_model
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	scatter (sample in cohort.samples) {
@@ -27,7 +28,8 @@ workflow humanwgs {
 				reference = reference,
 				deepvariant_version = deepvariant_version,
 				deepvariant_model = deepvariant_model,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		if (sample.run_de_novo_assembly) {
@@ -35,7 +37,8 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
-					container_registry = container_registry
+					container_registry = container_registry,
+					preemptible = preemptible
 			}
 		}
 	}
@@ -48,7 +51,8 @@ workflow humanwgs {
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
 				reference = reference,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		if (cohort.run_de_novo_assembly_trio) {
@@ -56,7 +60,8 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
-					container_registry = container_registry
+					container_registry = container_registry,
+					preemptible = preemptible
 			}
 		}
 	}
@@ -77,7 +82,8 @@ workflow humanwgs {
 			sv_vcf = slivar_sv_input_vcf,
 			reference = reference,
 			slivar_data = slivar_data,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {

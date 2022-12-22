@@ -12,13 +12,15 @@ workflow de_novo_assembly_sample {
 		ReferenceData reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
 		call SamtoolsFasta.samtools_fasta {
 			input:
 				bam = movie_bam,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 	}
 
@@ -27,7 +29,8 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call htsbox {
@@ -35,13 +38,15 @@ workflow de_novo_assembly_sample {
 			bam = assemble_genome.asm_bam.data,
 			bam_index = assemble_genome.asm_bam.data_index,
 			reference = reference.fasta.data,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = htsbox.htsbox_vcf,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call bcftools_stats {
@@ -49,7 +54,8 @@ workflow de_novo_assembly_sample {
 			vcf = zip_index_vcf.zipped_vcf,
 			bam = assemble_genome.asm_bam.data,
 			reference = reference.fasta.data,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {
@@ -77,6 +83,7 @@ task htsbox {
 		File reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String bam_basename = basename(bam, ".bam")
@@ -104,7 +111,7 @@ task htsbox {
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -117,6 +124,7 @@ task bcftools_stats {
 		File reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf, ".gz")
@@ -135,6 +143,7 @@ task bcftools_stats {
 	>>>
 
 	output {
+		File df_log = "df_log.txt"
 		File vcf_stats = "~{vcf_basename}.stats.txt"
 	}
 
@@ -143,7 +152,7 @@ task bcftools_stats {
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

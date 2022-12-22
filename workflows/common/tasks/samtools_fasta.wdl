@@ -5,11 +5,12 @@ task samtools_fasta {
 		File bam
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String bam_basename = basename(bam, ".bam")
 	Int threads = 4
-	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
+	Int disk_size = ceil(size(bam, "GB") * 3.5 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -27,9 +28,9 @@ task samtools_fasta {
 	runtime {
 		docker: "~{container_registry}/samtools:b1a46c6"
 		cpu: threads
-		memory: "14 GB"
+		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

@@ -1,0 +1,31 @@
+{
+  "deepvariant.sample_id": "String"
+  "deepvariant.aligned_bams": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "deepvariant.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
+  },
+  "deepvariant.deepvariant_version": "String",
+  "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)"
+}

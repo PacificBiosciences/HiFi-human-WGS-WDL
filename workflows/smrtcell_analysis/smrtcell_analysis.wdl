@@ -10,6 +10,7 @@ workflow smrtcell_analysis {
 		ReferenceData reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -20,14 +21,16 @@ workflow smrtcell_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		call Mosdepth.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		call pbsv_discover {
@@ -35,7 +38,8 @@ workflow smrtcell_analysis {
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
 				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		IndexData aligned_bam = {
@@ -73,11 +77,14 @@ task pbmm2_align {
 		String reference_name
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String movie = basename(bam, ".bam")
 
+	# TODO actually uses ~16.7, but this might be pbmm2 restricting it from the max
 	Int threads = 24
+	Int mem_gb = ceil(threads * 1.5)
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
 	command <<<
@@ -131,9 +138,9 @@ task pbmm2_align {
 	runtime {
 		docker: "~{container_registry}/pbmm2:b1a46c6"
 		cpu: threads
-		memory: "256 GB"
+		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -146,6 +153,7 @@ task pbsv_discover {
 		File reference_tandem_repeat_bed
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String prefix = basename(aligned_bam, ".bam")
@@ -168,10 +176,10 @@ task pbsv_discover {
 
 	runtime {
 		docker: "~{container_registry}/pbsv:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

@@ -10,9 +10,11 @@ task pbsv_call {
 		String reference_name
 
 		String container_registry
+		Boolean preemptible
 	}
 
-	Int threads = 8
+	# TODO does this slow it down? 2:15 at 8 cores
+	Int threads = 4
 	Int disk_size = ceil((size(svsigs[0], "GB") * length(svsigs) + size(reference, "GB")) * 2 + 20)
 
 	command <<<
@@ -20,7 +22,7 @@ task pbsv_call {
 
 		pbsv call \
 			--hifi \
-			-m 20 \
+			--min-sv-length 20 \
 			--num-threads ~{threads} \
 			~{reference} \
 			~{sep=' ' svsigs} \
@@ -34,9 +36,9 @@ task pbsv_call {
 	runtime {
 		docker: "~{container_registry}/pbsv:b1a46c6"
 		cpu: threads
-		memory: "48 GB"
+		memory: "56 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

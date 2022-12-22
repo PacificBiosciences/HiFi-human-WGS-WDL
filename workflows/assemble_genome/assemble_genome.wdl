@@ -14,6 +14,7 @@ workflow assemble_genome {
 		File? mother_yak
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	call hifiasm_assemble {
@@ -23,7 +24,8 @@ workflow assemble_genome {
 			extra_params = hifiasm_extra_params,
 			father_yak = father_yak,
 			mother_yak = mother_yak,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {
@@ -32,7 +34,8 @@ workflow assemble_genome {
 			input:
 				gfa = gfa,
 				reference_index = reference.fasta.data_index,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 	}
 
@@ -42,7 +45,8 @@ workflow assemble_genome {
 			query_sequences = gfa2fa.zipped_fasta,
 			reference = reference.fasta.data,
 			reference_name = reference.name,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {
@@ -74,6 +78,7 @@ task hifiasm_assemble {
 		File? mother_yak
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String prefix = "~{sample_id}.asm"
@@ -107,9 +112,9 @@ task hifiasm_assemble {
 	runtime {
 		docker: "~{container_registry}/hifiasm:b1a46c6"
 		cpu: threads
-		memory: "192 GB"
+		memory: "384 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -121,6 +126,7 @@ task gfa2fa {
 		File reference_index
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String gfa_basename = basename(gfa, ".gfa")
@@ -159,7 +165,7 @@ task gfa2fa {
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -173,6 +179,7 @@ task align_hifiasm {
 		String reference_name
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Int threads = 16
@@ -210,7 +217,7 @@ task align_hifiasm {
 		cpu: threads
 		memory: "256 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

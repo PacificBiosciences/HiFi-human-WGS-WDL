@@ -10,6 +10,7 @@ workflow phase_vcf {
 		ReferenceData reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf.data, ".vcf.gz")
@@ -25,7 +26,8 @@ workflow phase_vcf {
 				vcf = vcf.data,
 				vcf_index = vcf.data_index,
 				region = chromosome,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		call whatshap_phase {
@@ -37,7 +39,8 @@ workflow phase_vcf {
 				aligned_bam_indices = aligned_bam_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 	}
 
@@ -46,7 +49,8 @@ workflow phase_vcf {
 			vcfs = whatshap_phase.phased_vcf,
 			vcf_indices = whatshap_phase.phased_vcf_index,
 			output_vcf_name = "~{vcf_basename}.phased.vcf.gz",
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call whatshap_stats {
@@ -54,7 +58,8 @@ workflow phase_vcf {
 			phased_vcf = bcftools_concat.concatenated_vcf,
 			phased_vcf_index = bcftools_concat.concatenated_vcf_index,
 			reference_chromosome_lengths = reference.chromosome_lengths,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {
@@ -79,6 +84,7 @@ task split_vcf {
 		String region
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -104,10 +110,10 @@ task split_vcf {
 
 	runtime {
 		docker: "~{container_registry}/htslib:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -125,6 +131,7 @@ task whatshap_phase {
 		File reference_index
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -151,10 +158,10 @@ task whatshap_phase {
 
 	runtime {
 		docker: "~{container_registry}/whatshap:b1a46c6"
-		cpu: 32
-		memory: "14 GB"
+		cpu: 1
+		memory: "8 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -166,6 +173,7 @@ task bcftools_concat {
 		String output_vcf_name
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Int disk_size = ceil(size(vcfs[0], "GB") * length(vcfs) * 2 + 20)
@@ -189,10 +197,10 @@ task bcftools_concat {
 
 	runtime {
 		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -205,6 +213,7 @@ task whatshap_stats {
 		File reference_chromosome_lengths
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String output_basename = basename(phased_vcf, ".vcf.gz")
@@ -229,10 +238,10 @@ task whatshap_stats {
 
 	runtime {
 		docker: "~{container_registry}/whatshap:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

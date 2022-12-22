@@ -5,6 +5,7 @@ task zip_index_vcf {
 		File vcf
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf)
@@ -33,9 +34,9 @@ task zip_index_vcf {
 	runtime {
 		docker: "~{container_registry}/htslib:b1a46c6"
 		cpu: threads
-		memory: "14 GB"
+		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

@@ -11,12 +11,14 @@ workflow de_novo_assembly_trio {
 		ReferenceData reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	call parse_families {
 		input:
 			cohort_json = write_json(cohort),
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	# Run de_novo_assembly for each child with mother and father samples present in the cohort
@@ -29,7 +31,8 @@ workflow de_novo_assembly_trio {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_father {
 				input:
 					bam = movie_bam,
-					container_registry = container_registry
+					container_registry = container_registry,
+					preemptible = preemptible
 			}
 		}
 
@@ -37,14 +40,16 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = father.sample_id,
 				reads_fastas = samtools_fasta_father.reads_fasta,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		scatter (movie_bam in mother.movie_bams) {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_mother {
 				input:
 					bam = movie_bam,
-					container_registry = container_registry
+					container_registry = container_registry,
+					preemptible = preemptible
 			}
 		}
 
@@ -52,7 +57,8 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = mother.sample_id,
 				reads_fastas = samtools_fasta_mother.reads_fasta,
-				container_registry = container_registry
+				container_registry = container_registry,
+				preemptible = preemptible
 		}
 
 		# Father is haplotype 1; mother is haplotype 2
@@ -68,7 +74,8 @@ workflow de_novo_assembly_trio {
 				call SamtoolsFasta.samtools_fasta as samtools_fasta_child {
 					input:
 						bam = movie_bam,
-						container_registry = container_registry
+						container_registry = container_registry,
+						preemptible = preemptible
 				}
 			}
 
@@ -84,7 +91,8 @@ workflow de_novo_assembly_trio {
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
-					container_registry = container_registry
+					container_registry = container_registry,
+					preemptible = preemptible
 			}
 		}
 	}
@@ -110,6 +118,7 @@ task parse_families {
 		File cohort_json
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	command <<<
@@ -126,10 +135,10 @@ task parse_families {
 
 	runtime {
 		docker: "~{container_registry}/parse_cohort:1.0.0"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: "20 GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -140,9 +149,12 @@ task yak_count {
 		Array[File] reads_fastas
 
 		String container_registry
+		Boolean preemptible
 	}
 
-	Int threads = 32
+	# TODO does this slow down at 10 vs. 32 cores? ~30 mins at 32 cores
+	Int threads = 10
+	Int mem_gb = 8 * threads
 	Int disk_size = ceil(size(reads_fastas[0], "GB") * length(reads_fastas) * 2 + 20)
 
 	command <<<
@@ -161,9 +173,9 @@ task yak_count {
 	runtime {
 		docker: "~{container_registry}/yak:b1a46c6"
 		cpu: threads
-		memory: "96 GB"
+		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }

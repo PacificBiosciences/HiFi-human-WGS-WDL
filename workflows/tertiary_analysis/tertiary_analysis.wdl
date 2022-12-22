@@ -14,20 +14,23 @@ workflow tertiary_analysis {
 		SlivarData slivar_data
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	call write_cohort_yaml {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_json = write_json(cohort),
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call write_ped {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_yaml = write_cohort_yaml.cohort_yaml,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call calculate_phrank {
@@ -38,7 +41,8 @@ workflow tertiary_analysis {
 			hpo_dag = slivar_data.hpo_dag,
 			hpo_annotations = slivar_data.hpo_annotations,
 			ensembl_to_hgnc = slivar_data.ensembl_to_hgnc,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call bcftools_norm {
@@ -46,7 +50,8 @@ workflow tertiary_analysis {
 			vcf = small_variant_vcf.data,
 			vcf_index = small_variant_vcf.data_index,
 			reference = reference.fasta.data,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call slivar_small_variant {
@@ -60,7 +65,8 @@ workflow tertiary_analysis {
 			gnomad_af = reference.gnomad_af,
 			hprc_af = reference.hprc_af,
 			gff = reference.gff,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call slivar_compound_hets {
@@ -68,7 +74,8 @@ workflow tertiary_analysis {
 			filtered_vcf = slivar_small_variant.filtered_vcf,
 			filtered_vcf_index = slivar_small_variant.filtered_vcf_index,
 			pedigree = write_ped.pedigree,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call slivar_tsv {
@@ -79,7 +86,8 @@ workflow tertiary_analysis {
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	scatter (vcf_object in reference.population_vcfs) {
@@ -93,13 +101,15 @@ workflow tertiary_analysis {
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
 			gff = reference.gff,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = svpack_filter_annotated.svpack_vcf,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	call slivar_svpack_tsv {
@@ -109,7 +119,8 @@ workflow tertiary_analysis {
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
-			container_registry = container_registry
+			container_registry = container_registry,
+			preemptible = preemptible
 	}
 
 	output {
@@ -137,6 +148,7 @@ task write_cohort_yaml {
 		File cohort_json
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	command <<<
@@ -156,7 +168,7 @@ task write_cohort_yaml {
 		cpu: 4
 		memory: "14 GB"
 		disk: "20 GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -167,6 +179,7 @@ task write_ped {
 		File cohort_yaml
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	command <<<
@@ -187,7 +200,7 @@ task write_ped {
 		cpu: 4
 		memory: "14 GB"
 		disk: "20 GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -203,6 +216,7 @@ task calculate_phrank {
 		File ensembl_to_hgnc
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Int disk_size = ceil((size(hpo_terms, "GB") + size(hpo_dag, "GB") + size(hpo_annotations, "GB") + size(ensembl_to_hgnc, "GB")) * 2 + 20)
@@ -229,7 +243,7 @@ task calculate_phrank {
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -242,6 +256,7 @@ task bcftools_norm {
 		File reference
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -274,7 +289,7 @@ task bcftools_norm {
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -294,6 +309,7 @@ task slivar_small_variant {
 		File gff
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Float max_gnomad_af = 0.01
@@ -378,7 +394,7 @@ task slivar_small_variant {
 		cpu: threads
 		memory: "32 GB"
 		disk: "300 GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -390,6 +406,7 @@ task slivar_compound_hets {
 		File pedigree
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Array[String] skip_list = [
@@ -434,7 +451,7 @@ task slivar_compound_hets {
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -450,6 +467,7 @@ task slivar_tsv {
 		File phrank_lookup
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Array[String] info_fields = [
@@ -509,7 +527,7 @@ task slivar_tsv {
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -524,6 +542,7 @@ task svpack_filter_annotated {
 		File gff
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	String sv_vcf_basename = basename(sv_vcf, ".vcf.gz")
@@ -557,7 +576,7 @@ task svpack_filter_annotated {
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
@@ -572,6 +591,7 @@ task slivar_svpack_tsv {
 		File phrank_lookup
 
 		String container_registry
+		Boolean preemptible
 	}
 
 	Array[String] info_fields = [
@@ -613,7 +633,7 @@ task slivar_svpack_tsv {
 		cpu: 4
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: true
+		preemptible: preemptible
 		maxRetries: 3
 	}
 }
