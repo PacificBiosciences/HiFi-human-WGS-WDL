@@ -136,18 +136,20 @@ task deepvariant_call_variants {
 
 	String deepvariant_model_path = if (defined(deepvariant_model)) then sub(select_first([deepvariant_model]).model.data, "\\.data.*", "") else "/opt/models/pacbio/model.ckpt"
 
-	# extract the path where the first example_tfrecord is located; all example_tfrecords will be located at the same base path
-	String example_tfrecord_path = sub(example_tfrecords[0], "/" + basename(example_tfrecords[0]), "")
-
 	Int disk_size = ceil(size(example_tfrecords[0], "GB") * length(example_tfrecords) * 2 + 100)
 	Int mem_gb = deepvariant_threads * 4
 
 	command <<<
 		set -euo pipefail
 
+		# extract the path where the first example_tfrecord is located; all example_tfrecords will be located at the same base path
+		example_tfrecord_strings=~{sep="," example_tfrecords}
+		example_tfrecord_full_path=$(cut -d ',' -f 1 <<< "$example_tfrecord_strings")
+		example_tfrecord_dir=$(dirname $example_tfrecord_full_path)
+
 		/opt/deepvariant/bin/call_variants \
 			--outfile ~{sample_id}.~{reference_name}.call_variants_output.tfrecord.gz \
-			--examples ~{example_tfrecord_path}/~{sample_id}.examples.tfrecord@~{deepvariant_threads}.gz \
+			--examples $example_tfrecord_dir/~{sample_id}.examples.tfrecord@~{deepvariant_threads}.gz \
 			--checkpoint ~{deepvariant_model_path}
 	>>>
 
@@ -180,18 +182,21 @@ task deepvariant_postprocess_variants {
 		Boolean preemptible
 	}
 
-	# extract the path where the first nonvariant_site_tfrecord is located; all nonvariant_site_tfrecord will be located at the same base path
-	String nonvariant_site_tfrecord_path = sub(nonvariant_site_tfrecords[0], "/" + basename(nonvariant_site_tfrecords[0]), "")
 	Int disk_size = ceil((size(tfrecord, "GB") + size(reference, "GB") + size(nonvariant_site_tfrecords[0], "GB") * length(nonvariant_site_tfrecords)) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
+		# extract the path where the first nonvariant_site_tfrecord is located; all nonvariant_site_tfrecord will be located at the same base path
+		nonvariant_site_tfrecord_strings=~{sep="," nonvariant_site_tfrecords}
+		nonvariant_site_tfrecord_full_path=$(cut -d ',' -f 1 <<< "$nonvariant_site_tfrecord_strings")
+		nonvariant_site_tfrecord_dir=$(dirname $nonvariant_site_tfrecord_full_path)
+
 		/opt/deepvariant/bin/postprocess_variants \
 			--ref ~{reference} \
 			--infile ~{tfrecord} \
 			--outfile ~{sample_id}.~{reference_name}.deepvariant.vcf.gz \
-			--nonvariant_site_tfrecord_path ~{nonvariant_site_tfrecord_path}/~{sample_id}.gvcf.tfrecord@~{deepvariant_threads}.gz \
+			--nonvariant_site_tfrecord_path $nonvariant_site_tfrecord_dir/~{sample_id}.gvcf.tfrecord@~{deepvariant_threads}.gz \
 			--gvcf_outfile ~{sample_id}.~{reference_name}.deepvariant.g.vcf.gz
 	>>>
 
