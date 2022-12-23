@@ -4,6 +4,7 @@ import "../common/structs.wdl"
 import "../common/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome
 import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
 
 workflow de_novo_assembly_sample {
 	input {
@@ -49,7 +50,7 @@ workflow de_novo_assembly_sample {
 			preemptible = preemptible
 	}
 
-	call bcftools_stats {
+	call BcftoolsStats.bcftools_stats {
 		input:
 			vcf = zip_index_vcf.zipped_vcf,
 			bam = assemble_genome.asm_bam.data,
@@ -65,7 +66,7 @@ workflow de_novo_assembly_sample {
 		Array[File] assembly_stats = assemble_genome.assembly_stats
 		IndexData asm_bam = assemble_genome.asm_bam
 		IndexData htsbox_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
-		File htsbox_vcf_stats = bcftools_stats.vcf_stats
+		File htsbox_vcf_stats = bcftools_stats.stats
 	}
 
 	parameter_meta {
@@ -108,47 +109,6 @@ task htsbox {
 
 	runtime {
 		docker: "~{container_registry}/htsbox:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
-	}
-}
-
-task bcftools_stats {
-	input {
-		File vcf
-		File bam
-
-		File reference
-
-		String container_registry
-		Boolean preemptible
-	}
-
-	String vcf_basename = basename(vcf, ".gz")
-	Int threads = 4
-	Int disk_size = ceil((size(vcf, "GB") + size(bam, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		bcftools stats \
-			--threads ~{threads - 1} \
-			--fasta-ref ~{reference} \
-			--samples ~{bam} \
-			~{vcf} \
-		> ~{vcf_basename}.stats.txt
-	>>>
-
-	output {
-		File df_log = "df_log.txt"
-		File vcf_stats = "~{vcf_basename}.stats.txt"
-	}
-
-	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"

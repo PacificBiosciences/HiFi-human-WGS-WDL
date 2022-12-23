@@ -72,14 +72,14 @@
 <text text-anchor="middle" x="165" y="-38.3" font-family="Times,serif" font-size="14.00">assemble_genome</text>
 </g>
 <!-- call&#45;samtools_fasta_father&#45;&gt;call&#45;assemble_genome -->
-<g id="edge8" class="edge">
+<g id="edge6" class="edge">
 <title>call&#45;samtools_fasta_father&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M572.84,-209.9C579.53,-205.71 585.48,-200.49 590,-194 616.91,-155.33 621.51,-123.02 590,-88 567.61,-63.11 365.53,-50.95 248.27,-45.94"/>
 <polygon fill="black" stroke="black" points="248.38,-42.44 238.24,-45.52 248.09,-49.43 248.38,-42.44"/>
 </g>
 <!-- scatter&#45;L30C3&#45;movie_bam -->
 <!-- call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome -->
-<g id="edge4" class="edge">
+<g id="edge5" class="edge">
 <title>call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M453.68,-95.91C443.86,-93.06 433.67,-90.29 424,-88 365.71,-74.21 299.11,-62.73 248.04,-54.82"/>
 <polygon fill="black" stroke="black" points="248.46,-51.34 238.04,-53.28 247.4,-58.26 248.46,-51.34"/>
@@ -103,14 +103,14 @@
 <polygon fill="black" stroke="black" points="318.45,-142.73 319.33,-132.17 312.06,-139.88 318.45,-142.73"/>
 </g>
 <!-- call&#45;samtools_fasta_mother&#45;&gt;call&#45;assemble_genome -->
-<g id="edge7" class="edge">
+<g id="edge4" class="edge">
 <title>call&#45;samtools_fasta_mother&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M346.79,-209.99C357.9,-207.3 369.26,-204.57 380,-202 395.1,-198.39 404.36,-206.17 414,-194 421.31,-184.77 421.55,-97.04 414,-88 393.05,-62.92 312.34,-51.79 248.41,-46.87"/>
 <polygon fill="black" stroke="black" points="248.53,-43.37 238.31,-46.13 248.02,-50.35 248.53,-43.37"/>
 </g>
 <!-- scatter&#45;L47C3&#45;movie_bam -->
 <!-- call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome -->
-<g id="edge6" class="edge">
+<g id="edge7" class="edge">
 <title>call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M287.37,-95.88C265.22,-86.31 237.44,-74.3 213.94,-64.15"/>
 <polygon fill="black" stroke="black" points="215.07,-60.82 204.5,-60.07 212.29,-67.25 215.07,-60.82"/>
@@ -122,7 +122,7 @@
 <text text-anchor="middle" x="148" y="-110.3" font-family="Times,serif" font-size="14.00">samtools_fasta_child</text>
 </g>
 <!-- call&#45;samtools_fasta_child&#45;&gt;call&#45;assemble_genome -->
-<g id="edge5" class="edge">
+<g id="edge8" class="edge">
 <title>call&#45;samtools_fasta_child&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M152.2,-95.7C154.1,-87.9 156.38,-78.51 158.48,-69.83"/>
 <polygon fill="black" stroke="black" points="161.89,-70.65 160.85,-60.1 155.08,-69 161.89,-70.65"/>

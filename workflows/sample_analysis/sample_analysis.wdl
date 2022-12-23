@@ -3,6 +3,7 @@ version 1.0
 import "../common/structs.wdl"
 import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "../deepvariant/deepvariant.wdl" as DeepVariant
+import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../common/tasks/mosdepth.wdl" as Mosdepth
 import "../common/tasks/pbsv_call.wdl" as PbsvCall
 import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
@@ -39,7 +40,7 @@ workflow sample_analysis {
 			preemptible = preemptible
 	}
 
-	call bcftools_stats {
+	call BcftoolsStats.bcftools_stats {
 		input:
 			vcf = deepvariant.vcf.data,
 			params = "--apply-filters PASS --samples ~{sample.sample_id}",
@@ -178,47 +179,6 @@ workflow sample_analysis {
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		container_registry: {help: "Container registry where docker images are hosted"}
-	}
-}
-
-task bcftools_stats {
-	input {
-		File vcf
-		String? params
-
-		File? reference
-
-		String container_registry
-		Boolean preemptible
-	}
-
-	String vcf_basename = basename(vcf, ".gz")
-
-	Int threads = 4
-	Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		bcftools stats \
-			--threads ~{threads - 1} \
-			~{params} \
-			~{"--fasta-ref " + reference} \
-			~{vcf} \
-		> ~{vcf_basename}.stats.txt
-	>>>
-
-	output {
-		File stats = "~{vcf_basename}.stats.txt"
-	}
-
-	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
-		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
 	}
 }
 

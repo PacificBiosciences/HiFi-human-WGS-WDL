@@ -152,7 +152,6 @@ task yak_count {
 		Boolean preemptible
 	}
 
-	# TODO does this slow down at 10 vs. 32 cores? ~30 mins at 32 cores
 	Int threads = 10
 	Int mem_gb = 8 * threads
 	Int disk_size = ceil(size(reads_fastas[0], "GB") * length(reads_fastas) * 2 + 20)

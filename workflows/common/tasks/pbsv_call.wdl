@@ -13,8 +13,7 @@ task pbsv_call {
 		Boolean preemptible
 	}
 
-	# TODO does this slow it down? 2:15 at 8 cores
-	Int threads = 4
+	Int threads = 8
 	Int disk_size = ceil((size(svsigs[0], "GB") * length(svsigs) + size(reference, "GB")) * 2 + 20)
 
 	command <<<
@@ -36,7 +35,7 @@ task pbsv_call {
 	runtime {
 		docker: "~{container_registry}/pbsv:b1a46c6"
 		cpu: threads
-		memory: "56 GB"
+		memory: "64 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
