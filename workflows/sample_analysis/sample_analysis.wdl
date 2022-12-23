@@ -191,7 +191,6 @@ task bcftools_roh {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
-
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
@@ -382,7 +381,6 @@ task trgt_coverage_dropouts {
 		Boolean preemptible
 	}
 
-	# TODO far too large?
 	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
 
 	command <<<

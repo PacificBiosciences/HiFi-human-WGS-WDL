@@ -82,7 +82,6 @@ task pbmm2_align {
 
 	String movie = basename(bam, ".bam")
 
-	# TODO actually uses ~16.7, but this might be pbmm2 restricting it from the max
 	Int threads = 24
 	Int mem_gb = ceil(threads * 1.5)
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)

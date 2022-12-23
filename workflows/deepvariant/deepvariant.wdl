@@ -137,7 +137,6 @@ task deepvariant_call_variants {
 	String deepvariant_model_path = if (defined(deepvariant_model)) then sub(select_first([deepvariant_model]).model.data, "\\.data.*", "") else "/opt/models/pacbio/model.ckpt"
 
 	Int disk_size = ceil(size(example_tfrecords[0], "GB") * length(example_tfrecords) * 2 + 100)
-	Int mem_gb = deepvariant_threads * 4
 
 	command <<<
 		set -euo pipefail
@@ -158,7 +157,7 @@ task deepvariant_call_variants {
 	runtime {
 		docker: "gcr.io/deepvariant-docker/deepvariant:~{deepvariant_version}"
 		cpu: deepvariant_threads
-		memory: mem_gb + " GB"
+		memory: "8 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3

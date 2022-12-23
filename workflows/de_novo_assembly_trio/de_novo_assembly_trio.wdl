@@ -153,6 +153,8 @@ task yak_count {
 	}
 
 	Int threads = 10
+
+	# needs ~6.7 GB / thread
 	Int mem_gb = 8 * threads
 	Int disk_size = ceil(size(reads_fastas[0], "GB") * length(reads_fastas) * 2 + 20)
 

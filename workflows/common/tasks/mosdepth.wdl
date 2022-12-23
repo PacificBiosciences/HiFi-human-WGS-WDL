@@ -10,8 +10,7 @@ task mosdepth {
 	}
 
 	String prefix = basename(aligned_bam, ".bam")
-	# TODO does this slow down at 2 cores instead of 4? 6 mins at 4
-	Int threads = 2
+	Int threads = 4
 	Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
 	command <<<
