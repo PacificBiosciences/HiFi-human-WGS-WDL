@@ -27,5 +27,6 @@
     ]
   },
   "deepvariant.deepvariant_version": "String",
-  "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)"
+  "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "deepvariant.preemptible": "Boolean"
 }

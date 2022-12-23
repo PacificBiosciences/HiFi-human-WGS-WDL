@@ -27,5 +27,6 @@
         }
     ]
   },
-  "smrtcell_analysis.container_registry": "String"
+  "smrtcell_analysis.container_registry": "String",
+  "smrtcell_analysis.preemptible": "Boolean"
 }

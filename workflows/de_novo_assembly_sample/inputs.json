@@ -28,5 +28,6 @@
         }
     ]
   },
-  "de_novo_assembly_sample.container_registry": "String"
+  "de_novo_assembly_sample.container_registry": "String",
+  "de_novo_assembly_sample.preemptible": "Boolean"
 }

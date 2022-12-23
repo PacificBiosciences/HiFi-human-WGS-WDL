@@ -33,5 +33,6 @@
         }
     ]
   },
-  "cohort_analysis.container_registry": "String"
+  "cohort_analysis.container_registry": "String",
+  "cohort_analysis.preemptible": "Boolean"
 }

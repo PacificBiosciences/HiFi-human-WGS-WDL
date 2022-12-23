@@ -29,6 +29,7 @@
         }
     ]
   },
-  "phase_vcf.container_registry": "String"
+  "phase_vcf.container_registry": "String",
+  "phase_vcf.preemptible": "Boolean"
 }
 

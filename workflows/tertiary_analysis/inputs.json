@@ -52,5 +52,6 @@
     "lof_lookup": "File",
     "clinvar_lookup": "File"
   },
-  "tertiary_analysis.container_registry": "String"
+  "tertiary_analysis.container_registry": "String",
+  "tertiary_analysis.preemptible": "Boolean"
 }

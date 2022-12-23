@@ -35,5 +35,6 @@
         }
     ]
   },
-  "de_novo_assembly_trio.container_registry": "String"
+  "de_novo_assembly_trio.container_registry": "String",
+  "de_novo_assembly_trio.preemptible": "Boolean"
 }
