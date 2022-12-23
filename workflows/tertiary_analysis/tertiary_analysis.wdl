@@ -240,8 +240,8 @@ task calculate_phrank {
 
 	runtime {
 		docker: "~{container_registry}/pyyaml:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -260,7 +260,6 @@ task bcftools_norm {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
-	Int threads = 4
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
@@ -286,8 +285,8 @@ task bcftools_norm {
 
 	runtime {
 		docker: "~{container_registry}/bcftools:b1a46c6"
-		cpu: threads
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -352,6 +351,7 @@ task slivar_small_variant {
 
 	String bcf_basename = basename(bcf, ".bcf")
 	Int threads = 8
+	Int disk_size = ceil((size(bcf, "GB") + size(reference, "GB") + size(gnomad_af, "GB") + size(hprc_af, "GB") + size(gff, "GB")) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -392,8 +392,8 @@ task slivar_small_variant {
 	runtime {
 		docker: "~{container_registry}/slivar:b1a46c6"
 		cpu: threads
-		memory: "32 GB"
-		disk: "300 GB"
+		memory: "4 GB"
+		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
 	}
@@ -448,8 +448,8 @@ task slivar_compound_hets {
 
 	runtime {
 		docker: "~{container_registry}/slivar:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 2
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -524,8 +524,8 @@ task slivar_tsv {
 
 	runtime {
 		docker: "~{container_registry}/slivar:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -573,8 +573,8 @@ task svpack_filter_annotated {
 
 	runtime {
 		docker: "~{container_registry}/svpack:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -630,8 +630,8 @@ task slivar_svpack_tsv {
 
 	runtime {
 		docker: "~{container_registry}/slivar:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
