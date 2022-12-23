@@ -164,7 +164,7 @@ task write_cohort_yaml {
 	}
 
 	runtime {
-		docker: "~{container_registry}/parse_cohort:0.0.1"
+		docker: "~{container_registry}/parse_cohort:1.0.0"
 		cpu: 4
 		memory: "14 GB"
 		disk: "20 GB"
