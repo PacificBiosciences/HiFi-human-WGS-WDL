@@ -165,8 +165,8 @@ task write_cohort_yaml {
 
 	runtime {
 		docker: "~{container_registry}/parse_cohort:1.0.0"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: "20 GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -197,8 +197,8 @@ task write_ped {
 
 	runtime {
 		docker: "~{container_registry}/pyyaml:b1a46c6"
-		cpu: 4
-		memory: "14 GB"
+		cpu: 1
+		memory: "1 GB"
 		disk: "20 GB"
 		preemptible: preemptible
 		maxRetries: 3
