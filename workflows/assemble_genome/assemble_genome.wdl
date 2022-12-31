@@ -83,6 +83,7 @@ task hifiasm_assemble {
 
 	String prefix = "~{sample_id}.asm"
 	Int threads = 48
+	Int mem_gb = threads * 6
 	Int disk_size = ceil((size(reads_fastas[0], "GB") * length(reads_fastas)) * 2 + 20)
 
 	command <<<
@@ -112,7 +113,7 @@ task hifiasm_assemble {
 	runtime {
 		docker: "~{container_registry}/hifiasm:b1a46c6"
 		cpu: threads
-		memory: "384 GB"
+		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3

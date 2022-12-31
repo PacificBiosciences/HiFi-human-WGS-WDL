@@ -89,7 +89,7 @@ task htsbox {
 
 	String bam_basename = basename(bam, ".bam")
 	Int threads = 4
-	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 3 + 200)
 
 	command <<<
 		set -euo pipefail
