@@ -26,7 +26,7 @@ task bcftools_stats {
 			--threads ~{threads} \
 			~{params} \
 			~{"--fasta-ref " + reference} \
-			~{"--samples " + bam}
+			~{"--samples " + bam} \
 			~{vcf} \
 		> ~{vcf_basename}.stats.txt
 	>>>
