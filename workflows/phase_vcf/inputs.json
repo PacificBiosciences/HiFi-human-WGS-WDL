@@ -29,7 +29,12 @@
         }
     ]
   },
-  "phase_vcf.container_registry": "String",
-  "phase_vcf.preemptible": "Boolean"
+  "phase_vcf.spot_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }
 

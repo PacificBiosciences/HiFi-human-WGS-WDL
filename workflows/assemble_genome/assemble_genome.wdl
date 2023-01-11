@@ -13,8 +13,7 @@ workflow assemble_genome {
 		File? father_yak
 		File? mother_yak
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes spot_runtime_attributes
 	}
 
 	call hifiasm_assemble {
@@ -24,8 +23,7 @@ workflow assemble_genome {
 			extra_params = hifiasm_extra_params,
 			father_yak = father_yak,
 			mother_yak = mother_yak,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {
@@ -34,8 +32,7 @@ workflow assemble_genome {
 			input:
 				gfa = gfa,
 				reference_index = reference.fasta.data_index,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 	}
 
@@ -45,8 +42,7 @@ workflow assemble_genome {
 			query_sequences = gfa2fa.zipped_fasta,
 			reference = reference.fasta.data,
 			reference_name = reference.name,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	output {
@@ -64,7 +60,7 @@ workflow assemble_genome {
 		hiiasm_extra_params: {help: "[OPTIONAL] Additional parameters to pass to hifiasm assembly"}
 		father_yak: {help: "[OPTIONAL] kmer counts for the father; required if running trio-based assembly"}
 		mother_yak: {help: "[OPTIONAL] kmer counts for the mother; required if running trio-based assembly"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
 	}
 }
 
@@ -77,8 +73,7 @@ task hifiasm_assemble {
 		File? father_yak
 		File? mother_yak
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String prefix = "~{sample_id}.asm"
@@ -111,12 +106,16 @@ task hifiasm_assemble {
 	}
 
 	runtime {
-		docker: "~{container_registry}/hifiasm:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/hifiasm:b1a46c6"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -126,8 +125,7 @@ task gfa2fa {
 
 		File reference_index
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String gfa_basename = basename(gfa, ".gfa")
@@ -162,12 +160,16 @@ task gfa2fa {
 	}
 
 	runtime {
-		docker: "~{container_registry}/gfatools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/gfatools:b1a46c6"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -179,8 +181,7 @@ task align_hifiasm {
 		File reference
 		String reference_name
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int threads = 16
@@ -214,11 +215,15 @@ task align_hifiasm {
 	}
 
 	runtime {
-		docker: "~{container_registry}/align_hifiasm:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/align_hifiasm:b1a46c6"
 		cpu: threads
 		memory: "256 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

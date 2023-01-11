@@ -9,8 +9,7 @@ workflow smrtcell_analysis {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes spot_runtime_attributes
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -21,16 +20,14 @@ workflow smrtcell_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 
 		call Mosdepth.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 
 		call pbsv_discover {
@@ -38,8 +35,7 @@ workflow smrtcell_analysis {
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
 				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 
 		IndexData aligned_bam = {
@@ -63,7 +59,7 @@ workflow smrtcell_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
 	}
 }
 
@@ -76,8 +72,7 @@ task pbmm2_align {
 		File reference_index
 		String reference_name
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String movie = basename(bam, ".bam")
@@ -135,12 +130,16 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbmm2:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/pbmm2:b1a46c6"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -151,8 +150,7 @@ task pbsv_discover {
 
 		File reference_tandem_repeat_bed
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String prefix = basename(aligned_bam, ".bam")
@@ -174,11 +172,15 @@ task pbsv_discover {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbsv:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/pbsv:b1a46c6"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

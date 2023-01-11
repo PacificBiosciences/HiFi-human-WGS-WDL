@@ -1,6 +1,7 @@
 version 1.0
 
 import "common/structs.wdl"
+import "common/backend_configuration.wdl" as BackendConfiguration
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "de_novo_assembly_sample/de_novo_assembly_sample.wdl" as DeNovoAssemblySample
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
@@ -17,8 +18,19 @@ workflow humanwgs {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-		String container_registry
-		Boolean preemptible
+		# Backend configuration
+		String backend
+		String? zones
+		String? aws_spot_queue_arn
+		String? aws_on_demand_queue_arn
+	}
+
+	call BackendConfiguration.backend_configuration {
+		input:
+			backend = backend,
+			zones = zones,
+			aws_spot_queue_arn = aws_spot_queue_arn,
+			aws_on_demand_queue_arn = aws_on_demand_queue_arn
 	}
 
 	scatter (sample in cohort.samples) {
@@ -28,8 +40,7 @@ workflow humanwgs {
 				reference = reference,
 				deepvariant_version = deepvariant_version,
 				deepvariant_model = deepvariant_model,
-				container_registry = container_registry,
-				preemptible = preemptible
+				spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 		}
 
 		if (sample.run_de_novo_assembly) {
@@ -37,8 +48,7 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
-					container_registry = container_registry,
-					preemptible = preemptible
+					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 			}
 		}
 	}
@@ -51,8 +61,7 @@ workflow humanwgs {
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
 				reference = reference,
-				container_registry = container_registry,
-				preemptible = preemptible
+				spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 		}
 
 		if (cohort.run_de_novo_assembly_trio) {
@@ -60,8 +69,7 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
-					container_registry = container_registry,
-					preemptible = preemptible
+					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 			}
 		}
 	}
@@ -82,8 +90,7 @@ workflow humanwgs {
 			sv_vcf = slivar_sv_input_vcf,
 			reference = reference,
 			slivar_data = slivar_data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 	}
 
 	output {
@@ -152,6 +159,9 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		backend: {help: "Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']"}
+		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
+		aws_spot_queue_arn: {help: "Queue ARN for the spot batch queue; required if backend is set to 'AWS'"}
+		aws_on_demand_queue_arn: {help: "Queue ARN for the on demand batch queue; required if backend is set to 'AWS'"}
 	}
 }

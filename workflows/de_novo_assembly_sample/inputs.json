@@ -28,6 +28,11 @@
         }
     ]
   },
-  "de_novo_assembly_sample.container_registry": "String",
-  "de_novo_assembly_sample.preemptible": "Boolean"
+  "de_novo_assembly_sample.spot_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }

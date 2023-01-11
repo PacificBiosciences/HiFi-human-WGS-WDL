@@ -12,16 +12,14 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes spot_runtime_attributes
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
 		call SamtoolsFasta.samtools_fasta {
 			input:
 				bam = movie_bam,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 	}
 
@@ -30,8 +28,7 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
-			container_registry = container_registry,
-			preemptible = preemptible
+			spot_runtime_attributes = spot_runtime_attributes
 	}
 
 	call htsbox {
@@ -39,15 +36,13 @@ workflow de_novo_assembly_sample {
 			bam = assemble_genome.asm_bam.data,
 			bam_index = assemble_genome.asm_bam.data_index,
 			reference = reference.fasta.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = htsbox.htsbox_vcf,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -55,8 +50,7 @@ workflow de_novo_assembly_sample {
 			vcf = zip_index_vcf.zipped_vcf,
 			bam = assemble_genome.asm_bam.data,
 			reference = reference.fasta.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	output {
@@ -72,7 +66,7 @@ workflow de_novo_assembly_sample {
 	parameter_meta {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
 	}
 }
 
@@ -83,8 +77,7 @@ task htsbox {
 
 		File reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String bam_basename = basename(bam, ".bam")
@@ -108,11 +101,15 @@ task htsbox {
 	}
 
 	runtime {
-		docker: "~{container_registry}/htsbox:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/htsbox:b1a46c6"
 		cpu: threads
 		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

@@ -1,11 +1,12 @@
 version 1.0
 
+import "../structs.wdl"
+
 task samtools_fasta {
 	input {
 		File bam
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String bam_basename = basename(bam, ".bam")
@@ -26,11 +27,15 @@ task samtools_fasta {
 	}
 
 	runtime {
-		docker: "~{container_registry}/samtools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/samtools:b1a46c6"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

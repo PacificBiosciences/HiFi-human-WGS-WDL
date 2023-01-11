@@ -1,12 +1,13 @@
 version 1.0
 
+import "../structs.wdl"
+
 task mosdepth {
 	input {
 		File aligned_bam
 		File aligned_bam_index
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String prefix = basename(aligned_bam, ".bam")
@@ -31,11 +32,15 @@ task mosdepth {
 	}
 
 	runtime {
-		docker: "~{container_registry}/mosdepth:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/mosdepth:b1a46c6"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

@@ -9,8 +9,7 @@ workflow phase_vcf {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes spot_runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf.data, ".vcf.gz")
@@ -26,8 +25,7 @@ workflow phase_vcf {
 				vcf = vcf.data,
 				vcf_index = vcf.data_index,
 				region = chromosome,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 
 		call whatshap_phase {
@@ -39,8 +37,7 @@ workflow phase_vcf {
 				aligned_bam_indices = aligned_bam_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = spot_runtime_attributes
 		}
 	}
 
@@ -49,8 +46,7 @@ workflow phase_vcf {
 			vcfs = whatshap_phase.phased_vcf,
 			vcf_indices = whatshap_phase.phased_vcf_index,
 			output_vcf_name = "~{vcf_basename}.phased.vcf.gz",
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	call whatshap_stats {
@@ -58,8 +54,7 @@ workflow phase_vcf {
 			phased_vcf = bcftools_concat.concatenated_vcf,
 			phased_vcf_index = bcftools_concat.concatenated_vcf_index,
 			reference_chromosome_lengths = reference.chromosome_lengths,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	output {
@@ -73,7 +68,7 @@ workflow phase_vcf {
 		vcf: {help: "VCF to phase"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
 		reference: {help: "Reference genome data"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
 	}
 }
 
@@ -83,8 +78,7 @@ task split_vcf {
 		File vcf_index
 		String region
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -109,12 +103,16 @@ task split_vcf {
 	}
 
 	runtime {
-		docker: "~{container_registry}/htslib:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/htslib:b1a46c6"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -130,8 +128,7 @@ task whatshap_phase {
 		File reference
 		File reference_index
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -157,12 +154,16 @@ task whatshap_phase {
 	}
 
 	runtime {
-		docker: "~{container_registry}/whatshap:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/whatshap:b1a46c6"
 		cpu: 1
 		memory: "8 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -172,8 +173,7 @@ task bcftools_concat {
 		Array[File] vcf_indices
 		String output_vcf_name
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int disk_size = ceil(size(vcfs[0], "GB") * length(vcfs) * 2 + 20)
@@ -196,12 +196,16 @@ task bcftools_concat {
 	}
 
 	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/bcftools:b1a46c6"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -212,8 +216,7 @@ task whatshap_stats {
 
 		File reference_chromosome_lengths
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String output_basename = basename(phased_vcf, ".vcf.gz")
@@ -237,11 +240,15 @@ task whatshap_stats {
 	}
 
 	runtime {
-		docker: "~{container_registry}/whatshap:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/whatshap:b1a46c6"
 		cpu: 1
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

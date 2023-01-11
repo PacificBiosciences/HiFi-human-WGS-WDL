@@ -1,5 +1,7 @@
 version 1.0
 
+import "../structs.wdl"
+
 task bcftools_stats {
 	input {
 		File vcf
@@ -8,8 +10,7 @@ task bcftools_stats {
 		File? reference
 		File? bam
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".gz")
@@ -36,11 +37,15 @@ task bcftools_stats {
 	}
 
 	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/bcftools:b1a46c6"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

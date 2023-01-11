@@ -52,6 +52,11 @@
     "lof_lookup": "File",
     "clinvar_lookup": "File"
   },
-  "tertiary_analysis.container_registry": "String",
-  "tertiary_analysis.preemptible": "Boolean"
+  "tertiary_analysis.spot_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }

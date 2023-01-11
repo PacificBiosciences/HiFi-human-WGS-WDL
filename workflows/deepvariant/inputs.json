@@ -1,5 +1,5 @@
 {
-  "deepvariant.sample_id": "String"
+  "deepvariant.sample_id": "String",
   "deepvariant.aligned_bams": [
     {
       "data": "File",
@@ -28,5 +28,11 @@
   },
   "deepvariant.deepvariant_version": "String",
   "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
-  "deepvariant.preemptible": "Boolean"
+  "deepvariant.spot_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }

@@ -9,7 +9,8 @@ workflow deepvariant {
 		ReferenceData reference
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
-		Boolean preemptible
+		
+		RuntimeAttributes spot_runtime_attributes
 	}
 
 	Int deepvariant_threads = 64
@@ -28,7 +29,7 @@ workflow deepvariant {
 			reference_index = reference.fasta.data_index,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	call deepvariant_call_variants {
@@ -39,7 +40,7 @@ workflow deepvariant {
 			deepvariant_model = deepvariant_model,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	call deepvariant_postprocess_variants {
@@ -52,7 +53,7 @@ workflow deepvariant {
 			reference_name = reference.name,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			preemptible = preemptible
+			runtime_attributes = spot_runtime_attributes
 	}
 
 	output {
@@ -73,7 +74,8 @@ task deepvariant_make_examples {
 
 		Int deepvariant_threads
 		String deepvariant_version
-		Boolean preemptible
+		
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int disk_size = ceil(size(aligned_bams[0], "GB") * length(aligned_bams) * 2 + 50)
@@ -117,8 +119,12 @@ task deepvariant_make_examples {
 		cpu: deepvariant_threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -131,7 +137,8 @@ task deepvariant_call_variants {
 		DeepVariantModel? deepvariant_model
 		Int deepvariant_threads
 		String deepvariant_version
-		Boolean preemptible
+		
+		RuntimeAttributes runtime_attributes
 	}
 
 	String deepvariant_model_path = if (defined(deepvariant_model)) then sub(select_first([deepvariant_model]).model.data, "\\.data.*", "") else "/opt/models/pacbio/model.ckpt"
@@ -159,8 +166,12 @@ task deepvariant_call_variants {
 		cpu: deepvariant_threads
 		memory: "8 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -176,7 +187,8 @@ task deepvariant_postprocess_variants {
 
 		Int deepvariant_threads
 		String deepvariant_version
-		Boolean preemptible
+		
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int disk_size = ceil((size(tfrecord, "GB") + size(reference, "GB") + size(nonvariant_site_tfrecords[0], "GB") * length(nonvariant_site_tfrecords)) * 2 + 20)
@@ -208,7 +220,11 @@ task deepvariant_postprocess_variants {
 		cpu: 1
 		memory: "32 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

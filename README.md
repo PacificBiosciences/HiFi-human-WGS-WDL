@@ -169,8 +169,10 @@ Files associated with `slivar` annotation.
 
 - `String deepvariant_version`: Version of deepvariant to use
 - `DeepVariantModel? deepvariant_model`: Optional alternate DeepVariant model file to use; includes the model, model index, and model metadata
-- `String container_registry`: Container registry where docker images are hosted
-- `Boolean preemptible`: Whether or not to run tasks in preemptible (spot) VMs
+- `String backend`: Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']
+- `String? zones`: Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'
+- `String? aws_spot_queue_arn`: Queue ARN for the spot batch queue; required if backend is set to 'AWS'
+- `String? aws_on_demand_queue_arn`: Queue ARN for the on demand batch queue; required if backend is set to 'AWS'
 
 
 ## Development
