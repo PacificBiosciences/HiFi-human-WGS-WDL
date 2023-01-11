@@ -129,8 +129,7 @@ task parse_families {
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
+		disks: "local-disk " + "20" + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries

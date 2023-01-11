@@ -79,6 +79,8 @@ task glnexus {
 		Array[File] gvcfs
 		Array[File] gvcf_indices
 
+		String reference_name
+
 		RuntimeAttributes runtime_attributes
 	}
 
