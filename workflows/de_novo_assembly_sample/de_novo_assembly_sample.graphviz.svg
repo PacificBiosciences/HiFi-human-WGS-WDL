@@ -10,7 +10,7 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-367 241,-367 241,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L20C2&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L21C2&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="8,-280 8,-355 229,-355 229,-280 8,-280"/>
 <text text-anchor="middle" x="118.5" y="-339.8" font-family="Times,serif" font-size="14.00">scatter(sample.movie_bams)</text>
 </g>
@@ -32,7 +32,7 @@
 <path fill="none" stroke="black" d="M144,-287.7C144,-279.98 144,-270.71 144,-262.11"/>
 <polygon fill="black" stroke="black" points="147.5,-262.1 144,-252.1 140.5,-262.1 147.5,-262.1"/>
 </g>
-<!-- scatter&#45;L20C2&#45;movie_bam -->
+<!-- scatter&#45;L21C2&#45;movie_bam -->
 <!-- call&#45;htsbox -->
 <g id="node4" class="node">
 <title>call&#45;htsbox</title>

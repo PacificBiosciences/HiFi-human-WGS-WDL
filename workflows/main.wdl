@@ -51,7 +51,8 @@ workflow humanwgs {
 					sample = sample,
 					reference = reference,
 					assembly_threads = assembly_threads,
-					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
+					spot_runtime_attributes = backend_configuration.spot_runtime_attributes,
+					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
 			}
 		}
 	}
@@ -73,7 +74,8 @@ workflow humanwgs {
 					cohort = cohort,
 					reference = reference,
 					assembly_threads = assembly_threads,
-					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
+					spot_runtime_attributes = backend_configuration.spot_runtime_attributes,
+					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
 			}
 		}
 	}

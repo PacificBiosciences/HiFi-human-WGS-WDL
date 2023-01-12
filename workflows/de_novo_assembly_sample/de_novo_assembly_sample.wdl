@@ -15,6 +15,7 @@ workflow de_novo_assembly_sample {
 		Int? assembly_threads
 
 		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes on_demand_runtime_attributes
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -31,7 +32,8 @@ workflow de_novo_assembly_sample {
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
 			assembly_threads = assembly_threads,
-			spot_runtime_attributes = spot_runtime_attributes
+			spot_runtime_attributes = spot_runtime_attributes,
+			on_demand_runtime_attributes = on_demand_runtime_attributes
 	}
 
 	call htsbox {

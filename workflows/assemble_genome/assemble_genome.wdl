@@ -16,6 +16,7 @@ workflow assemble_genome {
 		Int? assembly_threads
 
 		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes on_demand_runtime_attributes
 	}
 
 	call hifiasm_assemble {
@@ -26,7 +27,7 @@ workflow assemble_genome {
 			father_yak = father_yak,
 			mother_yak = mother_yak,
 			assembly_threads = assembly_threads,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = on_demand_runtime_attributes
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {

@@ -10,27 +10,27 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-356 616.19,-356 616.19,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L26C2&#45;family</title>
+<title>cluster&#45;scatter&#45;L27C2&#45;family</title>
 <polygon fill="none" stroke="black" points="8,-8 8,-308 604,-308 604,-8 8,-8"/>
 <text text-anchor="middle" x="306" y="-292.8" font-family="Times,serif" font-size="14.00">scatter(parse_families.families)</text>
 </g>
 <g id="clust2" class="cluster">
-<title>cluster&#45;scatter&#45;L30C3&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L31C3&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="384,-202 384,-277 596,-277 596,-202 384,-202"/>
 <text text-anchor="middle" x="490" y="-261.8" font-family="Times,serif" font-size="14.00">scatter(father.movie_bams)</text>
 </g>
 <g id="clust3" class="cluster">
-<title>cluster&#45;scatter&#45;L45C3&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L46C3&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="156,-202 156,-277 376,-277 376,-202 156,-202"/>
 <text text-anchor="middle" x="266" y="-261.8" font-family="Times,serif" font-size="14.00">scatter(mother.movie_bams)</text>
 </g>
 <g id="clust4" class="cluster">
-<title>cluster&#45;scatter&#45;L66C3&#45;child_index</title>
+<title>cluster&#45;scatter&#45;L67C3&#45;child_index</title>
 <polygon fill="none" stroke="black" points="16,-16 16,-194 246,-194 246,-16 16,-16"/>
 <text text-anchor="middle" x="131" y="-178.8" font-family="Times,serif" font-size="14.00">scatter(family.child_indices)</text>
 </g>
 <g id="clust5" class="cluster">
-<title>cluster&#45;scatter&#45;L69C4&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L70C4&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="34,-88 34,-163 238,-163 238,-88 34,-88"/>
 <text text-anchor="middle" x="136" y="-147.8" font-family="Times,serif" font-size="14.00">scatter(child.movie_bams)</text>
 </g>
@@ -40,10 +40,10 @@
 <polygon fill="none" stroke="black" points="129.5,-346 22.5,-346 22.5,-322 129.5,-322 141.5,-334 129.5,-346"/>
 <text text-anchor="middle" x="82" y="-330.3" font-family="Times,serif" font-size="14.00">parse_families</text>
 </g>
-<!-- scatter&#45;L26C2&#45;family -->
-<!-- call&#45;parse_families&#45;&gt;scatter&#45;L26C2&#45;family -->
+<!-- scatter&#45;L27C2&#45;family -->
+<!-- call&#45;parse_families&#45;&gt;scatter&#45;L27C2&#45;family -->
 <g id="edge1" class="edge">
-<title>call&#45;parse_families&#45;&gt;scatter&#45;L26C2&#45;family</title>
+<title>call&#45;parse_families&#45;&gt;scatter&#45;L27C2&#45;family</title>
 <path fill="none" stroke="black" d="M82,-315.83C82,-315.67 82,-315.52 82,-315.37"/>
 <polygon fill="black" stroke="black" points="85.5,-318 82,-308 78.5,-318 85.5,-318"/>
 </g>
@@ -77,9 +77,9 @@
 <path fill="none" stroke="black" d="M572.84,-209.9C579.53,-205.71 585.48,-200.49 590,-194 616.91,-155.33 621.51,-123.02 590,-88 567.61,-63.11 365.53,-50.95 248.27,-45.94"/>
 <polygon fill="black" stroke="black" points="248.38,-42.44 238.24,-45.52 248.09,-49.43 248.38,-42.44"/>
 </g>
-<!-- scatter&#45;L30C3&#45;movie_bam -->
+<!-- scatter&#45;L31C3&#45;movie_bam -->
 <!-- call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome -->
-<g id="edge7" class="edge">
+<g id="edge6" class="edge">
 <title>call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M453.68,-95.91C443.86,-93.06 433.67,-90.29 424,-88 365.71,-74.21 299.11,-62.73 248.04,-54.82"/>
 <polygon fill="black" stroke="black" points="248.46,-51.34 238.04,-53.28 247.4,-58.26 248.46,-51.34"/>
@@ -103,14 +103,14 @@
 <polygon fill="black" stroke="black" points="318.45,-142.73 319.33,-132.17 312.06,-139.88 318.45,-142.73"/>
 </g>
 <!-- call&#45;samtools_fasta_mother&#45;&gt;call&#45;assemble_genome -->
-<g id="edge4" class="edge">
+<g id="edge7" class="edge">
 <title>call&#45;samtools_fasta_mother&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M346.79,-209.99C357.9,-207.3 369.26,-204.57 380,-202 395.1,-198.39 404.36,-206.17 414,-194 421.31,-184.77 421.55,-97.04 414,-88 393.05,-62.92 312.34,-51.79 248.41,-46.87"/>
 <polygon fill="black" stroke="black" points="248.53,-43.37 238.31,-46.13 248.02,-50.35 248.53,-43.37"/>
 </g>
-<!-- scatter&#45;L45C3&#45;movie_bam -->
+<!-- scatter&#45;L46C3&#45;movie_bam -->
 <!-- call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome -->
-<g id="edge5" class="edge">
+<g id="edge4" class="edge">
 <title>call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M287.37,-95.88C265.22,-86.31 237.44,-74.3 213.94,-64.15"/>
 <polygon fill="black" stroke="black" points="215.07,-60.82 204.5,-60.07 212.29,-67.25 215.07,-60.82"/>
@@ -122,12 +122,12 @@
 <text text-anchor="middle" x="148" y="-110.3" font-family="Times,serif" font-size="14.00">samtools_fasta_child</text>
 </g>
 <!-- call&#45;samtools_fasta_child&#45;&gt;call&#45;assemble_genome -->
-<g id="edge6" class="edge">
+<g id="edge5" class="edge">
 <title>call&#45;samtools_fasta_child&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M152.2,-95.7C154.1,-87.9 156.38,-78.51 158.48,-69.83"/>
 <polygon fill="black" stroke="black" points="161.89,-70.65 160.85,-60.1 155.08,-69 161.89,-70.65"/>
 </g>
-<!-- scatter&#45;L69C4&#45;movie_bam -->
-<!-- scatter&#45;L66C3&#45;child_index -->
+<!-- scatter&#45;L70C4&#45;movie_bam -->
+<!-- scatter&#45;L67C3&#45;child_index -->
 </g>
 </svg>

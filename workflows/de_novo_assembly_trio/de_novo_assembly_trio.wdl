@@ -13,6 +13,7 @@ workflow de_novo_assembly_trio {
 		Int? assembly_threads
 
 		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes on_demand_runtime_attributes
 	}
 
 	call parse_families {
@@ -87,7 +88,8 @@ workflow de_novo_assembly_trio {
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
 					assembly_threads = assembly_threads,
-					spot_runtime_attributes = spot_runtime_attributes
+					spot_runtime_attributes = spot_runtime_attributes,
+					on_demand_runtime_attributes = on_demand_runtime_attributes
 			}
 		}
 	}
