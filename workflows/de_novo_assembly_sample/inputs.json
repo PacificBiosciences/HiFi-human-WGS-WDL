@@ -28,6 +28,7 @@
         }
     ]
   },
+  "de_novo_assembly_sample.assembly_threads": "Int? (optional)",
   "de_novo_assembly_sample.spot_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",

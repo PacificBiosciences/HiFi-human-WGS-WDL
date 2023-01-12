@@ -18,6 +18,8 @@ workflow humanwgs {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
+		Int? assembly_threads
+
 		# Backend configuration
 		String backend
 		String? zones
@@ -48,6 +50,7 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
+					assembly_threads = assembly_threads,
 					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 			}
 		}
@@ -69,6 +72,7 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
+					assembly_threads = assembly_threads,
 					spot_runtime_attributes = backend_configuration.spot_runtime_attributes
 			}
 		}

@@ -10,6 +10,8 @@ workflow de_novo_assembly_trio {
 
 		ReferenceData reference
 
+		Int? assembly_threads
+
 		RuntimeAttributes spot_runtime_attributes
 	}
 
@@ -84,6 +86,7 @@ workflow de_novo_assembly_trio {
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
+					assembly_threads = assembly_threads,
 					spot_runtime_attributes = spot_runtime_attributes
 			}
 		}
