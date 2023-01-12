@@ -46,6 +46,7 @@
   },
   "humanwgs.deepvariant_version": "String",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.assembly_threads": "Int? (optional)",
   "humanwgs.container_registry": "String",
   "humanwgs.preemptible": "Boolean"
 }

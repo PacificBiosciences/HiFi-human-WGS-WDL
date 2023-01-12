@@ -10,7 +10,7 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-187 364,-187 364,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L31C2&#45;gfa</title>
+<title>cluster&#45;scatter&#45;L34C2&#45;gfa</title>
 <polygon fill="none" stroke="black" points="8,-64 8,-139 352,-139 352,-64 8,-64"/>
 <text text-anchor="middle" x="180" y="-123.8" font-family="Times,serif" font-size="14.00">scatter(hifiasm_assemble.assembly_hap_gfas)</text>
 </g>
@@ -20,10 +20,10 @@
 <polygon fill="none" stroke="black" points="199,-177 69,-177 69,-153 199,-153 211,-165 199,-177"/>
 <text text-anchor="middle" x="140" y="-161.3" font-family="Times,serif" font-size="14.00">hifiasm_assemble</text>
 </g>
-<!-- scatter&#45;L31C2&#45;gfa -->
-<!-- call&#45;hifiasm_assemble&#45;&gt;scatter&#45;L31C2&#45;gfa -->
+<!-- scatter&#45;L34C2&#45;gfa -->
+<!-- call&#45;hifiasm_assemble&#45;&gt;scatter&#45;L34C2&#45;gfa -->
 <g id="edge1" class="edge">
-<title>call&#45;hifiasm_assemble&#45;&gt;scatter&#45;L31C2&#45;gfa</title>
+<title>call&#45;hifiasm_assemble&#45;&gt;scatter&#45;L34C2&#45;gfa</title>
 <path fill="none" stroke="black" d="M140,-146.7C140,-146.55 140,-146.4 140,-146.24"/>
 <polygon fill="black" stroke="black" points="143.5,-149 140,-139 136.5,-149 143.5,-149"/>
 </g>

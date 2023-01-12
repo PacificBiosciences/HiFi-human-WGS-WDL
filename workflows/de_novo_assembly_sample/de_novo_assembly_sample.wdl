@@ -12,6 +12,8 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
+		Int? assembly_threads
+
 		String container_registry
 		Boolean preemptible
 	}
@@ -30,6 +32,7 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
+			assembly_threads = assembly_threads,
 			container_registry = container_registry,
 			preemptible = preemptible
 	}
@@ -53,7 +56,7 @@ workflow de_novo_assembly_sample {
 	call BcftoolsStats.bcftools_stats {
 		input:
 			vcf = zip_index_vcf.zipped_vcf,
-			bam = assemble_genome.asm_bam.data,
+			params = "--samples ~{basename(assemble_genome.asm_bam.data)}",
 			reference = reference.fasta.data,
 			container_registry = container_registry,
 			preemptible = preemptible
@@ -88,18 +91,20 @@ task htsbox {
 	}
 
 	String bam_basename = basename(bam, ".bam")
-	Int threads = 4
+	Int threads = 2
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 3 + 200)
 
 	command <<<
 		set -euo pipefail
 
+		# Ensure the sample is named based on the bam basename (not the full path)
+		cp ~{bam} .
+
 		htsbox pileup \
 			-q20 \
 			-c \
-			-f \
-			~{reference} \
-			~{bam} \
+			-f ~{reference} \
+			~{basename(bam)} \
 		> ~{bam_basename}.htsbox.vcf
 	>>>
 
@@ -110,7 +115,7 @@ task htsbox {
 	runtime {
 		docker: "~{container_registry}/htsbox:b1a46c6"
 		cpu: threads
-		memory: "14 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
