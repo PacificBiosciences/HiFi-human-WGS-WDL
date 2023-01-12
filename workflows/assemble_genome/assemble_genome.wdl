@@ -15,7 +15,7 @@ workflow assemble_genome {
 
 		Int? assembly_threads
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
 
@@ -36,7 +36,7 @@ workflow assemble_genome {
 			input:
 				gfa = gfa,
 				reference_index = reference.fasta.data_index,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -46,7 +46,7 @@ workflow assemble_genome {
 			query_sequences = gfa2fa.zipped_fasta,
 			reference = reference.fasta.data,
 			reference_name = reference.name,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -64,7 +64,9 @@ workflow assemble_genome {
 		hiiasm_extra_params: {help: "[OPTIONAL] Additional parameters to pass to hifiasm assembly"}
 		father_yak: {help: "[OPTIONAL] kmer counts for the father; required if running trio-based assembly"}
 		mother_yak: {help: "[OPTIONAL] kmer counts for the mother; required if running trio-based assembly"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		assembly_threads: {help: "Number of threads to use for de novo assembly"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
 }
 

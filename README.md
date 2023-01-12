@@ -169,10 +169,12 @@ Files associated with `slivar` annotation.
 
 - `String deepvariant_version`: Version of deepvariant to use
 - `DeepVariantModel? deepvariant_model`: Optional alternate DeepVariant model file to use; includes the model, model index, and model metadata
+- `Int? assembly_threads`: Number of threads to use for de novo assembly
 - `String backend`: Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']
 - `String? zones`: Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'
 - `String? aws_spot_queue_arn`: Queue ARN for the spot batch queue; required if backend is set to 'AWS'
 - `String? aws_on_demand_queue_arn`: Queue ARN for the on demand batch queue; required if backend is set to 'AWS'
+- `Boolean preemptible`: If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours. If set to `false`, on-demand VMs will be used for every task.
 
 
 ## Development

@@ -29,7 +29,7 @@
         }
     ]
   },
-  "phase_vcf.spot_runtime_attributes": {
+  "phase_vcf.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",

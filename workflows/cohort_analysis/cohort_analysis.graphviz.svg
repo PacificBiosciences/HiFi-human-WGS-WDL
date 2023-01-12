@@ -10,11 +10,11 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-133.5 336,-133.5 336,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L21C2&#45;gvcf_object</title>
+<title>cluster&#45;scatter&#45;L20C2&#45;gvcf_object</title>
 <polygon fill="none" stroke="black" points="8,-81.5 8,-121.5 123,-121.5 123,-81.5 8,-81.5"/>
 <text text-anchor="middle" x="65.5" y="-106.3" font-family="Times,serif" font-size="14.00">scatter(gvcfs)</text>
 </g>
-<!-- scatter&#45;L21C2&#45;gvcf_object -->
+<!-- scatter&#45;L20C2&#45;gvcf_object -->
 <!-- call&#45;pbsv_call -->
 <g id="node2" class="node">
 <title>call&#45;pbsv_call</title>

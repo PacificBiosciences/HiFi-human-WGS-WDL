@@ -14,7 +14,7 @@ workflow cohort_analysis {
 
 		ReferenceData reference
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	scatter (gvcf_object in gvcfs) {
@@ -29,13 +29,13 @@ workflow cohort_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call glnexus {
@@ -44,7 +44,7 @@ workflow cohort_analysis {
 			gvcfs = gvcf,
 			gvcf_indices = gvcf_index,
 			reference_name = reference.name,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PhaseVcf.phase_vcf {
@@ -52,7 +52,7 @@ workflow cohort_analysis {
 			vcf = {"data": glnexus.vcf, "data_index": glnexus.vcf_index},
 			aligned_bams = aligned_bams,
 			reference = reference,
-			spot_runtime_attributes = spot_runtime_attributes
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -69,7 +69,7 @@ workflow cohort_analysis {
 		svsigs: {help: "pbsv svsig files for each sample and movie bam in the cohort"}
 		gvcfs: {help: "gVCF for each sample in the cohort"}
 		reference: {help: "Reference genome data"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 

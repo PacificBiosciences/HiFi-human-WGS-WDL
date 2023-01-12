@@ -28,7 +28,7 @@
   },
   "deepvariant.deepvariant_version": "String",
   "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
-  "deepvariant.spot_runtime_attributes": {
+  "deepvariant.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",

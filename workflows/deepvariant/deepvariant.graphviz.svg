@@ -10,11 +10,11 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-205.5 435,-205.5 435,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L17C2&#45;bam_object</title>
+<title>cluster&#45;scatter&#45;L20C2&#45;bam_object</title>
 <polygon fill="none" stroke="black" points="8,-153.5 8,-193.5 183,-193.5 183,-153.5 8,-153.5"/>
 <text text-anchor="middle" x="95.5" y="-178.3" font-family="Times,serif" font-size="14.00">scatter(aligned_bams)</text>
 </g>
-<!-- scatter&#45;L17C2&#45;bam_object -->
+<!-- scatter&#45;L20C2&#45;bam_object -->
 <!-- call&#45;deepvariant_make_examples -->
 <g id="node2" class="node">
 <title>call&#45;deepvariant_make_examples</title>

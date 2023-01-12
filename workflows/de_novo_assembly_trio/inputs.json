@@ -36,7 +36,14 @@
     ]
   },
   "de_novo_assembly_trio.assembly_threads": "Int? (optional)",
-  "de_novo_assembly_trio.spot_runtime_attributes": {
+  "de_novo_assembly_trio.default_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  },
+  "de_novo_assembly_trio.on_demand_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",

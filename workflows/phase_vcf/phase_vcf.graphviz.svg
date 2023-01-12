@@ -10,16 +10,16 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-295 451,-295 451,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L18C2&#45;bam_object</title>
+<title>cluster&#45;scatter&#45;L17C2&#45;bam_object</title>
 <polygon fill="none" stroke="black" points="8,-225.5 8,-265.5 183,-265.5 183,-225.5 8,-225.5"/>
 <text text-anchor="middle" x="95.5" y="-250.3" font-family="Times,serif" font-size="14.00">scatter(aligned_bams)</text>
 </g>
 <g id="clust2" class="cluster">
-<title>cluster&#45;scatter&#45;L23C2&#45;chromosome</title>
+<title>cluster&#45;scatter&#45;L22C2&#45;chromosome</title>
 <polygon fill="none" stroke="black" points="191,-136 191,-283 439,-283 439,-136 191,-136"/>
 <text text-anchor="middle" x="315" y="-267.8" font-family="Times,serif" font-size="14.00">scatter(reference.chromosomes)</text>
 </g>
-<!-- scatter&#45;L18C2&#45;bam_object -->
+<!-- scatter&#45;L17C2&#45;bam_object -->
 <!-- call&#45;split_vcf -->
 <g id="node2" class="node">
 <title>call&#45;split_vcf</title>
@@ -50,7 +50,7 @@
 <path fill="none" stroke="black" d="M315,-143.7C315,-135.98 315,-126.71 315,-118.11"/>
 <polygon fill="black" stroke="black" points="318.5,-118.1 315,-108.1 311.5,-118.1 318.5,-118.1"/>
 </g>
-<!-- scatter&#45;L23C2&#45;chromosome -->
+<!-- scatter&#45;L22C2&#45;chromosome -->
 <!-- call&#45;whatshap_stats -->
 <g id="node6" class="node">
 <title>call&#45;whatshap_stats</title>

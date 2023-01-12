@@ -13,21 +13,21 @@ workflow tertiary_analysis {
 
 		SlivarData slivar_data
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	call write_cohort_yaml {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_json = write_json(cohort),
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call write_ped {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_yaml = write_cohort_yaml.cohort_yaml,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call calculate_phrank {
@@ -38,7 +38,7 @@ workflow tertiary_analysis {
 			hpo_dag = slivar_data.hpo_dag,
 			hpo_annotations = slivar_data.hpo_annotations,
 			ensembl_to_hgnc = slivar_data.ensembl_to_hgnc,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call bcftools_norm {
@@ -46,7 +46,7 @@ workflow tertiary_analysis {
 			vcf = small_variant_vcf.data,
 			vcf_index = small_variant_vcf.data_index,
 			reference = reference.fasta.data,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call slivar_small_variant {
@@ -60,7 +60,7 @@ workflow tertiary_analysis {
 			gnomad_af = reference.gnomad_af,
 			hprc_af = reference.hprc_af,
 			gff = reference.gff,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call slivar_compound_hets {
@@ -68,7 +68,7 @@ workflow tertiary_analysis {
 			filtered_vcf = slivar_small_variant.filtered_vcf,
 			filtered_vcf_index = slivar_small_variant.filtered_vcf_index,
 			pedigree = write_ped.pedigree,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call slivar_tsv {
@@ -79,7 +79,7 @@ workflow tertiary_analysis {
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	scatter (vcf_object in reference.population_vcfs) {
@@ -93,13 +93,13 @@ workflow tertiary_analysis {
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
 			gff = reference.gff,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = svpack_filter_annotated.svpack_vcf,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call slivar_svpack_tsv {
@@ -109,7 +109,7 @@ workflow tertiary_analysis {
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
 			phrank_lookup = calculate_phrank.phrank_lookup,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -127,7 +127,7 @@ workflow tertiary_analysis {
 		sv_vcf: {help: "Structural variant VCF to annotate using slivar"}
 		reference: {help: "Reference genome data"}
 		slivar_data: {help: "Data files used for annotation with slivar"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 

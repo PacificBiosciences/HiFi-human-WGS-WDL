@@ -12,14 +12,14 @@ workflow de_novo_assembly_trio {
 
 		Int? assembly_threads
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
 
 	call parse_families {
 		input:
 			cohort_json = write_json(cohort),
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	# Run de_novo_assembly for each child with mother and father samples present in the cohort
@@ -32,7 +32,7 @@ workflow de_novo_assembly_trio {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_father {
 				input:
 					bam = movie_bam,
-					runtime_attributes = spot_runtime_attributes
+					runtime_attributes = default_runtime_attributes
 			}
 		}
 
@@ -40,14 +40,14 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = father.sample_id,
 				reads_fastas = samtools_fasta_father.reads_fasta,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		scatter (movie_bam in mother.movie_bams) {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_mother {
 				input:
 					bam = movie_bam,
-					runtime_attributes = spot_runtime_attributes
+					runtime_attributes = default_runtime_attributes
 			}
 		}
 
@@ -55,7 +55,7 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = mother.sample_id,
 				reads_fastas = samtools_fasta_mother.reads_fasta,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		# Father is haplotype 1; mother is haplotype 2
@@ -71,7 +71,7 @@ workflow de_novo_assembly_trio {
 				call SamtoolsFasta.samtools_fasta as samtools_fasta_child {
 					input:
 						bam = movie_bam,
-						runtime_attributes = spot_runtime_attributes
+						runtime_attributes = default_runtime_attributes
 				}
 			}
 
@@ -88,7 +88,7 @@ workflow de_novo_assembly_trio {
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
 					assembly_threads = assembly_threads,
-					spot_runtime_attributes = spot_runtime_attributes,
+					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = on_demand_runtime_attributes
 			}
 		}
@@ -106,7 +106,9 @@ workflow de_novo_assembly_trio {
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
 		reference: {help: "Reference genome data"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		assembly_threads: {help: "Number of threads to use for de novo assembly"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
 }
 

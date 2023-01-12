@@ -9,7 +9,7 @@ workflow phase_vcf {
 
 		ReferenceData reference
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf.data, ".vcf.gz")
@@ -25,7 +25,7 @@ workflow phase_vcf {
 				vcf = vcf.data,
 				vcf_index = vcf.data_index,
 				region = chromosome,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		call whatshap_phase {
@@ -37,7 +37,7 @@ workflow phase_vcf {
 				aligned_bam_indices = aligned_bam_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -46,7 +46,7 @@ workflow phase_vcf {
 			vcfs = whatshap_phase.phased_vcf,
 			vcf_indices = whatshap_phase.phased_vcf_index,
 			output_vcf_name = "~{vcf_basename}.phased.vcf.gz",
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call whatshap_stats {
@@ -54,7 +54,7 @@ workflow phase_vcf {
 			phased_vcf = bcftools_concat.concatenated_vcf,
 			phased_vcf_index = bcftools_concat.concatenated_vcf_index,
 			reference_chromosome_lengths = reference.chromosome_lengths,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -68,7 +68,7 @@ workflow phase_vcf {
 		vcf: {help: "VCF to phase"}
 		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with the sample"}
 		reference: {help: "Reference genome data"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 

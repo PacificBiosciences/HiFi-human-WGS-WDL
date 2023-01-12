@@ -9,7 +9,7 @@ workflow smrtcell_analysis {
 
 		ReferenceData reference
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -20,14 +20,14 @@ workflow smrtcell_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		call Mosdepth.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		call pbsv_discover {
@@ -35,7 +35,7 @@ workflow smrtcell_analysis {
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
 				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 
 		IndexData aligned_bam = {
@@ -59,7 +59,7 @@ workflow smrtcell_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 

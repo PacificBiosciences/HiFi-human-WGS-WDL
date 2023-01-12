@@ -27,7 +27,7 @@
         }
     ]
   },
-  "smrtcell_analysis.spot_runtime_attributes": {
+  "smrtcell_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",

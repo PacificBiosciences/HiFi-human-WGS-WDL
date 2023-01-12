@@ -14,7 +14,7 @@ workflow de_novo_assembly_sample {
 
 		Int? assembly_threads
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
 
@@ -22,7 +22,7 @@ workflow de_novo_assembly_sample {
 		call SamtoolsFasta.samtools_fasta {
 			input:
 				bam = movie_bam,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -32,7 +32,7 @@ workflow de_novo_assembly_sample {
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
 			assembly_threads = assembly_threads,
-			spot_runtime_attributes = spot_runtime_attributes,
+			default_runtime_attributes = default_runtime_attributes,
 			on_demand_runtime_attributes = on_demand_runtime_attributes
 	}
 
@@ -41,13 +41,13 @@ workflow de_novo_assembly_sample {
 			bam = assemble_genome.asm_bam.data,
 			bam_index = assemble_genome.asm_bam.data_index,
 			reference = reference.fasta.data,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = htsbox.htsbox_vcf,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -55,7 +55,7 @@ workflow de_novo_assembly_sample {
 			vcf = zip_index_vcf.zipped_vcf,
 			params = "--samples ~{basename(assemble_genome.asm_bam.data)}",
 			reference = reference.fasta.data,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -71,7 +71,9 @@ workflow de_novo_assembly_sample {
 	parameter_meta {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		assembly_threads: {help: "Number of threads to use for de novo assembly"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
 }
 

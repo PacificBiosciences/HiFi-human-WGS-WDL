@@ -18,14 +18,14 @@ workflow sample_analysis {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-		RuntimeAttributes spot_runtime_attributes
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	call SmrtcellAnalysis.smrtcell_analysis {
 		input:
 			sample = sample,
 			reference = reference,
-			spot_runtime_attributes = spot_runtime_attributes
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	call DeepVariant.deepvariant {
@@ -35,7 +35,7 @@ workflow sample_analysis {
 			reference = reference,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
-			spot_runtime_attributes = spot_runtime_attributes
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -43,13 +43,13 @@ workflow sample_analysis {
 			vcf = deepvariant.vcf.data,
 			params = "--apply-filters PASS --samples ~{sample.sample_id}",
 			reference = reference.fasta.data,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call bcftools_roh {
 		input:
 			vcf = deepvariant.vcf.data,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PbsvCall.pbsv_call {
@@ -59,13 +59,13 @@ workflow sample_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PhaseVcf.phase_vcf {
@@ -73,7 +73,7 @@ workflow sample_analysis {
 			vcf = deepvariant.vcf,
 			aligned_bams = smrtcell_analysis.aligned_bams,
 			reference = reference,
-			spot_runtime_attributes = spot_runtime_attributes
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	scatter (bam_object in smrtcell_analysis.aligned_bams) {
@@ -85,7 +85,7 @@ workflow sample_analysis {
 				aligned_bam_index = bam_object.data_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
-				runtime_attributes = spot_runtime_attributes
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -93,14 +93,14 @@ workflow sample_analysis {
 		input:
 			bams = whatshap_haplotag.haplotagged_bam,
 			output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call Mosdepth.mosdepth {
 		input:
 			aligned_bam = merge_bams.merged_bam,
 			aligned_bam_index = merge_bams.merged_bam_index,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call trgt {
@@ -110,7 +110,7 @@ workflow sample_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call trgt_coverage_dropouts {
@@ -119,7 +119,7 @@ workflow sample_analysis {
 			bam_index = merge_bams.merged_bam_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call cpg_pileup {
@@ -129,7 +129,7 @@ workflow sample_analysis {
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -165,7 +165,7 @@ workflow sample_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		spot_runtime_attributes: {help: "RuntimeAttributes for spot (preemptible) tasks"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 

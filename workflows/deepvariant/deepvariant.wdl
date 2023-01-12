@@ -6,11 +6,13 @@ workflow deepvariant {
 	input {
 		String sample_id
 		Array[IndexData] aligned_bams
+
 		ReferenceData reference
+
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
-		
-		RuntimeAttributes spot_runtime_attributes
+
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	Int deepvariant_threads = 64
@@ -29,7 +31,7 @@ workflow deepvariant {
 			reference_index = reference.fasta.data_index,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call deepvariant_call_variants {
@@ -40,7 +42,7 @@ workflow deepvariant {
 			deepvariant_model = deepvariant_model,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call deepvariant_postprocess_variants {
@@ -53,15 +55,23 @@ workflow deepvariant {
 			reference_name = reference.name,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
-			runtime_attributes = spot_runtime_attributes
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
 		IndexData vcf = {"data": deepvariant_postprocess_variants.vcf, "data_index": deepvariant_postprocess_variants.vcf_index}
 		IndexData gvcf = {"data": deepvariant_postprocess_variants.gvcf, "data_index": deepvariant_postprocess_variants.gvcf_index}
 	}
-}
 
+	parameter_meta {
+		sample_id: {help: "Sample ID; used for naming files"}
+		aligned_bams: {help: "Bam and index aligned to the reference genome for each movie associated with all samples in the cohort"}
+		reference: {help: "Reference genome data"}
+		deepvariant_version: {help: "Version of deepvariant to use"}
+		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+	}
+}
 
 task deepvariant_make_examples {
 	input {
@@ -74,7 +84,7 @@ task deepvariant_make_examples {
 
 		Int deepvariant_threads
 		String deepvariant_version
-		
+
 		RuntimeAttributes runtime_attributes
 	}
 
@@ -137,7 +147,7 @@ task deepvariant_call_variants {
 		DeepVariantModel? deepvariant_model
 		Int deepvariant_threads
 		String deepvariant_version
-		
+
 		RuntimeAttributes runtime_attributes
 	}
 
@@ -187,7 +197,7 @@ task deepvariant_postprocess_variants {
 
 		Int deepvariant_threads
 		String deepvariant_version
-		
+
 		RuntimeAttributes runtime_attributes
 	}
 

@@ -33,7 +33,7 @@
         }
     ]
   },
-  "cohort_analysis.spot_runtime_attributes": {
+  "cohort_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",
