@@ -132,7 +132,7 @@ task parse_families {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/parse_cohort:0.0.1"
+		docker: "~{runtime_attributes.container_registry}/parse_cohort:1.0.0"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
