@@ -392,7 +392,7 @@ task slivar_small_variant {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar:b1a46c6"
 		cpu: threads
-		memory: "4 GB"
+		memory: "16 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
