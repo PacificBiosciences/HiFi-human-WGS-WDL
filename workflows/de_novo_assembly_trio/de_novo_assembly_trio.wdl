@@ -84,11 +84,7 @@ workflow de_novo_assembly_trio {
 			call AssembleGenome.assemble_genome {
 				input:
 					sample_id = "~{cohort.cohort_id}.~{child.sample_id}",
-					reads_fastas = flatten([
-							samtools_fasta_child.reads_fasta,
-							samtools_fasta_father.reads_fasta,
-							samtools_fasta_mother.reads_fasta
-						]),
+					reads_fastas = samtools_fasta_child.reads_fasta,
 					reference = reference,
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
