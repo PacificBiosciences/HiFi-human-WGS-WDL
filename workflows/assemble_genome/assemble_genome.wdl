@@ -68,6 +68,7 @@ workflow assemble_genome {
 	}
 }
 
+# Note that this task will run ~25% faster on intel vs. AMD processors
 task hifiasm_assemble {
 	input {
 		String sample_id
