@@ -24,7 +24,6 @@
   "assemble_genome.hifiasm_extra_params": "String? (optional)",
   "assemble_genome.father_yak": "File? (optional)",
   "assemble_genome.mother_yak": "File? (optional)",
-  "assemble_genome.assembly_threads": "Int? (optional)",
   "assemble_genome.container_registry": "String",
   "assemble_genome.preemptible": "Boolean"
 }

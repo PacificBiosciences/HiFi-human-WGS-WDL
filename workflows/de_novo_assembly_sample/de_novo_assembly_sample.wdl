@@ -12,8 +12,6 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
-		Int? assembly_threads
-
 		String container_registry
 		Boolean preemptible
 	}
@@ -32,7 +30,6 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
-			assembly_threads = assembly_threads,
 			container_registry = container_registry,
 			preemptible = preemptible
 	}

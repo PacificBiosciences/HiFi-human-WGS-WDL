@@ -10,27 +10,27 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-356 576,-356 576,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L28C2&#45;family</title>
+<title>cluster&#45;scatter&#45;L26C2&#45;family</title>
 <polygon fill="none" stroke="black" points="8,-8 8,-308 564,-308 564,-8 8,-8"/>
 <text text-anchor="middle" x="286" y="-292.8" font-family="Times,serif" font-size="14.00">scatter(parse_families.families)</text>
 </g>
 <g id="clust2" class="cluster">
-<title>cluster&#45;scatter&#45;L32C3&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L30C3&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="344,-202 344,-277 556,-277 556,-202 344,-202"/>
 <text text-anchor="middle" x="450" y="-261.8" font-family="Times,serif" font-size="14.00">scatter(father.movie_bams)</text>
 </g>
 <g id="clust3" class="cluster">
-<title>cluster&#45;scatter&#45;L49C3&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L47C3&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="116,-202 116,-277 336,-277 336,-202 116,-202"/>
 <text text-anchor="middle" x="226" y="-261.8" font-family="Times,serif" font-size="14.00">scatter(mother.movie_bams)</text>
 </g>
 <g id="clust4" class="cluster">
-<title>cluster&#45;scatter&#45;L72C3&#45;child_index</title>
+<title>cluster&#45;scatter&#45;L70C3&#45;child_index</title>
 <polygon fill="none" stroke="black" points="16,-16 16,-194 246,-194 246,-16 16,-16"/>
 <text text-anchor="middle" x="131" y="-178.8" font-family="Times,serif" font-size="14.00">scatter(family.child_indices)</text>
 </g>
 <g id="clust5" class="cluster">
-<title>cluster&#45;scatter&#45;L75C4&#45;movie_bam</title>
+<title>cluster&#45;scatter&#45;L73C4&#45;movie_bam</title>
 <polygon fill="none" stroke="black" points="34,-88 34,-163 238,-163 238,-88 34,-88"/>
 <text text-anchor="middle" x="136" y="-147.8" font-family="Times,serif" font-size="14.00">scatter(child.movie_bams)</text>
 </g>
@@ -40,10 +40,10 @@
 <polygon fill="none" stroke="black" points="109.5,-346 2.5,-346 2.5,-322 109.5,-322 121.5,-334 109.5,-346"/>
 <text text-anchor="middle" x="62" y="-330.3" font-family="Times,serif" font-size="14.00">parse_families</text>
 </g>
-<!-- scatter&#45;L28C2&#45;family -->
-<!-- call&#45;parse_families&#45;&gt;scatter&#45;L28C2&#45;family -->
+<!-- scatter&#45;L26C2&#45;family -->
+<!-- call&#45;parse_families&#45;&gt;scatter&#45;L26C2&#45;family -->
 <g id="edge1" class="edge">
-<title>call&#45;parse_families&#45;&gt;scatter&#45;L28C2&#45;family</title>
+<title>call&#45;parse_families&#45;&gt;scatter&#45;L26C2&#45;family</title>
 <path fill="none" stroke="black" d="M62,-315.83C62,-315.67 62,-315.52 62,-315.37"/>
 <polygon fill="black" stroke="black" points="65.5,-318 62,-308 58.5,-318 65.5,-318"/>
 </g>
@@ -65,7 +65,7 @@
 <path fill="none" stroke="black" d="M464.95,-209.99C469.13,-191.98 475.79,-163.29 480.7,-142.15"/>
 <polygon fill="black" stroke="black" points="484.16,-142.7 483.01,-132.17 477.34,-141.12 484.16,-142.7"/>
 </g>
-<!-- scatter&#45;L32C3&#45;movie_bam -->
+<!-- scatter&#45;L30C3&#45;movie_bam -->
 <!-- call&#45;assemble_genome -->
 <g id="node10" class="node">
 <title>call&#45;assemble_genome</title>
@@ -96,7 +96,7 @@
 <path fill="none" stroke="black" d="M250.67,-209.99C265.6,-191.41 289.68,-161.45 306.79,-140.15"/>
 <polygon fill="black" stroke="black" points="309.67,-142.16 313.2,-132.17 304.21,-137.77 309.67,-142.16"/>
 </g>
-<!-- scatter&#45;L49C3&#45;movie_bam -->
+<!-- scatter&#45;L47C3&#45;movie_bam -->
 <!-- call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome -->
 <g id="edge4" class="edge">
 <title>call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome</title>
@@ -115,7 +115,7 @@
 <path fill="none" stroke="black" d="M152.2,-95.7C154.1,-87.9 156.38,-78.51 158.48,-69.83"/>
 <polygon fill="black" stroke="black" points="161.89,-70.65 160.85,-60.1 155.08,-69 161.89,-70.65"/>
 </g>
-<!-- scatter&#45;L75C4&#45;movie_bam -->
-<!-- scatter&#45;L72C3&#45;child_index -->
+<!-- scatter&#45;L73C4&#45;movie_bam -->
+<!-- scatter&#45;L70C3&#45;child_index -->
 </g>
 </svg>

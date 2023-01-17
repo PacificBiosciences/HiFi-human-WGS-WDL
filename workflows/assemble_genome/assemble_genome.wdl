@@ -13,8 +13,6 @@ workflow assemble_genome {
 		File? father_yak
 		File? mother_yak
 
-		Int? assembly_threads
-
 		String container_registry
 		Boolean preemptible
 	}
@@ -26,7 +24,6 @@ workflow assemble_genome {
 			extra_params = hifiasm_extra_params,
 			father_yak = father_yak,
 			mother_yak = mother_yak,
-			assembly_threads = assembly_threads,
 			container_registry = container_registry,
 			preemptible = preemptible
 	}
@@ -80,14 +77,12 @@ task hifiasm_assemble {
 		File? father_yak
 		File? mother_yak
 
-		Int? assembly_threads
-
 		String container_registry
 		Boolean preemptible
 	}
 
 	String prefix = "~{sample_id}.asm"
-	Int threads = select_first([assembly_threads, 48])
+	Int threads = 48
 	Int mem_gb = threads * 6
 	Int disk_size = ceil((size(reads_fastas[0], "GB") * length(reads_fastas)) * 2 + 20)
 

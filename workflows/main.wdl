@@ -17,8 +17,6 @@ workflow humanwgs {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-		Int? assembly_threads
-
 		String container_registry
 		Boolean preemptible
 	}
@@ -39,7 +37,6 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
-					assembly_threads = assembly_threads,
 					container_registry = container_registry,
 					preemptible = preemptible
 			}
@@ -63,7 +60,6 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
-					assembly_threads = assembly_threads,
 					container_registry = container_registry,
 					preemptible = preemptible
 			}
