@@ -165,7 +165,6 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		assembly_threads: {help: "Number of threads to use for de novo assembly"}
 		backend: {help: "Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']"}
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
 		aws_spot_queue_arn: {help: "Queue ARN for the spot batch queue; required if backend is set to 'AWS'"}

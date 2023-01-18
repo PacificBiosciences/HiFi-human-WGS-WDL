@@ -99,7 +99,6 @@ workflow de_novo_assembly_trio {
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
 		reference: {help: "Reference genome data"}
-		assembly_threads: {help: "Number of threads to use for de novo assembly"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}

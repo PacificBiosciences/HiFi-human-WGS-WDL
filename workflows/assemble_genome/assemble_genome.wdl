@@ -13,8 +13,6 @@ workflow assemble_genome {
 		File? father_yak
 		File? mother_yak
 
-		Int? assembly_threads
-
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
@@ -63,7 +61,6 @@ workflow assemble_genome {
 		hiiasm_extra_params: {help: "[OPTIONAL] Additional parameters to pass to hifiasm assembly"}
 		father_yak: {help: "[OPTIONAL] kmer counts for the father; required if running trio-based assembly"}
 		mother_yak: {help: "[OPTIONAL] kmer counts for the mother; required if running trio-based assembly"}
-		assembly_threads: {help: "Number of threads to use for de novo assembly"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
