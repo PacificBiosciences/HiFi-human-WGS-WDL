@@ -46,14 +46,8 @@
   },
   "humanwgs.deepvariant_version": "String",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
-<<<<<<< HEAD
-  "humanwgs.assembly_threads": "Int? (optional)",
   "humanwgs.backend": "String ['GCP', 'Azure', or 'AWS']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",
   "humanwgs.aws_on_demand_queue_arn": "String? (optional); required if backend is set to 'AWS'"
-=======
-  "humanwgs.container_registry": "String",
-  "humanwgs.preemptible": "Boolean"
->>>>>>> initial_workflow_structure
 }

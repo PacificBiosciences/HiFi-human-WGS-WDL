@@ -35,8 +35,6 @@
         }
     ]
   },
-<<<<<<< HEAD
-  "de_novo_assembly_trio.assembly_threads": "Int? (optional)",
   "de_novo_assembly_trio.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
@@ -51,8 +49,4 @@
     "queue_arn": "String",
     "container_registry": "String"
   }
-=======
-  "de_novo_assembly_trio.container_registry": "String",
-  "de_novo_assembly_trio.preemptible": "Boolean"
->>>>>>> initial_workflow_structure
 }

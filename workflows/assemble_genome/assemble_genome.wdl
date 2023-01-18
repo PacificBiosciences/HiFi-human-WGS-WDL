@@ -13,15 +13,10 @@ workflow assemble_genome {
 		File? father_yak
 		File? mother_yak
 
-<<<<<<< HEAD
 		Int? assembly_threads
 
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
-=======
-		String container_registry
-		Boolean preemptible
->>>>>>> initial_workflow_structure
 	}
 
 	call hifiasm_assemble {
@@ -31,13 +26,7 @@ workflow assemble_genome {
 			extra_params = hifiasm_extra_params,
 			father_yak = father_yak,
 			mother_yak = mother_yak,
-<<<<<<< HEAD
-			assembly_threads = assembly_threads,
 			runtime_attributes = on_demand_runtime_attributes
-=======
-			container_registry = container_registry,
-			preemptible = preemptible
->>>>>>> initial_workflow_structure
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {
@@ -90,14 +79,7 @@ task hifiasm_assemble {
 		File? father_yak
 		File? mother_yak
 
-<<<<<<< HEAD
-		Int? assembly_threads
-
 		RuntimeAttributes runtime_attributes
-=======
-		String container_registry
-		Boolean preemptible
->>>>>>> initial_workflow_structure
 	}
 
 	String prefix = "~{sample_id}.asm"

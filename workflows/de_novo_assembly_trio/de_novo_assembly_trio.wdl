@@ -10,15 +10,8 @@ workflow de_novo_assembly_trio {
 
 		ReferenceData reference
 
-<<<<<<< HEAD
-		Int? assembly_threads
-
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
-=======
-		String container_registry
-		Boolean preemptible
->>>>>>> initial_workflow_structure
 	}
 
 	call parse_families {
@@ -88,14 +81,8 @@ workflow de_novo_assembly_trio {
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
-<<<<<<< HEAD
-					assembly_threads = assembly_threads,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = on_demand_runtime_attributes
-=======
-					container_registry = container_registry,
-					preemptible = preemptible
->>>>>>> initial_workflow_structure
 			}
 		}
 	}

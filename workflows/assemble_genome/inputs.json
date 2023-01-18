@@ -24,8 +24,6 @@
   "assemble_genome.hifiasm_extra_params": "String? (optional)",
   "assemble_genome.father_yak": "File? (optional)",
   "assemble_genome.mother_yak": "File? (optional)",
-<<<<<<< HEAD
-  "assemble_genome.assembly_threads": "Int? (optional)",
   "assemble_genome.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
@@ -40,8 +38,4 @@
     "queue_arn": "String",
     "container_registry": "String"
   }
-=======
-  "assemble_genome.container_registry": "String",
-  "assemble_genome.preemptible": "Boolean"
->>>>>>> initial_workflow_structure
 }

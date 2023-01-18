@@ -18,17 +18,12 @@ workflow humanwgs {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-<<<<<<< HEAD
-		Int? assembly_threads
-
 		# Backend configuration
 		String backend
 		String? zones
 		String? aws_spot_queue_arn
 		String? aws_on_demand_queue_arn
-=======
-		String container_registry
->>>>>>> initial_workflow_structure
+
 		Boolean preemptible
 	}
 
@@ -57,14 +52,8 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
-<<<<<<< HEAD
-					assembly_threads = assembly_threads,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
-=======
-					container_registry = container_registry,
-					preemptible = preemptible
->>>>>>> initial_workflow_structure
 			}
 		}
 	}
@@ -85,14 +74,8 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
-<<<<<<< HEAD
-					assembly_threads = assembly_threads,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
-=======
-					container_registry = container_registry,
-					preemptible = preemptible
->>>>>>> initial_workflow_structure
 			}
 		}
 	}
