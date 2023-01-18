@@ -10,6 +10,7 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-484 737.44,-484 737.44,4 -4,4"/>
 <g id="clust1" class="cluster">
+<<<<<<< HEAD
 <title>cluster&#45;scatter&#45;L41C2&#45;sample</title>
 <polygon fill="none" stroke="black" points="8,-250 8,-364 429,-364 429,-250 8,-250"/>
 <text text-anchor="middle" x="218.5" y="-348.8" font-family="Times,serif" font-size="14.00">scatter(cohort.samples)</text>
@@ -28,6 +29,26 @@
 <title>cluster&#45;if&#45;L74C3</title>
 <polygon fill="none" stroke="black" points="427,-136 427,-211 709,-211 709,-136 427,-136"/>
 <text text-anchor="middle" x="568" y="-195.8" font-family="Times,serif" font-size="14.00">if(cohort.run_de_novo_assembly_trio)</text>
+=======
+<title>cluster&#45;scatter&#45;L24C2&#45;sample</title>
+<polygon fill="none" stroke="black" points="77.5,-250 77.5,-364 508.5,-364 508.5,-250 77.5,-250"/>
+<text text-anchor="middle" x="293" y="-348.8" font-family="Times,serif" font-size="14.00">scatter(cohort.samples)</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster&#45;if&#45;L35C3</title>
+<polygon fill="none" stroke="black" points="245.5,-258 245.5,-333 500.5,-333 500.5,-258 245.5,-258"/>
+<text text-anchor="middle" x="373" y="-317.8" font-family="Times,serif" font-size="14.00">if(sample.run_de_novo_assembly)</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster&#45;if&#45;L46C2</title>
+<polygon fill="none" stroke="black" points="80.5,-128 80.5,-242 533.5,-242 533.5,-128 80.5,-128"/>
+<text text-anchor="middle" x="307" y="-226.8" font-family="Times,serif" font-size="14.00">if(length(cohort.samples) &gt; 1)</text>
+</g>
+<g id="clust4" class="cluster">
+<title>cluster&#45;if&#45;L58C3</title>
+<polygon fill="none" stroke="black" points="243.5,-136 243.5,-211 525.5,-211 525.5,-136 243.5,-136"/>
+<text text-anchor="middle" x="384.5" y="-195.8" font-family="Times,serif" font-size="14.00">if(cohort.run_de_novo_assembly_trio)</text>
+>>>>>>> initial_workflow_structure
 </g>
 <!-- call&#45;backend_configuration -->
 <g id="node1" class="node">
@@ -42,9 +63,37 @@
 </g>
 <!-- call&#45;backend_configuration&#45;&gt;decl&#45;default_runtime_attributes -->
 <g id="edge1" class="edge">
+<<<<<<< HEAD
 <title>call&#45;backend_configuration&#45;&gt;decl&#45;default_runtime_attributes</title>
 <path fill="none" stroke="black" d="M449,-443.7C449,-435.98 449,-426.71 449,-418.11"/>
 <polygon fill="black" stroke="black" points="452.5,-418.1 449,-408.1 445.5,-418.1 452.5,-418.1"/>
+=======
+<title>call&#45;sample_analysis&#45;&gt;call&#45;cohort_analysis</title>
+<path fill="none" stroke="black" d="M171.5,-265.81C171.5,-246.11 171.5,-213.58 171.5,-190.39"/>
+<polygon fill="black" stroke="black" points="175,-190.16 171.5,-180.16 168,-190.16 175,-190.16"/>
+</g>
+<!-- decl&#45;slivar_small_variant_input_vcf -->
+<g id="node9" class="node">
+<title>decl&#45;slivar_small_variant_input_vcf</title>
+<text text-anchor="middle" x="115.5" y="-86.3" font-family="Times,serif" font-size="14.00">slivar_small_variant_input_vcf</text>
+</g>
+<!-- call&#45;sample_analysis&#45;&gt;decl&#45;slivar_small_variant_input_vcf -->
+<g id="edge3" class="edge">
+<title>call&#45;sample_analysis&#45;&gt;decl&#45;slivar_small_variant_input_vcf</title>
+<path fill="none" stroke="black" d="M133.45,-265.96C121.65,-260.75 108.57,-255.07 96.5,-250 87.67,-246.29 81.87,-249.93 76.5,-242 48.09,-200.04 56.5,-174.55 76.5,-128 78.43,-123.52 81.19,-119.33 84.37,-115.49"/>
+<polygon fill="black" stroke="black" points="87,-117.8 91.35,-108.14 81.92,-112.98 87,-117.8"/>
+</g>
+<!-- decl&#45;slivar_sv_input_vcf -->
+<g id="node10" class="node">
+<title>decl&#45;slivar_sv_input_vcf</title>
+<text text-anchor="middle" x="324.5" y="-86.3" font-family="Times,serif" font-size="14.00">slivar_sv_input_vcf</text>
+</g>
+<!-- call&#45;sample_analysis&#45;&gt;decl&#45;slivar_sv_input_vcf -->
+<g id="edge5" class="edge">
+<title>call&#45;sample_analysis&#45;&gt;decl&#45;slivar_sv_input_vcf</title>
+<path fill="none" stroke="black" d="M200.82,-265.87C212.99,-259.65 227.52,-253.34 241.5,-250 257.07,-246.29 518.34,-253.47 529.5,-242 564.83,-205.68 561.99,-166.88 529.5,-128 514.07,-109.53 459.28,-100.27 410.23,-95.63"/>
+<polygon fill="black" stroke="black" points="410.46,-92.13 400.18,-94.73 409.83,-99.11 410.46,-92.13"/>
+>>>>>>> initial_workflow_structure
 </g>
 <!-- call&#45;de_novo_assembly_sample -->
 <g id="node4" class="node">
@@ -52,11 +101,27 @@
 <polygon fill="none" stroke="black" points="259,-296 65,-296 65,-272 259,-272 271,-284 259,-296"/>
 <text text-anchor="middle" x="168" y="-280.3" font-family="Times,serif" font-size="14.00">de_novo_assembly_sample</text>
 </g>
+<<<<<<< HEAD
 <!-- call&#45;backend_configuration&#45;&gt;call&#45;de_novo_assembly_sample -->
 <g id="edge4" class="edge">
 <title>call&#45;backend_configuration&#45;&gt;call&#45;de_novo_assembly_sample</title>
 <path fill="none" stroke="black" d="M407.79,-443.89C385.96,-434.28 358.97,-421.51 336,-408 284.37,-377.63 229.2,-335.05 196.7,-308.78"/>
 <polygon fill="black" stroke="black" points="198.51,-305.75 188.54,-302.15 194.09,-311.18 198.51,-305.75"/>
+=======
+<!-- if&#45;L35C3 -->
+<!-- scatter&#45;L24C2&#45;sample -->
+<!-- call&#45;cohort_analysis&#45;&gt;decl&#45;slivar_small_variant_input_vcf -->
+<g id="edge2" class="edge">
+<title>call&#45;cohort_analysis&#45;&gt;decl&#45;slivar_small_variant_input_vcf</title>
+<path fill="none" stroke="black" d="M157.66,-143.7C151.01,-135.39 142.92,-125.28 135.61,-116.14"/>
+<polygon fill="black" stroke="black" points="138.16,-113.73 129.18,-108.1 132.7,-118.1 138.16,-113.73"/>
+</g>
+<!-- call&#45;cohort_analysis&#45;&gt;decl&#45;slivar_sv_input_vcf -->
+<g id="edge4" class="edge">
+<title>call&#45;cohort_analysis&#45;&gt;decl&#45;slivar_sv_input_vcf</title>
+<path fill="none" stroke="black" d="M205.96,-143.93C216.67,-138.73 228.53,-133.05 239.5,-128 250.92,-122.75 263.29,-117.25 274.96,-112.16"/>
+<polygon fill="black" stroke="black" points="276.36,-115.36 284.14,-108.17 273.57,-108.94 276.36,-115.36"/>
+>>>>>>> initial_workflow_structure
 </g>
 <!-- call&#45;de_novo_assembly_trio -->
 <g id="node8" class="node">
@@ -64,11 +129,21 @@
 <polygon fill="none" stroke="black" points="672,-174 504,-174 504,-150 672,-150 684,-162 672,-174"/>
 <text text-anchor="middle" x="594" y="-158.3" font-family="Times,serif" font-size="14.00">de_novo_assembly_trio</text>
 </g>
+<<<<<<< HEAD
 <!-- call&#45;backend_configuration&#45;&gt;call&#45;de_novo_assembly_trio -->
 <g id="edge8" class="edge">
 <title>call&#45;backend_configuration&#45;&gt;call&#45;de_novo_assembly_trio</title>
 <path fill="none" stroke="black" d="M513.94,-443.97C532.51,-435.99 550.96,-424.48 563,-408 611.07,-342.17 604.84,-238.99 598.45,-190.25"/>
 <polygon fill="black" stroke="black" points="601.89,-189.57 597.02,-180.16 594.96,-190.55 601.89,-189.57"/>
+=======
+<!-- if&#45;L58C3 -->
+<!-- if&#45;L46C2 -->
+<!-- call&#45;tertiary_analysis -->
+<g id="node11" class="node">
+<title>call&#45;tertiary_analysis</title>
+<polygon fill="none" stroke="black" points="275.5,-30 151.5,-30 151.5,-6 275.5,-6 287.5,-18 275.5,-30"/>
+<text text-anchor="middle" x="219.5" y="-14.3" font-family="Times,serif" font-size="14.00">tertiary_analysis</text>
+>>>>>>> initial_workflow_structure
 </g>
 <!-- call&#45;sample_analysis -->
 <g id="node3" class="node">

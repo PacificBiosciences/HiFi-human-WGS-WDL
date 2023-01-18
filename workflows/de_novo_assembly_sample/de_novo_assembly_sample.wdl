@@ -12,10 +12,15 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
+<<<<<<< HEAD
 		Int? assembly_threads
 
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
+=======
+		String container_registry
+		Boolean preemptible
+>>>>>>> initial_workflow_structure
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -31,9 +36,14 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
+<<<<<<< HEAD
 			assembly_threads = assembly_threads,
 			default_runtime_attributes = default_runtime_attributes,
 			on_demand_runtime_attributes = on_demand_runtime_attributes
+=======
+			container_registry = container_registry,
+			preemptible = preemptible
+>>>>>>> initial_workflow_structure
 	}
 
 	call htsbox {
