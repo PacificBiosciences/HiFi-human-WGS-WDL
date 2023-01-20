@@ -30,9 +30,9 @@
     "gff": "File",
     "population_vcfs": [
       {
-          "data": "File",
-          "data_index": "File"
-        }
+        "data": "File",
+        "data_index": "File"
+      }
     ]
   },
   "humanwgs.slivar_data": {

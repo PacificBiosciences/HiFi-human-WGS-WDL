@@ -118,6 +118,20 @@ Assembles a genome using `hifiasm`. These steps are used in both single-sample- 
 ![Genome assembly workflow diagram](workflows/assemble_genome/assemble_genome.graphviz.svg)
 
 
+
+## Reference datasets and associated workflow files
+
+Reference datasets are hosted publicly for use in the pipeline. For data locations, see `workflows/inputs.${cloud_name}.json`.
+
+### Reference data hosted in Azure
+
+To use Azure reference data, add the following line to your `containers-to-mount` file in your Cromwell on Azure installation ([more info here](https://github.com/microsoft/CromwellOnAzure/blob/develop/docs/troubleshooting-guide.md#use-input-data-files-from-an-existing-azure-storage-account-that-my-lab-or-team-is-currently-using)):
+
+`https://datasetpbrarediseases.blob.core.windows.net/dataset?si=public&spr=https&sv=2021-06-08&sr=c&sig=o6OkcqWWlGcGOOr8I8gCA%2BJwlpA%2FYsRz0DMB8CCtCJk%3D`
+
+The [Azure input file template](workflows/inputs.azure.json) has paths to the reference files in this blob storage prefilled.
+
+
 ## Workflow inputs
 
 ### `Cohort cohort`
@@ -171,6 +185,7 @@ Files associated with `slivar` annotation.
 - `DeepVariantModel? deepvariant_model`: Optional alternate DeepVariant model file to use; includes the model, model index, and model metadata
 - `String container_registry`: Container registry where docker images are hosted
 - `Boolean preemptible`: Whether or not to run tasks in preemptible (spot) VMs
+
 
 
 ## Development
