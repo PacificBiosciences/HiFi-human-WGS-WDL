@@ -49,7 +49,7 @@
       "chrM"
     ],
     "chromosome_lengths": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
-    "tandem_repeat_bed": "File",
+    "tandem_repeat_bed": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "/datasetpbrarediseases/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "gnomad_af": "/datasetpbrarediseases/dataset/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
     "hprc_af": "/datasetpbrarediseases/dataset/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
