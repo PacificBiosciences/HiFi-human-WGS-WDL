@@ -25,7 +25,7 @@ Calls all steps of the full analysis.
 
 ### Sample analysis (`sample_analysis`)
 
-Run for each sample in the cohort. [Aligns reads from each movie to a reference](smrt-cell-analysis-smrtcell_analysis). Calls and phases small and structural variants.
+Run for each sample in the cohort. [Aligns reads from each movie to a reference](#smrt-cell-analysis-smrtcell_analysis). Calls and phases small and structural variants.
 
 **Workflow**: [workflows/sample_analysis/sample_analysis.wdl](workflows/sample_analysis/sample_analysis.wdl)
 
