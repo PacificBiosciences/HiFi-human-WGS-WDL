@@ -192,5 +192,5 @@ Files associated with `slivar` annotation.
 
 Install commit hooks by setting `git config core.hooksPath hooks/`.
 
-`python3` is required to run the pre-commit hook; install required libraries using `python3 -m pip install -r hooks/scripts/requirements.txt`.
+`python3` is required to run the pre-commit hook; install required libraries using `python3 -m pip install -r hooks/scripts/requirements.txt`. The `graphviz` package may also be required (Mac: `brew install graphviz`; Debian/Ubuntu: `sudo apt-get install graphviz`).
 The pre-commit hook will generate a workfow graph visualization for each workflow in the `workflows` directory with the '.wdl' extension that is located in a directory that shares its name (e.g. `workflows/slivar/slivar.wdl` would be included, and `workflows/common/structs.wdl` would be excluded). A visualization for `workflows/main.wdl` will also be generated.
