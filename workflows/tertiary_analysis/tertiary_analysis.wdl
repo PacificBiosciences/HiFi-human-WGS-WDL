@@ -583,7 +583,7 @@ task svpack_filter_annotated {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/svpack:b1a46c6"
 		cpu: 1
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
