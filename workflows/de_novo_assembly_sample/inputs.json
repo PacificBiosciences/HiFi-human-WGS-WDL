@@ -1,0 +1,33 @@
+{
+  "de_novo_assembly_sample.sample": {
+    "sample_id": "String",
+    "movie_bams": "Array[File]",
+    "sex": "String",
+    "affected": "Boolean",
+    "mother_id": "String?",
+    "father_id": "String?",
+    "run_de_novo_assembly": "Boolean"
+  },
+  "de_novo_assembly_sample.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
+  },
+  "de_novo_assembly_sample.container_registry": "String",
+  "de_novo_assembly_sample.preemptible": "Boolean"
+}

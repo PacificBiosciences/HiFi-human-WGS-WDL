@@ -1,0 +1,34 @@
+{
+  "sample_analysis.sample": {
+    "sample_id": "String",
+    "movie_bams": "Array[File]",
+    "sex": "String",
+    "affected": "Boolean",
+    "father_id": "String?",
+    "mother_id": "String?"
+  },
+  "sample_analysis.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
+  },
+  "sample_analysis.deepvariant_version": "String",
+  "sample_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "sample_analysis.container_registry": "String",
+  "sample_analysis.preemptible": "Boolean"
+}

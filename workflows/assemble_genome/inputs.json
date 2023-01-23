@@ -1,0 +1,29 @@
+{
+  "assemble_genome.sample_id": "String",
+  "assemble_genome.reads_fastas": "Array[File]",
+  "assemble_genome.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
+  },
+  "assemble_genome.hifiasm_extra_params": "String? (optional)",
+  "assemble_genome.father_yak": "File? (optional)",
+  "assemble_genome.mother_yak": "File? (optional)",
+  "assemble_genome.container_registry": "String",
+  "assemble_genome.preemptible": "Boolean"
+}

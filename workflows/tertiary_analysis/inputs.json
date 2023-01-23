@@ -1,0 +1,57 @@
+{
+  "tertiary_analysis.cohort": {
+    "cohort_id": "String",
+    "samples": [
+      {
+        "sample_id": "String",
+        "movie_bams": "Array[File]",
+        "sex": "String",
+        "affected": "Boolean",
+        "father_id": "String?",
+        "mother_id": "String?",
+        "run_de_novo_assembly": "Boolean"
+      }
+    ],
+    "phenotypes": "Array[String]",
+    "run_de_novo_assembly_trio": "Boolean"
+  },
+  "tertiary_analysis.small_variant_vcf": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "tertiary_analysis.sv_vcf": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "tertiary_analysis.reference": {
+    "name": "String",
+    "fasta": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "chromosomes": "Array[String]",
+    "chromosome_lengths": "File",
+    "tandem_repeat_bed": "File",
+    "trgt_tandem_repeat_bed": "File",
+    "gnomad_af": "File",
+    "hprc_af": "File",
+    "gff": "File",
+    "population_vcfs": [
+      {
+          "data": "File",
+          "data_index": "File"
+        }
+    ]
+  },
+  "tertiary_analysis.slivar_data": {
+    "slivar_js": "File",
+    "hpo_terms": "File",
+    "hpo_dag": "File",
+    "hpo_annotations": "File",
+    "ensembl_to_hgnc": "File",
+    "lof_lookup": "File",
+    "clinvar_lookup": "File"
+  },
+  "tertiary_analysis.container_registry": "String",
+  "tertiary_analysis.preemptible": "Boolean"
+}

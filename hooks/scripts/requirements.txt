@@ -1,0 +1,2 @@
+miniwdl>=1.4.3
+graphviz>=0.20.1
