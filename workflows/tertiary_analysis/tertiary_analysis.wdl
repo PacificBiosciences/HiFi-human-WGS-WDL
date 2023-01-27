@@ -283,7 +283,7 @@ task bcftools_norm {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools:b1a46c6"
 		cpu: 1
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
