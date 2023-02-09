@@ -135,7 +135,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbmm2:b1a46c6"
+		docker: "~{container_registry}/pbmm2:1.9.0"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -174,7 +174,7 @@ task pbsv_discover {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbsv:b1a46c6"
+		docker: "~{container_registry}/pbsv:2.8"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"

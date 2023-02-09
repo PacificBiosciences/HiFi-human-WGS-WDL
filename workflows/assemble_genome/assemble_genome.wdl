@@ -112,7 +112,7 @@ task hifiasm_assemble {
 	}
 
 	runtime {
-		docker: "~{container_registry}/hifiasm:b1a46c6"
+		docker: "~{container_registry}/hifiasm:0.15"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -150,20 +150,19 @@ task gfa2fa {
 
 		# Calculate assembly stats
 		k8 \
-			/opt/scripts/calN50/calN50.js \
+			/opt/calN50/calN50.js \
 			-f ~{reference_index} \
 			~{gfa_basename}.fasta.gz \
 		> ~{gfa_basename}.fasta.stats.txt
 	>>>
 
 	output {
-		File fasta = "~{gfa_basename}.fasta"
 		File zipped_fasta = "~{gfa_basename}.fasta.gz"
 		File assembly_stats = "~{gfa_basename}.fasta.stats.txt"
 	}
 
 	runtime {
-		docker: "~{container_registry}/gfatools:b1a46c6"
+		docker: "~{container_registry}/gfatools:0.4_01091f2"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -216,7 +215,7 @@ task align_hifiasm {
 	}
 
 	runtime {
-		docker: "~{container_registry}/align_hifiasm:b1a46c6"
+		docker: "~{container_registry}/align_hifiasm:2.17_1.14"
 		cpu: threads
 		memory: "256 GB"
 		disk: disk_size + " GB"

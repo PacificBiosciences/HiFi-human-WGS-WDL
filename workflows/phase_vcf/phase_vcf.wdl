@@ -109,7 +109,7 @@ task split_vcf {
 	}
 
 	runtime {
-		docker: "~{container_registry}/htslib:b1a46c6"
+		docker: "~{container_registry}/htslib:1.14"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -157,7 +157,7 @@ task whatshap_phase {
 	}
 
 	runtime {
-		docker: "~{container_registry}/whatshap:b1a46c6"
+		docker: "~{container_registry}/whatshap:1.4"
 		cpu: 1
 		memory: "8 GB"
 		disk: disk_size + " GB"
@@ -196,7 +196,7 @@ task bcftools_concat {
 	}
 
 	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
+		docker: "~{container_registry}/bcftools:1.14"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -237,7 +237,7 @@ task whatshap_stats {
 	}
 
 	runtime {
-		docker: "~{container_registry}/whatshap:b1a46c6"
+		docker: "~{container_registry}/whatshap:1.4"
 		cpu: 1
 		memory: "4 GB"
 		disk: disk_size + " GB"

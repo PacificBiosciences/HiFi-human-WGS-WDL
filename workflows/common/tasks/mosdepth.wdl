@@ -31,7 +31,7 @@ task mosdepth {
 	}
 
 	runtime {
-		docker: "~{container_registry}/mosdepth:b1a46c6"
+		docker: "~{container_registry}/mosdepth:0.2.9"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
