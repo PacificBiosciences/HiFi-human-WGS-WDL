@@ -33,7 +33,7 @@ task pbsv_call {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbsv:2.8"
+		docker: "~{container_registry}/pbsv:2.8.0"
 		cpu: threads
 		memory: "64 GB"
 		disk: disk_size + " GB"

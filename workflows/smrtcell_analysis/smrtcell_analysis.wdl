@@ -174,7 +174,7 @@ task pbsv_discover {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbsv:2.8"
+		docker: "~{container_registry}/pbsv:2.8.0"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
