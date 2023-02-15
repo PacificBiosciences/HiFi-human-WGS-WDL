@@ -381,7 +381,7 @@ task trgt_coverage_dropouts {
 		Boolean preemptible
 	}
 
-	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
+	Int disk_size = ceil(size(bam, "GB") * 4 + 20)
 
 	command <<<
 		set -euo pipefail

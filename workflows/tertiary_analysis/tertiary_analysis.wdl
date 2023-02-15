@@ -392,7 +392,7 @@ task slivar_small_variant {
 	runtime {
 		docker: "~{container_registry}/slivar:0.2.2"
 		cpu: threads
-		memory: "4 GB"
+		memory: "16 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -574,7 +574,7 @@ task svpack_filter_annotated {
 	runtime {
 		docker: "~{container_registry}/svpack:a82598e"
 		cpu: 1
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3

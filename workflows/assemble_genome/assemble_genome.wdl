@@ -85,7 +85,7 @@ task hifiasm_assemble {
 	String prefix = "~{sample_id}.asm"
 	Int threads = 48
 	Int mem_gb = threads * 6
-	Int disk_size = ceil((size(reads_fastas[0], "GB") * length(reads_fastas)) * 2 + 20)
+	Int disk_size = ceil((size(reads_fastas[0], "GB") * length(reads_fastas)) * 4 + 20)
 
 	command <<<
 		set -euo pipefail
