@@ -164,7 +164,7 @@ task write_cohort_yaml {
 	}
 
 	runtime {
-		docker: "~{container_registry}/parse_cohort:1.0.0"
+		docker: "~{container_registry}/parse-cohort:1.0.0"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
@@ -185,7 +185,7 @@ task write_ped {
 	command <<<
 		set -euo pipefail
 
-		python3 /opt/scripts/yaml2ped.py \
+		yaml2ped.py \
 			~{cohort_yaml} \
 			~{cohort_id} \
 			~{cohort_id}.ped
@@ -196,7 +196,7 @@ task write_ped {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pyyaml:b1a46c6"
+		docker: "~{container_registry}/pyyaml:5.3.1"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
@@ -239,7 +239,7 @@ task calculate_phrank {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pyyaml:b1a46c6"
+		docker: "~{container_registry}/pyyaml:5.3.1"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -284,7 +284,7 @@ task bcftools_norm {
 	}
 
 	runtime {
-		docker: "~{container_registry}/bcftools:b1a46c6"
+		docker: "~{container_registry}/bcftools:1.14"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -390,9 +390,9 @@ task slivar_small_variant {
 	}
 
 	runtime {
-		docker: "~{container_registry}/slivar:b1a46c6"
+		docker: "~{container_registry}/slivar:0.2.2"
 		cpu: threads
-		memory: "4 GB"
+		memory: "16 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -434,7 +434,7 @@ task slivar_compound_hets {
 			--sample-field comphet_side \
 			--ped ~{pedigree} \
 			--allow-non-trios \
-		| python3 /opt/scripts/add_comphet_phase.py \
+		| add_comphet_phase.py \
 		> ~{vcf_basename}.compound_hets.vcf
 
 		bgzip ~{vcf_basename}.compound_hets.vcf
@@ -447,7 +447,7 @@ task slivar_compound_hets {
 	}
 
 	runtime {
-		docker: "~{container_registry}/slivar:b1a46c6"
+		docker: "~{container_registry}/slivar:0.2.2"
 		cpu: 2
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -523,7 +523,7 @@ task slivar_tsv {
 	}
 
 	runtime {
-		docker: "~{container_registry}/slivar:b1a46c6"
+		docker: "~{container_registry}/slivar:0.2.2"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -551,17 +551,17 @@ task svpack_filter_annotated {
 	command <<<
 		set -euo pipefail
 
-		python /opt/scripts/svpack/svpack \
+		svpack \
 			filter \
 			--pass-only \
 			--min-svlen 50 \
 			~{sv_vcf} \
-		~{sep=' ' prefix('| python /opt/scripts/svpack/svpack match -v - ', population_vcfs)} \
-		| python /opt/scripts/svpack/svpack \
+		~{sep=' ' prefix('| svpack match -v - ', population_vcfs)} \
+		| svpack \
 			consequence \
 			- \
 			~{gff} \
-		| python /opt/scripts/svpack/svpack \
+		| svpack \
 			tagzygosity \
 			- \
 		> ~{sv_vcf_basename}.svpack.vcf
@@ -572,9 +572,9 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{container_registry}/svpack:b1a46c6"
+		docker: "~{container_registry}/svpack:a82598e"
 		cpu: 1
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		preemptible: preemptible
 		maxRetries: 3
@@ -629,7 +629,7 @@ task slivar_svpack_tsv {
 	}
 
 	runtime {
-		docker: "~{container_registry}/slivar:b1a46c6"
+		docker: "~{container_registry}/slivar:0.2.2"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
