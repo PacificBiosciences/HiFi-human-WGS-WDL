@@ -75,7 +75,7 @@
 <text text-anchor="middle" x="169.5" y="-14.3" font-family="Times,serif" font-size="14.00">slivar_tsv</text>
 </g>
 <!-- call&#45;write_ped&#45;&gt;call&#45;slivar_tsv -->
-<g id="edge8" class="edge">
+<g id="edge9" class="edge">
 <title>call&#45;write_ped&#45;&gt;call&#45;slivar_tsv</title>
 <path fill="none" stroke="black" d="M202.07,-215.55C210.76,-185.43 224.94,-122.07 208.5,-72 205.19,-61.91 199.13,-52.15 192.77,-43.82"/>
 <polygon fill="black" stroke="black" points="195.42,-41.54 186.39,-36.01 190,-45.97 195.42,-41.54"/>
@@ -87,19 +87,19 @@
 <text text-anchor="middle" x="325.5" y="-158.3" font-family="Times,serif" font-size="14.00">slivar_svpack_tsv</text>
 </g>
 <!-- call&#45;write_ped&#45;&gt;call&#45;slivar_svpack_tsv -->
-<g id="edge12" class="edge">
+<g id="edge13" class="edge">
 <title>call&#45;write_ped&#45;&gt;call&#45;slivar_svpack_tsv</title>
 <path fill="none" stroke="black" d="M228.06,-215.88C245.16,-206.6 266.48,-195.03 284.82,-185.08"/>
 <polygon fill="black" stroke="black" points="286.7,-188.04 293.82,-180.19 283.36,-181.88 286.7,-188.04"/>
 </g>
 <!-- call&#45;calculate_phrank&#45;&gt;call&#45;slivar_tsv -->
-<g id="edge9" class="edge">
+<g id="edge10" class="edge">
 <title>call&#45;calculate_phrank&#45;&gt;call&#45;slivar_tsv</title>
 <path fill="none" stroke="black" d="M366.68,-215.77C381.33,-207.28 396.3,-195.48 404.5,-180 411.99,-165.86 412.74,-157.72 404.5,-144 365.1,-78.42 278.38,-45.38 222.01,-30.22"/>
 <polygon fill="black" stroke="black" points="222.77,-26.8 212.21,-27.68 221.01,-33.58 222.77,-26.8"/>
 </g>
 <!-- call&#45;calculate_phrank&#45;&gt;call&#45;slivar_svpack_tsv -->
-<g id="edge13" class="edge">
+<g id="edge14" class="edge">
 <title>call&#45;calculate_phrank&#45;&gt;call&#45;slivar_svpack_tsv</title>
 <path fill="none" stroke="black" d="M326.25,-215.7C326.14,-207.98 326.01,-198.71 325.89,-190.11"/>
 <polygon fill="black" stroke="black" points="329.39,-190.05 325.74,-180.1 322.39,-190.15 329.39,-190.05"/>
@@ -123,7 +123,7 @@
 <polygon fill="black" stroke="black" points="103.34,-118.64 104.44,-108.1 97.01,-115.66 103.34,-118.64"/>
 </g>
 <!-- call&#45;slivar_small_variant&#45;&gt;call&#45;slivar_tsv -->
-<g id="edge10" class="edge">
+<g id="edge8" class="edge">
 <title>call&#45;slivar_small_variant&#45;&gt;call&#45;slivar_tsv</title>
 <path fill="none" stroke="black" d="M49.2,-143.8C36.62,-134.9 23.38,-122.77 16.5,-108 9.75,-93.49 7.22,-85.03 16.5,-72 39.13,-40.21 82.2,-27.32 116.89,-22.17"/>
 <polygon fill="black" stroke="black" points="117.43,-25.63 126.89,-20.86 116.52,-18.69 117.43,-25.63"/>
@@ -154,7 +154,7 @@
 <polygon fill="black" stroke="black" points="472,-262.1 468.5,-252.1 465,-262.1 472,-262.1"/>
 </g>
 <!-- call&#45;zip_index_vcf&#45;&gt;call&#45;slivar_svpack_tsv -->
-<g id="edge14" class="edge">
+<g id="edge12" class="edge">
 <title>call&#45;zip_index_vcf&#45;&gt;call&#45;slivar_svpack_tsv</title>
 <path fill="none" stroke="black" d="M433.52,-215.88C414.3,-206.47 390.27,-194.71 369.76,-184.67"/>
 <polygon fill="black" stroke="black" points="371.14,-181.44 360.62,-180.19 368.06,-187.73 371.14,-181.44"/>
