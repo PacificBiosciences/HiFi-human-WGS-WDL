@@ -300,6 +300,10 @@
   },
   "test_params": {
     "global_params": {},
-    "engine_params": {}
+    "engine_params": {
+      "f1ed5b40-6a26-4eac-a2b8-9960516e4164": {
+        "input_file_path": "/coac74908838b5dd7/inputs/small_dataset/chr6.p23"
+      }
+    }
   }
 }
