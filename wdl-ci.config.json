@@ -14,17 +14,86 @@
         "hifiasm_assemble": {
           "key": "hifiasm_assemble",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "reads_fastas": [
+                  "${resources_file_path}/de_novo_assembly_sample/m64017_200723_190224.hifi_reads.fasta"
+                ],
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "assembly_hap_gfas" : {
+                  "value": [
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.gfa",
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap2.p_ctg.gfa"
+                  ],
+                  "test_tasks": ["check_tab_delimited"]
+                },
+                "assembly_noseq_gfas": {
+                  "value": [
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
+                  ],
+                  "test_tasks": ["check_tab_delimited"]
+                },
+                "assembly_lowQ_beds": {
+                  "value": [
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
+                    "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
+                  ],
+                  "test_tasks": ["count_bed_columns"]
+                }
+              }
+            }
+          ]
         },
         "gfa2fa": {
           "key": "gfa2fa",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "gfa": "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.gfa",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "zipped_fasta" : {
+                  "value": "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "test_tasks": ["check_empty_lines", "check_gzip", "check_tab_delimited"]
+                }
+              }
+            }
+          ]
         },
         "align_hifiasm": {
           "key": "align_hifiasm",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "query_sequences" : [
+                  "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "${resources_file_path}/de_novo_assembly_sample/HG005.asm.bp.hap2.p_ctg.fasta.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_name": "GRCh38",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "asm_bam" : {
+                  "value": "${resources_file_path}/de_novo_assembly_sample/",
+                  "test_tasks": ["samtools_quickcheck", "check_sorted_alignment"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -36,12 +105,46 @@
         "pbmm2_align": {
           "key": "pbmm2_align",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "aligned_bam" : {
+                  "value": "${resources_file_path}/chr6.p23/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": ["compare_file_basename", "samtools_quickcheck"]
+                }
+              }
+            }
+          ]
         },
         "pbsv_discover": {
           "key": "pbsv_discover",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference_tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "svsig" : {
+                  "value": "${resources_file_path}/chr6.p23/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz",
+                  "test_tasks": ["compare_file_basename", "check_empty_lines"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -53,7 +156,31 @@
         "glnexus": {
           "key": "glnexus",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "gvcfs": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.vcf.gz",
+                  "${resources_file_path}/cohort_analysis/HG006.GRCh38.deepvariant.vcf.gz",
+                  "${resources_file_path}/cohort_analysis/HG007.GRCh38.deepvariant.vcf.gz"
+                ],
+                "gvcf_indices": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.vcf.gz.tbi",
+                  "${resources_file_path}/cohort_analysis/HG006.GRCh38.deepvariant.vcf.gz.tbi",
+                  "${resources_file_path}/cohort_analysis/HG007.GRCh38.deepvariant.vcf.gz.tbi"
+                ],
+                "reference_name": "GRCh38",
+                "preemptible": true
+              },
+              "output_tests": {
+                "vcf" : {
+                  "value": "${resources_file_path}/cohort_analysis/hg005-trio-sequelii.GRCh38.deepvariant.glnexus.vcf.gz",
+                  "test_tasks": ["vcftools_validator", "check_gzip"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -117,22 +244,98 @@
         "split_vcf": {
           "key": "split_vcf",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.g.vcf.gz",
+                "vcf_index": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
+                "region": "chr6",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "region_vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                }
+              }
+            }
+          ]
         },
         "whatshap_phase": {
           "key": "whatshap_phase",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "vcf_index": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "chromosome": "chr6",
+                "aligned_bams": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "phased_vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                }
+              }
+            }
+          ]
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
+                ],
+                "output_vcf_name": "~{vcf_basename}.phased.vcf.gz",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "concatenated_vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                }
+              }
+            }
+          ]
         },
         "whatshap_stats": {
           "key": "whatshap_stats",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "phased_vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "reference_chromosome_lengths": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "tsv" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.phased.tsv",
+                  "test_tasks": ["compare_file_basename", "check_tab_delimited"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -166,7 +369,97 @@
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "tfrecord": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.call_variants_output.tfrecord.gz",
+                "nonvariant_site_tfrecords": [
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00000-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00001-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00002-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00003-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00004-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00005-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00006-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00007-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00008-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00009-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00010-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00011-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00012-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00013-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00014-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00015-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00016-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00017-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00018-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00019-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00020-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00021-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00022-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00023-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00024-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00025-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00026-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00027-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00028-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00029-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00030-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00031-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00032-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00033-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00034-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00035-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00036-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00037-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00038-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00039-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00040-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00041-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00042-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00043-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00044-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00045-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00046-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00047-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00048-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00049-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00050-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00051-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00052-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00053-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00054-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00055-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00056-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00057-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00058-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00059-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00060-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00061-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00062-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00063-of-00064.gz",
+                  "${resources_file_path}/deepvariant_nonvariant_site_tfrecords/smrtcell_analysis/HG005.gvcf.tfrecord-00064-of-00064.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "deepvariant_threads": 64,
+                "deepvariant_version": "1.4.0",
+                "preemptible": true
+              },
+              "output_tests": {
+                "vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "test_tasks": ["vcftools_validator"]
+                },
+                "gvcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.vcf.gz",
+                  "test_tasks": ["vcftools_validator"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -178,27 +471,97 @@
         "bcftools_roh": {
           "key": "bcftools_roh",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.g.vcf.gz",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "roh_bed" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.roh.bed",
+                  "test_tasks": ["compare_file_basename", "count_bed_columns", "check_tab_delimited"]
+                }
+              }
+            }
+          ]
         },
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "phased_vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "aligned_bam": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "haplotagged_bam" : {
+                  "value": "${resources_file_path}/chr6.p23/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "test_tasks": ["compare_file_basename", "samtools_quickcheck"]
+                }
+              }
+            }
+          ]
         },
         "merge_bams": {
           "key": "merge_bams",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+              },
+              "output_tests": {
+                "merged_bam" : {
+                  "value": "",
+                  "test_tasks": ["compare_file_basename", "samtools_quickcheck"]
+                }
+              }
+            }
+          ]
         },
         "trgt": {
           "key": "trgt",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+              },
+              "output_tests": {
+                "spanning_reads" : {
+                  "value": "",
+                  "test_tasks": ["samtools_quickcheck", "check_sorted_alignment"]
+                },
+                "repeat_vcf" : {
+                  "value": "",
+                  "test_tasks": ["vcftools_validator", "check_sorted_vcf"]
+                }
+              }
+            }
+          ]
         },
         "trgt_coverage_dropouts": {
           "key": "trgt_coverage_dropouts",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+              },
+              "output_tests": {
+                "trgt_dropouts" : {
+                  "value": "",
+                  "test_tasks": ["count_columns"]
+                }
+              }
+            }
+          ]
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
@@ -221,7 +584,21 @@
         "zip_index_vcf": {
           "key": "zip_index_vcf",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.pbsv.vcf",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "zipped_vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.pbsv.vcf.gz",
+                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -233,7 +610,21 @@
         "samtools_fasta": {
           "key": "samtools_fasta",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "reads_fasta" : {
+                  "value": "${resources_file_path}/de_novo_assembly_sample/m64017_200723_190224.hifi_reads.fasta",
+                  "test_tasks": ["check_empty_lines"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -257,7 +648,27 @@
         "pbsv_call": {
           "key": "pbsv_call",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "svsigs": [
+                  "${datasets_file_path}/GRCh38/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "pbsv_vcf" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.GRCh38.pbsv.vcf",
+                  "test_tasks": ["compare_file_basename", "vcftools_validator"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -269,7 +680,22 @@
         "mosdepth": {
           "key": "mosdepth",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "region_bed" : {
+                  "value": "${resources_file_path}/smrtcell_analysis/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.regions.bed.gz",
+                  "test_tasks": ["compare_file_basename", "count_bed_columns", "check_tab_delimited"]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -281,12 +707,26 @@
         "parse_families": {
           "key": "parse_families",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "cohort_json": "${resources_file_path}/de_novo_assembly_trio/cohort.json",
+                "container_registry": "pacbio.azurecr.io",
+                "preemptible": true
+              },
+              "output_tests": {
+                "families" : {
+                  "value": "${resources_file_path}/de_novo_assembly_trio/families.json",
+                  "test_tasks": ["check_json"]
+                }
+              }
+            }
+          ]
         },
         "yak_count": {
           "key": "yak_count",
           "digest": "",
-          "tests": []
+          "tests": [],
         }
       }
     }
@@ -302,7 +742,9 @@
     "global_params": {},
     "engine_params": {
       "f1ed5b40-6a26-4eac-a2b8-9960516e4164": {
-        "input_file_path": "/coac74908838b5dd7/inputs/small_dataset/chr6.p23"
+        "input_file_path": "/coac74908838b5dd7/inputs/small_dataset/chr6.p23",
+        "resources_file_path": "/coac74908838b5dd7/inputs/wdl-ci",
+        "datasets_file_path": "/datasetpbrarediseases/dataset"
       }
     }
   }
