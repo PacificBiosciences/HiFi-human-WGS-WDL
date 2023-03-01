@@ -98,6 +98,7 @@ workflow tertiary_analysis {
 	call svpack_filter_annotated {
 		input:
 			sv_vcf = sv_vcf.data,
+			sv_vcf_index = sv_vcf.data_index,
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
 			gff = reference.gff,
@@ -535,6 +536,7 @@ task slivar_tsv {
 task svpack_filter_annotated {
 	input {
 		File sv_vcf
+		File sv_vcf_index
 
 		Array[File] population_vcfs
 		Array[File] population_vcf_indices
