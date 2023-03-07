@@ -195,7 +195,7 @@ task bcftools_roh {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -243,7 +243,7 @@ task whatshap_haplotag {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/whatshap:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/whatshap:1.4"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -289,7 +289,7 @@ task merge_bams {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/samtools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/samtools:1.14"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -354,7 +354,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt:v0.3.4"
+		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -395,7 +395,7 @@ task trgt_coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:07f9162"
+		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:1.8.1"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -429,7 +429,7 @@ task cpg_pileup {
 	command <<<
 		set -euo pipefail
 
-		/opt/scripts/pb-CpG-tools/aligned_bam_to_cpg_scores.py \
+		aligned_bam_to_cpg_scores.py \
 			--bam ~{bam} \
 			--fasta ~{reference} \
 			--output_label ~{output_prefix} \
@@ -437,7 +437,7 @@ task cpg_pileup {
 			--min_mapq 1 \
 			--modsites denovo \
 			--pileup_mode model \
-			--model_dir /opt/scripts/pb-CpG-tools/pileup_calling_model \
+			--model_dir "$PILEUP_MODEL_DIR" \
 			--min_coverage 10
 	>>>
 
@@ -446,7 +446,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:fed1a7b"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"

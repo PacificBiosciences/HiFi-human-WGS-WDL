@@ -33,7 +33,7 @@ task zip_index_vcf {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/htslib:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/htslib:1.14"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"

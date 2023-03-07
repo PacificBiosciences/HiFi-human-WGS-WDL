@@ -106,7 +106,7 @@ task htsbox {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/htsbox:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/htsbox:r346"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"

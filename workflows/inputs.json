@@ -30,9 +30,9 @@
     "gff": "File",
     "population_vcfs": [
       {
-          "data": "File",
-          "data_index": "File"
-        }
+        "data": "File",
+        "data_index": "File"
+      }
     ]
   },
   "humanwgs.slivar_data": {
@@ -49,5 +49,6 @@
   "humanwgs.backend": "String ['GCP', 'Azure', or 'AWS']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",
-  "humanwgs.aws_on_demand_queue_arn": "String? (optional); required if backend is set to 'AWS'"
+  "humanwgs.aws_on_demand_queue_arn": "String? (optional); required if backend is set to 'AWS'",
+  "humanwgs.preemptible": "Boolean"
 }

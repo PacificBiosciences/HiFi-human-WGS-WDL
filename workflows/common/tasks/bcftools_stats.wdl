@@ -34,7 +34,7 @@ task bcftools_stats {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools:b1a46c6"
+		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
