@@ -36,7 +36,7 @@ task mosdepth {
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
+		disks: "local-disk " + disk_size + " LOCAL"
 		preemptible: runtime_attributes.preemptible_tries
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
