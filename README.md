@@ -19,6 +19,8 @@ Calls all steps of the full analysis.
 **Workflow**: [workflows/main.wdl](workflows/main.wdl)
 
 **Inputs**: [workflows/inputs.json](workflows/inputs.json)
+**Azure template inputs**: [workflows/inputs.azure.json](workflows/inputs.azure.json)
+
 
 ![Main workflow diagram](workflows/main.graphviz.svg)
 
@@ -185,11 +187,42 @@ Files associated with `slivar` annotation.
 - `DeepVariantModel? deepvariant_model`: Optional alternate DeepVariant model file to use; includes the model, model index, and model metadata
 - `Int? assembly_threads`: Number of threads to use for de novo assembly
 - `String backend`: Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']
-- `String? zones`: Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'
-- `String? aws_spot_queue_arn`: Queue ARN for the spot batch queue; required if backend is set to 'AWS'
-- `String? aws_on_demand_queue_arn`: Queue ARN for the on demand batch queue; required if backend is set to 'AWS'
+- `String? zones`: Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. To determine which zones are available in your region, see [determining available zones in AWS and GCP](#determining-available-zones-in-aws-and-gcp).
+- `String? aws_spot_queue_arn`: Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` (see below for details on finding the queue ARN)[#determining-the-AWS-batch-queue-ARN]
+- `String? aws_on_demand_queue_arn`: Queue ARN for the on demand batch queue; required if backend is set to 'AWS' (see below for details on finding the queue ARN)[#determining-the-AWS-batch-queue-ARN]
 - `Boolean preemptible`: If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours. If set to `false`, on-demand VMs will be used for every task.
 
+#### Determining available zones in AWS and GCP
+
+##### AWS
+
+To determine available zones in AWS, look for the ZoneName attributes output by the following command:
+
+```bash
+aws ec2 describe-availability-zones --region ${region}
+```
+For example, the zones in region us-east-2 are `"us-east-2a us-east-2b us-east-2c"`.
+
+
+##### GCP
+
+To determine available zones in GCP, run the following; available zones within a region can be found in the first column of the output:
+
+```bash
+gcloud compute zones list | grep ${region}
+```
+
+For example, the zones in region us-central1 are `"us-central1-a us-central1-b us-central1c us-central1f"`.
+
+
+#### Determining the AWS batch queue ARN
+
+1. Visit the AWS console.
+2. Navigate to the Batch service.
+3. In the lefthand sidebar, select Job queues.
+4. Click a job queue name and locate the Amazon Resource Name (ARN). This is the value that should be used for the queue_arn inputs. Ensure that the job queue you've selected is configured with AGC (in the Tags section, application-name should be set to agc, and the agc-project should match the project you are submitting runs to).
+
+Spot context job queues should have the word 'Spot' in them somewhere. You will need to identify both the spot and on-demand job queues if you plan to run the workflow preemptibly (`preemtible = true`). If `preemptible = false`, only the `aws_on_demand_queue_arn` must be provided.
 
 
 ## Development

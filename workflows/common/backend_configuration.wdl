@@ -12,7 +12,7 @@ workflow backend_configuration {
 
 	# TODO define public container registries in each cloud
 	String gcp_container_registry = ""
-	String azure_container_registry = ""
+	String azure_container_registry = "pacbio.azurecr.io"
 	String aws_container_registry = ""
 
 	if (backend == "GCP") {
