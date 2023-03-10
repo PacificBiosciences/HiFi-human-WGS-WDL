@@ -1,6 +1,8 @@
 version 1.0
 
 import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/whatshap_phase.wdl" as WhatshapPhase
+import "../wdl-common/wdl/tasks/whatshap_stats.wdl" as WhatshapStats
 
 workflow phase_vcf {
 	input {
@@ -28,7 +30,7 @@ workflow phase_vcf {
 				runtime_attributes = default_runtime_attributes
 		}
 
-		call whatshap_phase {
+		call WhatshapPhase.whatshap_phase {
 			input:
 				vcf = split_vcf.region_vcf,
 				vcf_index = split_vcf.region_vcf_index,
@@ -49,7 +51,7 @@ workflow phase_vcf {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call whatshap_stats {
+	call WhatshapStats.whatshap_stats {
 		input:
 			phased_vcf = bcftools_concat.concatenated_vcf,
 			phased_vcf_index = bcftools_concat.concatenated_vcf_index,
@@ -116,57 +118,6 @@ task split_vcf {
 	}
 }
 
-task whatshap_phase {
-	input {
-		File vcf
-		File vcf_index
-		String chromosome
-
-		Array[File] aligned_bams
-		Array[File] aligned_bam_indices
-
-		File reference
-		File reference_index
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	String vcf_basename = basename(vcf, ".vcf.gz")
-	Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB") + size(aligned_bams[0], "GB") * length(aligned_bams)) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		whatshap phase \
-			--indels \
-			--reference ~{reference} \
-			--chromosome ~{chromosome} \
-			--output ~{vcf_basename}.phased.vcf.gz \
-			~{vcf} \
-			~{sep=' ' aligned_bams}
-
-		tabix ~{vcf_basename}.phased.vcf.gz
-	>>>
-
-	output {
-		File phased_vcf = "~{vcf_basename}.phased.vcf.gz"
-		File phased_vcf_index = "~{vcf_basename}.phased.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/whatshap:1.4"
-		cpu: 1
-		memory: "8 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
 task bcftools_concat {
 	input {
 		Array[File] vcfs
@@ -199,50 +150,6 @@ task bcftools_concat {
 		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
 		cpu: 1
 		memory: "1 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task whatshap_stats {
-	input {
-		File phased_vcf
-		File phased_vcf_index
-
-		File reference_chromosome_lengths
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	String output_basename = basename(phased_vcf, ".vcf.gz")
-	Int disk_size = ceil(size(phased_vcf, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		whatshap stats \
-			--gtf ~{output_basename}.gtf \
-			--tsv ~{output_basename}.tsv \
-			--block-list ~{output_basename}.blocklist \
-			--chr-lengths ~{reference_chromosome_lengths} \
-			~{phased_vcf}
-	>>>
-
-	output {
-		File gtf = "~{output_basename}.gtf"
-		File tsv = "~{output_basename}.tsv"
-		File blocklist = "~{output_basename}.blocklist"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/whatshap:1.4"
-		cpu: 1
-		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries

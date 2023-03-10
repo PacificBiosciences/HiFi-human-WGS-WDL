@@ -8,6 +8,7 @@ import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
+import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
 
 workflow sample_analysis {
 	input {
@@ -78,7 +79,7 @@ workflow sample_analysis {
 	}
 
 	scatter (bam_object in smrtcell_analysis.aligned_bams) {
-		call whatshap_haplotag {
+		call WhatshapHaplotag.whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
 				phased_vcf_index = phase_vcf.phased_vcf.data_index,
@@ -198,54 +199,6 @@ task bcftools_roh {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
 		cpu: 2
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task whatshap_haplotag {
-	input {
-		File phased_vcf
-		File phased_vcf_index
-
-		File aligned_bam
-		File aligned_bam_index
-
-		File reference
-		File reference_index
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	String bam_basename = basename(aligned_bam, ".bam")
-	Int threads = 4
-	Int disk_size = ceil((size(phased_vcf, "GB") + size(aligned_bam, "GB") + size(reference, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		whatshap haplotag \
-			--tag-supplementary \
-			--output-threads ~{threads} \
-			--reference ~{reference} \
-			--output ~{bam_basename}.haplotagged.bam \
-			~{phased_vcf} \
-			~{aligned_bam}
-	>>>
-
-	output {
-		File haplotagged_bam = "~{bam_basename}.haplotagged.bam"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/whatshap:1.4"
-		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
