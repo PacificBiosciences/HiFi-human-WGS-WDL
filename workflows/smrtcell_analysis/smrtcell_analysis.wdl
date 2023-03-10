@@ -2,6 +2,7 @@ version 1.0
 
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 
 workflow smrtcell_analysis {
 	input {
@@ -30,7 +31,7 @@ workflow smrtcell_analysis {
 				runtime_attributes = default_runtime_attributes
 		}
 
-		call pbsv_discover {
+		call PbsvDiscover.pbsv_discover {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
@@ -133,48 +134,6 @@ task pbmm2_align {
 		docker: "~{runtime_attributes.container_registry}/pbmm2:1.9.0"
 		cpu: threads
 		memory: mem_gb + " GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task pbsv_discover {
-	input {
-		File aligned_bam
-		File aligned_bam_index
-
-		File reference_tandem_repeat_bed
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	String prefix = basename(aligned_bam, ".bam")
-	Int disk_size = ceil((size(aligned_bam, "GB") + size(reference_tandem_repeat_bed, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		pbsv discover \
-			--log-level INFO \
-			--hifi \
-			--tandem-repeats ~{reference_tandem_repeat_bed} \
-			~{aligned_bam} \
-			~{prefix}.svsig.gz
-	>>>
-
-	output {
-		File svsig = "~{prefix}.svsig.gz"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbsv:2.8.0"
-		cpu: 2
-		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
