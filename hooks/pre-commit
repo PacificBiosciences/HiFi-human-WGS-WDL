@@ -47,7 +47,9 @@ fi
 
 # Write graph visualizations for each workflow named workflows/${wf_name}/${wf_name}.wdl or workflows/main.wdl
 echo "Generating workflow graphs"
-git diff --cached --name-only \
+git diff --cached --name-status \
+| grep -v '^D' \
+| cut -f 2 \
 | grep -E '.wdl$' \
 | sed 's~.wdl~~' \
 | awk -F '/' '{if ($2 == $3 || $2 == "main") print $0".wdl"}' \
