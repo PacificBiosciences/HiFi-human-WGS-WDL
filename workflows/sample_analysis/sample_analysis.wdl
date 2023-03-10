@@ -1,12 +1,12 @@
 version 1.0
 
-import "../common/structs.wdl"
+import "../humanwgs_structs.wdl"
 import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "../deepvariant/deepvariant.wdl" as DeepVariant
-import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
-import "../common/tasks/mosdepth.wdl" as Mosdepth
-import "../common/tasks/pbsv_call.wdl" as PbsvCall
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
+import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow sample_analysis {
@@ -32,7 +32,9 @@ workflow sample_analysis {
 		input:
 			sample_id = sample.sample_id,
 			aligned_bams = smrtcell_analysis.aligned_bams,
-			reference = reference,
+			reference_fasta = reference.fasta.data,
+			reference_index = reference.fasta.data_index,
+			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
 			default_runtime_attributes = default_runtime_attributes

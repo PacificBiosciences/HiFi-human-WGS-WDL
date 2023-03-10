@@ -1,7 +1,7 @@
 version 1.0
 
-import "common/structs.wdl"
-import "common/backend_configuration.wdl" as BackendConfiguration
+import "humanwgs_structs.wdl"
+import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "de_novo_assembly_sample/de_novo_assembly_sample.wdl" as DeNovoAssemblySample
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis

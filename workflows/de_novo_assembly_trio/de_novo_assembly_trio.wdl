@@ -1,7 +1,7 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/samtools_fasta.wdl" as SamtoolsFasta
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome
 
 workflow de_novo_assembly_trio {

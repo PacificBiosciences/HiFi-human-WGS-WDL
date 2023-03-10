@@ -1,10 +1,10 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/samtools_fasta.wdl" as SamtoolsFasta
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 
 workflow de_novo_assembly_sample {
 	input {

@@ -10,7 +10,7 @@
 <title>%3</title>
 <polygon fill="white" stroke="transparent" points="-4,4 -4,-403 575,-403 575,4 -4,4"/>
 <g id="clust1" class="cluster">
-<title>cluster&#45;scatter&#45;L79C2&#45;bam_object</title>
+<title>cluster&#45;scatter&#45;L81C2&#45;bam_object</title>
 <polygon fill="none" stroke="black" points="209.5,-136 209.5,-211 511.5,-211 511.5,-136 209.5,-136"/>
 <text text-anchor="middle" x="360.5" y="-195.8" font-family="Times,serif" font-size="14.00">scatter(smrtcell_analysis.aligned_bams)</text>
 </g>
@@ -51,15 +51,15 @@
 <text text-anchor="middle" x="298.5" y="-233.3" font-family="Times,serif" font-size="14.00">phase_vcf</text>
 </g>
 <!-- call&#45;smrtcell_analysis&#45;&gt;call&#45;phase_vcf -->
-<g id="edge7" class="edge">
+<g id="edge6" class="edge">
 <title>call&#45;smrtcell_analysis&#45;&gt;call&#45;phase_vcf</title>
 <path fill="none" stroke="black" d="M359.65,-362.86C354.34,-352.5 347.47,-339.03 341.5,-327 331.07,-305.99 319.52,-282.04 311.02,-264.28"/>
 <polygon fill="black" stroke="black" points="314.11,-262.63 306.64,-255.11 307.79,-265.65 314.11,-262.63"/>
 </g>
-<!-- scatter&#45;L79C2&#45;bam_object -->
-<!-- call&#45;smrtcell_analysis&#45;&gt;scatter&#45;L79C2&#45;bam_object -->
+<!-- scatter&#45;L81C2&#45;bam_object -->
+<!-- call&#45;smrtcell_analysis&#45;&gt;scatter&#45;L81C2&#45;bam_object -->
 <g id="edge8" class="edge">
-<title>call&#45;smrtcell_analysis&#45;&gt;scatter&#45;L79C2&#45;bam_object</title>
+<title>call&#45;smrtcell_analysis&#45;&gt;scatter&#45;L81C2&#45;bam_object</title>
 <path fill="none" stroke="black" d="M397.93,-362.99C412.3,-353.66 429.11,-341.13 441.5,-327 465.49,-299.63 468.02,-289.19 480.5,-255 484.44,-244.21 487.65,-232.4 490.23,-220.94"/>
 <polygon fill="black" stroke="black" points="493.69,-221.5 492.34,-211 486.84,-220.05 493.69,-221.5"/>
 </g>
@@ -88,7 +88,7 @@
 <polygon fill="black" stroke="black" points="199.65,-263 192.59,-255.1 193.18,-265.68 199.65,-263"/>
 </g>
 <!-- call&#45;deepvariant&#45;&gt;call&#45;phase_vcf -->
-<g id="edge6" class="edge">
+<g id="edge7" class="edge">
 <title>call&#45;deepvariant&#45;&gt;call&#45;phase_vcf</title>
 <path fill="none" stroke="black" d="M235.26,-290.7C245.74,-281.97 258.61,-271.24 270,-261.75"/>
 <polygon fill="black" stroke="black" points="272.53,-264.19 277.97,-255.1 268.05,-258.82 272.53,-264.19"/>

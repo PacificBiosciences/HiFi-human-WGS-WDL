@@ -1,13 +1,15 @@
 version 1.0
 
-import "../common/structs.wdl"
+import "../wdl-common/wdl/structs.wdl"
 
 workflow deepvariant {
 	input {
 		String sample_id
 		Array[IndexData] aligned_bams
 
-		ReferenceData reference
+		File reference_fasta
+		File reference_index
+		String reference_name
 
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
@@ -27,8 +29,8 @@ workflow deepvariant {
 			sample_id = sample_id,
 			aligned_bams = aligned_bam,
 			aligned_bam_indices = aligned_bam_index,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
+			reference = reference_fasta,
+			reference_index = reference_index,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
 			runtime_attributes = default_runtime_attributes
@@ -37,7 +39,7 @@ workflow deepvariant {
 	call deepvariant_call_variants {
 		input:
 			sample_id = sample_id,
-			reference_name = reference.name,
+			reference_name = reference_name,
 			example_tfrecords = deepvariant_make_examples.example_tfrecords,
 			deepvariant_model = deepvariant_model,
 			deepvariant_threads = deepvariant_threads,
@@ -50,9 +52,9 @@ workflow deepvariant {
 			sample_id = sample_id,
 			tfrecord = deepvariant_call_variants.tfrecord,
 			nonvariant_site_tfrecords = deepvariant_make_examples.nonvariant_site_tfrecords,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			reference_name = reference.name,
+			reference = reference_fasta,
+			reference_index = reference_index,
+			reference_name = reference_name,
 			deepvariant_threads = deepvariant_threads,
 			deepvariant_version = deepvariant_version,
 			runtime_attributes = default_runtime_attributes

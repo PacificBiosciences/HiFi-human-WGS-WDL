@@ -1,7 +1,7 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 
 workflow tertiary_analysis {
 	input {

@@ -1,6 +1,6 @@
 version 1.0
 
-import "../common/structs.wdl"
+import "../humanwgs_structs.wdl"
 
 workflow assemble_genome {
 	input {

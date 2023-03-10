@@ -1,8 +1,8 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/pbsv_call.wdl" as PbsvCall
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow cohort_analysis {

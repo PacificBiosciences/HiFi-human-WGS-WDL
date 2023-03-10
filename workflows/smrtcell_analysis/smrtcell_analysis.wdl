@@ -1,7 +1,7 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/mosdepth.wdl" as Mosdepth
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 
 workflow smrtcell_analysis {
 	input {

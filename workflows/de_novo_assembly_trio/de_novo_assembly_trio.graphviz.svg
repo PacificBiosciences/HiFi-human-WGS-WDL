@@ -73,7 +73,7 @@
 <text text-anchor="middle" x="165" y="-38.3" font-family="Times,serif" font-size="14.00">assemble_genome</text>
 </g>
 <!-- call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome -->
-<g id="edge6" class="edge">
+<g id="edge5" class="edge">
 <title>call&#45;yak_count_father&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M436.92,-95.91C427.7,-93.06 418.1,-90.29 409,-88 355.96,-74.67 295.51,-63.49 248.05,-55.61"/>
 <polygon fill="black" stroke="black" points="248.56,-52.15 238.13,-53.98 247.43,-59.05 248.56,-52.15"/>
@@ -98,7 +98,7 @@
 </g>
 <!-- scatter&#45;L44C3&#45;movie_bam -->
 <!-- call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome -->
-<g id="edge5" class="edge">
+<g id="edge6" class="edge">
 <title>call&#45;yak_count_mother&#45;&gt;call&#45;assemble_genome</title>
 <path fill="none" stroke="black" d="M287.37,-95.88C265.22,-86.31 237.44,-74.3 213.94,-64.15"/>
 <polygon fill="black" stroke="black" points="215.07,-60.82 204.5,-60.07 212.29,-67.25 215.07,-60.82"/>
