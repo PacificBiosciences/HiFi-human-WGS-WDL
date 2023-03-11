@@ -3,6 +3,7 @@ version 1.0
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/glnexus.wdl" as Glnexus
 import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow cohort_analysis {
@@ -38,7 +39,7 @@ workflow cohort_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call glnexus {
+	call Glnexus.glnexus {
 		input:
 			cohort_id = cohort_id,
 			gvcfs = gvcf,
@@ -70,59 +71,5 @@ workflow cohort_analysis {
 		gvcfs: {help: "gVCF for each sample in the cohort"}
 		reference: {help: "Reference genome data"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
-	}
-}
-
-task glnexus {
-	input {
-		String cohort_id
-		Array[File] gvcfs
-		Array[File] gvcf_indices
-
-		String reference_name
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	Int threads = 24
-	Int mem_gbytes = 30
-	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 100)
-
-	command <<<
-		set -euo pipefail
-
-		glnexus_cli \
-			--threads ~{threads} \
-			--mem-gbytes ~{mem_gbytes} \
-			--dir ~{cohort_id}.~{reference_name}.GLnexus.DB \
-			--config DeepVariant_unfiltered \
-			~{sep=' ' gvcfs} \
-		> ~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
-
-		bcftools view \
-			--threads ~{threads} \
-			--output-type z \
-			--output-file ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz \
-			~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
-
-		tabix ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz
-	>>>
-
-	output {
-		File vcf = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz"
-		File vcf_index = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
-		cpu: threads
-		memory: mem_gbytes + " GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
 	}
 }
