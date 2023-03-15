@@ -7,7 +7,7 @@ import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
+import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
 
 workflow sample_analysis {
@@ -74,7 +74,9 @@ workflow sample_analysis {
 		input:
 			vcf = deepvariant.vcf,
 			aligned_bams = smrtcell_analysis.aligned_bams,
-			reference = reference,
+			reference_fasta = reference.fasta,
+			reference_chromosome_lengths = reference.chromosome_lengths,
+			regions = reference.chromosomes,
 			default_runtime_attributes = default_runtime_attributes
 	}
 

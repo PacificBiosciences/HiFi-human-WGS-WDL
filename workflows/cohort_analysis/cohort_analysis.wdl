@@ -4,7 +4,7 @@ import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/tasks/glnexus.wdl" as Glnexus
-import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
+import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow cohort_analysis {
 	input {
@@ -52,7 +52,9 @@ workflow cohort_analysis {
 		input:
 			vcf = {"data": glnexus.vcf, "data_index": glnexus.vcf_index},
 			aligned_bams = aligned_bams,
-			reference = reference,
+			reference_fasta = reference.fasta,
+			reference_chromosome_lengths = reference.chromosome_lengths,
+			regions = reference.chromosomes,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
