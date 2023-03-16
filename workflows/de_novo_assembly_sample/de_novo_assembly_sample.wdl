@@ -114,7 +114,7 @@ task htsbox {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/htsbox:r346"
 		cpu: threads
-		memory: "4 GB"
+		memory: "14 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
