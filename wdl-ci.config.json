@@ -13,19 +13,19 @@
       "tasks": {
         "hifiasm_assemble": {
           "key": "hifiasm_assemble",
-          "digest": "",
+          "digest": "mxt4cplolcmyvc2vkyjusgmf3yyjjnnx",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "reads_fastas": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200723_190224.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200730_190124.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200801_011415.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200802_073944.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64109_200304_195708.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64109_200309_192110.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64109_200311_013444.hifi_reads.fasta"
+                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
                 ],
                 "extra_params": "-c1 -d1",
                 "father_yak": "${resources_file_path}/HG006.yak",
@@ -36,32 +36,33 @@
               "output_tests": {
                 "assembly_hap_gfas": {
                   "value": [
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap1.p_ctg.gfa",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap2.p_ctg.gfa"
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
                   ],
                   "test_tasks": []
                 },
                 "assembly_noseq_gfas": {
                   "value": [
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
                   ],
                   "test_tasks": []
                 },
                 "assembly_lowQ_beds": {
                   "value": [
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
                   ],
                   "test_tasks": []
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "gfa2fa": {
           "key": "gfa2fa",
-          "digest": "",
+          "digest": "4slwcvq2vhllewrosat7peweyyjandbd",
           "tests": [
             {
               "inputs": {
@@ -73,26 +74,38 @@
               "output_tests": {
                 "zipped_fasta": {
                   "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_gzip", "check_empty_lines", "fasta_validator"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
                 },
                 "assembly_stats": {
                   "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "check_empty_lines"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "check_empty_lines"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "align_hifiasm": {
           "key": "align_hifiasm",
-          "digest": "",
+          "digest": "g7g4tubnfydphyfedp3y3q63o47wdnos",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "query_sequences": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.asm.bp.hap2.p_ctg.fasta.gz"
+                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_name": "GRCh38",
@@ -102,9 +115,14 @@
               "output_tests": {
                 "asm_bam": {
                   "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                  "test_tasks": ["compare_file_basename", "samtools_quickcheck", "check_sorted_alignment"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_sorted_alignment"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -117,7 +135,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "",
+          "digest": "3d45e5cimoqa4wnyydxyom5d5ofuargr",
           "tests": [
             {
               "inputs": {
@@ -132,27 +150,48 @@
               "output_tests": {
                 "aligned_bam": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": ["compare_file_basename", "samtools_quickcheck"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
                 },
                 "bam_stats": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 },
                 "read_length_summary": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns", "check_numeric"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
                 },
                 "read_quality_summary": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns", "check_numeric"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "",
+          "digest": "3wyfqzax34piczwyku6jn43jxvqqkmz6",
           "tests": [
             {
               "inputs": {
@@ -165,9 +204,14 @@
               "output_tests": {
                 "svsig": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz",
-                  "test_tasks": ["compare_file_basename", "check_gzip", "check_empty_lines"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -180,20 +224,20 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "",
+          "digest": "afj2ldzugw63fispg7mo3bmqlbrfjzvs",
           "tests": [
             {
               "inputs": {
                 "cohort_id": "hg005-small-cohort",
                 "gvcfs": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.g.vcf.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG006.GRCh38.deepvariant.g.vcf.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG007.GRCh38.deepvariant.g.vcf.gz"
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz"
                 ],
                 "gvcf_indices": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG006.GRCh38.deepvariant.g.vcf.gz.tbi",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG007.GRCh38.deepvariant.g.vcf.gz.tbi"
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz.tbi"
                 ],
                 "reference_name": "GRCh38",
                 "preemptible": true
@@ -201,9 +245,14 @@
               "output_tests": {
                 "vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.vcf.gz",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -216,7 +265,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "",
+          "digest": "h4ppviba22jmx6ruckhcuna7ci4kbsx3",
           "tests": [
             {
               "inputs": {
@@ -228,15 +277,20 @@
               "output_tests": {
                 "cohort_yaml": {
                   "value": "${resources_file_path}/hg005-small-cohort.yml",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_yaml"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_yaml"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "",
+          "digest": "b4eqkeyl7mgzl7jhh3fsry6zezwir6cp",
           "tests": [
             {
               "inputs": {
@@ -248,15 +302,21 @@
               "output_tests": {
                 "pedigree": {
                   "value": "${resources_file_path}/hg005-small-cohort.ped",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "",
+          "digest": "xacgna54lzpnhvmrgopahesunauattjb",
           "tests": [
             {
               "inputs": {
@@ -272,15 +332,20 @@
               "output_tests": {
                 "phrank_lookup": {
                   "value": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
-                  "test_tasks": ["compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "",
+          "digest": "k3hkoswna7jqqtbwgqqt6bizqfkezymg",
           "tests": [
             {
               "inputs": {
@@ -293,15 +358,19 @@
               "output_tests": {
                 "normalized_bcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
-                  "test_tasks": ["compare_file_basename", "check_sorted_vcf"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_sorted_vcf"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "",
+          "digest": "6jiteeaosrvwlc6qbvvmqut5xcyjrv37",
           "tests": [
             {
               "inputs": {
@@ -320,15 +389,20 @@
               "output_tests": {
                 "filtered_vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "",
+          "digest": "3rv3iu743hg3y3kqc5fk5htmgkbh2qcr",
           "tests": [
             {
               "inputs": {
@@ -341,15 +415,21 @@
               "output_tests": {
                 "compound_het_vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "",
+          "digest": "4zuqa4ftffklekkanpqrfymdwf272qcx",
           "tests": [
             {
               "inputs": {
@@ -365,19 +445,30 @@
               "output_tests": {
                 "filtered_tsv": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 },
                 "compound_het_tsv": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "",
+          "digest": "tctaqa65faoh3ghq3m4pyimgaa7lbagc",
           "tests": [
             {
               "inputs": {
@@ -401,15 +492,20 @@
               "output_tests": {
                 "svpack_vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "vcftools_validator"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "",
+          "digest": "4pv7pxrnfwgkmuszn53liu5gs3tb2736",
           "tests": [
             {
               "inputs": {
@@ -424,9 +520,15 @@
               "output_tests": {
                 "svpack_tsv": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.tsv",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -439,7 +541,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "",
+          "digest": "o4tg3yafn3bbpw6vdvvwlemh6mx6osmg",
           "tests": [
             {
               "inputs": {
@@ -452,15 +554,21 @@
               "output_tests": {
                 "region_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "",
+          "digest": "wpp4svgn67vhxgqfnb3ekornxfffxaip",
           "tests": [
             {
               "inputs": {
@@ -468,22 +576,22 @@
                 "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
                 "chromosome": "chr6",
                 "aligned_bams": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
                 ],
                 "aligned_bam_indices": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -493,25 +601,30 @@
               "output_tests": {
                 "phased_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "",
+          "digest": "oqc5x2wumcbt3soscuk6phumpluweshb",
           "tests": [
             {
               "inputs": {
                 "vcfs": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
                 ],
                 "vcf_indices": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
                 ],
                 "output_vcf_name": "HG005.GRCh38.deepvariant.phased.vcf.gz",
                 "container_registry": "pacbio.azurecr.io",
@@ -520,15 +633,20 @@
               "output_tests": {
                 "concatenated_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "",
+          "digest": "djlfzp2ahw6lv3l3tfr7wlchxq3yfxib",
           "tests": [
             {
               "inputs": {
@@ -541,17 +659,32 @@
               "output_tests": {
                 "tsv": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.tsv",
-                  "test_tasks": ["compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 },
                 "gtf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.gtf",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 },
                 "blocklist": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.blocklist",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -564,7 +697,7 @@
       "tasks": {
         "htsbox": {
           "key": "htsbox",
-          "digest": "",
+          "digest": "wh544ndwjasetf7e2yb2rphftenv7oro",
           "tests": [
             {
               "inputs": {
@@ -577,9 +710,13 @@
               "output_tests": {
                 "htsbox_vcf": {
                   "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -592,28 +729,28 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "",
+          "digest": "j4eswrkkvfa5ecgmd44jb2pxhnxfmgu5",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "aligned_bams": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
                 ],
                 "aligned_bam_indices": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -624,221 +761,222 @@
               "output_tests": {
                 "example_tfrecords": {
                   "value": [
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00000-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00001-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00002-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00003-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00004-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00005-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00006-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00007-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00008-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00009-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00010-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00011-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00012-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00013-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00014-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00015-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00016-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00017-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00018-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00019-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00020-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00021-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00022-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00023-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00024-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00025-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00026-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00027-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00028-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00029-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00030-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00031-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00032-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00033-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00034-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00035-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00036-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00037-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00038-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00039-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00040-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00041-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00042-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00043-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00044-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00045-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00046-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00047-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00048-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00049-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00050-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00051-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00052-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00053-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00054-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00055-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00056-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00057-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00058-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00059-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00060-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00061-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00062-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00063-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00064-of-00064.gz"
+                    "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00064-of-00064.gz"
                   ],
                   "test_tasks": []
                 },
                 "nonvariant_site_tfrecords": {
                   "value": [
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00000-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00001-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00002-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00003-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00004-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00005-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00006-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00007-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00008-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00009-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00010-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00011-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00012-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00013-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00014-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00015-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00016-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00017-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00018-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00019-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00020-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00021-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00022-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00023-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00024-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00025-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00026-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00027-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00028-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00029-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00030-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00031-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00032-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00033-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00034-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00035-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00036-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00037-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00038-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00039-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00040-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00041-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00042-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00043-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00044-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00045-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00046-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00047-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00048-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00049-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00050-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00051-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00052-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00053-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00054-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00055-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00056-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00057-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00058-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00059-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00060-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00061-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00063-of-00064.gz",
-                    "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00064-of-00064.gz"
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00064-of-00064.gz"
                   ],
                   "test_tasks": []
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "",
+          "digest": "kl5sehsir7jhqw4spjdiolvuyzekup3r",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "example_tfrecords": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00000-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00001-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00002-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00003-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00004-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00005-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00006-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00007-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00008-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00009-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00010-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00011-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00012-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00013-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00014-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00015-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00016-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00017-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00018-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00019-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00020-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00021-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00022-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00023-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00024-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00025-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00026-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00027-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00028-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00029-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00030-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00031-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00032-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00033-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00034-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00035-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00036-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00037-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00038-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00039-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00040-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00041-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00042-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00043-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00044-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00045-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00046-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00047-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00048-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00049-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00050-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00051-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00052-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00053-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00054-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00055-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00056-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00057-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00058-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00059-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00060-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00061-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00062-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00063-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.examples.tfrecord-00064-of-00064.gz"
+                  "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00064-of-00064.gz"
                 ],
                 "reference_name": "GRCh38",
                 "deepvariant_threads": 64,
@@ -850,84 +988,85 @@
                   "value": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
                   "test_tasks": []
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "",
+          "digest": "bqt5hh62pqesgiq5zedmqrsjlnx72eot",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "tfrecord": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
                 "nonvariant_site_tfrecords": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00000-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00001-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00002-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00003-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00004-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00005-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00006-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00007-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00008-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00009-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00010-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00011-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00012-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00013-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00014-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00015-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00016-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00017-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00018-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00019-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00020-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00021-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00022-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00023-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00024-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00025-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00026-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00027-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00028-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00029-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00030-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00031-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00032-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00033-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00034-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00035-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00036-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00037-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00038-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00039-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00040-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00041-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00042-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00043-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00044-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00045-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00046-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00047-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00048-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00049-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00050-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00051-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00052-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00053-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00054-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00055-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00056-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00057-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00058-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00059-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00060-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00061-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00063-of-00064.gz",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.gvcf.tfrecord-00064-of-00064.gz"
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00064-of-00064.gz"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -949,7 +1088,8 @@
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.visual_report.html",
                   "test_tasks": []
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -962,7 +1102,7 @@
       "tasks": {
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "",
+          "digest": "bgzpqvsl5loj3ugjzmp6h6bbwxatfm7n",
           "tests": [
             {
               "inputs": {
@@ -973,15 +1113,21 @@
               "output_tests": {
                 "roh_bed": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "count_bed_columns", "check_tab_delimited"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "count_bed_columns",
+                    "check_tab_delimited"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "",
+          "digest": "ymvmetfu3deyglznebunea4swkp36y4u",
           "tests": [
             {
               "inputs": {
@@ -997,21 +1143,25 @@
               "output_tests": {
                 "haplotagged_bam": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
-                  "test_tasks": ["compare_file_basename", "samtools_quickcheck"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "",
+          "digest": "tq5gv6ticn2rem2pzfoba3yp2y6ibvwu",
           "tests": [
             {
               "inputs": {
                 "bams": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
                 ],
                 "output_bam_name": "HG005.GRCh38.haplotagged.bam",
                 "container_registry": "pacbio.azurecr.io",
@@ -1020,15 +1170,21 @@
               "output_tests": {
                 "merged_bam": {
                   "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "samtools_quickcheck"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
                 }
-              }
+              },
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         },
         "trgt": {
           "key": "trgt",
-          "digest": "",
+          "digest": "v5jkf3zs6dmuxdttdfeznxhuis64yi65",
           "tests": [
             {
               "inputs": {
@@ -1043,25 +1199,36 @@
               "output_tests": {
                 "spanning_reads": {
                   "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "samtools_quickcheck", "check_sorted_alignment"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_sorted_alignment"
+                  ]
                 },
                 "repeat_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "vcftools_validator", "check_sorted_vcf"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_sorted_vcf"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "trgt_coverage_dropouts": {
           "key": "trgt_coverage_dropouts",
-          "digest": "",
+          "digest": "ng3jz3wqnhdy4blha25yt6ybz4anpqgh",
           "tests": [
             {
               "inputs": {
                 "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
                 "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "HG005.GRCh38",
+                "output_prefix": "~{sample.sample_id}.~{reference.name}",
                 "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
                 "container_registry": "pacbio.azurecr.io",
                 "preemptible": true
@@ -1069,15 +1236,23 @@
               "output_tests": {
                 "trgt_dropouts": {
                   "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited","count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "",
+          "digest": "trwq2arowgiqqrofhmdwstos7uxut2tk",
           "tests": [
             {
               "inputs": {
@@ -1101,7 +1276,8 @@
                   ],
                   "test_tasks": []
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -1120,7 +1296,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "",
+          "digest": "jgvqohcx552zydcax4sosa7od7xuczhk",
           "tests": [
             {
               "inputs": {
@@ -1131,9 +1307,15 @@
               "output_tests": {
                 "zipped_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "vcftools_validator", "check_gzip"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -1146,7 +1328,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "",
+          "digest": "a7zzqaglsm2vmlpt322d2rwadzdovvej",
           "tests": [
             {
               "inputs": {
@@ -1157,9 +1339,15 @@
               "output_tests": {
                 "reads_fasta": {
                   "value": "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_empty_lines", "fasta_validator"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -1172,12 +1360,12 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "",
+          "digest": "lxpc37xausr2hbnbqoz2j66thf65wlqg",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "params": "--apply-filters PASS --samples HG005",
+                "params": "--apply-filters PASS --samples ~{sample.sample_id}",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "container_registry": "pacbio.azurecr.io",
                 "preemptible": true
@@ -1185,9 +1373,15 @@
               "output_tests": {
                 "stats": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
-                  "test_tasks": ["compare_file_basename", "check_empty_lines"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_empty_lines"
+                  ]
                 }
-              }
+              },
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         }
@@ -1200,13 +1394,13 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "",
+          "digest": "jkok3rpsxoum4g4kvws3lu4umpinnlp5",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "svsigs": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -1217,9 +1411,13 @@
               "output_tests": {
                 "pbsv_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
-                  "test_tasks": ["compare_file_basename", "vcftools_validator"]
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -1232,7 +1430,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "",
+          "digest": "q566mka54owywex56wlq2fsnm2wizgl7",
           "tests": [
             {
               "inputs": {
@@ -1244,13 +1442,24 @@
               "output_tests": {
                 "region_bed": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.regions.bed.gz",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_bed_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
                 },
                 "summary": {
                   "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.mosdepth.summary.txt",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_tab_delimited", "count_columns"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
@@ -1263,7 +1472,7 @@
       "tasks": {
         "parse_families": {
           "key": "parse_families",
-          "digest": "",
+          "digest": "n4tskg3zarvuhap3vjatmtljcxhnd3hj",
           "tests": [
             {
               "inputs": {
@@ -1274,26 +1483,31 @@
               "output_tests": {
                 "families_json": {
                   "value": "${resources_file_path}/families.json",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename", "check_json"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_json"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         },
         "yak_count": {
           "key": "yak_count",
-          "digest": "",
+          "digest": "65mljqtocsvh6rdorcttmwqf6pvaewkh",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG007",
                 "reads_fastas": [
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_191216_194629.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_191218_164535.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_191219_225837.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_191221_052416.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200108_232219.hifi_reads.fasta",
-                  "/coac74908838b5dd7/inputs/wdl-ci/m64017_200112_090459.hifi_reads.fasta"
+                  "${resources_file_path}/m64017_191216_194629.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191218_164535.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191219_225837.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191221_052416.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200108_232219.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200112_090459.hifi_reads.fasta"
                 ],
                 "container_registry": "pacbio.azurecr.io",
                 "preemptible": true
@@ -1301,9 +1515,13 @@
               "output_tests": {
                 "yak": {
                   "value": "${resources_file_path}/HG007.yak",
-                  "test_tasks": ["calculate_md5sum", "compare_file_basename"]
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename"
+                  ]
                 }
-              }
+              },
+              "struct_imports": []
             }
           ]
         }
