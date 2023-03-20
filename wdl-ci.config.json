@@ -1155,7 +1155,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "tq5gv6ticn2rem2pzfoba3yp2y6ibvwu",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -1163,7 +1163,7 @@
                   "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
                   "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
                 ],
-                "output_bam_name": "HG005.GRCh38.haplotagged.bam",
+                "output_bam_name": "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
                 "container_registry": "pacbio.azurecr.io",
                 "preemptible": true
               },
@@ -1222,7 +1222,7 @@
         },
         "trgt_coverage_dropouts": {
           "key": "trgt_coverage_dropouts",
-          "digest": "ng3jz3wqnhdy4blha25yt6ybz4anpqgh",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -1360,7 +1360,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "lxpc37xausr2hbnbqoz2j66thf65wlqg",
+          "digest": "",
           "tests": [
             {
               "inputs": {
