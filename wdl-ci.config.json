@@ -27,9 +27,6 @@
                   "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
                   "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
                 ],
-                "extra_params": "-c1 -d1",
-                "father_yak": "${resources_file_path}/HG006.yak",
-                "mother_yak": "${resources_file_path}/HG007.yak",
                 "container_registry": "pacbio.azurecr.io",
                 "preemptible": true
               },
@@ -39,24 +36,39 @@
                     "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
                     "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
                 },
                 "assembly_noseq_gfas": {
                   "value": [
                     "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
                     "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
                 },
                 "assembly_lowQ_beds": {
                   "value": [
                     "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
                     "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_columns_array"
+                  ]
                 }
               },
-              "struct_imports": []
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         },
@@ -986,10 +998,17 @@
               "output_tests": {
                 "tfrecord": {
                   "value": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines"
+                  ]
                 }
               },
-              "struct_imports": []
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         },
@@ -1078,18 +1097,34 @@
               "output_tests": {
                 "vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
                 },
                 "gvcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
                 },
                 "report": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.visual_report.html",
-                  "test_tasks": []
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "html_validator"
+                  ]
                 }
               },
-              "struct_imports": []
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         }
@@ -1268,16 +1303,28 @@
                 "pileups": {
                   "value": [
                     "${resources_file_path}/HG005.GRCh38.combined.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bw",
                     "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bw",
                     "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed"
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bw"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_bed_columns_array"
+                  ]
                 }
               },
-              "struct_imports": []
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         }
