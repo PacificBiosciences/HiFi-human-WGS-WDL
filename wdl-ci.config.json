@@ -836,10 +836,12 @@
                     "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
                     "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
                     "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00064-of-00064.gz"
+                    "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_gzip_array"
+                  ]
                 },
                 "nonvariant_site_tfrecords": {
                   "value": [
@@ -906,13 +908,17 @@
                     "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
                     "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
                     "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00064-of-00064.gz"
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
                   ],
-                  "test_tasks": []
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_gzip_array"
+                  ]
                 }
               },
-              "struct_imports": []
+              "struct_imports": [
+                "workflows/common/structs.wdl"
+              ]
             }
           ]
         },
@@ -987,8 +993,7 @@
                   "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
                   "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
                   "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00064-of-00064.gz"
+                  "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
                 ],
                 "reference_name": "GRCh38",
                 "deepvariant_threads": 64,
@@ -999,10 +1004,8 @@
                 "tfrecord": {
                   "value": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines"
+                    "check_gzip"
                   ]
                 }
               },
@@ -1084,8 +1087,7 @@
                   "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
                   "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
                   "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00064-of-00064.gz"
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -1318,7 +1320,8 @@
                   "test_tasks": [
                     "compare_file_basename_array",
                     "check_tab_delimited_array",
-                    "count_bed_columns_array"
+                    "count_bed_columns_array",
+                    "bigwig_validator_array"
                   ]
                 }
               },

@@ -1,1 +1,1 @@
-{"py/object": "wdlci.model.changeset.Changeset", "workflow_changes": {"workflows/assemble_genome/assemble_genome.wdl": {"py/object": "wdlci.model.changeset.WorkflowChange", "task_changes": {"py/set": ["hifiasm_assemble"]}}}}
+{"py/object": "wdlci.model.changeset.Changeset", "workflow_changes": {"workflows/deepvariant/deepvariant.wdl": {"py/object": "wdlci.model.changeset.WorkflowChange", "task_changes": {"py/set": ["deepvariant_call_variants", "deepvariant_postprocess_variants", "deepvariant_make_examples"]}}}}
