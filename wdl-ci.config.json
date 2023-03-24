@@ -130,7 +130,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck",
-                    "check_sorted_alignment"
+                    "check_coordinate_sorted_alignment"
                   ]
                 }
               },
@@ -372,7 +372,7 @@
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
                   "test_tasks": [
                     "compare_file_basename",
-                    "check_sorted_vcf"
+                    "check_sorted_vcf_bcf"
                   ]
                 }
               },
@@ -1240,7 +1240,7 @@
                     "calculate_md5sum",
                     "compare_file_basename",
                     "samtools_quickcheck",
-                    "check_sorted_alignment"
+                    "check_coordinate_sorted_alignment"
                   ]
                 },
                 "repeat_vcf": {
@@ -1249,7 +1249,7 @@
                     "calculate_md5sum",
                     "compare_file_basename",
                     "vcftools_validator",
-                    "check_sorted_vcf"
+                    "check_sorted_vcf_bcf"
                   ]
                 }
               },
