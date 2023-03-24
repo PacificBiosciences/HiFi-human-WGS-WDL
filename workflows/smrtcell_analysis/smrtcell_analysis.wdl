@@ -94,8 +94,6 @@ task pbmm2_align {
 			--log-level INFO \
 			--sort \
 			--unmapped \
-			-c 0 \
-			-y 70 \
 			~{reference} \
 			~{bam} \
 			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
