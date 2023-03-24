@@ -33,6 +33,11 @@
         }
     ]
   },
-  "cohort_analysis.container_registry": "String",
-  "cohort_analysis.preemptible": "Boolean"
+  "cohort_analysis.default_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }

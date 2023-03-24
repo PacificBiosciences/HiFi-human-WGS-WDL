@@ -1,7 +1,10 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/mosdepth.wdl" as Mosdepth
+# Align reads to a reference genome and generates statistic on alignment depth, read length, and alignment quality.
+
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 
 workflow smrtcell_analysis {
 	input {
@@ -9,8 +12,7 @@ workflow smrtcell_analysis {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -21,25 +23,22 @@ workflow smrtcell_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 
 		call Mosdepth.mosdepth {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 
-		call pbsv_discover {
+		call PbsvDiscover.pbsv_discover {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
 				aligned_bam_index = pbmm2_align.aligned_bam_index,
 				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 
 		IndexData aligned_bam = {
@@ -63,7 +62,7 @@ workflow smrtcell_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 
@@ -76,8 +75,7 @@ task pbmm2_align {
 		File reference_index
 		String reference_name
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String movie = basename(bam, ".bam")
@@ -96,8 +94,6 @@ task pbmm2_align {
 			--log-level INFO \
 			--sort \
 			--unmapped \
-			-c 0 \
-			-y 70 \
 			~{reference} \
 			~{bam} \
 			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
@@ -135,50 +131,15 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pbmm2:1.9.0"
+		docker: "~{runtime_attributes.container_registry}/pbmm2:1.9.0"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
-	}
-}
-
-task pbsv_discover {
-	input {
-		File aligned_bam
-		File aligned_bam_index
-
-		File reference_tandem_repeat_bed
-
-		String container_registry
-		Boolean preemptible
-	}
-
-	String prefix = basename(aligned_bam, ".bam")
-	Int disk_size = ceil((size(aligned_bam, "GB") + size(reference_tandem_repeat_bed, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		pbsv discover \
-			--log-level INFO \
-			--hifi \
-			--tandem-repeats ~{reference_tandem_repeat_bed} \
-			~{aligned_bam} \
-			~{prefix}.svsig.gz
-	>>>
-
-	output {
-		File svsig = "~{prefix}.svsig.gz"
-	}
-
-	runtime {
-		docker: "~{container_registry}/pbsv:2.8.0"
-		cpu: 2
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

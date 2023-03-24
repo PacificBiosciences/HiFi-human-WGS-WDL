@@ -1,9 +1,6 @@
 version 1.0
 
-struct IndexData {
-	File data
-	File data_index
-}
+import "wdl-common/wdl/structs.wdl"
 
 struct ReferenceData {
 	String name
@@ -58,9 +55,4 @@ struct SlivarData {
 	File ensembl_to_hgnc
 	File lof_lookup
 	File clinvar_lookup
-}
-
-struct DeepVariantModel {
-	IndexData model
-	File metadata
 }

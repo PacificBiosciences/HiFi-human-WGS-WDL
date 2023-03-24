@@ -82,8 +82,8 @@
     "lof_lookup": "/datasetpbrarediseases/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "/datasetpbrarediseases/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },
-  "humanwgs.deepvariant_version": "String",
+  "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
-  "humanwgs.container_registry": "pacbio.azurecr.io",
+  "humanwgs.backend": "Azure",
   "humanwgs.preemptible": "Boolean"
 }

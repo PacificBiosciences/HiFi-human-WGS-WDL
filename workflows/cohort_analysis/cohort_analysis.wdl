@@ -1,9 +1,12 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/pbsv_call.wdl" as PbsvCall
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
+# Run joint genotyping for a cohort. This workflow will be run if there is more than one sample in the cohort.
+
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/glnexus.wdl" as Glnexus
+import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 
 workflow cohort_analysis {
 	input {
@@ -14,8 +17,7 @@ workflow cohort_analysis {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	scatter (gvcf_object in gvcfs) {
@@ -30,33 +32,32 @@ workflow cohort_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
-	call glnexus {
+	call Glnexus.glnexus {
 		input:
 			cohort_id = cohort_id,
 			gvcfs = gvcf,
 			gvcf_indices = gvcf_index,
 			reference_name = reference.name,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PhaseVcf.phase_vcf {
 		input:
 			vcf = {"data": glnexus.vcf, "data_index": glnexus.vcf_index},
 			aligned_bams = aligned_bams,
-			reference = reference,
-			container_registry = container_registry,
-			preemptible = preemptible
+			reference_fasta = reference.fasta,
+			reference_chromosome_lengths = reference.chromosome_lengths,
+			regions = reference.chromosomes,
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -73,55 +74,6 @@ workflow cohort_analysis {
 		svsigs: {help: "pbsv svsig files for each sample and movie bam in the cohort"}
 		gvcfs: {help: "gVCF for each sample in the cohort"}
 		reference: {help: "Reference genome data"}
-		container_registry: {help: "Container registry where docker images are hosted"}
-	}
-}
-
-task glnexus {
-	input {
-		String cohort_id
-		Array[File] gvcfs
-		Array[File] gvcf_indices
-
-		String reference_name
-		Boolean preemptible
-	}
-
-	Int threads = 24
-	Int mem_gbytes = 30
-	Int disk_size = ceil((size(gvcfs[0], "GB") * length(gvcfs)) * 2 + 100)
-
-	command <<<
-		set -euo pipefail
-
-		glnexus_cli \
-			--threads ~{threads} \
-			--mem-gbytes ~{mem_gbytes} \
-			--dir ~{cohort_id}.~{reference_name}.GLnexus.DB \
-			--config DeepVariant_unfiltered \
-			~{sep=' ' gvcfs} \
-		> ~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
-
-		bcftools view \
-			--threads ~{threads} \
-			--output-type z \
-			--output-file ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz \
-			~{cohort_id}.~{reference_name}.deepvariant.glnexus.bcf
-
-		tabix ~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz
-	>>>
-
-	output {
-		File vcf = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz"
-		File vcf_index = "~{cohort_id}.~{reference_name}.deepvariant.glnexus.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "ghcr.io/dnanexus-rnd/glnexus:v1.4.1"
-		cpu: threads
-		memory: mem_gbytes + " GB"
-		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }

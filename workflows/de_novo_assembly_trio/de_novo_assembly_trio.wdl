@@ -1,7 +1,10 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/samtools_fasta.wdl" as SamtoolsFasta
+# Performs de novo assembly on a trio, using parental information and phasing to improve the assembly.
+# This workflow will run if `Cohort.run_de_novo_assembly_trio` is set to `true`. The cohort must include at least one valid trio (child, father, and mother).
+
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome
 
 workflow de_novo_assembly_trio {
@@ -10,15 +13,15 @@ workflow de_novo_assembly_trio {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		String backend
+		RuntimeAttributes default_runtime_attributes
+		RuntimeAttributes on_demand_runtime_attributes
 	}
 
 	call parse_families {
 		input:
 			cohort_json = write_json(cohort),
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	Array[FamilySampleIndices] families = read_json(parse_families.families_json)
@@ -34,8 +37,7 @@ workflow de_novo_assembly_trio {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_father {
 				input:
 					bam = movie_bam,
-					container_registry = container_registry,
-					preemptible = preemptible
+					runtime_attributes = default_runtime_attributes
 			}
 		}
 
@@ -43,16 +45,14 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = father.sample_id,
 				reads_fastas = samtools_fasta_father.reads_fasta,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 
 		scatter (movie_bam in mother.movie_bams) {
 			call SamtoolsFasta.samtools_fasta as samtools_fasta_mother {
 				input:
 					bam = movie_bam,
-					container_registry = container_registry,
-					preemptible = preemptible
+					runtime_attributes = default_runtime_attributes
 			}
 		}
 
@@ -60,8 +60,7 @@ workflow de_novo_assembly_trio {
 			input:
 				sample_id = mother.sample_id,
 				reads_fastas = samtools_fasta_mother.reads_fasta,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 
 		# Father is haplotype 1; mother is haplotype 2
@@ -77,8 +76,7 @@ workflow de_novo_assembly_trio {
 				call SamtoolsFasta.samtools_fasta as samtools_fasta_child {
 					input:
 						bam = movie_bam,
-						container_registry = container_registry,
-						preemptible = preemptible
+						runtime_attributes = default_runtime_attributes
 				}
 			}
 
@@ -90,8 +88,9 @@ workflow de_novo_assembly_trio {
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
-					container_registry = container_registry,
-					preemptible = preemptible
+					backend = backend,
+					default_runtime_attributes = default_runtime_attributes,
+					on_demand_runtime_attributes = on_demand_runtime_attributes
 			}
 		}
 	}
@@ -108,7 +107,8 @@ workflow de_novo_assembly_trio {
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
 		reference: {help: "Reference genome data"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
 }
 
@@ -116,8 +116,7 @@ task parse_families {
 	input {
 		File cohort_json
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	command <<<
@@ -133,12 +132,16 @@ task parse_families {
 	}
 
 	runtime {
-		docker: "~{container_registry}/parse-cohort:1.0.0"
+		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + "20" + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -147,8 +150,7 @@ task yak_count {
 		String sample_id
 		Array[File] reads_fastas
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int threads = 10
@@ -171,11 +173,15 @@ task yak_count {
 	}
 
 	runtime {
-		docker: "~{container_registry}/yak:0.1"
+		docker: "~{runtime_attributes.container_registry}/yak:0.1"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
