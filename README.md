@@ -27,6 +27,7 @@ The human WGS workflow performs read alignment, small and structural variant cal
 
 Reference datasets are hosted publicly for use in the pipeline. For data locations, see `workflows/inputs.${backend}.json`.
 
+
 ## Reference data hosted in Azure
 
 To use Azure reference data, add the following line to your `containers-to-mount` file in your Cromwell on Azure installation ([more info here](https://github.com/microsoft/CromwellOnAzure/blob/develop/docs/troubleshooting-guide.md#use-input-data-files-from-an-existing-azure-storage-account-that-my-lab-or-team-is-currently-using)):
@@ -85,7 +86,7 @@ Sample information for each sample in the workflow run.
 | Boolean | run_de_novo_assembly | If true, run single-sample _de novo_ assembly for this sample | [true, false] |
 
 
-## [ReferenceData](workflows/humanwgs_structs.wdl) reference
+## [ReferenceData](workflows/humanwgs_structs.wdl)
 
 Files associated with the reference genome.
 
@@ -105,7 +106,7 @@ These files are hosted publicly in each of the cloud backends; see `workflows/in
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | Population calls in VCF format; used to annotate the VCFs | |
 
 
-## [SlivarData](workflows/humanwgs_structs.wdl) slivar_data
+## [SlivarData](workflows/humanwgs_structs.wdl)
 
 Files associated with `slivar` annotation.
 
