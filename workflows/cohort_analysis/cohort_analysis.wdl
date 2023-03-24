@@ -1,5 +1,7 @@
 version 1.0
 
+# Run joint genotyping for a cohort. This workflow will be run if there is more than one sample in the cohort.
+
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf

@@ -1,5 +1,7 @@
 version 1.0
 
+# Align reads to a reference genome and generates statistic on alignment depth, read length, and alignment quality.
+
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover

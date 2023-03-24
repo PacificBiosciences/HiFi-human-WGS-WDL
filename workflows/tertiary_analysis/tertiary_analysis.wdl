@@ -1,5 +1,8 @@
 version 1.0
 
+# Annotate small and structural variant VCFs using slivar. Outputs annotated VCFs and TSVs.
+# This workflow is run on a phased single-sample VCF if there is only a single individual in the cohort, otherwise it is run on the joint-called phased VCF.
+
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 

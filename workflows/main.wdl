@@ -15,7 +15,7 @@ workflow humanwgs {
 		ReferenceData reference
 		SlivarData slivar_data
 
-		String deepvariant_version
+		String deepvariant_version = "1.4.0"
 		DeepVariantModel? deepvariant_model
 
 		# Backend configuration

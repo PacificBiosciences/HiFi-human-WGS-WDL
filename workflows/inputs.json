@@ -44,7 +44,7 @@
     "lof_lookup": "File",
     "clinvar_lookup": "File"
   },
-  "humanwgs.deepvariant_version": "String",
+  "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
   "humanwgs.backend": "String ['GCP', 'Azure', or 'AWS']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",

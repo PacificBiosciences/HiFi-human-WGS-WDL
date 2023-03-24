@@ -1,5 +1,8 @@
 version 1.0
 
+# Performs de novo assembly on a trio, using parental information and phasing to improve the assembly.
+# This workflow will run if `Cohort.run_de_novo_assembly_trio` is set to `true`. The cohort must include at least one valid trio (child, father, and mother).
+
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome

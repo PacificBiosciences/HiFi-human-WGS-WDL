@@ -1,5 +1,7 @@
 version 1.0
 
+# Assemble a genome using hifiasm. Can be used for single-sample or trio-based assembly.
+
 import "../humanwgs_structs.wdl"
 
 workflow assemble_genome {

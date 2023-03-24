@@ -1,5 +1,7 @@
 version 1.0
 
+# Run for each sample in the cohort. Aligns reads from each movie to the reference genome, then calls and phases small and structural variants.
+
 import "../humanwgs_structs.wdl"
 import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
