@@ -13,9 +13,13 @@ workflow assemble_genome {
 		File? father_yak
 		File? mother_yak
 
+		String backend
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
+
+	# Preemptible jobs in GCP cannot live >24h; force on-demand for assembly in GCP
+	RuntimeAttributes assemble_runtime_attributes = if (backend == "GCP") then on_demand_runtime_attributes else default_runtime_attributes
 
 	call hifiasm_assemble {
 		input:
@@ -24,7 +28,7 @@ workflow assemble_genome {
 			extra_params = hifiasm_extra_params,
 			father_yak = father_yak,
 			mother_yak = mother_yak,
-			runtime_attributes = on_demand_runtime_attributes
+			runtime_attributes = assemble_runtime_attributes
 	}
 
 	scatter (gfa in hifiasm_assemble.assembly_hap_gfas) {

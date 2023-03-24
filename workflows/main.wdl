@@ -52,6 +52,7 @@ workflow humanwgs {
 				input:
 					sample = sample,
 					reference = reference,
+					backend = backend,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
 			}
@@ -74,6 +75,7 @@ workflow humanwgs {
 				input:
 					cohort = cohort,
 					reference = reference,
+					backend = backend,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
 			}

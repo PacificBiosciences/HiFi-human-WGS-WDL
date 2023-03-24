@@ -12,6 +12,7 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
+		String backend
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 
@@ -35,6 +36,7 @@ workflow de_novo_assembly_sample {
 			hifiasm_extra_params = "",
 			father_yak = my_none,
 			mother_yak = my_none,
+			backend = backend,
 			default_runtime_attributes = default_runtime_attributes,
 			on_demand_runtime_attributes = on_demand_runtime_attributes
 	}

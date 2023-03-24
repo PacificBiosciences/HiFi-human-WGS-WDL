@@ -10,6 +10,7 @@ workflow de_novo_assembly_trio {
 
 		ReferenceData reference
 
+		String backend
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
 	}
@@ -81,6 +82,7 @@ workflow de_novo_assembly_trio {
 					hifiasm_extra_params = "-c1 -d1",
 					father_yak = yak_count_father.yak,
 					mother_yak = yak_count_mother.yak,
+					backend = backend,
 					default_runtime_attributes = default_runtime_attributes,
 					on_demand_runtime_attributes = on_demand_runtime_attributes
 			}
