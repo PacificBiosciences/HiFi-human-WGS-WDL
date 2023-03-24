@@ -1,13 +1,16 @@
 version 1.0
 
-import "../common/structs.wdl"
+# Run for each sample in the cohort. Aligns reads from each movie to the reference genome, then calls and phases small and structural variants.
+
+import "../humanwgs_structs.wdl"
 import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
-import "../deepvariant/deepvariant.wdl" as DeepVariant
-import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
-import "../common/tasks/mosdepth.wdl" as Mosdepth
-import "../common/tasks/pbsv_call.wdl" as PbsvCall
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../phase_vcf/phase_vcf.wdl" as PhaseVcf
+import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
+import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
+import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
+import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
 
 workflow sample_analysis {
 	input {
@@ -18,26 +21,25 @@ workflow sample_analysis {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes default_runtime_attributes
 	}
 
 	call SmrtcellAnalysis.smrtcell_analysis {
 		input:
 			sample = sample,
 			reference = reference,
-			container_registry = container_registry,
-			preemptible = preemptible
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	call DeepVariant.deepvariant {
 		input:
 			sample_id = sample.sample_id,
 			aligned_bams = smrtcell_analysis.aligned_bams,
-			reference = reference,
+			reference_fasta = reference.fasta,
+			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
-			preemptible = preemptible
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -45,15 +47,13 @@ workflow sample_analysis {
 			vcf = deepvariant.vcf.data,
 			params = "--apply-filters PASS --samples ~{sample.sample_id}",
 			reference = reference.fasta.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call bcftools_roh {
 		input:
 			vcf = deepvariant.vcf.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PbsvCall.pbsv_call {
@@ -63,28 +63,27 @@ workflow sample_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = pbsv_call.pbsv_vcf,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call PhaseVcf.phase_vcf {
 		input:
 			vcf = deepvariant.vcf,
 			aligned_bams = smrtcell_analysis.aligned_bams,
-			reference = reference,
-			container_registry = container_registry,
-			preemptible = preemptible
+			reference_fasta = reference.fasta,
+			reference_chromosome_lengths = reference.chromosome_lengths,
+			regions = reference.chromosomes,
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	scatter (bam_object in smrtcell_analysis.aligned_bams) {
-		call whatshap_haplotag {
+		call WhatshapHaplotag.whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
 				phased_vcf_index = phase_vcf.phased_vcf.data_index,
@@ -92,8 +91,7 @@ workflow sample_analysis {
 				aligned_bam_index = bam_object.data_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -101,16 +99,14 @@ workflow sample_analysis {
 		input:
 			bams = whatshap_haplotag.haplotagged_bam,
 			output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call Mosdepth.mosdepth {
 		input:
 			aligned_bam = merge_bams.merged_bam,
 			aligned_bam_index = merge_bams.merged_bam_index,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call trgt {
@@ -120,8 +116,7 @@ workflow sample_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call trgt_coverage_dropouts {
@@ -130,8 +125,7 @@ workflow sample_analysis {
 			bam_index = merge_bams.merged_bam_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call cpg_pileup {
@@ -141,8 +135,7 @@ workflow sample_analysis {
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -178,7 +171,7 @@ workflow sample_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
 
@@ -186,8 +179,7 @@ task bcftools_roh {
 	input {
 		File vcf
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
@@ -209,57 +201,16 @@ task bcftools_roh {
 	}
 
 	runtime {
-		docker: "~{container_registry}/bcftools:1.14"
+		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
-	}
-}
-
-task whatshap_haplotag {
-	input {
-		File phased_vcf
-		File phased_vcf_index
-
-		File aligned_bam
-		File aligned_bam_index
-
-		File reference
-		File reference_index
-
-		String container_registry
-		Boolean preemptible
-	}
-
-	String bam_basename = basename(aligned_bam, ".bam")
-	Int threads = 4
-	Int disk_size = ceil((size(phased_vcf, "GB") + size(aligned_bam, "GB") + size(reference, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		whatshap haplotag \
-			--tag-supplementary \
-			--output-threads ~{threads} \
-			--reference ~{reference} \
-			--output ~{bam_basename}.haplotagged.bam \
-			~{phased_vcf} \
-			~{aligned_bam}
-	>>>
-
-	output {
-		File haplotagged_bam = "~{bam_basename}.haplotagged.bam"
-	}
-
-	runtime {
-		docker: "~{container_registry}/whatshap:1.4"
-		cpu: threads
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -269,8 +220,7 @@ task merge_bams {
 
 		String output_bam_name
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int threads = 8
@@ -297,12 +247,16 @@ task merge_bams {
 	}
 
 	runtime {
-		docker: "~{container_registry}/samtools:1.14"
+		docker: "~{runtime_attributes.container_registry}/samtools:1.14"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -315,8 +269,7 @@ task trgt {
 		File reference_index
 		File tandem_repeat_bed
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String bam_basename = basename(bam, ".bam")
@@ -359,12 +312,16 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{container_registry}/trgt:0.3.4"
+		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -377,8 +334,7 @@ task trgt_coverage_dropouts {
 
 		File tandem_repeat_bed
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int disk_size = ceil(size(bam, "GB") * 4 + 20)
@@ -397,12 +353,16 @@ task trgt_coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{container_registry}/tandem-genotypes:1.8.1"
+		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:1.8.1"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -416,8 +376,7 @@ task cpg_pileup {
 		File reference
 		File reference_index
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	Int threads = 48
@@ -445,11 +404,15 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{container_registry}/pb-cpg-tools:fed1a7b"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:fed1a7b"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

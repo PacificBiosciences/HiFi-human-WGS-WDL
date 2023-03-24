@@ -1,10 +1,12 @@
 version 1.0
 
-import "../common/structs.wdl"
-import "../common/tasks/samtools_fasta.wdl" as SamtoolsFasta
+# Assembles a single genome. This workflow is run if `Sample.run_de_novo_assembly` is set to `true`. Each sample can be independently assembled in this way.
+
+import "../humanwgs_structs.wdl"
+import "../wdl-common/wdl/tasks/samtools_fasta.wdl" as SamtoolsFasta
 import "../assemble_genome/assemble_genome.wdl" as AssembleGenome
-import "../common/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../common/tasks/bcftools_stats.wdl" as BcftoolsStats
+import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 
 workflow de_novo_assembly_sample {
 	input {
@@ -12,16 +14,19 @@ workflow de_novo_assembly_sample {
 
 		ReferenceData reference
 
-		String container_registry
-		Boolean preemptible
+		String backend
+		RuntimeAttributes default_runtime_attributes
+		RuntimeAttributes on_demand_runtime_attributes
+
+		# TODO workaround for miniwdl-style inputs run via Cromwell
+		File? my_none
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
 		call SamtoolsFasta.samtools_fasta {
 			input:
 				bam = movie_bam,
-				container_registry = container_registry,
-				preemptible = preemptible
+				runtime_attributes = default_runtime_attributes
 		}
 	}
 
@@ -30,8 +35,12 @@ workflow de_novo_assembly_sample {
 			sample_id = sample.sample_id,
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
-			container_registry = container_registry,
-			preemptible = preemptible
+			hifiasm_extra_params = "",
+			father_yak = my_none,
+			mother_yak = my_none,
+			backend = backend,
+			default_runtime_attributes = default_runtime_attributes,
+			on_demand_runtime_attributes = on_demand_runtime_attributes
 	}
 
 	call htsbox {
@@ -39,15 +48,13 @@ workflow de_novo_assembly_sample {
 			bam = assemble_genome.asm_bam.data,
 			bam_index = assemble_genome.asm_bam.data_index,
 			reference = reference.fasta.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
 			vcf = htsbox.htsbox_vcf,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -55,8 +62,7 @@ workflow de_novo_assembly_sample {
 			vcf = zip_index_vcf.zipped_vcf,
 			params = "--samples ~{basename(assemble_genome.asm_bam.data)}",
 			reference = reference.fasta.data,
-			container_registry = container_registry,
-			preemptible = preemptible
+			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
@@ -72,7 +78,8 @@ workflow de_novo_assembly_sample {
 	parameter_meta {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
-		container_registry: {help: "Container registry where docker images are hosted"}
+		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+		on_demand_runtime_attributes: {help: "RuntimeAttributes for tasks that require dedicated instances"}
 	}
 }
 
@@ -83,8 +90,7 @@ task htsbox {
 
 		File reference
 
-		String container_registry
-		Boolean preemptible
+		RuntimeAttributes runtime_attributes
 	}
 
 	String bam_basename = basename(bam, ".bam")
@@ -110,11 +116,15 @@ task htsbox {
 	}
 
 	runtime {
-		docker: "~{container_registry}/htsbox:r346"
+		docker: "~{runtime_attributes.container_registry}/htsbox:r346"
 		cpu: threads
-		memory: "4 GB"
+		memory: "14 GB"
 		disk: disk_size + " GB"
-		preemptible: preemptible
-		maxRetries: 3
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }

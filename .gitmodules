@@ -1,0 +1,3 @@
+[submodule "workflows/wdl-common"]
+	path = workflows/wdl-common
+	url = https://github.com/PacificBiosciences/wdl-common

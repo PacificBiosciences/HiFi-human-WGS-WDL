@@ -27,6 +27,11 @@
         }
     ]
   },
-  "smrtcell_analysis.container_registry": "String",
-  "smrtcell_analysis.preemptible": "Boolean"
+  "smrtcell_analysis.default_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
 }
