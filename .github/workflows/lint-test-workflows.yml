@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: wdl-ci
         uses: ./
         with:
