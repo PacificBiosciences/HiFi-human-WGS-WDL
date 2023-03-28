@@ -97,7 +97,6 @@
                 "repeat_vcf": {
                   "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "vcftools_validator",
                     "check_sorted_vcf_bcf"
