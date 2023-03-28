@@ -48,7 +48,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "",
+          "digest": "r3h2dezvgyytoj4robparvptlegelvaj",
           "tests": [
             {
               "inputs": {
@@ -73,7 +73,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "",
+          "digest": "xf2vasrkfnlhn3xqam32mq5h3wprzka3",
           "tests": [
             {
               "inputs": {
@@ -109,7 +109,7 @@
         },
         "trgt_coverage_dropouts": {
           "key": "trgt_coverage_dropouts",
-          "digest": "",
+          "digest": "aud6wufdctev3x66mobbzfc5ahas6cuj",
           "tests": [
             {
               "inputs": {
@@ -135,7 +135,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "",
+          "digest": "slhdxznxvar32ek3oxz3fufnlzna643p",
           "tests": [
             {
               "inputs": {
@@ -182,7 +182,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "",
+          "digest": "muu7y4mrrgmysqvlsq5kuqct4tkxaica",
           "tests": [
             {
               "inputs": {
@@ -249,7 +249,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "",
+          "digest": "vizneldpuzlu2b5f6zk2fzb2uztwsy6e",
           "tests": [
             {
               "inputs": {
@@ -279,7 +279,7 @@
       "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "",
+          "digest": "mvevyl6vopai2ptp3tkbq23kvcv5xcpi",
           "tests": [
             {
               "inputs": {
@@ -328,7 +328,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "",
+          "digest": "fve5q26x66nkiko7evxh2quukvwxobxu",
           "tests": [
             {
               "inputs": {
@@ -359,7 +359,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "",
+          "digest": "jtrgz5y4n5oodpjjpndz2pu2svqfrllx",
           "tests": [
             {
               "inputs": {
@@ -389,7 +389,7 @@
       "tasks": {
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "",
+          "digest": "qm3ulixglygrglpjw2psianylbl3edrh",
           "tests": [
             {
               "inputs": {
@@ -422,7 +422,7 @@
       "tasks": {
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "",
+          "digest": "vci7rugv75gr4grjjgs7skaeeo7ksdcr",
           "tests": [
             {
               "inputs": {
@@ -473,7 +473,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "",
+          "digest": "aptpgmivcvoe2oqukhsclkwvqq7wqmco",
           "tests": [
             {
               "inputs": {
@@ -513,7 +513,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "",
+          "digest": "efgnkw24bldf5e6ustylz27yu3egiqpu",
           "tests": [
             {
               "inputs": {
@@ -547,7 +547,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "",
+          "digest": "dkbnkqxbmcep5oqjelgi7pg2jzxen76t",
           "tests": [
             {
               "inputs": {
@@ -577,7 +577,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "",
+          "digest": "llhlhbe4xo5d3hsdbddclb7nq7dq7jka",
           "tests": [
             {
               "inputs": {
@@ -623,7 +623,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "",
+          "digest": "lcsmxfgw32fjgaielybd3zn4kglkpdjt",
           "tests": [
             {
               "inputs": {
@@ -648,7 +648,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "",
+          "digest": "f67dcveadct5kfikftiwmfbh2odzdw3t",
           "tests": [
             {
               "inputs": {
@@ -685,7 +685,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "",
+          "digest": "cw5eizdd4reqibnagkdeknljww3wp6fg",
           "tests": [
             {
               "inputs": {
@@ -865,7 +865,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "",
+          "digest": "qgxyjgcunf7fcqgrgnpso4uvcgifisux",
           "tests": [
             {
               "inputs": {
@@ -955,7 +955,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "",
+          "digest": "2aji2u2mozvqoykiudminizihevkk7yq",
           "tests": [
             {
               "inputs": {
@@ -1074,7 +1074,7 @@
       "tasks": {
         "parse_families": {
           "key": "parse_families",
-          "digest": "",
+          "digest": "gnwm74ahxyt2kdeudg4qww7u6byg7kkm",
           "tests": [
             {
               "inputs": {
@@ -1096,7 +1096,7 @@
         },
         "yak_count": {
           "key": "yak_count",
-          "digest": "",
+          "digest": "t7yyshbbxi5cygehiqwqzsz272xd6sfm",
           "tests": [
             {
               "inputs": {
@@ -1132,7 +1132,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "",
+          "digest": "5ftts32nsetg52xhx37dbysvt34yo5pl",
           "tests": [
             {
               "inputs": {
@@ -1155,7 +1155,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "",
+          "digest": "eq43eelvq2coxyjdywwtf5ya7zfn6axg",
           "tests": [
             {
               "inputs": {
@@ -1179,7 +1179,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "",
+          "digest": "l3oj6cjm7n2q2ajss56elineuycxx326",
           "tests": [
             {
               "inputs": {
@@ -1206,7 +1206,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "",
+          "digest": "akvjtqpqun6xloqksqv4nnleemaadsws",
           "tests": [
             {
               "inputs": {
@@ -1229,7 +1229,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "",
+          "digest": "dn5paqivbilsrkzlzyeapp6m2txs7heg",
           "tests": [
             {
               "inputs": {
@@ -1259,7 +1259,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "",
+          "digest": "c33v4bdm67czyhxwqnzrrfdvh6sew3bm",
           "tests": [
             {
               "inputs": {
@@ -1284,7 +1284,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "",
+          "digest": "hte4277fejcwvd5qadhp6lcicyftyiec",
           "tests": [
             {
               "inputs": {
@@ -1321,7 +1321,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "",
+          "digest": "jrzl5mxcmcpyyisi5o7jckubf7jg4bky",
           "tests": [
             {
               "inputs": {
@@ -1356,7 +1356,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "",
+          "digest": "zz4fc42vlufduzxjzybpd3wgresvuhy2",
           "tests": [
             {
               "inputs": {
@@ -1390,7 +1390,7 @@
       "tasks": {
         "hifiasm_assemble": {
           "key": "hifiasm_assemble",
-          "digest": "",
+          "digest": "koqdyh4tgtohv7ruuehca2gy3rn2b3yc",
           "tests": [
             {
               "inputs": {
@@ -1447,7 +1447,7 @@
         },
         "gfa2fa": {
           "key": "gfa2fa",
-          "digest": "",
+          "digest": "jvvzwrqa3df5v7mcwjbxpcznufo4bziq",
           "tests": [
             {
               "inputs": {
@@ -1481,7 +1481,7 @@
         },
         "align_hifiasm": {
           "key": "align_hifiasm",
-          "digest": "",
+          "digest": "rzb4tkbzblsxe7dnibfzhhaxdkzwstf5",
           "tests": [
             {
               "inputs": {
@@ -1516,7 +1516,7 @@
       "tasks": {
         "htsbox": {
           "key": "htsbox",
-          "digest": "",
+          "digest": "m7ohywpebteihr5hin5upxjm4qjnc3ef",
           "tests": [
             {
               "inputs": {
