@@ -188,7 +188,7 @@ task bcftools_roh {
 	command <<<
 		set -euo pipefail
 
-		echo -e "#chr\tstart\tend\tqual" > ~{vcf_basename}.roh.bed
+		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
 			--AF-dflt 0.4 \
 			~{vcf} \
