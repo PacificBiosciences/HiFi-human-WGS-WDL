@@ -25,7 +25,7 @@
       "tasks": {
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "m5wydpwrscxykz4txxmsski3mduutrhh",
+          "digest": "joitj5h642bx3vh4c47ldxat5ov6tofe",
           "tests": [
             {
               "inputs": {
