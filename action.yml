@@ -59,6 +59,10 @@ runs:
       uses: docker://dnastack/wdl-ci:latest
       with:
         args: monitor
+    - name: update-task-digests
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: update-task-digests
     - name: update-config
       uses: EndBug/add-and-commit@v9
       with:
