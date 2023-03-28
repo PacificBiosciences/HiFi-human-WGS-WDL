@@ -1,140 +1,175 @@
 {
   "workflows": {
+    "workflows/humanwgs_structs.wdl": {
+      "key": "workflows/humanwgs_structs.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
     "workflows/main.wdl": {
       "key": "workflows/main.wdl",
       "name": "",
       "description": "",
       "tasks": {}
     },
-    "workflows/assemble_genome/assemble_genome.wdl": {
-      "key": "workflows/assemble_genome/assemble_genome.wdl",
+    "workflows/cohort_analysis/cohort_analysis.wdl": {
+      "key": "workflows/cohort_analysis/cohort_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/sample_analysis/sample_analysis.wdl": {
+      "key": "workflows/sample_analysis/sample_analysis.wdl",
       "name": "",
       "description": "",
       "tasks": {
-        "hifiasm_assemble": {
-          "key": "hifiasm_assemble",
-          "digest": "mxt4cplolcmyvc2vkyjusgmf3yyjjnnx",
+        "bcftools_roh": {
+          "key": "bcftools_roh",
+          "digest": "m5wydpwrscxykz4txxmsski3mduutrhh",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
-                "reads_fastas": [
-                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
-                ],
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "assembly_hap_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_noseq_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_lowQ_beds": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_columns_array"
-                  ]
-                }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        },
-        "gfa2fa": {
-          "key": "gfa2fa",
-          "digest": "4slwcvq2vhllewrosat7peweyyjandbd",
-          "tests": [
-            {
-              "inputs": {
-                "gfa": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "zipped_fasta": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                "roh_bed": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
                   "test_tasks": [
                     "calculate_md5sum",
                     "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines",
-                    "fasta_validator"
-                  ]
-                },
-                "assembly_stats": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "check_empty_lines"
+                    "count_bed_columns",
+                    "check_tab_delimited"
                   ]
                 }
-              },
-              "struct_imports": []
+              }
             }
           ]
         },
-        "align_hifiasm": {
-          "key": "align_hifiasm",
-          "digest": "g7g4tubnfydphyfedp3y3q63o47wdnos",
+        "merge_bams": {
+          "key": "merge_bams",
+          "digest": "",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
-                "query_sequences": [
-                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
+                "bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
                 ],
+                "output_bam_name": "${sample_id}.${reference_name}.haplotagged.bam",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_bam": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "trgt": {
+          "key": "trgt",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_name": "GRCh38",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "asm_bam": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
+                "spanning_reads": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
                   "test_tasks": [
+                    "calculate_md5sum",
                     "compare_file_basename",
                     "samtools_quickcheck",
                     "check_coordinate_sorted_alignment"
                   ]
+                },
+                "repeat_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_sorted_vcf_bcf"
+                  ]
                 }
+              }
+            }
+          ]
+        },
+        "trgt_coverage_dropouts": {
+          "key": "trgt_coverage_dropouts",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
               },
-              "struct_imports": []
+              "output_tests": {
+                "trgt_dropouts": {
+                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "cpg_pileup": {
+          "key": "cpg_pileup",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pileups": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_bed_columns_array",
+                    "bigwig_validator_array"
+                  ]
+                }
+              }
             }
           ]
         }
@@ -147,7 +182,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "3d45e5cimoqa4wnyydxyom5d5ofuargr",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -156,8 +191,7 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "aligned_bam": {
@@ -196,477 +230,63 @@
                     "check_numeric"
                   ]
                 }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "pbsv_discover": {
-          "key": "pbsv_discover",
-          "digest": "3wyfqzax34piczwyku6jn43jxvqqkmz6",
-          "tests": [
-            {
-              "inputs": {
-                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                "reference_tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "svsig": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines"
-                  ]
-                }
-              },
-              "struct_imports": []
+              }
             }
           ]
         }
       }
     },
-    "workflows/cohort_analysis/cohort_analysis.wdl": {
-      "key": "workflows/cohort_analysis/cohort_analysis.wdl",
+    "workflows/wdl-common/wdl/structs.wdl": {
+      "key": "workflows/wdl-common/wdl/structs.wdl",
       "name": "",
       "description": "",
-      "tasks": {
-        "glnexus": {
-          "key": "glnexus",
-          "digest": "afj2ldzugw63fispg7mo3bmqlbrfjzvs",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "gvcfs": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
-                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz",
-                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz"
-                ],
-                "gvcf_indices": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
-                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz.tbi",
-                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz.tbi"
-                ],
-                "reference_name": "GRCh38",
-                "preemptible": true
-              },
-              "output_tests": {
-                "vcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        }
-      }
+      "tasks": {}
     },
-    "workflows/tertiary_analysis/tertiary_analysis.wdl": {
-      "key": "workflows/tertiary_analysis/tertiary_analysis.wdl",
+    "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl",
       "name": "",
       "description": "",
       "tasks": {
-        "write_cohort_yaml": {
-          "key": "write_cohort_yaml",
-          "digest": "h4ppviba22jmx6ruckhcuna7ci4kbsx3",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "cohort_json": "${resources_file_path}/cohort.json",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "cohort_yaml": {
-                  "value": "${resources_file_path}/hg005-small-cohort.yml",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_yaml"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "write_ped": {
-          "key": "write_ped",
-          "digest": "b4eqkeyl7mgzl7jhh3fsry6zezwir6cp",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/hg005-small-cohort.ped",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "calculate_phrank": {
-          "key": "calculate_phrank",
-          "digest": "xacgna54lzpnhvmrgopahesunauattjb",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
-                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
-                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
-                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
-                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "bcftools_norm": {
-          "key": "bcftools_norm",
-          "digest": "k3hkoswna7jqqtbwgqqt6bizqfkezymg",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz",
-                "vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz.tbi",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "normalized_bcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_sorted_vcf_bcf"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "slivar_small_variant": {
-          "key": "slivar_small_variant",
-          "digest": "6jiteeaosrvwlc6qbvvmqut5xcyjrv37",
-          "tests": [
-            {
-              "inputs": {
-                "bcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
-                "bcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf.csi",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "slivar_js": "${datasets_file_path}/slivar/slivar-functions.v0.2.8.js",
-                "gnomad_af": "${datasets_file_path}/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
-                "hprc_af": "${datasets_file_path}/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
-                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "filtered_vcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "slivar_compound_hets": {
-          "key": "slivar_compound_hets",
-          "digest": "3rv3iu743hg3y3kqc5fk5htmgkbh2qcr",
-          "tests": [
-            {
-              "inputs": {
-                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                "filtered_vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz.tbi",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "compound_het_vcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "slivar_tsv": {
-          "key": "slivar_tsv",
-          "digest": "4zuqa4ftffklekkanpqrfymdwf272qcx",
-          "tests": [
-            {
-              "inputs": {
-                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                "compound_het_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
-                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
-                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "filtered_tsv": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                },
-                "compound_het_tsv": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "svpack_filter_annotated": {
-          "key": "svpack_filter_annotated",
-          "digest": "tctaqa65faoh3ghq3m4pyimgaa7lbagc",
-          "tests": [
-            {
-              "inputs": {
-                "sv_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.vcf.gz",
-                "population_vcfs": [
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz"
-                ],
-                "population_vcf_indices": [
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz.tbi",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz.tbi",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz.tbi",
-                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz.tbi"
-                ],
-                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "svpack_vcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "slivar_svpack_tsv": {
-          "key": "slivar_svpack_tsv",
-          "digest": "4pv7pxrnfwgkmuszn53liu5gs3tb2736",
-          "tests": [
-            {
-              "inputs": {
-                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf.gz",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
-                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
-                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "svpack_tsv": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        }
-      }
-    },
-    "workflows/phase_vcf/phase_vcf.wdl": {
-      "key": "workflows/phase_vcf/phase_vcf.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "split_vcf": {
-          "key": "split_vcf",
-          "digest": "o4tg3yafn3bbpw6vdvvwlemh6mx6osmg",
+        "bcftools_stats": {
+          "key": "bcftools_stats",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz.tbi",
-                "region": "chr6",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "region_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "whatshap_phase": {
-          "key": "whatshap_phase",
-          "digest": "wpp4svgn67vhxgqfnb3ekornxfffxaip",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
-                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
-                "chromosome": "chr6",
-                "aligned_bams": [
-                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
-                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
-                ],
-                "aligned_bam_indices": [
-                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
-                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
-                ],
+                "params": "--apply-filters PASS --samples ${sample_id}",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "phased_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                "stats": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
                   "test_tasks": [
                     "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
+                    "check_empty_lines"
                   ]
                 }
-              },
-              "struct_imports": []
+              }
             }
           ]
-        },
-        "bcftools_concat": {
-          "key": "bcftools_concat",
-          "digest": "oqc5x2wumcbt3soscuk6phumpluweshb",
-          "tests": [
-            {
-              "inputs": {
-                "vcfs": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
-                ],
-                "vcf_indices": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
-                ],
-                "output_vcf_name": "HG005.GRCh38.deepvariant.phased.vcf.gz",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "concatenated_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_stats.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_stats.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "djlfzp2ahw6lv3l3tfr7wlchxq3yfxib",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
                 "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
                 "reference_chromosome_lengths": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tsv": {
@@ -695,53 +315,377 @@
                     "count_columns"
                   ]
                 }
-              },
-              "struct_imports": []
+              }
             }
           ]
         }
       }
     },
-    "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl": {
-      "key": "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl",
+    "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl",
       "name": "",
       "description": "",
       "tasks": {
-        "htsbox": {
-          "key": "htsbox",
-          "digest": "wh544ndwjasetf7e2yb2rphftenv7oro",
+        "pbsv_discover": {
+          "key": "pbsv_discover",
+          "digest": "",
           "tests": [
             {
               "inputs": {
-                "bam": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                "bam_index": "${resources_file_path}/HG005.asm.GRCh38.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference_tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "htsbox_vcf": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
+                "svsig": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "zip_index_vcf": {
+          "key": "zip_index_vcf",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "zipped_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_haplotag.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_haplotag.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "whatshap_haplotag": {
+          "key": "whatshap_haplotag",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "haplotagged_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_phase.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_phase.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "whatshap_phase": {
+          "key": "whatshap_phase",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "chromosome": "chr6",
+                "aligned_bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "phased_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/glnexus.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/glnexus.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "glnexus": {
+          "key": "glnexus",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "gvcfs": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz"
+                ],
+                "gvcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz.tbi"
+                ],
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/pbsv_call.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/pbsv_call.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "pbsv_call": {
+          "key": "pbsv_call",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "svsigs": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pbsv_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator"
                   ]
                 }
-              },
-              "struct_imports": []
+              }
             }
           ]
         }
       }
     },
-    "workflows/deepvariant/deepvariant.wdl": {
-      "key": "workflows/deepvariant/deepvariant.wdl",
+    "workflows/wdl-common/wdl/tasks/samtools_fasta.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/samtools_fasta.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "samtools_fasta": {
+          "key": "samtools_fasta",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "reads_fasta": {
+                  "value": "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/mosdepth.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/mosdepth.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "mosdepth": {
+          "key": "mosdepth",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "region_bed": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.regions.bed.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.mosdepth.summary.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "split_vcf": {
+          "key": "split_vcf",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz.tbi",
+                "region": "chr6",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "region_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "bcftools_concat": {
+          "key": "bcftools_concat",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
+                ],
+                "output_vcf_name": "HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "concatenated_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl",
       "name": "",
       "description": "",
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "j4eswrkkvfa5ecgmd44jb2pxhnxfmgu5",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -768,7 +712,7 @@
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "deepvariant_threads": 64,
                 "deepvariant_version": "1.4.0",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "example_tfrecords": {
@@ -915,16 +859,13 @@
                     "check_gzip_array"
                   ]
                 }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
+              }
             }
           ]
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "kl5sehsir7jhqw4spjdiolvuyzekup3r",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -998,7 +939,7 @@
                 "reference_name": "GRCh38",
                 "deepvariant_threads": 64,
                 "deepvariant_version": "1.4.0",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecord": {
@@ -1008,16 +949,13 @@
                     "check_gzip"
                   ]
                 }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
+              }
             }
           ]
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "bqt5hh62pqesgiq5zedmqrsjlnx72eot",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -1094,7 +1032,7 @@
                 "reference_name": "GRCh38",
                 "deepvariant_threads": 64,
                 "deepvariant_version": "1.4.0",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
@@ -1123,393 +1061,7 @@
                     "html_validator"
                   ]
                 }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "workflows/sample_analysis/sample_analysis.wdl": {
-      "key": "workflows/sample_analysis/sample_analysis.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "bcftools_roh": {
-          "key": "bcftools_roh",
-          "digest": "bgzpqvsl5loj3ugjzmp6h6bbwxatfm7n",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "roh_bed": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "count_bed_columns",
-                    "check_tab_delimited"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "whatshap_haplotag": {
-          "key": "whatshap_haplotag",
-          "digest": "ymvmetfu3deyglznebunea4swkp36y4u",
-          "tests": [
-            {
-              "inputs": {
-                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
-                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
-                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "haplotagged_bam": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "merge_bams": {
-          "key": "merge_bams",
-          "digest": "tq5gv6ticn2rem2pzfoba3yp2y6ibvwu",
-          "tests": [
-            {
-              "inputs": {
-                "bams": [
-                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
-                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
-                ],
-                "output_bam_name": "${sample_id}.${reference_name}.haplotagged.bam",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "merged_bam": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        },
-        "trgt": {
-          "key": "trgt",
-          "digest": "v5jkf3zs6dmuxdttdfeznxhuis64yi65",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "spanning_reads": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "samtools_quickcheck",
-                    "check_coordinate_sorted_alignment"
-                  ]
-                },
-                "repeat_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_sorted_vcf_bcf"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        },
-        "trgt_coverage_dropouts": {
-          "key": "trgt_coverage_dropouts",
-          "digest": "ng3jz3wqnhdy4blha25yt6ybz4anpqgh",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "trgt_dropouts": {
-                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        },
-        "cpg_pileup": {
-          "key": "cpg_pileup",
-          "digest": "trwq2arowgiqqrofhmdwstos7uxut2tk",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "pileups": {
-                  "value": [
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bw"
-                  ],
-                  "test_tasks": [
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_bed_columns_array",
-                    "bigwig_validator_array"
-                  ]
-                }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "workflows/common/structs.wdl": {
-      "key": "workflows/common/structs.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {}
-    },
-    "workflows/common/tasks/zip_index_vcf.wdl": {
-      "key": "workflows/common/tasks/zip_index_vcf.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "zip_index_vcf": {
-          "key": "zip_index_vcf",
-          "digest": "jgvqohcx552zydcax4sosa7od7xuczhk",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "zipped_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        }
-      }
-    },
-    "workflows/common/tasks/samtools_fasta.wdl": {
-      "key": "workflows/common/tasks/samtools_fasta.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "samtools_fasta": {
-          "key": "samtools_fasta",
-          "digest": "a7zzqaglsm2vmlpt322d2rwadzdovvej",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "reads_fasta": {
-                  "value": "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_empty_lines",
-                    "fasta_validator"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        }
-      }
-    },
-    "workflows/common/tasks/bcftools_stats.wdl": {
-      "key": "workflows/common/tasks/bcftools_stats.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "bcftools_stats": {
-          "key": "bcftools_stats",
-          "digest": "lxpc37xausr2hbnbqoz2j66thf65wlqg",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "params": "--apply-filters PASS --samples ${sample_id}",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "stats": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_empty_lines"
-                  ]
-                }
-              },
-              "struct_imports": [
-                "workflows/common/structs.wdl"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "workflows/common/tasks/pbsv_call.wdl": {
-      "key": "workflows/common/tasks/pbsv_call.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pbsv_call": {
-          "key": "pbsv_call",
-          "digest": "jkok3rpsxoum4g4kvws3lu4umpinnlp5",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "svsigs": [
-                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
-                ],
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "reference_name": "GRCh38",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "pbsv_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator"
-                  ]
-                }
-              },
-              "struct_imports": []
-            }
-          ]
-        }
-      }
-    },
-    "workflows/common/tasks/mosdepth.wdl": {
-      "key": "workflows/common/tasks/mosdepth.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "mosdepth": {
-          "key": "mosdepth",
-          "digest": "q566mka54owywex56wlq2fsnm2wizgl7",
-          "tests": [
-            {
-              "inputs": {
-                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
-              },
-              "output_tests": {
-                "region_bed": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.regions.bed.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_bed_columns"
-                  ]
-                },
-                "summary": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.mosdepth.summary.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              },
-              "struct_imports": []
+              }
             }
           ]
         }
@@ -1522,13 +1074,12 @@
       "tasks": {
         "parse_families": {
           "key": "parse_families",
-          "digest": "n4tskg3zarvuhap3vjatmtljcxhnd3hj",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "cohort_json": "${resources_file_path}/cohort.json",
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "families_json": {
@@ -1539,14 +1090,13 @@
                     "check_json"
                   ]
                 }
-              },
-              "struct_imports": []
+              }
             }
           ]
         },
         "yak_count": {
           "key": "yak_count",
-          "digest": "65mljqtocsvh6rdorcttmwqf6pvaewkh",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -1559,8 +1109,7 @@
                   "${resources_file_path}/m64017_200108_232219.hifi_reads.fasta",
                   "${resources_file_path}/m64017_200112_090459.hifi_reads.fasta"
                 ],
-                "container_registry": "pacbio.azurecr.io",
-                "preemptible": true
+                "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "yak": {
@@ -1570,8 +1119,421 @@
                     "compare_file_basename"
                   ]
                 }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/tertiary_analysis/tertiary_analysis.wdl": {
+      "key": "workflows/tertiary_analysis/tertiary_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "write_cohort_yaml": {
+          "key": "write_cohort_yaml",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_json": "${resources_file_path}/cohort.json",
+                "runtime_attributes": "${default_runtime_attributes}"
               },
-              "struct_imports": []
+              "output_tests": {
+                "cohort_yaml": {
+                  "value": "${resources_file_path}/hg005-small-cohort.yml",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_yaml"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "write_ped": {
+          "key": "write_ped",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/hg005-small-cohort.ped",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "calculate_phrank": {
+          "key": "calculate_phrank",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
+                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
+                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
+                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
+                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "bcftools_norm": {
+          "key": "bcftools_norm",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz",
+                "vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz.tbi",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "normalized_bcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_sorted_vcf_bcf"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_small_variant": {
+          "key": "slivar_small_variant",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
+                "bcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf.csi",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "slivar_js": "${datasets_file_path}/slivar/slivar-functions.v0.2.8.js",
+                "gnomad_af": "${datasets_file_path}/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
+                "hprc_af": "${datasets_file_path}/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
+                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_compound_hets": {
+          "key": "slivar_compound_hets",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                "filtered_vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz.tbi",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "compound_het_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_tsv": {
+          "key": "slivar_tsv",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                "compound_het_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
+                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "compound_het_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "svpack_filter_annotated": {
+          "key": "svpack_filter_annotated",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sv_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.vcf.gz",
+                "population_vcfs": [
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz"
+                ],
+                "population_vcf_indices": [
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz.tbi"
+                ],
+                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_svpack_tsv": {
+          "key": "slivar_svpack_tsv",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf.gz",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
+                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/assemble_genome/assemble_genome.wdl": {
+      "key": "workflows/assemble_genome/assemble_genome.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "hifiasm_assemble": {
+          "key": "hifiasm_assemble",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "reads_fastas": [
+                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
+                ],
+                "runtime_attributes": "${on_demand_runtime_attributes}"
+              },
+              "output_tests": {
+                "assembly_hap_gfas": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
+                },
+                "assembly_noseq_gfas": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
+                },
+                "assembly_lowQ_beds": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_columns_array"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "gfa2fa": {
+          "key": "gfa2fa",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "gfa": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "zipped_fasta": {
+                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
+                },
+                "assembly_stats": {
+                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "check_empty_lines"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "align_hifiasm": {
+          "key": "align_hifiasm",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "query_sequences": [
+                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "asm_bam": {
+                  "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_coordinate_sorted_alignment"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl": {
+      "key": "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "htsbox": {
+          "key": "htsbox",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.asm.GRCh38.bam",
+                "bam_index": "${resources_file_path}/HG005.asm.GRCh38.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "htsbox_vcf": {
+                  "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
             }
           ]
         }
@@ -1588,7 +1550,21 @@
   "test_params": {
     "global_params": {
       "sample_id": "HG005",
-      "reference_name": "GRCh38"
+      "reference_name": "GRCh38",
+      "default_runtime_attributes": {
+        "preemptible_tries": 3,
+        "max_retries": 3,
+        "zones": "",
+        "queue_arn": "",
+        "container_registry": "pacbio.azurecr.io"
+      },
+      "on_demand_runtime_attributes": {
+        "preemptible_tries": 0,
+        "max_retries": 0,
+        "zones": "",
+        "queue_arn": "",
+        "container_registry": "pacbio.azurecr.io"
+      }
     },
     "engine_params": {
       "f1ed5b40-6a26-4eac-a2b8-9960516e4164": {
