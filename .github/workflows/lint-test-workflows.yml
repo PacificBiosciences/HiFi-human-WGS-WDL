@@ -5,6 +5,7 @@ on:
     branches:
       - '*'
       - '!master'
+      - '!main'
 jobs:
   wdl-ci:
     runs-on: ubuntu-latest
