@@ -1,11 +1,5 @@
 name: Lint and test workflows
-run-name: Workflow linting and testing
-on:
-  push:
-    branches:
-      - '*'
-      - '!master'
-      - '!main'
+on: pull_request
 jobs:
   wdl-ci:
     runs-on: ubuntu-latest
@@ -14,6 +8,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           submodules: true
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
       - name: wdl-ci
         uses: ./
         with:

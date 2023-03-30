@@ -56,13 +56,13 @@ runs:
       with:
         args: submit
     - name: monitor
-      # If a test fails, still update task digests for any tests that succeeded
-      # This allows fixing broken tests without rerunning successful runs
-      continue-on-error: true
       uses: docker://dnastack/wdl-ci:latest
       with:
         args: monitor --update-digests
+      # If a test fails, still update task digests for any tests that succeeded
+      # This allows fixing broken tests without rerunning successful runs
     - name: update-config
+      if: always()
       uses: EndBug/add-and-commit@v9
       with:
         add: ${{ inputs.config-file }}
