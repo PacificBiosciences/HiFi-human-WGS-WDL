@@ -379,32 +379,31 @@ task cpg_pileup {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 48
+	Int threads = 12
 	# Uses ~7 GB memory / thread
-	Int mem_gb = threads * 8
+	Int mem_gb = threads * 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
-		aligned_bam_to_cpg_scores.py \
-			--bam ~{bam} \
-			--fasta ~{reference} \
-			--output_label ~{output_prefix} \
+		aligned_bam_to_cpg_scores \
 			--threads ~{threads} \
-			--min_mapq 1 \
-			--modsites denovo \
-			--pileup_mode model \
-			--model_dir "$PILEUP_MODEL_DIR" \
-			--min_coverage 10
+			--bam ~{bam} \
+			--ref ~{reference} \
+			--output-prefix ~{output_prefix} \
+			--min-mapq 1 \
+			--min-coverage 10 \
+			--model "$PILEUP_MODEL_DIR"/pileup_calling_model.v1.tflite
+
 	>>>
 
 	output {
-		Array[File] pileups = glob("~{output_prefix}.{combined,hap1,hap2}.denovo.{bed,bw,mincov10.bed,mincov10.bw}")
+		Array[File] pileups = glob("~{output_prefix}.{combined,hap1,hap2}.{bed,bw}")
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:fed1a7b"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:v2.1.0"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
