@@ -353,7 +353,7 @@ task trgt_coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:1.8.1"
+		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"

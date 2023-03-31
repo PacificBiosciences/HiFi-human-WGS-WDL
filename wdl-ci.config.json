@@ -73,7 +73,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "xf2vasrkfnlhn3xqam32mq5h3wprzka3",
+          "digest": "",
           "tests": [
             {
               "inputs": {
