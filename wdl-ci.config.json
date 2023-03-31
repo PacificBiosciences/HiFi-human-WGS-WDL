@@ -305,7 +305,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "fve5q26x66nkiko7evxh2quukvwxobxu",
+          "digest": "w7ayfampcp2trpuwuu2b25wxfqogttlu",
           "tests": [
             {
               "inputs": {
@@ -490,7 +490,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "efgnkw24bldf5e6ustylz27yu3egiqpu",
+          "digest": "mpmacr7oz5gwbeofzd4s5pr3she47emo",
           "tests": [
             {
               "inputs": {
