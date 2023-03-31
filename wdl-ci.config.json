@@ -116,32 +116,6 @@
             }
           ]
         },
-        "trgt_coverage_dropouts": {
-          "key": "trgt_coverage_dropouts",
-          "digest": "aud6wufdctev3x66mobbzfc5ahas6cuj",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "trgt_dropouts": {
-                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              }
-            }
-          ]
-        },
         "cpg_pileup": {
           "key": "cpg_pileup",
           "digest": "fio32qktatoy6377u3gukkjgx7w6f244",
