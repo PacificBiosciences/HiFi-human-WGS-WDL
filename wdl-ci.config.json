@@ -1,0 +1,1576 @@
+{
+  "workflows": {
+    "workflows/humanwgs_structs.wdl": {
+      "key": "workflows/humanwgs_structs.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/main.wdl": {
+      "key": "workflows/main.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/cohort_analysis/cohort_analysis.wdl": {
+      "key": "workflows/cohort_analysis/cohort_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/sample_analysis/sample_analysis.wdl": {
+      "key": "workflows/sample_analysis/sample_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "bcftools_roh": {
+          "key": "bcftools_roh",
+          "digest": "joitj5h642bx3vh4c47ldxat5ov6tofe",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "roh_bed": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "count_bed_columns",
+                    "check_tab_delimited"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "merge_bams": {
+          "key": "merge_bams",
+          "digest": "r3h2dezvgyytoj4robparvptlegelvaj",
+          "tests": [
+            {
+              "inputs": {
+                "bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
+                ],
+                "output_bam_name": "${sample_id}.${reference_name}.haplotagged.bam",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_bam": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "trgt": {
+          "key": "trgt",
+          "digest": "xf2vasrkfnlhn3xqam32mq5h3wprzka3",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "spanning_reads": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_coordinate_sorted_alignment"
+                  ]
+                },
+                "repeat_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_sorted_vcf_bcf"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "trgt_coverage_dropouts": {
+          "key": "trgt_coverage_dropouts",
+          "digest": "aud6wufdctev3x66mobbzfc5ahas6cuj",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "trgt_dropouts": {
+                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "cpg_pileup": {
+          "key": "cpg_pileup",
+          "digest": "slhdxznxvar32ek3oxz3fufnlzna643p",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pileups": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_bed_columns_array",
+                    "bigwig_validator_array"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/smrtcell_analysis/smrtcell_analysis.wdl": {
+      "key": "workflows/smrtcell_analysis/smrtcell_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "pbmm2_align": {
+          "key": "pbmm2_align",
+          "digest": "muu7y4mrrgmysqvlsq5kuqct4tkxaica",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "bam_stats": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "read_length_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                },
+                "read_quality_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/structs.wdl": {
+      "key": "workflows/wdl-common/wdl/structs.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "bcftools_stats": {
+          "key": "bcftools_stats",
+          "digest": "vizneldpuzlu2b5f6zk2fzb2uztwsy6e",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "params": "--apply-filters PASS --samples ${sample_id}",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "stats": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_empty_lines"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_stats.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_stats.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "whatshap_stats": {
+          "key": "whatshap_stats",
+          "digest": "mvevyl6vopai2ptp3tkbq23kvcv5xcpi",
+          "tests": [
+            {
+              "inputs": {
+                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "reference_chromosome_lengths": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "tsv": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "gtf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.gtf",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "blocklist": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.blocklist",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "pbsv_discover": {
+          "key": "pbsv_discover",
+          "digest": "fve5q26x66nkiko7evxh2quukvwxobxu",
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference_tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svsig": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "zip_index_vcf": {
+          "key": "zip_index_vcf",
+          "digest": "jtrgz5y4n5oodpjjpndz2pu2svqfrllx",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "zipped_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_haplotag.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_haplotag.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "whatshap_haplotag": {
+          "key": "whatshap_haplotag",
+          "digest": "qm3ulixglygrglpjw2psianylbl3edrh",
+          "tests": [
+            {
+              "inputs": {
+                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "haplotagged_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/whatshap_phase.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/whatshap_phase.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "whatshap_phase": {
+          "key": "whatshap_phase",
+          "digest": "vci7rugv75gr4grjjgs7skaeeo7ksdcr",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz.tbi",
+                "chromosome": "chr6",
+                "aligned_bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "phased_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/glnexus.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/glnexus.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "glnexus": {
+          "key": "glnexus",
+          "digest": "aptpgmivcvoe2oqukhsclkwvqq7wqmco",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "gvcfs": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz"
+                ],
+                "gvcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG006.GRCh38.deepvariant.g.vcf.gz.tbi",
+                  "${resources_file_path}/HG007.GRCh38.deepvariant.g.vcf.gz.tbi"
+                ],
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/pbsv_call.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/pbsv_call.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "pbsv_call": {
+          "key": "pbsv_call",
+          "digest": "efgnkw24bldf5e6ustylz27yu3egiqpu",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "svsigs": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.svsig.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pbsv_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/samtools_fasta.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/samtools_fasta.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "samtools_fasta": {
+          "key": "samtools_fasta",
+          "digest": "dkbnkqxbmcep5oqjelgi7pg2jzxen76t",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "reads_fasta": {
+                  "value": "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/mosdepth.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/mosdepth.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "mosdepth": {
+          "key": "mosdepth",
+          "digest": "llhlhbe4xo5d3hsdbddclb7nq7dq7jka",
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "region_bed": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.regions.bed.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.mosdepth.summary.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {}
+    },
+    "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "split_vcf": {
+          "key": "split_vcf",
+          "digest": "lcsmxfgw32fjgaielybd3zn4kglkpdjt",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz.tbi",
+                "region": "chr6",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "region_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "bcftools_concat": {
+          "key": "bcftools_concat",
+          "digest": "f67dcveadct5kfikftiwmfbh2odzdw3t",
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
+                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
+                ],
+                "output_vcf_name": "HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "concatenated_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "deepvariant_make_examples": {
+          "key": "deepvariant_make_examples",
+          "digest": "cw5eizdd4reqibnagkdeknljww3wp6fg",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "aligned_bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam"
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200801_011415.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64017_200802_073944.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200304_195708.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200309_192110.hifi_reads.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/HG005.m64109_200311_013444.hifi_reads.GRCh38.aligned.bam.bai"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "deepvariant_threads": 64,
+                "deepvariant_version": "1.4.0",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "example_tfrecords": {
+                  "value": [
+                    "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
+                    "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_gzip_array"
+                  ]
+                },
+                "nonvariant_site_tfrecords": {
+                  "value": [
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
+                    "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_gzip_array"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "deepvariant_call_variants": {
+          "key": "deepvariant_call_variants",
+          "digest": "qgxyjgcunf7fcqgrgnpso4uvcgifisux",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "example_tfrecords": [
+                  "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
+                  "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
+                ],
+                "reference_name": "GRCh38",
+                "deepvariant_threads": 64,
+                "deepvariant_version": "1.4.0",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "tfrecord": {
+                  "value": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "deepvariant_postprocess_variants": {
+          "key": "deepvariant_postprocess_variants",
+          "digest": "2aji2u2mozvqoykiudminizihevkk7yq",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "tfrecord": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
+                "nonvariant_site_tfrecords": [
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
+                  "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "deepvariant_threads": 64,
+                "deepvariant_version": "1.4.0",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
+                },
+                "gvcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
+                },
+                "report": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.visual_report.html",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "html_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl": {
+      "key": "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "parse_families": {
+          "key": "parse_families",
+          "digest": "gnwm74ahxyt2kdeudg4qww7u6byg7kkm",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_json": "${resources_file_path}/cohort.json",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "families_json": {
+                  "value": "${resources_file_path}/families.json",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "yak_count": {
+          "key": "yak_count",
+          "digest": "t7yyshbbxi5cygehiqwqzsz272xd6sfm",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG007",
+                "reads_fastas": [
+                  "${resources_file_path}/m64017_191216_194629.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191218_164535.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191219_225837.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_191221_052416.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200108_232219.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200112_090459.hifi_reads.fasta"
+                ],
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "yak": {
+                  "value": "${resources_file_path}/HG007.yak",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/tertiary_analysis/tertiary_analysis.wdl": {
+      "key": "workflows/tertiary_analysis/tertiary_analysis.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "write_cohort_yaml": {
+          "key": "write_cohort_yaml",
+          "digest": "5ftts32nsetg52xhx37dbysvt34yo5pl",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_json": "${resources_file_path}/cohort.json",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "cohort_yaml": {
+                  "value": "${resources_file_path}/hg005-small-cohort.yml",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_yaml"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "write_ped": {
+          "key": "write_ped",
+          "digest": "eq43eelvq2coxyjdywwtf5ya7zfn6axg",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/hg005-small-cohort.ped",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "calculate_phrank": {
+          "key": "calculate_phrank",
+          "digest": "l3oj6cjm7n2q2ajss56elineuycxx326",
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "hg005-small-cohort",
+                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
+                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
+                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
+                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
+                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "bcftools_norm": {
+          "key": "bcftools_norm",
+          "digest": "akvjtqpqun6xloqksqv4nnleemaadsws",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz",
+                "vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz.tbi",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "normalized_bcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_sorted_vcf_bcf"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_small_variant": {
+          "key": "slivar_small_variant",
+          "digest": "dn5paqivbilsrkzlzyeapp6m2txs7heg",
+          "tests": [
+            {
+              "inputs": {
+                "bcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
+                "bcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf.csi",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "slivar_js": "${datasets_file_path}/slivar/slivar-functions.v0.2.8.js",
+                "gnomad_af": "${datasets_file_path}/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
+                "hprc_af": "${datasets_file_path}/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
+                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_compound_hets": {
+          "key": "slivar_compound_hets",
+          "digest": "c33v4bdm67czyhxwqnzrrfdvh6sew3bm",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                "filtered_vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz.tbi",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "compound_het_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_tsv": {
+          "key": "slivar_tsv",
+          "digest": "hte4277fejcwvd5qadhp6lcicyftyiec",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
+                "compound_het_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
+                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "compound_het_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "svpack_filter_annotated": {
+          "key": "svpack_filter_annotated",
+          "digest": "jrzl5mxcmcpyyisi5o7jckubf7jg4bky",
+          "tests": [
+            {
+              "inputs": {
+                "sv_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.vcf.gz",
+                "population_vcfs": [
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz"
+                ],
+                "population_vcf_indices": [
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/EEE_SV-Pop_1.ALL.sites.20181204.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/nstd166.GRCh38.variant_call.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/hprc.GRCh38.pbsv.vcf.gz.tbi",
+                  "/datasetpbrarediseases/dataset/GRCh38/sv_pop_vcfs/ont_sv_high_confidence_SVs.sorted.vcf.gz.tbi"
+                ],
+                "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_vcf": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "slivar_svpack_tsv": {
+          "key": "slivar_svpack_tsv",
+          "digest": "zz4fc42vlufduzxjzybpd3wgresvuhy2",
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf.gz",
+                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
+                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
+                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_tsv": {
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/assemble_genome/assemble_genome.wdl": {
+      "key": "workflows/assemble_genome/assemble_genome.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "hifiasm_assemble": {
+          "key": "hifiasm_assemble",
+          "digest": "koqdyh4tgtohv7ruuehca2gy3rn2b3yc",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "reads_fastas": [
+                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
+                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
+                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
+                ],
+                "runtime_attributes": "${on_demand_runtime_attributes}"
+              },
+              "output_tests": {
+                "assembly_hap_gfas": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
+                },
+                "assembly_noseq_gfas": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_empty_lines_array"
+                  ]
+                },
+                "assembly_lowQ_beds": {
+                  "value": [
+                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
+                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
+                  ],
+                  "test_tasks": [
+                    "calculate_md5sum_array",
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_columns_array"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "gfa2fa": {
+          "key": "gfa2fa",
+          "digest": "jvvzwrqa3df5v7mcwjbxpcznufo4bziq",
+          "tests": [
+            {
+              "inputs": {
+                "gfa": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "zipped_fasta": {
+                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip",
+                    "check_empty_lines",
+                    "fasta_validator"
+                  ]
+                },
+                "assembly_stats": {
+                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "check_empty_lines"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "align_hifiasm": {
+          "key": "align_hifiasm",
+          "digest": "rzb4tkbzblsxe7dnibfzhhaxdkzwstf5",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "query_sequences": [
+                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
+                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
+                ],
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "asm_bam": {
+                  "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_coordinate_sorted_alignment"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl": {
+      "key": "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "htsbox": {
+          "key": "htsbox",
+          "digest": "m7ohywpebteihr5hin5upxjm4qjnc3ef",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.asm.GRCh38.bam",
+                "bam_index": "${resources_file_path}/HG005.asm.GRCh38.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "htsbox_vcf": {
+                  "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "engines": {
+    "f1ed5b40-6a26-4eac-a2b8-9960516e4164": {
+      "key": "f1ed5b40-6a26-4eac-a2b8-9960516e4164",
+      "enabled": true,
+      "name": "PacBio CoA installation"
+    }
+  },
+  "test_params": {
+    "global_params": {
+      "sample_id": "HG005",
+      "reference_name": "GRCh38",
+      "default_runtime_attributes": {
+        "preemptible_tries": 3,
+        "max_retries": 3,
+        "zones": "",
+        "queue_arn": "",
+        "container_registry": "pacbio.azurecr.io"
+      },
+      "on_demand_runtime_attributes": {
+        "preemptible_tries": 0,
+        "max_retries": 0,
+        "zones": "",
+        "queue_arn": "",
+        "container_registry": "pacbio.azurecr.io"
+      }
+    },
+    "engine_params": {
+      "f1ed5b40-6a26-4eac-a2b8-9960516e4164": {
+        "input_file_path": "/coac74908838b5dd7/inputs/small_dataset/chr6.p23",
+        "resources_file_path": "/coac74908838b5dd7/inputs/wdl-ci",
+        "datasets_file_path": "/datasetpbrarediseases/dataset"
+      }
+    }
+  }
+}
