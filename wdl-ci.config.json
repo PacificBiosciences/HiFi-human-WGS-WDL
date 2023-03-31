@@ -148,18 +148,12 @@
               "output_tests": {
                 "pileups": {
                   "value": [
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.denovo.mincov10.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.denovo.mincov10.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.denovo.mincov10.bw"
+                    "${resources_file_path}/HG005.GRCh38.combined.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
                   ],
                   "test_tasks": [
                     "compare_file_basename_array",
