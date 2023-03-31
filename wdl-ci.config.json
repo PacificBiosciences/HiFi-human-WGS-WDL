@@ -82,6 +82,7 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "output_prefix": "${sample_id}.${reference_name}",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -100,6 +101,15 @@
                     "compare_file_basename",
                     "vcftools_validator",
                     "check_sorted_vcf_bcf"
+                  ]
+                },
+                "trgt_dropouts": {
+                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
                   ]
                 }
               }
