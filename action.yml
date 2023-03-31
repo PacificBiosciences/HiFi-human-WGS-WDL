@@ -1,0 +1,75 @@
+name: WDL CI
+description: Test new/updated WDL tasks in a workflow repository by submitting to DNAstack Workbench
+inputs:
+  config-file:
+    description: Config file
+    required: false
+    default: 'wdl-ci.config.json'
+  wallet-url:
+    description: Wallet URL
+    required: true
+  wallet-client-id:
+    description: Wallet Client ID
+    required: true
+  wallet-client-secret:
+    description: Wallet Client Secret
+    required: true
+  workbench-namespace:
+    description: Workbench Namespace
+    required: true
+  workbench-ewes-url:
+    description: Workbench EWES URL
+    required: true
+  workbench-workflow-service-url:
+    description: Workbench Workflow Service URL
+    required: true
+  workbench-ewes-refresh-token:
+    description: Workbench EWES Refresh Token
+    required: true
+  workbench-workflow-service-refresh-token:
+    description: Workbench Workflow Service Refresh Token
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: set-env
+      shell: bash
+      run: |
+        echo "WALLET_URL=${{ inputs.wallet-url }}" >> $GITHUB_ENV
+        echo "WALLET_CLIENT_ID=${{ inputs.wallet-client-id }}" >> $GITHUB_ENV
+        echo "WALLET_CLIENT_SECRET=${{ inputs.wallet-client-secret }}" >> $GITHUB_ENV
+        echo "WORKBENCH_NAMESPACE=${{ inputs.workbench-namespace }}" >> $GITHUB_ENV
+        echo "WORKBENCH_EWES_URL=${{ inputs.workbench-ewes-url }}" >> $GITHUB_ENV
+        echo "WORKBENCH_WORKFLOW_SERVICE_URL=${{ inputs.workbench-workflow-service-url }}" >> $GITHUB_ENV
+        echo "WORKBENCH_EWES_REFRESH_TOKEN=${{ inputs.workbench-ewes-refresh-token }}" >> $GITHUB_ENV
+        echo "WORKBENCH_WORKFLOW_SERVICE_REFRESH_TOKEN=${{ inputs.workbench-workflow-service-refresh-token }}" >> $GITHUB_ENV
+    - name: lint
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: lint
+    - name: detect-changes
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: detect-changes
+    - name: submit
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: submit
+    - name: monitor
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: monitor --update-digests
+      # If a test fails, still update task digests for any tests that succeeded
+      # This allows fixing broken tests without rerunning successful runs
+    - name: update-config
+      if: always()
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: ${{ inputs.config-file }}
+        message: "update wdl-ci config file after successful tests"
+        default_author: github_actions
+    - name: cleanup
+      if: always()
+      uses: docker://dnastack/wdl-ci:latest
+      with:
+        args: cleanup

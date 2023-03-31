@@ -24,9 +24,12 @@ workflow de_novo_assembly_trio {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	Array[FamilySampleIndices] families = read_json(parse_families.families_json)
+
+
 	# Run de_novo_assembly for each child with mother and father samples present in the cohort
 	# Multiple children per family and multiple unrelated families can be included in the cohort and will each produce separate child assemblies
-	scatter (family in parse_families.families) {
+	scatter (family in families) {
 		Sample father = cohort.samples[family.father_index]
 		Sample mother = cohort.samples[family.mother_index]
 
@@ -125,7 +128,7 @@ task parse_families {
 	>>>
 
 	output {
-		Array[FamilySampleIndices] families = read_json("families.json")
+		File families_json = "families.json"
 	}
 
 	runtime {

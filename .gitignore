@@ -1,1 +1,2 @@
 inputs.test_data*.json
+.wdltest*
