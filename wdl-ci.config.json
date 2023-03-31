@@ -73,7 +73,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "f7qs6pxo3qgabixxwig66du4qjpu7lfv",
+          "digest": "xmjkuju54i4xmyb4urylsikg2e5vafq4",
           "tests": [
             {
               "inputs": {
@@ -103,32 +103,6 @@
                     "check_sorted_vcf_bcf"
                   ]
                 },
-                "trgt_dropouts": {
-                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "trgt_coverage_dropouts": {
-          "key": "trgt_coverage_dropouts",
-          "digest": "aud6wufdctev3x66mobbzfc5ahas6cuj",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
                 "trgt_dropouts": {
                   "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
                   "test_tasks": [
@@ -185,7 +159,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "muu7y4mrrgmysqvlsq5kuqct4tkxaica",
+          "digest": "2j6ymzbzu25g347j4c655e6duhonm2l5",
           "tests": [
             {
               "inputs": {

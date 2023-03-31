@@ -313,7 +313,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
+		docker: "~{runtime_attributes.container_registry}/trgt:0.4.0"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"

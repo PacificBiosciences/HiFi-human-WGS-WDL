@@ -131,7 +131,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2:1.9.0"
+		docker: "~{runtime_attributes.container_registry}/pbmm2:1.10.0"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
