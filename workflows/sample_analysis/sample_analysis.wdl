@@ -116,15 +116,7 @@ workflow sample_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call trgt_coverage_dropouts {
-		input:
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
-			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -162,7 +154,7 @@ workflow sample_analysis {
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
-		File trgt_dropouts = trgt_coverage_dropouts.trgt_dropouts
+		File trgt_dropouts = trgt.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
 	}
 
@@ -269,6 +261,8 @@ task trgt {
 		File reference_index
 		File tandem_repeat_bed
 
+		String output_prefix
+
 		RuntimeAttributes runtime_attributes
 	}
 
@@ -302,46 +296,8 @@ task trgt {
 		samtools index \
 			-@ ~{threads - 1} \
 			~{bam_basename}.trgt.spanning.sorted.bam
-	>>>
 
-	output {
-		File spanning_reads = "~{bam_basename}.trgt.spanning.sorted.bam"
-		File spanning_reads_index = "~{bam_basename}.trgt.spanning.sorted.bam.bai"
-		File repeat_vcf = "~{bam_basename}.trgt.sorted.vcf.gz"
-		File repeat_vcf_index = "~{bam_basename}.trgt.sorted.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
-		cpu: threads
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task trgt_coverage_dropouts {
-	input {
-		File bam
-		File bam_index
-
-		String output_prefix
-
-		File tandem_repeat_bed
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	Int disk_size = ceil(size(bam, "GB") * 4 + 20)
-
-	command <<<
-		set -euo pipefail
-
+		# Get coverage dropouts
 		check_trgt_coverage.py \
 			~{tandem_repeat_bed} \
 			~{bam} \
@@ -349,13 +305,17 @@ task trgt_coverage_dropouts {
 	>>>
 
 	output {
+		File spanning_reads = "~{bam_basename}.trgt.spanning.sorted.bam"
+		File spanning_reads_index = "~{bam_basename}.trgt.spanning.sorted.bam.bai"
+		File repeat_vcf = "~{bam_basename}.trgt.sorted.vcf.gz"
+		File repeat_vcf_index = "~{bam_basename}.trgt.sorted.vcf.gz.tbi"
 		File trgt_dropouts = "~{output_prefix}.trgt.dropouts.txt"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:1.8.1"
-		cpu: 1
-		memory: "1 GB"
+		docker: "~{runtime_attributes.container_registry}/trgt:0.3.4"
+		cpu: threads
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
