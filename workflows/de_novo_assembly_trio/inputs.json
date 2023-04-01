@@ -40,13 +40,15 @@
     "max_retries": "Int",
     "zones": "String",
     "queue_arn": "String",
-    "container_registry": "String"
+    "container_registry": "String",
+    "slurm_partition_default": "String"
   },
   "de_novo_assembly_trio.on_demand_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
     "zones": "String",
     "queue_arn": "String",
-    "container_registry": "String"
+    "container_registry": "String",
+    "slurm_partition_default": "String"
   }
 }

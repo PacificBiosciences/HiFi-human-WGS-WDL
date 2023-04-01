@@ -38,6 +38,7 @@
     "max_retries": "Int",
     "zones": "String",
     "queue_arn": "String",
-    "container_registry": "String"
+    "container_registry": "String",
+    "slurm_partition_default": "String"
   }
 }

@@ -140,6 +140,7 @@ task pbmm2_align {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }

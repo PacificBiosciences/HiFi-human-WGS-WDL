@@ -164,6 +164,7 @@ task write_cohort_yaml {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -199,6 +200,7 @@ task write_ped {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -245,6 +247,7 @@ task calculate_phrank {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -293,6 +296,7 @@ task bcftools_norm {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -402,6 +406,7 @@ task slivar_small_variant {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -462,6 +467,7 @@ task slivar_compound_hets {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -541,6 +547,7 @@ task slivar_tsv {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -593,6 +600,7 @@ task svpack_filter_annotated {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -653,6 +661,7 @@ task slivar_svpack_tsv {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }

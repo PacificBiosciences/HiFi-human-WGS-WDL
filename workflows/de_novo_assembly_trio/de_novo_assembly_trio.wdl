@@ -141,6 +141,7 @@ task parse_families {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -182,6 +183,7 @@ task yak_count {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
