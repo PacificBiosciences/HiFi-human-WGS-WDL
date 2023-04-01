@@ -23,6 +23,8 @@ workflow humanwgs {
 		String? zones
 		String? aws_spot_queue_arn
 		String? aws_on_demand_queue_arn
+		String? slurm_partition_default
+		String? slurm_partition_gpu
 
 		Boolean preemptible
 	}
@@ -32,7 +34,9 @@ workflow humanwgs {
 			backend = backend,
 			zones = zones,
 			aws_spot_queue_arn = aws_spot_queue_arn,
-			aws_on_demand_queue_arn = aws_on_demand_queue_arn
+			aws_on_demand_queue_arn = aws_on_demand_queue_arn,
+			slurm_partition_default = slurm_partition_default,
+			slurm_partition_gpu = slurm_partition_gpu
 	}
 
 	RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
@@ -44,6 +48,7 @@ workflow humanwgs {
 				reference = reference,
 				deepvariant_version = deepvariant_version,
 				deepvariant_model = deepvariant_model,
+				backend = backend,
 				default_runtime_attributes = default_runtime_attributes
 		}
 

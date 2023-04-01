@@ -129,10 +129,12 @@ These files are hosted publicly in each of the cloud backends; see `workflows/in
 | :- | :- | :- | :- |
 | String? | deepvariant_version | Version of deepvariant to use [1.4.0] | |
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optonal alternate DeepVariant model file to use | |
-| String | backend | Backend where the workflow will be executed | ["Azure", "AWS", "GCP"] |
+| String | backend | Backend where the workflow will be executed | ["Azure", "AWS", "GCP", "slurm"] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in AWS and GCP](#determining-available-zones-in-aws-and-gcp). |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](#determining-the-aws-batch-queue-arn) |
 | String? | aws_on_demand_queue_arn | Queue ARN for the on demand batch queue; required if backend is set to 'AWS' and `preemptible` is set to `false` | [Determining the AWS queue ARN](#determining-the-aws-batch-queue-arn) |
+| String? | slurm_partition_default | Default slurm partition; required if backend is set to 'slurm' |
+| String? | slurm_partition_gpu | GPU slurm partition; optional if backend is set to 'slurm' |
 | Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. | [true, false] |
 
 

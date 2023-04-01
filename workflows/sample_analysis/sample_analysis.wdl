@@ -21,6 +21,7 @@ workflow sample_analysis {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
+		String backend
 		RuntimeAttributes default_runtime_attributes
 	}
 
@@ -39,7 +40,8 @@ workflow sample_analysis {
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
-			default_runtime_attributes = default_runtime_attributes
+			default_runtime_attributes = default_runtime_attributes,
+			backend = backend
 	}
 
 	call BcftoolsStats.bcftools_stats {
@@ -202,6 +204,7 @@ task bcftools_roh {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -248,6 +251,7 @@ task merge_bams {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -322,6 +326,7 @@ task trgt {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
@@ -372,6 +377,7 @@ task cpg_pileup {
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
 		queueArn: runtime_attributes.queue_arn
+		slurm_partition: runtime_attributes.slurm_partition_default
 		zones: runtime_attributes.zones
 	}
 }
