@@ -15,7 +15,7 @@ workflow humanwgs {
 		ReferenceData reference
 		SlivarData slivar_data
 
-		String deepvariant_version = "1.4.0"
+		String deepvariant_version = "1.5.0"
 		DeepVariantModel? deepvariant_model
 
 		Boolean run_tertiary_analysis = true
