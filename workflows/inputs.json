@@ -46,6 +46,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
   "humanwgs.backend": "String ['GCP', 'Azure', or 'AWS']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",

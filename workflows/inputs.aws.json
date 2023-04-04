@@ -84,6 +84,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
   "humanwgs.backend": "AWS",
   "humanwgs.zones": "us-east-2a us-east-2b us-east-2c",
   "humanwgs.aws_spot_queue_arn": "",
