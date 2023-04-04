@@ -129,6 +129,7 @@ These files are hosted publicly in each of the cloud backends; see `workflows/in
 | :- | :- | :- | :- |
 | String? | deepvariant_version | Version of deepvariant to use [1.4.0] | |
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optonal alternate DeepVariant model file to use | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps [true] | |
 | String | backend | Backend where the workflow will be executed | ["Azure", "AWS", "GCP"] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in AWS and GCP](#determining-available-zones-in-aws-and-gcp). |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](#determining-the-aws-batch-queue-arn) |
@@ -248,15 +249,15 @@ These files will be output if `cohort.de_novo_assembly_trio` is set to `true`.
 
 ## Tertiary analysis
 
-These files will be output for each run of the workflow. The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
+These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true` (this is the default). The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
 - If the number of samples is equal to one, the files being annotated in this step are the sample small variant VCF and SV VCF.
 - If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called VCF and the cohort SV VCF.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | filtered_small_variant_vcf | | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | compound_het_small_variant_vcf | | |
-| File | filtered_small_variant_tsv | | |
-| File | compound_het_small_variant_tsv | | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | filtered_svpack_vcf | | |
-| File | filtered_svpack_tsv | | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_small_variant_vcf | | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | compound_het_small_variant_vcf | | |
+| File? | filtered_small_variant_tsv | | |
+| File? | compound_het_small_variant_tsv | | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_svpack_vcf | | |
+| File? | filtered_svpack_tsv | | |

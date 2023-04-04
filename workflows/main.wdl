@@ -18,6 +18,8 @@ workflow humanwgs {
 		String deepvariant_version = "1.4.0"
 		DeepVariantModel? deepvariant_model
 
+		Boolean run_tertiary_analysis = true
+
 		# Backend configuration
 		String backend
 		String? zones
@@ -82,23 +84,25 @@ workflow humanwgs {
 		}
 	}
 
-	IndexData slivar_small_variant_input_vcf = select_first([
-		cohort_analysis.phased_joint_called_vcf,
-		sample_analysis.phased_small_variant_vcf[0]
-	])
-	IndexData slivar_sv_input_vcf = select_first([
-		cohort_analysis.sv_vcf,
-		sample_analysis.sv_vcf[0]
-	])
+	if (run_tertiary_analysis) {
+		IndexData slivar_small_variant_input_vcf = select_first([
+			cohort_analysis.phased_joint_called_vcf,
+			sample_analysis.phased_small_variant_vcf[0]
+		])
+		IndexData slivar_sv_input_vcf = select_first([
+			cohort_analysis.sv_vcf,
+			sample_analysis.sv_vcf[0]
+		])
 
-	call TertiaryAnalysis.tertiary_analysis {
-		input:
-			cohort = cohort,
-			small_variant_vcf = slivar_small_variant_input_vcf,
-			sv_vcf = slivar_sv_input_vcf,
-			reference = reference,
-			slivar_data = slivar_data,
-			default_runtime_attributes = default_runtime_attributes
+		call TertiaryAnalysis.tertiary_analysis {
+			input:
+				cohort = cohort,
+				small_variant_vcf = slivar_small_variant_input_vcf,
+				sv_vcf = slivar_sv_input_vcf,
+				reference = reference,
+				slivar_data = slivar_data,
+				default_runtime_attributes = default_runtime_attributes
+		}
 	}
 
 	output {
@@ -153,12 +157,12 @@ workflow humanwgs {
 		Array[IndexData]? trio_asm_bams = de_novo_assembly_trio.asm_bams
 
 		# tertiary_analysis output
-		IndexData filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf
-		IndexData compound_het_small_variant_vcf = tertiary_analysis.compound_het_small_variant_vcf
-		File filtered_small_variant_tsv = tertiary_analysis.filtered_small_variant_tsv
-		File compound_het_small_variant_tsv = tertiary_analysis.compound_het_small_variant_tsv
-		IndexData filtered_svpack_vcf = tertiary_analysis.filtered_svpack_vcf
-		File filtered_svpack_tsv = tertiary_analysis.filtered_svpack_tsv
+		IndexData? filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf
+		IndexData? compound_het_small_variant_vcf = tertiary_analysis.compound_het_small_variant_vcf
+		File? filtered_small_variant_tsv = tertiary_analysis.filtered_small_variant_tsv
+		File? compound_het_small_variant_tsv = tertiary_analysis.compound_het_small_variant_tsv
+		IndexData? filtered_svpack_vcf = tertiary_analysis.filtered_svpack_vcf
+		File? filtered_svpack_tsv = tertiary_analysis.filtered_svpack_tsv
 	}
 
 	parameter_meta {
@@ -167,6 +171,7 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		run_tertiary_analysis: {help: "Run the optional tertiary analysis steps"}
 		backend: {help: "Backend where the workflow will be executed ['GCP', 'Azure', 'AWS']"}
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
 		aws_spot_queue_arn: {help: "Queue ARN for the spot batch queue; required if backend is set to 'AWS'"}
