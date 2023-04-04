@@ -600,7 +600,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "lcsmxfgw32fjgaielybd3zn4kglkpdjt",
+          "digest": "6gir5tgqd2npdkl5cztuepcrjotqugs7",
           "tests": [
             {
               "inputs": {
