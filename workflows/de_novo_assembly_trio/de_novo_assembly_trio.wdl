@@ -132,7 +132,7 @@ task parse_families {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0"
+		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0@sha256:73bf5c4173c88c571c91658382ca95bb95a76bd64139aadaee99f41e172fd51a"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
@@ -173,7 +173,7 @@ task yak_count {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/yak:0.1"
+		docker: "~{runtime_attributes.container_registry}/yak:0.1@sha256:45e344d9432cac713159c830a115f439c5daea3eeb732f107f608376f1ea2a6c"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
