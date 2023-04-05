@@ -8,7 +8,6 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 - Common tasks that may be reused within or between workflows are defined [here](https://github.com/PacificBiosciences/wdl-common).
 
-
 # Workflow
 
 The human WGS workflow performs read alignment, small and structural variant calling, variant phasing, and optional _de novo_ assembly.
@@ -22,11 +21,9 @@ The human WGS workflow performs read alignment, small and structural variant cal
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
 
-
 # Reference datasets and associated workflow files
 
 Reference datasets are hosted publicly for use in the pipeline. For data locations, see `workflows/inputs.${backend}.json`.
-
 
 ## Reference data hosted in Azure
 
@@ -36,26 +33,23 @@ To use Azure reference data, add the following line to your `containers-to-mount
 
 The [Azure input file template](workflows/inputs.azure.json) has paths to the reference files in this blob storage prefilled.
 
-
 ## Reference data hosted in AWS
 
 AWS reference data is hosted in the `us-west-2` region  in the bucket `s3://dnastack-resources`.
 
 To use AWS reference data, add the following line to the data section of your [`agc-project.yaml`](https://aws.github.io/amazon-genomics-cli/docs/concepts/projects/):
 
-```
+```yaml
 data:
   - location: s3://dnastack-resources
-    readOnly: tue
+    readOnly: true
 ```
 
 The [AWS input file template](workflows/inputs.aws.json) has paths to the reference files in the blob storage prefilled.
 
-
 ## Reference data hosted in GCP
 
 <TODO>
-
 
 # Workflow inputs
 
@@ -67,9 +61,8 @@ A cohort can include one or more samples. Samples need not be related.
 | :- | :- | :- | :- |
 | String | cohort_id | A unique name for the cohort; used to name outputs | |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
-| Array[String] | phenotypes | [HPO phenotypes](https://hpo.jax.org/app/) associated with the cohort | |
-| Boolean | run_de_novo_assembly_trio | Run trio-based _de novo_ assembly. | Cohort must contain a valid trio (child and both parents present in the cohort) |
-
+| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort | |
+| Boolean | run_de_novo_assembly_trio | Run trio binned _de novo_ assembly. | Cohort must contain at least one valid trio (child and both parents present in the cohort) |
 
 ### [Sample](workflows/humanwgs_structs.wdl)
 
@@ -78,13 +71,12 @@ Sample information for each sample in the workflow run.
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
 | String | sample_id | A unique name for the sample; used to name outputs | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of movie bams associated with this sample | |
-| String | sex | Sample sex | ["MALE", "FEMALE"] |
-| Boolean | affected | The affected status for the sample | [true, false] |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
+| String | sex | Sample sex | \["MALE", "FEMALE"\] |
+| Boolean | affected | Is this sample affected by the phenotype? | \[true, false\] |
 | String? | father_id | Paternal `sample_id` | |
 | String? | mother_id | Maternal `sample_id` | |
-| Boolean | run_de_novo_assembly | If true, run single-sample _de novo_ assembly for this sample | [true, false] |
-
+| Boolean | run_de_novo_assembly | If true, run single-sample _de novo_ assembly for this sample | \[true, false\] |
 
 ## [ReferenceData](workflows/humanwgs_structs.wdl)
 
@@ -94,17 +86,16 @@ These files are hosted publicly in each of the cloud backends; see `workflows/in
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | name | Reference name; used to name outputs | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | fasta | Reference genome and index to align reads to | |
-| Array[String] | chromosomes | Chromosomes to phase during WhatsHap phasing | |
-| File | chromosome_lengths | File specifying the lengths of each of the reference chromosomes | |
-| File | tandem_repeat_bed | Tandem repeat locations in the reference genome | |
-| File | trgt_tandem_repeat_bed | Repeat bed used by [`trgt`](https://github.com/PacificBiosciences/trgt) to output spanning reads and a repeat VCF | |
-| File | gnomad_af | gnomAD allele frequencies; used for annotate the small variant VCF | |
-| File | hprc_af | Allele frequences from the Human Pangenome Reference Consortium (HPRC); used to annotate the small variant VCF | |
-| File | gff | GFF3 annotation file | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | Population calls in VCF format; used to annotate the VCFs | |
-
+| String | name | Reference name; used to name outputs (e.g., "GRCh38") | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | fasta | Reference genome and index | |
+| Array[String] | chromosomes | Chromosomes to phase, typically `chr{1..22} chr{X,Y}` | |
+| File | chromosome_lengths | Reference chromosome lengths | |
+| File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
+| File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
+| File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
+| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
+| File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | An array of structural variant population VCFs | |
 
 ## [SlivarData](workflows/humanwgs_structs.wdl)
 
@@ -115,27 +106,25 @@ These files are hosted publicly in each of the cloud backends; see `workflows/in
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
 | File | slivar_js | Additional javascript functions for slivar | |
-| File | hpo_terms | HPO annotation lookups | |
-| File | hpo_dag | HPO annotation lookups | |
-| File | hpo_annotations | HPO annotation lookups | |
+| File | hpo_terms | [HPO](https://hpo.jax.org/app/) annotation lookups | |
+| File | hpo_dag | [HPO](https://hpo.jax.org/app/) annotation lookups | |
+| File | hpo_annotations | [HPO](https://hpo.jax.org/app/) annotation lookups | |
 | File | ensembl_to_hgnc | Ensembl to HGNC gene mapping | |
-| File | lof_lookup | LoF lookup files for slivar annotations | |
-| File | clinvar_lookup | ClinVar lookup files for slivar annotation | |
-
+| File | lof_lookup | Loss-of-function scores per gene | |
+| File | clinvar_lookup | ClinVar annotations per gene | |
 
 ## Other inputs
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String? | deepvariant_version | Version of deepvariant to use [1.4.0] | |
+| String? | deepvariant_version | Version of deepvariant to use \["1.5.0"\] | |
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optonal alternate DeepVariant model file to use | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps [true] | |
-| String | backend | Backend where the workflow will be executed | ["Azure", "AWS", "GCP"] |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
+| String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in AWS and GCP](#determining-available-zones-in-aws-and-gcp). |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](#determining-the-aws-batch-queue-arn) |
 | String? | aws_on_demand_queue_arn | Queue ARN for the on demand batch queue; required if backend is set to 'AWS' and `preemptible` is set to `false` | [Determining the AWS queue ARN](#determining-the-aws-batch-queue-arn) |
-| Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. | [true, false] |
-
+| Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. | \[true, false\] |
 
 ### Determining available zones in AWS and GCP
 
@@ -148,7 +137,6 @@ aws ec2 describe-availability-zones --region <region>
 ```
 For example, the zones in region us-east-2 are `"us-east-2a us-east-2b us-east-2c"`.
 
-
 #### GCP
 
 To determine available zones in GCP, run the following; available zones within a region can be found in the first column of the output:
@@ -158,7 +146,6 @@ gcloud compute zones list | grep <region>
 ```
 
 For example, the zones in region us-central1 are `"us-central1-a us-central1-b us-central1c us-central1f"`.
-
 
 ### Determining the AWS batch queue ARN
 
@@ -181,38 +168,24 @@ These files will be output for each sample defined in the cohort.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| Array[Array[File]] | bam_stats | Statistics for the set of movie bams for each sample | |
-| Array[Array[File]] | read_length_summary | Read length stats for the set of movie bams for each sample | |
-| Array[Array[File]] | read_length_quality_summary | Read length quality summaries for the set of movie bams for each sample | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | | |
-| Array[File] | small_variant_vcf_stats | | |
-| Array[File] | small_variant_roh_bed | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | | |
-| Array[File] | sample_whatshap_stats_gtfs | | |
-| Array[File] | sample_whatshap_stats_tsvs | | |
-| Array[File] | sample_whatshap_stats_blocklists | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | | |
-| Array[File] | haplotagged_bam_mosdepth_summary | | |
-| Array[File] | haplotagged_bam_mosdepth_region_bed | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_spanning_reads | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | | |
-| Array[File] | trgt_dropouts | | |
-| Array[Array[File]] | cpg_pileups | | |
-
-
-## Cohort analysis
-
-These files will be output if the cohort includes more than one sample.
-
-| Type | Name | Description | Notes |
-| :- | :- | :- | :- |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | | |
-| File? | cohort_whatshap_stats_gtfs | | |
-| File? | cohort_whatshap_stats_tsvs | | |
-| File? | cohort_whatshap_stats_blocklists | | |
-
+| Array[Array[File]] | bam_stats | TSV of length and quality for each read (per input BAM) | |
+| Array[Array[File]] | read_length_summary | For each input BAM, read length distribution (per input BAM) | |
+| Array[Array[File]] | read_quality_summary | For each input BAM, read quality distribution (per input BAM) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | Small variants (SNPs and INDELs < 50bp) gVCFs called by [DeepVariant](https://github.com/google/deepvariant) (with index) | |
+| Array[File] | small_variant_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for small variants | |
+| Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by [DeepVariant](https://github.com/google/deepvariant) and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
+| Array[File] | sample_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
+| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
+| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [`whatshap haplotag`](https://whatshap.readthedocs.io/en/latest/guide.html#visualizing-phasing-results)) reads (with index) | |
+| Array[File] | haplotagged_bam_mosdepth_summary | [mosdepth](https://github.com/brentp/mosdepth) summary of median depths per chromosome | |
+| Array[File] | haplotagged_bam_mosdepth_region_bed | [mosdepth](https://github.com/brentp/mosdepth) BED of median coverage depth per 500 bp window | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | Tandem repeat genotypes from [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/vcf_files.md) (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_spanning_reads | Fragments of HiFi reads spanning loci genotyped by [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/tutorial.md) (with index) | |
+| Array[File] | trgt_dropouts | Regions with insufficient coverage to genotype | |
+| Array[Array[File]] | cpg_pileups | 5mCpG site methylation probability pileups generated by [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools#output-files) | |
 
 ## De novo assembly - sample
 
@@ -220,40 +193,50 @@ These files will be output if `cohort.samples[sample]` is set to `true` for any 
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| Array[Array[File]?] | assembly_noseq_gfas | | |
-| Array[Array[File]?] | assembly_lowQ_beds | | |
-| Array[Array[File]?] | zipped_assembly_fastas | | |
-| Array[Array[File]?] | assembly_stats | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | asm_bam | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | htsbox_vcf | | |
-| Array[File?] | htsbox_vcf_stats | | |
+| Array[Array[File]?] | zipped_assembly_fastas | [_De novo_ dual assembly](http://lh3.github.io/2021/10/10/introducing-dual-assembly) generated by [hifiasm](https://github.com/chhylp123/hifiasm) | |
+| Array[Array[File]?] | assembly_noseq_gfas | Assembly graphs in [GFA format](https://github.com/chhylp123/hifiasm/blob/master/docs/source/interpreting-output.rst). | |
+| Array[Array[File]?] | assembly_lowQ_beds | Coordinates of low quality regions in BED format. | |
+| Array[Array[File]?] | assembly_stats | Assembly size and NG50 stats generated by [calN50](https://github.com/lh3/calN50). | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | asm_bam | [minimap2](https://github.com/lh3/minimap2) alignment of assembly to reference. | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | htsbox_vcf | Naive pileup variant calling of assembly against reference with [`htsbox`](https://github.com/lh3/htsbox) | |
+| Array[File?] | htsbox_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for `htsbox` variant calls | |
 
+## Cohort analysis
 
-## De novo assembly - trio
-
-These files will be output if `cohort.de_novo_assembly_trio` is set to `true`.
+These files will be output if the cohort includes more than one sample.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| Array[Map[String, String]]? | haplotype_key | | |
-| Array[Array[File]]? | trio_assembly_noseq_gfas | | |
-| Array[Array[File]]? | trio_assembly_lowQ_beds | | |
-| Array[Array[File]]? | trio_zipped_assembly_fastas | | |
-| Array[Array[File]]? | trio_assembly_stats | | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)]? | trio_asm_bams | | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
+| File? | cohort_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
+| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
+| File? | cohort_whatshap_stats_blocklists | Haplotype block list written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
 
+## De novo assembly - trio
+
+These files will be output if `cohort.de_novo_assembly_trio` is set to `true` and there is at least one parent-parent-kid trio in the cohort.
+
+| Type | Name | Description | Notes |
+| :- | :- | :- | :- |
+| Array[Array[File]]? | trio_zipped_assembly_fastas | [Haplotype-resolved _de novo_ assembly](http://lh3.github.io/2021/10/10/introducing-dual-assembly) of the trio kid generated by [hifiasm](https://github.com/chhylp123/hifiasm) with [trio binning](https://github.com/chhylp123/hifiasm#trio-binning) | |
+| Array[Array[File]]? | trio_assembly_noseq_gfas | Assembly graphs in [GFA format](https://github.com/chhylp123/hifiasm/blob/master/docs/source/interpreting-output.rst). | |
+| Array[Array[File]]? | trio_assembly_lowQ_beds | Coordinates of low quality regions in BED format. | |
+| Array[Array[File]]? | trio_assembly_stats | Assembly size and NG50 stats generated by [calN50](https://github.com/lh3/calN50). | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)]? | trio_asm_bams | [minimap2](https://github.com/lh3/minimap2) alignment of assembly to reference. | |
+| Array[Map[String, String]]? | haplotype_key | Indication of which haplotype (`hap1`/`hap2`) corresponds to which parent. | |
 
 ## Tertiary analysis
 
 These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true` (this is the default). The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
 - If the number of samples is equal to one, the files being annotated in this step are the sample small variant VCF and SV VCF.
-- If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called VCF and the cohort SV VCF.
+- If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called small variant VCF and the cohort SV VCF.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_small_variant_vcf | | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | compound_het_small_variant_vcf | | |
-| File? | filtered_small_variant_tsv | | |
-| File? | compound_het_small_variant_tsv | | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_svpack_vcf | | |
-| File? | filtered_svpack_tsv | | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_small_variant_vcf | Small variant calls that are filtered based on population frequency and annotated with cohort information, population frequency, gene, functional impact, etc., using [slivar](https://github.com/brentp/slivar) and [`bcftools csq`](https://samtools.github.io/bcftools/howtos/csq-calling.html) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | compound_het_small_variant_vcf | Compound heterozygotes annotated with cohort information, population frequency, gene, functional impact, etc., using [slivar](https://github.com/brentp/slivar) and [`bcftools csq`](https://samtools.github.io/bcftools/howtos/csq-calling.html) | |
+| File? | filtered_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
+| File? | compound_het_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_svpack_vcf | Structural variant calls that are filtered based on population frequency and annotated with cohort information, population frequency, gene, functional impact, etc., using [svpack](https://github.com/PacificBiosciences/svpack) | |
+| File? | filtered_svpack_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
