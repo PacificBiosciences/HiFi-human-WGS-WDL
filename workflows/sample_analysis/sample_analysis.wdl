@@ -363,7 +363,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:v2.1.0"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:v2.1.1"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
