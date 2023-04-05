@@ -115,7 +115,7 @@ task hifiasm_assemble {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hifiasm:0.19.3@sha256:9e5fd8743f2668de04f595913c4f4ef07e717a19647a2be75ecf83a9488b726e"
+		docker: "~{runtime_attributes.container_registry}/hifiasm@sha256:9e5fd8743f2668de04f595913c4f4ef07e717a19647a2be75ecf83a9488b726e"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -168,7 +168,7 @@ task gfa2fa {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/gfatools:0.4_01091f2@sha256:5b68ed45a3dfce62936db039d2fe775866a5de9ed9e2e590d6af38c2ebcffd92"
+		docker: "~{runtime_attributes.container_registry}/gfatools@sha256:5b68ed45a3dfce62936db039d2fe775866a5de9ed9e2e590d6af38c2ebcffd92"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -224,7 +224,7 @@ task align_hifiasm {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/align_hifiasm:2.17_1.14@sha256:3968cb152a65163005ffed46297127536701ec5af4c44e8f3e7051f7b01f80fe"
+		docker: "~{runtime_attributes.container_registry}/align_hifiasm@sha256:3968cb152a65163005ffed46297127536701ec5af4c44e8f3e7051f7b01f80fe"
 		cpu: threads
 		memory: "256 GB"
 		disk: disk_size + " GB"
