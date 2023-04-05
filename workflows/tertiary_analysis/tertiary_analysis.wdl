@@ -155,7 +155,7 @@ task write_cohort_yaml {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0@sha256:73bf5c4173c88c571c91658382ca95bb95a76bd64139aadaee99f41e172fd51a"
+		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.1@sha256:94444e7e3fd151936c9bbcb8a64b6a5e7d8c59de53b256a83f15c4ea203977b4"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"

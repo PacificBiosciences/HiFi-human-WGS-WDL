@@ -23,7 +23,7 @@ struct Sample {
 	String sample_id
 	Array[File] movie_bams
 
-	String sex
+	String? sex
 	Boolean affected
 
 	String? father_id
