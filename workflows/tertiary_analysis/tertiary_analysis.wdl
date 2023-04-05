@@ -155,7 +155,7 @@ task write_cohort_yaml {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0"
+		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0@sha256:73bf5c4173c88c571c91658382ca95bb95a76bd64139aadaee99f41e172fd51a"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
@@ -190,7 +190,7 @@ task write_ped {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1"
+		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1@sha256:7ce6b587e6a75df225eda677f47aba060ae98da10ff9a1fbe345a43e6ac3147b"
 		cpu: 1
 		memory: "1 GB"
 		disk: "20 GB"
@@ -236,7 +236,7 @@ task calculate_phrank {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1"
+		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1@sha256:7ce6b587e6a75df225eda677f47aba060ae98da10ff9a1fbe345a43e6ac3147b"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -284,7 +284,7 @@ task bcftools_norm {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
+		docker: "~{runtime_attributes.container_registry}/bcftools:1.14@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
 		cpu: 1
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -393,7 +393,7 @@ task slivar_small_variant {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
+		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
 		cpu: threads
 		memory: "16 GB"
 		disk: disk_size + " GB"
@@ -453,7 +453,7 @@ task slivar_compound_hets {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
+		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
 		cpu: 2
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -532,7 +532,7 @@ task slivar_tsv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
+		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -584,7 +584,7 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack:a82598e"
+		docker: "~{runtime_attributes.container_registry}/svpack:a82598e@sha256:912c1c3d9b4778f6f3256ba503c4a15deaae7eb9fb534ba40106f58d064682c3"
 		cpu: 1
 		memory: "16 GB"
 		disk: disk_size + " GB"
@@ -644,7 +644,7 @@ task slivar_svpack_tsv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
+		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
 		cpu: 1
 		memory: "1 GB"
 		disk: disk_size + " GB"
