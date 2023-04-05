@@ -1051,7 +1051,7 @@
       "tasks": {
         "parse_families": {
           "key": "parse_families",
-          "digest": "tgnvff4yiytpzstqi4pl24tfab5sangl",
+          "digest": "qdrgun3sdh34boff6gtwjev4hiwte2i5",
           "tests": [
             {
               "inputs": {
@@ -1109,7 +1109,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "vrkykviev3be2bs2blpdjojmbyuraktq",
+          "digest": "42gf3ufyvrsajzgm5zryakrkz34dzvos",
           "tests": [
             {
               "inputs": {
