@@ -136,8 +136,6 @@ workflow sample_analysis {
 		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
 		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
 		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
-		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
 		Array[File] svsigs = smrtcell_analysis.svsigs
 
 		IndexData small_variant_vcf = deepvariant.vcf

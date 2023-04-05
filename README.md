@@ -184,10 +184,6 @@ These files will be output for each sample defined in the cohort.
 | Array[Array[File]] | bam_stats | Statistics for the set of movie bams for each sample | |
 | Array[Array[File]] | read_length_summary | Read length stats for the set of movie bams for each sample | |
 | Array[Array[File]] | read_length_quality_summary | Read length quality summaries for the set of movie bams for each sample | |
-| Array[Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)]] | aligned_bams | Set of aligned bams for the set of movie bams for each sample | |
-| Array[Array[File]] | aligned_bam_mosdepth_summary | Mosdepth summary for the set of aligned bams for each sample | |
-| Array[Array[File]] | aligned_bam_mosdepth_region_bed | Mosdepth region bed for the set of aligned bams for each sample | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_vcfs | | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | | |
 | Array[File] | small_variant_vcf_stats | | |
 | Array[File] | small_variant_roh_bed | | |
