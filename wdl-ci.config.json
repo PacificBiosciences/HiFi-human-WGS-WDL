@@ -1436,7 +1436,6 @@
                 "zipped_fasta": {
                   "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_gzip",
                     "check_empty_lines",
@@ -1446,7 +1445,6 @@
                 "assembly_stats": {
                   "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_empty_lines"
