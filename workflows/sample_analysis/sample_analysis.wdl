@@ -395,8 +395,8 @@ task paraphase {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 1
-	Int mem_gb = threads * 8
+	Int threads = 2
+	Int mem_gb = 4
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
 	command <<<
