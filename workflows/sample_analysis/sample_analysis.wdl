@@ -358,8 +358,8 @@ task cpg_pileup {
 
 	output {
 		Array[File] pileups = [
-			"~{output_prefix}.comined.bed",
-			"~{output_prefix}.comined.bw",
+			"~{output_prefix}.combined.bed",
+			"~{output_prefix}.combined.bw",
 			"~{output_prefix}.hap1.bed",
 			"~{output_prefix}.hap1.bw",
 			"~{output_prefix}.hap2.bed",
