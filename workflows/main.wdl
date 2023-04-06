@@ -131,7 +131,7 @@ workflow humanwgs {
 		Array[IndexData] trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
 		Array[File] trgt_dropouts = sample_analysis.trgt_dropouts
 		Array[Array[File]] cpg_pileups = sample_analysis.cpg_pileups
-		Array[Array[File]] paraphase = sample_analysis.paraphase
+		Array[Array[File]] paraphase = sample_analysis.paraphase_output
 
 		# de_novo_assembly_sample output
 		Array[Array[File]?] assembly_noseq_gfas = de_novo_assembly_sample.assembly_noseq_gfas

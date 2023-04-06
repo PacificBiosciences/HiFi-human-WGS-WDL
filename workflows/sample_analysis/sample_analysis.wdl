@@ -164,7 +164,7 @@ workflow sample_analysis {
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
-		Array[File] paraphase = paraphase.outputs
+		Array[File] paraphase_output = paraphase.outputs
 	}
 
 	parameter_meta {
