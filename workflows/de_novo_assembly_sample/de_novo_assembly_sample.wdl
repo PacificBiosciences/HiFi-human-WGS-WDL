@@ -17,9 +17,6 @@ workflow de_novo_assembly_sample {
 		String backend
 		RuntimeAttributes default_runtime_attributes
 		RuntimeAttributes on_demand_runtime_attributes
-
-		# TODO workaround for miniwdl-style inputs run via Cromwell
-		File? my_none
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
@@ -36,8 +33,6 @@ workflow de_novo_assembly_sample {
 			reads_fastas = samtools_fasta.reads_fasta,
 			reference = reference,
 			hifiasm_extra_params = "",
-			father_yak = my_none,
-			mother_yak = my_none,
 			backend = backend,
 			default_runtime_attributes = default_runtime_attributes,
 			on_demand_runtime_attributes = on_demand_runtime_attributes
