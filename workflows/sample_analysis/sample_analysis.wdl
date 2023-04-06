@@ -357,7 +357,14 @@ task cpg_pileup {
 	>>>
 
 	output {
-		Array[File] pileups = glob("~{output_prefix}.{combined,hap1,hap2}.{bed,bw}")
+		Array[File] pileups = [
+			"~{output_prefix}.comined.bed",
+			"~{output_prefix}.comined.bw",
+			"~{output_prefix}.hap1.bed",
+			"~{output_prefix}.hap1.bw",
+			"~{output_prefix}.hap2.bed",
+			"~{output_prefix}.hap2.bw"
+		]
 	}
 
 	runtime {
