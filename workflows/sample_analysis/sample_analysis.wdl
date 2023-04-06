@@ -338,7 +338,7 @@ task cpg_pileup {
 	}
 
 	Int threads = 12
-	# Uses ~7 GB memory / thread
+	# Uses ~4 GB memory / thread
 	Int mem_gb = threads * 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
