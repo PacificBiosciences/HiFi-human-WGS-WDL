@@ -72,8 +72,8 @@ Sample information for each sample in the workflow run.
 | :- | :- | :- | :- |
 | String | sample_id | A unique name for the sample; used to name outputs | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
-| String | sex | Sample sex | \["MALE", "FEMALE"\] |
-| Boolean | affected | Is this sample affected by the phenotype? | \[true, false\] |
+| String? | sex | Sample sex | ["MALE", "FEMALE", "."]. "." or `null` will set sex to unknown. |
+| Boolean | affected | The affected status for the sample | [true, false] |
 | String? | father_id | Paternal `sample_id` | |
 | String? | mother_id | Maternal `sample_id` | |
 | Boolean | run_de_novo_assembly | If true, run single-sample _de novo_ assembly for this sample | \[true, false\] |
