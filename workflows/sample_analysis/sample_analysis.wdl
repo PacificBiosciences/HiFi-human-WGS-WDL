@@ -132,6 +132,7 @@ workflow sample_analysis {
 
 	call paraphase {
 		input:
+			sample_id = sample.sample_id,
 			bam = merge_bams.merged_bam,
 			bam_index = merge_bams.merged_bam_index,
 			out_directory = "~{sample.sample_id}.paraphase",
@@ -163,6 +164,8 @@ workflow sample_analysis {
 		File trgt_dropouts = trgt.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
 		Array[File] paraphase_output = paraphase.outputs
+		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
+		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
 	}
 
 	parameter_meta {
@@ -388,6 +391,7 @@ task paraphase {
 		File bam
 		File bam_index
 
+		String sample_id
 		String out_directory
 
 		RuntimeAttributes runtime_attributes
@@ -407,7 +411,10 @@ task paraphase {
 	>>>
 
 	output {
-		Array[File] outputs = glob("~{out_directory}/*")
+		File paraphase_output = "~{out_directory}/~{sample_id}.json"
+		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
+		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
+		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
 	}
 
 	runtime {
