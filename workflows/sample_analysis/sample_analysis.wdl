@@ -163,7 +163,7 @@ workflow sample_analysis {
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
-		Array[File] paraphase_output = paraphase.outputs
+		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
 	}
@@ -418,7 +418,7 @@ task paraphase {
 	>>>
 
 	output {
-		File paraphase_output = "~{out_directory}/~{sample_id}.json"
+		File output_json = "~{out_directory}/~{sample_id}.json"
 		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
 		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
 		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
