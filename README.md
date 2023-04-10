@@ -17,9 +17,39 @@ The human WGS workflow performs read alignment, small and structural variant cal
 - [Blank input template file](workflows/inputs.json)
 - [Azure-based inputs](workflows/inputs.azure.json)
 - [AWS-based inputs](workflows/inputs.aws.json)
-- [GCP-based inputs]((workflows/inputs.gcp.json))
+- [GCP-based inputs](workflows/inputs.gcp.json)
+- [HPC-based inputs](workflows/inputs.hpc.json)
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
+
+# Running the workflow
+
+Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
+
+The workflow engine that you choose will depend on where your data is located.
+
+| Engine | Azure | AWS | GCP | HPC |
+| :- | :- | :- | :- | :- |
+| [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
+| [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
+
+## Set up and run the workflow
+
+1. Install and configure the workflow execution engine of your choice following the documentation for the backend environment where your data is located.
+
+2. Select the input template file ([Azure](workflows/inputs.azure.json), [AWS](workflows/inputs.aws.json), [GCP](workflows/inputs.gcp.json), [HPC](workflows/inputs.hpc.json)) that matches the backend environment where you will be executing the workflows. These files have reference dataset information prefilled. If using an HPC backend, you will need to replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
+
+3. Fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
+
+4. Run the workflow using the engine of choice.
+
+### Running using miniwdl
+
+`miniwdl run workflows/main.wdl -i <input_file_path.json>`
+
+### Running using Cromwell
+
+`java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
 # Reference datasets and associated workflow files
 
