@@ -157,8 +157,8 @@
             {
               "inputs": {
                 "sample_id": "${sample_id}",
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
                 "out_directory": "${sample_id}.paraphase",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
