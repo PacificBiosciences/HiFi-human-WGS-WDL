@@ -149,6 +149,37 @@
               }
             }
           ]
+        },
+        "paraphase": {
+          "key": "paraphase",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "out_directory": "${sample_id}.paraphase",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_json": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "realigned_bam": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
