@@ -1562,14 +1562,14 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
         "preemptible_tries": 0,
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       }
     },
     "engine_params": {
