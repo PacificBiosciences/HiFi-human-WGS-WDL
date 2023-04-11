@@ -115,7 +115,7 @@ task hifiasm_assemble {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hifiasm:0.15"
+		docker: "~{runtime_attributes.container_registry}/hifiasm:0.18" # hifiasm:0.18 required for performance improvements
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
