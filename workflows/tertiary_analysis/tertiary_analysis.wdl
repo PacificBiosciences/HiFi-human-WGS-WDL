@@ -156,8 +156,8 @@ task write_cohort_yaml {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/parse-cohort:1.0.0"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: "20 GB"
 		disks: "local-disk " + "20" + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -191,8 +191,8 @@ task write_ped {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: "20 GB"
 		disks: "local-disk " + "20" + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -237,8 +237,8 @@ task calculate_phrank {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/pyyaml:5.3.1"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -285,7 +285,7 @@ task bcftools_norm {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
-		cpu: 1
+		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -455,7 +455,7 @@ task slivar_compound_hets {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
 		cpu: 2
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -533,8 +533,8 @@ task slivar_tsv {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -585,7 +585,7 @@ task svpack_filter_annotated {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/svpack:a82598e"
-		cpu: 1
+		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -645,8 +645,8 @@ task slivar_svpack_tsv {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar:0.2.2"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries

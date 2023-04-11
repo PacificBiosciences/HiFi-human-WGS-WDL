@@ -249,7 +249,7 @@ task merge_bams {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/samtools:1.14"
 		cpu: threads
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -354,8 +354,8 @@ task trgt_coverage_dropouts {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/tandem-genotypes:1.8.1"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
