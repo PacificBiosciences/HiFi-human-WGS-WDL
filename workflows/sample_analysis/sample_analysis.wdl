@@ -130,6 +130,15 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	call paraphase {
+		input:
+			sample_id = sample.sample_id,
+			bam = merge_bams.merged_bam,
+			bam_index = merge_bams.merged_bam_index,
+			out_directory = "~{sample.sample_id}.paraphase",
+			runtime_attributes = default_runtime_attributes
+	}
+
 	output {
 		# smrtcell_analysis output
 		Array[File] bam_stats = smrtcell_analysis.bam_stats
@@ -154,6 +163,9 @@ workflow sample_analysis {
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 		Array[File] cpg_pileups = cpg_pileup.pileups
+		File paraphase_output_json = paraphase.output_json
+		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
+		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
 	}
 
 	parameter_meta {
@@ -369,6 +381,51 @@ task cpg_pileup {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:28ec58610d8037613babfde1104050a9f3e93cd10667edf8aff83d918489add4"
+		cpu: threads
+		memory: mem_gb + " GB"
+		disk: disk_size + " GB"
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
+	}
+}
+
+task paraphase {
+	input {
+		File bam
+		File bam_index
+
+		String sample_id
+		String out_directory
+
+		RuntimeAttributes runtime_attributes
+	}
+
+	Int threads = 2
+	Int mem_gb = 4
+	Int disk_size = ceil(size(bam, "GB") + 20)
+
+	command <<<
+		set -euo pipefail
+
+		paraphase \
+			-b ~{bam} \
+			-o ~{out_directory}
+
+	>>>
+
+	output {
+		File output_json = "~{out_directory}/~{sample_id}.json"
+		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
+		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
+		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
+	}
+
+	runtime {
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:1148d86835ec474da93beb7ba94f0c9197d0f462825e5142f547ce966dbd89ce"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"

@@ -149,6 +149,37 @@
               }
             }
           ]
+        },
+        "paraphase": {
+          "key": "paraphase",
+          "digest": "tkhhyrmknvxwbc6ht7othqvtyw3y343h",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
+                "out_directory": "${sample_id}.paraphase",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_json": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "realigned_bam": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -1531,14 +1562,14 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
         "preemptible_tries": 0,
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       }
     },
     "engine_params": {
