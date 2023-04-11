@@ -50,8 +50,6 @@ workflow smrtcell_analysis {
 	parameter_meta {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
-		deepvariant_version: {help: "Version of deepvariant to use"}
-		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
