@@ -79,7 +79,7 @@ Sample information for each sample in the workflow run.
 | :- | :- | :- | :- |
 | String | sample_id | A unique name for the sample; used to name outputs | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of movie bams associated with this sample | |
-| String | sex | Sample sex | ["MALE", "FEMALE"] |
+| String? | sex | Sample sex | ["MALE", "FEMALE", "."]. "." or `null` will set sex to unknown. |
 | Boolean | affected | The affected status for the sample | [true, false] |
 | String? | father_id | Paternal `sample_id` | |
 | String? | mother_id | Maternal `sample_id` | |
@@ -184,10 +184,6 @@ These files will be output for each sample defined in the cohort.
 | Array[Array[File]] | bam_stats | Statistics for the set of movie bams for each sample | |
 | Array[Array[File]] | read_length_summary | Read length stats for the set of movie bams for each sample | |
 | Array[Array[File]] | read_length_quality_summary | Read length quality summaries for the set of movie bams for each sample | |
-| Array[Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)]] | aligned_bams | Set of aligned bams for the set of movie bams for each sample | |
-| Array[Array[File]] | aligned_bam_mosdepth_summary | Mosdepth summary for the set of aligned bams for each sample | |
-| Array[Array[File]] | aligned_bam_mosdepth_region_bed | Mosdepth region bed for the set of aligned bams for each sample | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_vcfs | | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | | |
 | Array[File] | small_variant_vcf_stats | | |
 | Array[File] | small_variant_roh_bed | | |

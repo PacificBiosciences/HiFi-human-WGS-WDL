@@ -3,7 +3,6 @@ version 1.0
 # Align reads to a reference genome and generates statistic on alignment depth, read length, and alignment quality.
 
 import "../humanwgs_structs.wdl"
-import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 
 workflow smrtcell_analysis {
@@ -26,13 +25,6 @@ workflow smrtcell_analysis {
 				runtime_attributes = default_runtime_attributes
 		}
 
-		call Mosdepth.mosdepth {
-			input:
-				aligned_bam = pbmm2_align.aligned_bam,
-				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				runtime_attributes = default_runtime_attributes
-		}
-
 		call PbsvDiscover.pbsv_discover {
 			input:
 				aligned_bam = pbmm2_align.aligned_bam,
@@ -52,8 +44,6 @@ workflow smrtcell_analysis {
 		Array[File] read_length_summary = pbmm2_align.read_length_summary
 		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
-		Array[File] aligned_bam_mosdepth_summary = mosdepth.summary
-		Array[File] aligned_bam_mosdepth_region_bed = mosdepth.region_bed
 		Array[File] svsigs = pbsv_discover.svsig
 	}
 
@@ -131,7 +121,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2:1.10.0"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:4ead08f03854bf9d21227921fd957453e226245d5459fde3c87c91d4bdfd7f3c"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"

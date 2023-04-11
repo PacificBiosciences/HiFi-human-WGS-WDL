@@ -136,8 +136,6 @@ workflow sample_analysis {
 		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
 		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
 		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] aligned_bam_mosdepth_summary = smrtcell_analysis.aligned_bam_mosdepth_summary
-		Array[File] aligned_bam_mosdepth_region_bed = smrtcell_analysis.aligned_bam_mosdepth_region_bed
 		Array[File] svsigs = smrtcell_analysis.svsigs
 
 		IndexData small_variant_vcf = deepvariant.vcf
@@ -193,7 +191,7 @@ task bcftools_roh {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools:1.14"
+		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -239,7 +237,7 @@ task merge_bams {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/samtools:1.14"
+		docker: "~{runtime_attributes.container_registry}/samtools@sha256:83ca955c4a83f72f2cc229f41450eea00e73333686f3ed76f9f4984a985c85bb"
 		cpu: threads
 		memory: "1 GB"
 		disk: disk_size + " GB"
@@ -313,7 +311,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt:0.4.0"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:4eb7cced5e7a3f52815aeca456d95148682ad4c29d7c5e382e11d7c629ec04d0"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -363,7 +361,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools:v2.1.0"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:28ec58610d8037613babfde1104050a9f3e93cd10667edf8aff83d918489add4"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
