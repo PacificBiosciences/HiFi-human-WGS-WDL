@@ -4,7 +4,7 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 - For the snakemake version of these workflows, see [here](https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake).
 
-- Docker images used by these workflows are defined [here](https://github.com/PacificBiosciences/wdl-dockerfiles).
+- Docker images used by these workflows are defined [here](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
 
 - Common tasks that may be reused within or between workflows are defined [here](https://github.com/PacificBiosciences/wdl-common).
 
@@ -270,3 +270,34 @@ These files will be output for each run of the workflow if `run_tertiary_analysi
 | File? | compound_het_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_svpack_vcf | Structural variant calls that are filtered based on population frequency and annotated with cohort information, population frequency, gene, functional impact, etc., using [svpack](https://github.com/PacificBiosciences/svpack) | |
 | File? | filtered_svpack_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
+
+# Tool versions and Docker images
+
+Docker images definitions used by the human WGS workflow can be found [here](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images are pegged to specific versions by referring to their digests rather than tags.
+
+The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task and looking for the name after the final `/` character and before the `@sha256:...`.
+For example, the image referred to by "~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb152a65163005ffed46297127536701ec5af4c44e8f3e7051f7b01f80fe" is "align_hifiasm".
+
+| Image | Major tool versions | Links |
+| :- | :- | :- |
+| align_hifiasm | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/align_hifiasm) |
+| bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/bcftools) |
+| deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
+| gfatools | <ul><li>[gfatools 0.4](https://github.com/lh3/gfatools/releases/tag/v0.4)</li><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li><li>[k8 0.2.5](https://github.com/attractivechaos/k8/releases/tag/0.2.5)</li><li>[caln50 01091f2](https://github.com/lh3/calN50/tree/01091f25bc24e17fbf0da3407ea24aa448c489ae)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/gfatools) |
+| glnexus | <ul><li>[glnexus v1.4.1](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.1)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
+| hifiasm | <ul><li>[hifiasm 0.19.4](https://github.com/chhylp123/hifiasm/releases/tag/0.19.4)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/hifiasm) |
+| htsbox | <ul><li>[htsbox r346 (6964440)](https://github.com/lh3/htsbox/tree/6964440d791a60a22ca5ff25dc413a362bdc0abe)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htsbox) |
+| htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htslib) |
+| mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/mosdepth) |
+| paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.1.0](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.1.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/paraphase) |
+| parse-cohort | <ul><li>python 3.8.10; custom scripts</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/parse-cohort) |
+| pb-cpg-tools | <ul><li>[pb-CpG-tools v2.1.1](https://github.com/PacificBiosciences/pb-CpG-tools/releases/tag/v2.1.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pb-cpg-tools) |
+| pbmm2 | <ul><li>[pbmm2 1.10.0](https://github.com/PacificBiosciences/pbmm2/releases/tag/v1.10.0)</li><li>[datamash 1.1.0](https://ftp.gnu.org/gnu/datamash/)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pbmm2) |
+| pbsv | <ul><li>[pbsv 2.9.0](https://github.com/PacificBiosciences/pbsv/releases/tag/v2.9.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pbsv) |
+| pyyaml | <ul><li>[pyyaml 5.3.1](https://github.com/yaml/pyyaml/releases/tag/5.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pyyaml) |
+| samtools | <ul><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/samtools) |
+| slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/slivar) |
+| svpack | <ul><li>[svpack a82598e](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/svpack) |
+| trgt | <ul><li>[trgt 0.4.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.4.0)</li><li>[samtools 1.16.1](https://github.com/samtools/samtools/releases/tag/1.16.1)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/trgt) |
+| whatshap | <ul><li>[whatshap 1.4](https://github.com/whatshap/whatshap/releases/tag/v1.4)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/whatshap) |
+| yak | <ul><li>[yak 0.1](https://github.com/lh3/yak/releases/tag/v0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/yak) |
