@@ -625,7 +625,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "bnyrj32sy65f3jwqoqdlsnjojs6fnce2",
+          "digest": "cr7guevtj3dii4rljhlstvcp4swwtzin",
           "tests": [
             {
               "inputs": {
