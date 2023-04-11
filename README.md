@@ -275,8 +275,8 @@ These files will be output for each run of the workflow if `run_tertiary_analysi
 
 Docker images definitions used by the human WGS workflow can be found [here](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images are pegged to specific versions by referring to their digests rather than tags.
 
-The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task and looking for the name after the final `/` character and before the `@sha256:...`.
-For example, the image referred to by "~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb152a65163005ffed46297127536701ec5af4c44e8f3e7051f7b01f80fe" is "align_hifiasm".
+The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
+> ~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb152a65163005ff<...>f4c44e8f3e7051f7b01f80fe
 
 | Image | Major tool versions | Links |
 | :- | :- | :- |
