@@ -115,7 +115,7 @@ task hifiasm_assemble {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hifiasm:0.19.4"
+		docker: "~{runtime_attributes.container_registry}/hifiasm@sha256:54fe2ed697437f30bb46ab2e7ff47bf78eb7168f13620eaec54d7ec46565701a"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
