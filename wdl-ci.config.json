@@ -1367,7 +1367,7 @@
       "tasks": {
         "hifiasm_assemble": {
           "key": "hifiasm_assemble",
-          "digest": "z6thm7dgb3ps4xecknuuu77utmjowq4u",
+          "digest": "m6ejbzh6hfwrievpznnbc4iysautatho",
           "tests": [
             {
               "inputs": {
