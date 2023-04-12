@@ -51,6 +51,10 @@ The workflow engine that you choose will depend on where your data is located.
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
+## Running and monitoring workflows using Workbench
+
+Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/). Runs may then be submitted and monitored directly in Workbench, or using the CLI.
+
 # Reference datasets and associated workflow files
 
 Reference datasets are hosted publicly for use in the pipeline. For data locations, see `workflows/inputs.${backend}.json`.
