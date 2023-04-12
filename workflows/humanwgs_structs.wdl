@@ -28,8 +28,6 @@ struct Sample {
 
 	String? father_id
 	String? mother_id
-
-	Boolean run_de_novo_assembly
 }
 
 struct Cohort {
@@ -37,14 +35,6 @@ struct Cohort {
 	Array[Sample] samples
 
 	Array[String] phenotypes
-
-	Boolean run_de_novo_assembly_trio
-}
-
-struct FamilySampleIndices {
-	Array[Int] child_indices
-	Int father_index
-	Int mother_index
 }
 
 struct SlivarData {

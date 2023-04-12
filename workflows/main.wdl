@@ -3,9 +3,7 @@ version 1.0
 import "humanwgs_structs.wdl"
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
-import "de_novo_assembly_sample/de_novo_assembly_sample.wdl" as DeNovoAssemblySample
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
-import "de_novo_assembly_trio/de_novo_assembly_trio.wdl" as DeNovoAssemblyTrio
 import "tertiary_analysis/tertiary_analysis.wdl" as TertiaryAnalysis
 
 workflow humanwgs {
@@ -48,17 +46,6 @@ workflow humanwgs {
 				deepvariant_model = deepvariant_model,
 				default_runtime_attributes = default_runtime_attributes
 		}
-
-		if (sample.run_de_novo_assembly) {
-			call DeNovoAssemblySample.de_novo_assembly_sample {
-				input:
-					sample = sample,
-					reference = reference,
-					backend = backend,
-					default_runtime_attributes = default_runtime_attributes,
-					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
-			}
-		}
 	}
 
 	if (length(cohort.samples) > 1) {
@@ -70,17 +57,6 @@ workflow humanwgs {
 				gvcfs = sample_analysis.small_variant_gvcf,
 				reference = reference,
 				default_runtime_attributes = default_runtime_attributes
-		}
-
-		if (cohort.run_de_novo_assembly_trio) {
-			call DeNovoAssemblyTrio.de_novo_assembly_trio {
-				input:
-					cohort = cohort,
-					reference = reference,
-					backend = backend,
-					default_runtime_attributes = default_runtime_attributes,
-					on_demand_runtime_attributes = backend_configuration.on_demand_runtime_attributes
-			}
 		}
 	}
 
@@ -131,29 +107,12 @@ workflow humanwgs {
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
 		Array[Array[File]] paraphase_vcfs = sample_analysis.paraphase_vcfs
 
-		# de_novo_assembly_sample output
-		Array[Array[File]?] assembly_noseq_gfas = de_novo_assembly_sample.assembly_noseq_gfas
-		Array[Array[File]?] assembly_lowQ_beds = de_novo_assembly_sample.assembly_lowQ_beds
-		Array[Array[File]?] zipped_assembly_fastas = de_novo_assembly_sample.zipped_assembly_fastas
-		Array[Array[File]?] assembly_stats = de_novo_assembly_sample.assembly_stats
-		Array[IndexData?] asm_bam = de_novo_assembly_sample.asm_bam
-		Array[IndexData?] htsbox_vcf = de_novo_assembly_sample.htsbox_vcf
-		Array[File?] htsbox_vcf_stats = de_novo_assembly_sample.htsbox_vcf_stats
-
 		# cohort_analysis output
 		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf
 		IndexData? cohort_phased_joint_called_vcf = cohort_analysis.phased_joint_called_vcf
 		File? cohort_whatshap_stats_gtfs = cohort_analysis.whatshap_stats_gtf
 		File? cohort_whatshap_stats_tsvs = cohort_analysis.whatshap_stats_tsv
 		File? cohort_whatshap_stats_blocklists = cohort_analysis.whatshap_stats_blocklist
-
-		# de_novo_assembly_trio output
-		Array[Map[String, String]]? haplotype_key = de_novo_assembly_trio.haplotype_key
-		Array[Array[File]]? trio_assembly_noseq_gfas = de_novo_assembly_trio.assembly_noseq_gfas
-		Array[Array[File]]? trio_assembly_lowQ_beds = de_novo_assembly_trio.assembly_lowQ_beds
-		Array[Array[File]]? trio_zipped_assembly_fastas = de_novo_assembly_trio.zipped_assembly_fastas
-		Array[Array[File]]? trio_assembly_stats = de_novo_assembly_trio.assembly_stats
-		Array[IndexData]? trio_asm_bams = de_novo_assembly_trio.asm_bams
 
 		# tertiary_analysis output
 		IndexData? filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf
