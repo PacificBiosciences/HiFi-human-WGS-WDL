@@ -48,7 +48,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "the46x6b2ofkpt4mso53cxhvgx4fgl3i",
+          "digest": "s5zie2vfnfhyxumeun5vrbfyafnzeabw",
           "tests": [
             {
               "inputs": {
@@ -257,7 +257,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "quwu42m27nhkimczr6ewtrcnfy3qinfx",
+          "digest": "zgvmaa6wtldmojg3gixeiah5aak7khb5",
           "tests": [
             {
               "inputs": {
@@ -287,7 +287,7 @@
       "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "25d5vaiz6va4msnc33zzjfo57dlqgnmp",
+          "digest": "6akbott6gk55sz7nzmhnrkaqvnztg3gw",
           "tests": [
             {
               "inputs": {
@@ -367,7 +367,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "k2rylyp4cjkou3cs7rt7a6wvqv2w473c",
+          "digest": "yxnm7toivkmsrrs4h3x72wdrtxd2lo72",
           "tests": [
             {
               "inputs": {
@@ -430,7 +430,7 @@
       "tasks": {
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "vkdaevt3laolbedhtqaxplhe4suyhata",
+          "digest": "s44b227slyhokaspyzkifpiguonh7xfc",
           "tests": [
             {
               "inputs": {
@@ -555,7 +555,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "sqhivuuxyexfmppftl7ezsx6se3qfkcy",
+          "digest": "i2tzlr7ni5gglbe7regxody2bttg35na",
           "tests": [
             {
               "inputs": {
@@ -631,7 +631,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "hwrmso63iim6ykmwl3iswr7hv7fxtrtk",
+          "digest": "kich5launnchu24tv4lqjxuypubfhvso",
           "tests": [
             {
               "inputs": {
@@ -656,7 +656,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "cr7guevtj3dii4rljhlstvcp4swwtzin",
+          "digest": "rzf44dvnz6rvur42tlv4fawhc42fc3i5",
           "tests": [
             {
               "inputs": {
@@ -963,7 +963,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "2aji2u2mozvqoykiudminizihevkk7yq",
+          "digest": "xd55osu4baa5ljt22cuy4khywcojbovo",
           "tests": [
             {
               "inputs": {
@@ -1082,7 +1082,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "cti7scxg6tplsaijyn4k7gz4a3blkos4",
+          "digest": "hqzjxv2yco24qutduqcvu2lo6tjhnnys",
           "tests": [
             {
               "inputs": {
@@ -1105,7 +1105,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "fdvp2nenqsvasyuydzuessu7bemenbrs",
+          "digest": "z33ywjmdqemmooowhpmz3laowtyxfsyi",
           "tests": [
             {
               "inputs": {
@@ -1129,7 +1129,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "ugp6jbmymgq63djtj333ie2mkrtvpukp",
+          "digest": "fjqmz4ee3o2d2h52upjw44lfy4bvaibn",
           "tests": [
             {
               "inputs": {
@@ -1156,7 +1156,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "t2q72yxf6gcw2hnlo2fjc3ulygubt6pk",
+          "digest": "wjzgmu77c3hrn5ndvne36xmhr4woxh4v",
           "tests": [
             {
               "inputs": {
@@ -1209,7 +1209,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "lz4hm2lqnuzkibtczqclgntdrjxv4jbr",
+          "digest": "66egzu7zo2jti56lcmogtlkpno4eju5f",
           "tests": [
             {
               "inputs": {
@@ -1234,7 +1234,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "mxnl2l4xgxtgio37ayahwa3y2rczuaku",
+          "digest": "mb6mv57frblexg35xhtrw2rmfkn6gfy4",
           "tests": [
             {
               "inputs": {
@@ -1271,7 +1271,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "w6gzasagowzidso7mx6ouxb27atmhig5",
+          "digest": "eopecz3mvpeqwv4a5lzxkpyni76lhq5x",
           "tests": [
             {
               "inputs": {
@@ -1306,7 +1306,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "qivpu6f5pwwbxa6vpaq4fcd6q5ohdghp",
+          "digest": "fb3rv3tslzjm4vacriulntz77h36jxyh",
           "tests": [
             {
               "inputs": {
