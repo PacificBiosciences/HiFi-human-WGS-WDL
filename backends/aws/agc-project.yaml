@@ -1,14 +1,16 @@
-name: agc-humanwgs
+name: humanwgsAgc
 schemaVersion: 1
 data:
   - location: s3://dnastack-resources
+    readOnly: true
+  - location: s3://pacbio-resources
     readOnly: true
 workflows:
   humanwgs:
     type:
       language: wdl
       version: 1.0
-    sourceUrl: ../../workflows
+    sourceURL: ../../workflows
 contexts:
   onDemandContext:
     instanceTypes: [

@@ -6,7 +6,7 @@ The Amazon Genomics CLI (`agc`) allows users to orchestrate workflow execution u
 
 Once you have installed and authenticated with the `agc`, you can deploy a context using an agc project YAML file.
 
-An [example file](agc-project.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `agc-humanwgs`, with contexts `spotContext` and `onDemandContext`. If you only require one context (on-demand or spot), delete the portion of the agc-project.yaml file that corresponds to the context you do not wish to deploy.
+An [example agc-project.yaml file](agc-project.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `humanwgsAGC`, with contexts `spotContext` and `onDemandContext`. If you only require one context (on-demand or spot), delete the portion of the agc-project.yaml file that corresponds to the context you do not wish to deploy.
 
 Note that deploying these resources **will incur costs** even if you are not actively running workflows; ensure that [contexts that are not in use are destroyed](https://aws.github.io/amazon-genomics-cli/docs/reference/agc_context_destroy/) to avoid incurring ongoing costs.
 
