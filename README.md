@@ -22,10 +22,10 @@ The human WGS workflow performs read alignment, small and structural variant cal
 
 The workflow can be run on Azure, AWS, GCP, or HPC. For backend-specific configuration, see the relevant documentation:
 
-[Azure](backends/azure)
-[AWS](backends/aws)
-[GCP](backends/gcp)
-[HPC](backends/hpc)
+- [Azure](backends/azure)
+- [AWS](backends/aws)
+- [GCP](backends/gcp)
+- [HPC](backends/hpc)
 
 ## Resource requirements
 
