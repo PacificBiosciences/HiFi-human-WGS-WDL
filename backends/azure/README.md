@@ -1,4 +1,20 @@
-## Reference data hosted in Azure
+# Configuring Cromwell on Azure
+
+Workflows can be run in Azure by setting up [Cromwell on Azure (CoA)](https://github.com/microsoft/CromwellOnAzure). Documentation on deploying and configuring an instance of CoA can be found [here](https://github.com/microsoft/CromwellOnAzure/wiki/Deploy-your-instance-of-Cromwell-on-Azure).
+
+## Requirements
+
+It is recommended to run the workflow using version 4.0+ of CoA; a minimum of version 3.2+ is required.
+
+# Configuring and running the workflow
+
+## Filling out workflow inputs
+
+Fill out any information missing in [the inputs file](inputs.azure.json).
+
+See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
+
+# Reference data hosted in Azure
 
 To use Azure reference data, add the following line to your `containers-to-mount` file in your Cromwell on Azure installation ([more info here](https://github.com/microsoft/CromwellOnAzure/blob/develop/docs/troubleshooting-guide.md#use-input-data-files-from-an-existing-azure-storage-account-that-my-lab-or-team-is-currently-using)):
 

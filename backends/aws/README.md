@@ -6,13 +6,21 @@ The Amazon Genomics CLI (`agc`) allows users to orchestrate workflow execution u
 
 Once you have installed and authenticated with the `agc`, you can deploy a context using an agc project YAML file.
 
-An [example agc-project.yaml file](agc-project.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `humanwgsAGC`, with contexts `spotContext` and `onDemandContext`. If you only require one context (on-demand or spot), delete the portion of the agc-project.yaml file that corresponds to the context you do not wish to deploy.
+An [example agc-project.yaml file](agc-project.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `humanwgsAGC`, with either (or both) a `spotContext` or an `onDemandContext`. The `spotContext` will allow you to run worklfows using [AWS spot instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html), which can result in substantial cost savings relative to using [on-demand instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-on-demand-instances.html).
 
-Note that deploying these resources **will incur costs** even if you are not actively running workflows; ensure that [contexts that are not in use are destroyed](https://aws.github.io/amazon-genomics-cli/docs/reference/agc_context_destroy/) to avoid incurring ongoing costs.
+Note that deploying a context **will incur costs** even if you are not actively running workflows; ensure that [contexts that are not in use are destroyed](https://aws.github.io/amazon-genomics-cli/docs/reference/agc_context_destroy/) to avoid incurring ongoing costs.
 
 To deploy the context, from the directory containing the `agc-project.yaml` file, run:
 
 ```bash
+agc context deploy --context ${context}
+```
+
+Where `${context}` is either `spotContext` or `onDemandContext`.
+
+If you want both spot and on-demand contexts, all contexts can be deployed at once by running:
+
+```
 agc context deploy --all
 ```
 
@@ -48,9 +56,11 @@ Fill out any information missing in [the inputs file](inputs.aws.json). Ensure t
 
 See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
 
+Note that you only need to fill out the queueArn corresponding to the context you are submitting the workflow to (spot or on-demand).
+
 ### Determining available zones
 
-To determine available zones in AWS, look for the ZoneName attributes output by the following command:
+To determine available zones in AWS, look for the `ZoneName` attribute output by the following command:
 
 ```bash
 aws ec2 describe-availability-zones --region <region>
