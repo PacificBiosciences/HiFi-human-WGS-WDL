@@ -3,8 +3,6 @@ schemaVersion: 1
 data:
   - location: s3://dnastack-resources
     readOnly: true
-  - location: s3://pacbio-resources
-    readOnly: true
 workflows:
   humanwgs:
     type:
