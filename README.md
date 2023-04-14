@@ -18,6 +18,9 @@ The human WGS workflow performs read alignment, small and structural variant cal
 
 **Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
 
+Some tasks and workflows are pulled in from other repositories. Make sure you have initialized submodules following cloning by running:
+`git submodule update --init --recursive`
+
 ## Backend environments
 
 The workflow can be run on Azure, AWS, GCP, or HPC. For backend-specific configuration, see the relevant documentation:
