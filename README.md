@@ -4,9 +4,9 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 - For the snakemake version of these workflows, see [here](https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake).
 
-- Docker images used by these workflows are defined [here](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
+- Docker images used by these workflows are defined in [the wdl-dockerfiles repo](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
 
-- Common tasks that may be reused within or between workflows are defined [here](https://github.com/PacificBiosciences/wdl-common).
+- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common). This repository is a submodule of the wdl-humanwgs repo; ensure the submodule has been initialized prior to attempting to run the workflow  (`git submodule update --init --recursive`).
 
 # Workflow
 
@@ -18,8 +18,7 @@ The human WGS workflow performs read alignment, small and structural variant cal
 
 **Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
 
-Some tasks and workflows are pulled in from other repositories. Make sure you have initialized submodules following cloning by running:
-`git submodule update --init --recursive`
+Some tasks and workflows are pulled in from other repositories. Make sure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
 
 ## Backend environments
 
@@ -77,7 +76,7 @@ Rather than running a workflow directly using an engine, engines can be configur
 
 # Reference datasets and associated workflow files
 
-Reference datasets are hosted publicly for use in the pipeline. For data locations, see `backends/${backend}/inputs.${backend}.json`.
+Reference datasets are hosted publicly for use in the pipeline. For data locations, the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
 
 # Workflow inputs
 

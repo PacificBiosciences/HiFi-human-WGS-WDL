@@ -56,9 +56,11 @@ Fill out any information missing in [the inputs file](inputs.aws.json). Ensure t
 
 See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
 
+Note that you only need to fill out the queueArn corresponding to the context you are submitting the workflow to (spot or on-demand).
+
 ### Determining available zones
 
-To determine available zones in AWS, look for the ZoneName attributes output by the following command:
+To determine available zones in AWS, look for the `ZoneName` attribute output by the following command:
 
 ```bash
 aws ec2 describe-availability-zones --region <region>
