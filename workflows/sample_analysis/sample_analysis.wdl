@@ -284,7 +284,6 @@ task trgt {
 	}
 
 	Boolean sex_defined = defined(sex)
-	String karyotype = if sex == "MALE" then "XY" else "XX"
 	String bam_basename = basename(bam, ".bam")
 	Int threads = 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
@@ -292,11 +291,13 @@ task trgt {
 	command <<<
 		set -euo pipefail
 
-		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample.sample_id}.  Defaulting to karyotype XX for TRGT."}
+		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."}
+
+		[[ ~{default="FEMALE" sex} = "MALE" ]] && KARYOTYPE="XY" || KARYOTYPE="XX"
 
 		trgt \
 			--threads ~{threads} \
-			--karyotype ~{karyotype} \
+			--karyotype $KARYOTYPE \
 			--genome ~{reference} \
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
