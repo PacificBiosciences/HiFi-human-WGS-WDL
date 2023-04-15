@@ -260,12 +260,14 @@ task bcftools_norm {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int threads = 2
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
 		bcftools norm \
+			--threads ~{threads - 1} \
 			--multiallelics \
 			- \
 			--output-type b \
@@ -275,7 +277,7 @@ task bcftools_norm {
 			--output-type b \
 			--output ~{vcf_basename}.norm.bcf
 
-		bcftools index ~{vcf_basename}.norm.bcf
+		bcftools index --threads ~{threads - 1} ~{vcf_basename}.norm.bcf
 	>>>
 
 	output {
@@ -285,7 +287,7 @@ task bcftools_norm {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
-		cpu: 2
+		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -341,12 +343,6 @@ task slivar_small_variant {
 		'INFO.gnomad_ac <= ~{max_gnomad_ac}',
 		'INFO.hprc_ac <= ~{max_hprc_ac}'
 	]
-	Array[String] family_x_dominant_expr = [
-		'x_dominant:(variant.CHROM == "chrX")',
-		'fam.every(segregating_dominant_x)',
-		'INFO.gnomad_ac <= ~{max_gnomad_ac}',
-		'INFO.hprc_ac <= ~{max_hprc_ac}'
-	]
 	Array[String] sample_expr = [
 		'comphet_side:sample.het',
 		'sample.GQ > ~{min_gq}'
@@ -368,7 +364,6 @@ task slivar_small_variant {
 			--family-expr '~{sep=" && " family_recessive_expr}' \
 			--family-expr '~{sep=" && " family_x_recessive_expr}' \
 			--family-expr '~{sep=" && " family_dominant_expr}' \
-			--family-expr '~{sep=" && " family_x_dominant_expr}' \
 			--sample-expr '~{sep=" && " sample_expr}' \
 			--gnotate ~{gnomad_af} \
 			--gnotate ~{hprc_af} \
@@ -498,7 +493,6 @@ task slivar_tsv {
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
 			--sample-field dominant \
-			--sample-field x_dominant \
 			--sample-field recessive \
 			--sample-field x_recessive \
 			--csq-field BCSQ \
