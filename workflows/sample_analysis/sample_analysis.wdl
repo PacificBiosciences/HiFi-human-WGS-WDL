@@ -111,6 +111,8 @@ workflow sample_analysis {
 
 	call trgt {
 		input:
+			sample_id = sample.sample_id,
+			sex = sample.sex,
 			bam = merge_bams.merged_bam,
 			bam_index = merge_bams.merged_bam_index,
 			reference = reference.fasta.data,
@@ -185,6 +187,7 @@ task bcftools_roh {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int threads = 2
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
@@ -192,6 +195,7 @@ task bcftools_roh {
 
 		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
+			--threads ~{threads - 1} \
 			--AF-dflt 0.4 \
 			~{vcf} \
 		| awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
@@ -204,7 +208,7 @@ task bcftools_roh {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
-		cpu: 2
+		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -264,6 +268,9 @@ task merge_bams {
 
 task trgt {
 	input {
+		String sample_id
+		String? sex
+
 		File bam
 		File bam_index
 
@@ -276,14 +283,24 @@ task trgt {
 		RuntimeAttributes runtime_attributes
 	}
 
+	Boolean sex_defined = defined(sex)
+	String karyotype = if sex == "MALE" then "XY" else "XX"
 	String bam_basename = basename(bam, ".bam")
 	Int threads = 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
+
+	if (!sex_defined) {
+		command <<<
+			echo "Sex is not defined for ~{sample.sample_id}.  Defaulting to karyotype XX for TRGT."
+		>>>
+	}
 
 	command <<<
 		set -euo pipefail
 
 		trgt \
+			--threads ~{threads} \
+			--karyotype ~{default="FEMALE" sex} \
 			--genome ~{reference} \
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
@@ -295,6 +312,7 @@ task trgt {
 			~{bam_basename}.trgt.vcf.gz
 
 		bcftools index \
+			--threads ~{threads - 1} \
 			--tbi \
 			~{bam_basename}.trgt.sorted.vcf.gz
 
