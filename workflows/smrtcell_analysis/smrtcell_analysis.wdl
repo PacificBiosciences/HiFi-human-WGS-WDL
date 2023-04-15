@@ -69,7 +69,7 @@ task pbmm2_align {
 	String movie = basename(bam, ".bam")
 
 	Int threads = 24
-	Int mem_gb = ceil(threads * 1.5)
+	Int mem_gb = ceil(threads * 2)
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 20)
 
 	command <<<
