@@ -300,7 +300,7 @@ task trgt {
 
 		trgt \
 			--threads ~{threads} \
-			--karyotype ~{default="FEMALE" sex} \
+			--karyotype ~{karyotype} \
 			--genome ~{reference} \
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
