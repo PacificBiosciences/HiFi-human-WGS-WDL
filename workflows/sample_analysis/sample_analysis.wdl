@@ -289,14 +289,10 @@ task trgt {
 	Int threads = 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
 
-	if (!sex_defined) {
-		command <<<
-			echo "Sex is not defined for ~{sample.sample_id}.  Defaulting to karyotype XX for TRGT."
-		>>>
-	}
-
 	command <<<
 		set -euo pipefail
+
+		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample.sample_id}.  Defaulting to karyotype XX for TRGT."}
 
 		trgt \
 			--threads ~{threads} \
