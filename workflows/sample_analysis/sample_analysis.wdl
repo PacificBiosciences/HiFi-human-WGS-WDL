@@ -83,6 +83,10 @@ workflow sample_analysis {
 	}
 
 	scatter (bam_object in smrtcell_analysis.aligned_bams) {
+		if (length(smrtcell_analysis.aligned_bams) == 1) {
+			String output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam"
+		}
+
 		call WhatshapHaplotag.whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
@@ -91,21 +95,27 @@ workflow sample_analysis {
 				aligned_bam_index = bam_object.data_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
+				output_bam_name = output_bam_name,
 				runtime_attributes = default_runtime_attributes
 		}
 	}
 
-	call merge_bams {
-		input:
-			bams = whatshap_haplotag.haplotagged_bam,
-			output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
-			runtime_attributes = default_runtime_attributes
+	if (length(whatshap_haplotag.haplotagged_bam) > 1) {
+		call merge_bams {
+			input:
+				bams = whatshap_haplotag.haplotagged_bam,
+				output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
+				runtime_attributes = default_runtime_attributes
+		}
 	}
+
+	File haplotagged_bam = select_first([merge_bams.merged_bam, whatshap_haplotag.haplotagged_bam[0]])
+	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, whatshap_haplotag.haplotagged_bam_index[0]])
 
 	call Mosdepth.mosdepth {
 		input:
-			aligned_bam = merge_bams.merged_bam,
-			aligned_bam_index = merge_bams.merged_bam_index,
+			aligned_bam = haplotagged_bam,
+			aligned_bam_index = haplotagged_bam_index,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -113,8 +123,8 @@ workflow sample_analysis {
 		input:
 			sample_id = sample.sample_id,
 			sex = sample.sex,
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
@@ -124,8 +134,8 @@ workflow sample_analysis {
 
 	call cpg_pileup {
 		input:
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
@@ -135,8 +145,8 @@ workflow sample_analysis {
 	call paraphase {
 		input:
 			sample_id = sample.sample_id,
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			out_directory = "~{sample.sample_id}.paraphase",
 			runtime_attributes = default_runtime_attributes
 	}
@@ -158,7 +168,7 @@ workflow sample_analysis {
 		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
 		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
 		File whatshap_stats_blocklist = phase_vcf.whatshap_stats_blocklist
-		IndexData merged_haplotagged_bam = {"data": merge_bams.merged_bam, "data_index": merge_bams.merged_bam_index}
+		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
