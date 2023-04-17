@@ -117,6 +117,9 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | File | chromosome_lengths | Reference chromosome lengths | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
+| File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
+| File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
 | File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
 | File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
 | File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
@@ -220,6 +223,7 @@ The Docker image used by a particular step of the workflow can be identified by 
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/bcftools) |
 | deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.1](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.1)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
+| hificnv | <ul><li>[HiFi-CNV v0.1.6](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.6)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](#TODO) |
 | htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htslib) |
 | mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/mosdepth) |
 | paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.1.0](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.1.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/paraphase) |

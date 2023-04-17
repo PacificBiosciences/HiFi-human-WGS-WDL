@@ -151,6 +151,24 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	call hificnv {
+		input:
+			sample_id = sample.sample_id,
+			sex = sample.sex,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
+			phased_vcf = phase_vcf.phased_vcf.data,
+			phased_vcf_index = phase_vcf.phased_vcf.data_index,
+			reference = reference.fasta.data,
+			reference_index = reference.fasta.data_index,
+			exclude_bed = reference.hificnv_exclude_bed.data,
+			exclude_bed_index = reference.hificnv_exclude_bed.data_index,
+			expected_bed_male = reference.hificnv_expected_bed_male,
+			expected_bed_female = reference.hificnv_expected_bed_female,
+			output_prefix = "hificnv",
+			runtime_attributes = default_runtime_attributes
+	}
+
 	output {
 		# smrtcell_analysis output
 		Array[File] bam_stats = smrtcell_analysis.bam_stats
@@ -178,6 +196,10 @@ workflow sample_analysis {
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
+		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
+		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
+		File hificnv_depth_bw = hificnv.depth_bw
+		File hificnv_maf_bw = hificnv.maf_bw
 	}
 
 	parameter_meta {
@@ -450,6 +472,79 @@ task paraphase {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:1148d86835ec474da93beb7ba94f0c9197d0f462825e5142f547ce966dbd89ce"
+		cpu: threads
+		memory: mem_gb + " GB"
+		disk: disk_size + " GB"
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
+	}
+}
+
+task hificnv {
+	input {
+		String sample_id
+		String? sex
+
+		File bam
+		File bam_index
+
+		File phased_vcf
+		File phased_vcf_index
+
+		File reference
+		File reference_index
+
+		File exclude_bed
+		File exclude_bed_index
+
+		File expected_bed_male
+		File expected_bed_female
+
+		String output_prefix
+
+		RuntimeAttributes runtime_attributes
+	}
+
+	Boolean sex_defined = defined(sex)
+	File expected_bed = if select_first([sex, "FEMALE"]) == "MALE" then expected_bed_male else expected_bed_female
+	
+	Int threads = 8
+	# Uses ~2 GB memory / thread
+	Int mem_gb = threads * 2
+	# <1 GB for output
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB"))+ 20)
+
+	command <<<
+		set -euo pipefail
+
+		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for HiFiCNV."}
+
+		hificnv \
+			--threads ~{threads} \
+			--bam ~{bam} \
+			--ref ~{reference} \
+			--maf ~{phased_vcf} \
+			--exclude ~{exclude_bed} \
+			--expected-cn ~{expected_bed} \
+			--output-prefix ~{output_prefix}
+
+		bcftools index --tbi vcf ~{output_prefix}.~{sample_id}.vcf.gz
+	>>>
+
+	output {
+		File cnv_vcf = "~{output_prefix}.~{sample_id}.vcf.gz"
+		File cnv_vcf_index = "~{output_prefix}.~{sample_id}.vcf.gz.tbi"
+		File copynum_bedgraph = "~{output_prefix}.~{sample_id}.copynum.bedgraph"
+		File depth_bw = "~{output_prefix}.~{sample_id}.depth.bw"
+		File maf_bw = "~{output_prefix}.~{sample_id}.maf.bw"
+	}
+
+	runtime {
+		docker: "~{runtime_attributes.container_registry}/hificnv:v0.1.6"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
