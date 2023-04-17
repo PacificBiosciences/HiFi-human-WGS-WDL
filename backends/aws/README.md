@@ -91,7 +91,7 @@ The running workflow can be monitored via [`agc workflow` commands](https://aws.
 
 # Reference data hosted in AWS
 
-AWS reference data is hosted in the `us-west-2` region  in the bucket `s3://dnastack-resources`.
+AWS reference data is hosted in the `us-west-2` region in the bucket `s3://dnastack-resources`.
 
 To use AWS reference data, add the following line to the data section of your [`agc-project.yaml`](https://aws.github.io/amazon-genomics-cli/docs/concepts/projects/):
 
