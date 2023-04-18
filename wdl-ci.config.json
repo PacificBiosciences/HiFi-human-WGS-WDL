@@ -23,6 +23,60 @@
       "name": "",
       "description": "",
       "tasks": {
+        "pbmm2_align": {
+          "key": "pbmm2_align",
+          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "bam_stats": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "read_length_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                },
+                "read_quality_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                }
+              }
+            }
+          ]
+        },
         "bcftools_roh": {
           "key": "bcftools_roh",
           "digest": "inej67mzwy6p7drzb2b6vzbmbxrhpynx",
@@ -175,67 +229,6 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/smrtcell_analysis/smrtcell_analysis.wdl": {
-      "key": "workflows/smrtcell_analysis/smrtcell_analysis.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pbmm2_align": {
-          "key": "pbmm2_align",
-          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "reference_name": "GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                },
-                "read_length_summary": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_numeric"
-                  ]
-                },
-                "read_quality_summary": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_numeric"
                   ]
                 }
               }
