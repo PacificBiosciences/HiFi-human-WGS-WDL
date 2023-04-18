@@ -532,7 +532,7 @@ task hificnv {
 			--expected-cn ~{expected_bed} \
 			--output-prefix ~{output_prefix}
 
-		bcftools index --tbi vcf ~{output_prefix}.~{sample_id}.vcf.gz
+		bcftools index --tbi ~{output_prefix}.~{sample_id}.vcf.gz
 	>>>
 
 	output {
