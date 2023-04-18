@@ -48,7 +48,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "the46x6b2ofkpt4mso53cxhvgx4fgl3i",
+          "digest": "s5zie2vfnfhyxumeun5vrbfyafnzeabw",
           "tests": [
             {
               "inputs": {
@@ -118,7 +118,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "q2tnq5rub3rqqobyn36i7n3eu2dcsctr",
+          "digest": "tkkyjsy2vfasiq62h3ddm3tppvowk3di",
           "tests": [
             {
               "inputs": {
@@ -144,6 +144,37 @@
                     "check_tab_delimited_array",
                     "count_bed_columns_array",
                     "bigwig_validator_array"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "paraphase": {
+          "key": "paraphase",
+          "digest": "tkhhyrmknvxwbc6ht7othqvtyw3y343h",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
+                "out_directory": "${sample_id}.paraphase",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_json": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "realigned_bam": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
                   ]
                 }
               }
@@ -226,7 +257,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "quwu42m27nhkimczr6ewtrcnfy3qinfx",
+          "digest": "zgvmaa6wtldmojg3gixeiah5aak7khb5",
           "tests": [
             {
               "inputs": {
@@ -256,7 +287,7 @@
       "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "25d5vaiz6va4msnc33zzjfo57dlqgnmp",
+          "digest": "6akbott6gk55sz7nzmhnrkaqvnztg3gw",
           "tests": [
             {
               "inputs": {
@@ -336,7 +367,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "k2rylyp4cjkou3cs7rt7a6wvqv2w473c",
+          "digest": "yxnm7toivkmsrrs4h3x72wdrtxd2lo72",
           "tests": [
             {
               "inputs": {
@@ -399,7 +430,7 @@
       "tasks": {
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "vkdaevt3laolbedhtqaxplhe4suyhata",
+          "digest": "s44b227slyhokaspyzkifpiguonh7xfc",
           "tests": [
             {
               "inputs": {
@@ -524,7 +555,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "sqhivuuxyexfmppftl7ezsx6se3qfkcy",
+          "digest": "i2tzlr7ni5gglbe7regxody2bttg35na",
           "tests": [
             {
               "inputs": {
@@ -600,7 +631,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "hwrmso63iim6ykmwl3iswr7hv7fxtrtk",
+          "digest": "kich5launnchu24tv4lqjxuypubfhvso",
           "tests": [
             {
               "inputs": {
@@ -625,7 +656,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "bnyrj32sy65f3jwqoqdlsnjojs6fnce2",
+          "digest": "rzf44dvnz6rvur42tlv4fawhc42fc3i5",
           "tests": [
             {
               "inputs": {
@@ -842,7 +873,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "qgxyjgcunf7fcqgrgnpso4uvcgifisux",
+          "digest": "tr7spxi6sn77tbw66it4wwjwymvcclca",
           "tests": [
             {
               "inputs": {
@@ -932,7 +963,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "2aji2u2mozvqoykiudminizihevkk7yq",
+          "digest": "xd55osu4baa5ljt22cuy4khywcojbovo",
           "tests": [
             {
               "inputs": {
@@ -1044,64 +1075,6 @@
         }
       }
     },
-    "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl": {
-      "key": "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "parse_families": {
-          "key": "parse_families",
-          "digest": "lox76ajk5hjyfziqejsqc4j5deghpmd4",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_json": "${resources_file_path}/cohort.json",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "families_json": {
-                  "value": "${resources_file_path}/families.json",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_json"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "yak_count": {
-          "key": "yak_count",
-          "digest": "7yffpsq6k3ejqtgyrzujgnvmieh6gbx6",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG007",
-                "reads_fastas": [
-                  "${resources_file_path}/m64017_191216_194629.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191218_164535.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191219_225837.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191221_052416.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200108_232219.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200112_090459.hifi_reads.fasta"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "yak": {
-                  "value": "${resources_file_path}/HG007.yak",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/tertiary_analysis/tertiary_analysis.wdl": {
       "key": "workflows/tertiary_analysis/tertiary_analysis.wdl",
       "name": "",
@@ -1109,7 +1082,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "cti7scxg6tplsaijyn4k7gz4a3blkos4",
+          "digest": "hqzjxv2yco24qutduqcvu2lo6tjhnnys",
           "tests": [
             {
               "inputs": {
@@ -1132,7 +1105,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "fdvp2nenqsvasyuydzuessu7bemenbrs",
+          "digest": "z33ywjmdqemmooowhpmz3laowtyxfsyi",
           "tests": [
             {
               "inputs": {
@@ -1156,7 +1129,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "ugp6jbmymgq63djtj333ie2mkrtvpukp",
+          "digest": "fjqmz4ee3o2d2h52upjw44lfy4bvaibn",
           "tests": [
             {
               "inputs": {
@@ -1183,7 +1156,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "t2q72yxf6gcw2hnlo2fjc3ulygubt6pk",
+          "digest": "wjzgmu77c3hrn5ndvne36xmhr4woxh4v",
           "tests": [
             {
               "inputs": {
@@ -1236,7 +1209,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "lz4hm2lqnuzkibtczqclgntdrjxv4jbr",
+          "digest": "66egzu7zo2jti56lcmogtlkpno4eju5f",
           "tests": [
             {
               "inputs": {
@@ -1261,7 +1234,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "mxnl2l4xgxtgio37ayahwa3y2rczuaku",
+          "digest": "mb6mv57frblexg35xhtrw2rmfkn6gfy4",
           "tests": [
             {
               "inputs": {
@@ -1298,7 +1271,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "w6gzasagowzidso7mx6ouxb27atmhig5",
+          "digest": "eopecz3mvpeqwv4a5lzxkpyni76lhq5x",
           "tests": [
             {
               "inputs": {
@@ -1333,7 +1306,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "qivpu6f5pwwbxa6vpaq4fcd6q5ohdghp",
+          "digest": "fb3rv3tslzjm4vacriulntz77h36jxyh",
           "tests": [
             {
               "inputs": {
@@ -1359,160 +1332,6 @@
           ]
         }
       }
-    },
-    "workflows/assemble_genome/assemble_genome.wdl": {
-      "key": "workflows/assemble_genome/assemble_genome.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "hifiasm_assemble": {
-          "key": "hifiasm_assemble",
-          "digest": "r4ikydzmdaed4hzsmc3t7efh6mz5e4mx",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "reads_fastas": [
-                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
-                ],
-                "runtime_attributes": "${on_demand_runtime_attributes}"
-              },
-              "output_tests": {
-                "assembly_hap_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_noseq_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_lowQ_beds": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_columns_array"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "gfa2fa": {
-          "key": "gfa2fa",
-          "digest": "liyb2m4cbkovxctcgaxwunqkn5az77ev",
-          "tests": [
-            {
-              "inputs": {
-                "gfa": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "zipped_fasta": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines",
-                    "fasta_validator"
-                  ]
-                },
-                "assembly_stats": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "check_empty_lines"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "align_hifiasm": {
-          "key": "align_hifiasm",
-          "digest": "uozjfq66ztyonrplvlkdc45lxt3d2ilj",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "query_sequences": [
-                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
-                ],
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_name": "GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "asm_bam": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck",
-                    "check_coordinate_sorted_alignment"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl": {
-      "key": "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "htsbox": {
-          "key": "htsbox",
-          "digest": "hgv6puzttllbwzgmunnigqiopcq3gl7x",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                "bam_index": "${resources_file_path}/HG005.asm.GRCh38.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "htsbox_vcf": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
     }
   },
   "engines": {
@@ -1531,14 +1350,14 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
         "preemptible_tries": 0,
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       }
     },
     "engine_params": {

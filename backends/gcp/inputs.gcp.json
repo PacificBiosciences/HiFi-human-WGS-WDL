@@ -8,12 +8,10 @@
         "sex": "String?",
         "affected": "Boolean",
         "father_id": "String?",
-        "mother_id": "String?",
-        "run_de_novo_assembly": "Boolean"
+        "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]",
-    "run_de_novo_assembly_trio": "Boolean"
+    "phenotypes": "Array[String]"
   },
   "humanwgs.reference": {
     "name": "GRCh38",

@@ -2,7 +2,7 @@
   "sample_analysis.sample": {
     "sample_id": "String",
     "movie_bams": "Array[File]",
-    "sex": "String",
+    "sex": "String?",
     "affected": "Boolean",
     "father_id": "String?",
     "mother_id": "String?"

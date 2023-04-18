@@ -5,15 +5,13 @@
       {
         "sample_id": "String",
         "movie_bams": "Array[File]",
-        "sex": "String",
+        "sex": "String?",
         "affected": "Boolean",
         "father_id": "String?",
-        "mother_id": "String?",
-        "run_de_novo_assembly": "Boolean"
+        "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]",
-    "run_de_novo_assembly_trio": "Boolean"
+    "phenotypes": "Array[String]"
   },
   "tertiary_analysis.small_variant_vcf": {
     "data": "File",
