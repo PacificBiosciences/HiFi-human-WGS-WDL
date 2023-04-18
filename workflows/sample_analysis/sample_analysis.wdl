@@ -226,7 +226,7 @@ task pbmm2_align {
 	String movie = basename(bam, ".bam")
 
 	Int threads = 24
-	Int mem_gb = ceil(threads * 1.5)
+	Int mem_gb = ceil(threads * 4)
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 20)
 
 	command <<<
@@ -234,6 +234,7 @@ task pbmm2_align {
 
 		pbmm2 align \
 			--num-threads ~{threads} \
+			--sort-memory 4G \
 			--preset CCS \
 			--sample ~{sample_id} \
 			--log-level INFO \
