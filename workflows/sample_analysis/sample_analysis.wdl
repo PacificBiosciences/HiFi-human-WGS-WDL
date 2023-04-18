@@ -346,14 +346,10 @@ task merge_bams {
 	command <<<
 		set -euo pipefail
 
-		if [[ "~{length(bams)}" -eq 1 ]]; then
-			mv ~{bams[0]} ~{output_bam_name}
-		else
-			samtools merge \
-				-@ ~{threads - 1} \
-				-o ~{output_bam_name} \
-				~{sep=' ' bams}
-		fi
+		samtools merge \
+			-@ ~{threads - 1} \
+			-o ~{output_bam_name} \
+			~{sep=' ' bams}
 
 		samtools index ~{output_bam_name}
 	>>>
