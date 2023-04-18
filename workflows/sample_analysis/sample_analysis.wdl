@@ -544,7 +544,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv:v0.1.6"
+		docker: "~{runtime_attributes.container_registry}/hificnv:0.1.6"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
