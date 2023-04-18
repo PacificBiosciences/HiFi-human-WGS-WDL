@@ -25,7 +25,7 @@
       "tasks": {
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "inej67mzwy6p7drzb2b6vzbmbxrhpynx",
+          "digest": "axhrixljyzd6sabv2fqg2z3mpiio5s3v",
           "tests": [
             {
               "inputs": {
@@ -73,7 +73,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "tzqezip3ve3y47j4dvdfmd7jah6rlimj",
+          "digest": "tp3sg66hn4yapj5hyjnv4abrhrsq2pf3",
           "tests": [
             {
               "inputs": {
@@ -192,7 +192,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
+          "digest": "aabohz3ve55zx4d4uhy3bteenjme4oj6",
           "tests": [
             {
               "inputs": {
@@ -259,7 +259,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "zgvmaa6wtldmojg3gixeiah5aak7khb5",
+          "digest": "l7ihfntkjdyomkcfhhnnmwqawkk7pq4e",
           "tests": [
             {
               "inputs": {
@@ -399,7 +399,7 @@
       "tasks": {
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "fowmgekesvpr6aiiln6rmntvhnkuah5i",
+          "digest": "ptsadvieuojksiqxiuww65xjcqb4owyc",
           "tests": [
             {
               "inputs": {
@@ -587,7 +587,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "obh4nkwg6jgebkdwe2kcisvta5plujxu",
+          "digest": "ztehyikkh5aysqbtbu6ao234rlkkzkh3",
           "tests": [
             {
               "inputs": {
@@ -633,7 +633,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "kich5launnchu24tv4lqjxuypubfhvso",
+          "digest": "nnbtwcqdgbqxbu2lu4w6iqoyl2lk5a2w",
           "tests": [
             {
               "inputs": {
@@ -658,7 +658,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "rzf44dvnz6rvur42tlv4fawhc42fc3i5",
+          "digest": "gxvd73efkxw2zvkuop5dqglosxgvc7bc",
           "tests": [
             {
               "inputs": {
@@ -875,7 +875,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "tr7spxi6sn77tbw66it4wwjwymvcclca",
+          "digest": "g5qadaivoa4iqokivb542s7mtc6baqec",
           "tests": [
             {
               "inputs": {
@@ -1158,7 +1158,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "wjzgmu77c3hrn5ndvne36xmhr4woxh4v",
+          "digest": "zl4ir6jskp56yz7icaolco5cfttsi577",
           "tests": [
             {
               "inputs": {
@@ -1181,7 +1181,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "sxrjiqphhojamm6eui7baehz6pqwxfvj",
+          "digest": "vkhoiclkwwfidgav3aaz3ois6clv7gc7",
           "tests": [
             {
               "inputs": {
@@ -1236,7 +1236,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "mb6mv57frblexg35xhtrw2rmfkn6gfy4",
+          "digest": "titsitdutc5jzyv67uxeqfr6slswvqot",
           "tests": [
             {
               "inputs": {
