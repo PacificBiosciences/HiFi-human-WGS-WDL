@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
+          "digest": "aabohz3ve55zx4d4uhy3bteenjme4oj6",
           "tests": [
             {
               "inputs": {
@@ -102,7 +102,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "s5zie2vfnfhyxumeun5vrbfyafnzeabw",
+          "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
           "tests": [
             {
               "inputs": {
