@@ -50,11 +50,11 @@
     "tandem_repeat_bed": "s3://dnastack-resources/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "s3://dnastack-resources/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "hificnv_exclude_bed": {
-      "data": "s3://dnastack-resources/GRCh38/cnv.excluded_regions.common_50.hg38.bed.gz",
-      "data_index": "s3://dnastack-resources/dataset/GRCh38/cnv.excluded_regions.common_50.hg38.bed.gz.tbi"
+      "data": "s3://dnastack-resources/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
+      "data_index": "s3://dnastack-resources/dataset/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi"
     },
-    "hificnv_expected_bed_male": "s3://dnastack-resources/dataset/GRCh38/male_expected_cn.hg38.bed",
-    "hificnv_expected_bed_female": "s3://dnastack-resources/dataset/GRCh38/female_expected_cn.hg38.bed",
+    "hificnv_expected_bed_male": "s3://dnastack-resources/dataset/GRCh38/hificnv/male_expected_cn.hg38.bed",
+    "hificnv_expected_bed_female": "s3://dnastack-resources/dataset/GRCh38/hificnv/female_expected_cn.hg38.bed",
     "gnomad_af": "s3://dnastack-resources/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
     "hprc_af": "s3://dnastack-resources/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
     "gff": "s3://dnastack-resources/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
