@@ -44,7 +44,7 @@ The workflow engine that you choose will depend on where your data is located.
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
 
-## Setup and running the workflow
+## Setting up and running the workflow
 
 1. Install and configure the workflow execution engine of your choice following the documentation for the backend environment where your data is located. See the [backend environments](#backend-environments) section for more information on configuring engines and quotas.
 
@@ -52,7 +52,7 @@ The workflow engine that you choose will depend on where your data is located.
 
 3. Fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
 
-4. Run the workflow using the engine of choice.
+4. Run the workflow using the engine and backend of choice ([miniwdl](#running-using-miniwdl), [Cromwell](#running-using-cromwell), [Workbench](#running-using-workbench)).
 
 ### Running using miniwdl
 
@@ -62,17 +62,63 @@ The workflow engine that you choose will depend on where your data is located.
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
-### Running using the Amazon Genomics CLI (AWS only)
+### Running using Workbench
 
-See [the AWS documentation](backends/aws/README.md) for information on configuring and deploying a context.
+`dnastack alpha workbench runs submit --workflow-params '@<input_file_path.json>' --url <internalId>`
 
-From the directory where your `agc-project.yaml` is located:
-
-`agc workflow run humanwgs --context <context> --inputsFile <input_file_path.json>`
+See the next section for details on configuring engines and submitting workflow runs using Workbench.
 
 ## Running and monitoring workflows using Workbench
 
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/). Runs may then be submitted and monitored directly in Workbench or using the CLI.
+Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines may be registered in Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
+
+Note that a license is required to submit runs using Workbench.
+
+### Configuring an engine
+
+Workflows submitted via Workbench must be submitted to an execution engine. See [the Workbench documentation](https://docs.dnastack.com/docs/workbench-settings) for details about setting up an engine in the backend of your choice. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
+
+Once the engine has been set up, follow the documentation for registering the engine with Workbench, following which you will be able to submit workflow runs using Workbench either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the CLI](#running-the-workflow-using-the-workbench-cli).
+
+### Installing and configuring the DNAstack CLI
+
+1. Install the DNAstack CLI
+
+`python3 -m pip install --user dnastack-client-library`
+
+Confirm that the CLI is installed and available by running `dnastack --version`.
+
+2. Authenticate using the CLI
+
+`dnastack auth login`
+
+3. Configure the CLI to use workbench
+
+`dnastack use workbench.dnastack.com`
+
+You can now use the DNAstack CLI to interact with Workbench. See [the CLI documentation](https://docs.dnastack.com/docs/runs-submit) for details on available commands.
+
+### Running the workflow using the Workbench CLI
+
+Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
+
+1. Register the workflow on Workbench
+
+From the root of this repository, run:
+
+`dnastack alpha workbench workflows create --name "PacBio HumanWGS" workflows/main.wdl`
+
+Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
+
+2. Fill out the inputs.json file
+
+The inputs you use will depend on the backend where you've set up your engine. Template files for [AWS](backends/aws/inputs.aws.json), [Azure](backends/azure/inputs.azure.json), and [GCP](backends/gcp/inputs.gcp.json) with reference file locations already filled out can be used to get started; see [the workflow inputs section](#workflow-inputs) for information on the other fields you will need to fill out.
+
+3. Submit the workflow to Workbench
+
+In the following command, replace `<input_file_path.json>` with the path to your filled out inptus file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
+
+`dnastack alpha workbench runs submit --workflow-params '@<input_file_path.json>' --url <internalId> [--tags <key=value>] [--engine <engineId>]`
 
 # Reference datasets and associated workflow files
 
