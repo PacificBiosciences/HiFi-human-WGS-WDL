@@ -117,11 +117,11 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | File | chromosome_lengths | Reference chromosome lengths | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
-| File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
-| File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV).  We recommend [cnv.excluded_regions.common_50.hg38.bed.gz](https://github.com/PacificBiosciences/HiFiCNV/blob/main/docs/aux_data.md). | |
+| File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for HiFiCNV | |
+| File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for HiFiCNV | |
 | File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
-| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
+| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | |
 | File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | An array of structural variant population VCFs | |
 
@@ -135,8 +135,8 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | :- | :- | :- | :- |
 | File | slivar_js | Additional javascript functions for slivar | |
 | File | hpo_terms | [HPO](https://hpo.jax.org/app/) annotation lookups | |
-| File | hpo_dag | [HPO](https://hpo.jax.org/app/) annotation lookups | |
-| File | hpo_annotations | [HPO](https://hpo.jax.org/app/) annotation lookups | |
+| File | hpo_dag | HPO annotation lookups | |
+| File | hpo_annotations | HPO annotation lookups | |
 | File | ensembl_to_hgnc | Ensembl to HGNC gene mapping | |
 | File | lof_lookup | Loss-of-function scores per gene | |
 | File | clinvar_lookup | ClinVar annotations per gene | |
