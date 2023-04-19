@@ -263,7 +263,7 @@
                   "value": "${resources_file_path}/hificnv/hificnv.HG005.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
-                    "samtools_quickcheck"
+                    "vcftools_validator"
                   ]
                 },
                 "copynum_bedgraph": {
