@@ -13,8 +13,8 @@ struct ReferenceData {
 	File trgt_tandem_repeat_bed
 
 	IndexData hificnv_exclude_bed
-    File hificnv_expected_bed_male
-    File hificnv_expected_bed_female
+	File hificnv_expected_bed_male
+	File hificnv_expected_bed_female
 
 	File gnomad_af
 	File hprc_af
