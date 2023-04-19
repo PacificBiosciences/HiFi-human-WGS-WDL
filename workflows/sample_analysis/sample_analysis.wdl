@@ -411,7 +411,6 @@ task cpg_pileup {
 			--min-mapq 1 \
 			--min-coverage 10 \
 			--model "$PILEUP_MODEL_DIR"/pileup_calling_model.v1.tflite
-
 	>>>
 
 	output {
@@ -460,7 +459,6 @@ task paraphase {
 		paraphase \
 			-b ~{bam} \
 			-o ~{out_directory}
-
 	>>>
 
 	output {
@@ -511,7 +509,7 @@ task hificnv {
 
 	Boolean sex_defined = defined(sex)
 	File expected_bed = if select_first([sex, "FEMALE"]) == "MALE" then expected_bed_male else expected_bed_female
-	
+
 	Int threads = 8
 	# Uses ~2 GB memory / thread
 	Int mem_gb = threads * 2
@@ -544,7 +542,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv:0.1.6"
+		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:0bd33af16b788859750ea1711d49e332b9db49cc3e2431297fb00d437d93ebe9"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
