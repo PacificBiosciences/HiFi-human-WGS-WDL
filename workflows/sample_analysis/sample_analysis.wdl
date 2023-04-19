@@ -3,7 +3,7 @@ version 1.0
 # Run for each sample in the cohort. Aligns reads from each movie to the reference genome, then calls and phases small and structural variants.
 
 import "../humanwgs_structs.wdl"
-import "../smrtcell_analysis/smrtcell_analysis.wdl" as SmrtcellAnalysis
+import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
@@ -24,17 +24,35 @@ workflow sample_analysis {
 		RuntimeAttributes default_runtime_attributes
 	}
 
-	call SmrtcellAnalysis.smrtcell_analysis {
-		input:
-			sample = sample,
-			reference = reference,
-			default_runtime_attributes = default_runtime_attributes
+	scatter (movie_bam in sample.movie_bams) {
+		call pbmm2_align {
+			input:
+				sample_id = sample.sample_id,
+				bam = movie_bam,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				reference_name = reference.name,
+				runtime_attributes = default_runtime_attributes
+		}
+
+		call PbsvDiscover.pbsv_discover {
+			input:
+				aligned_bam = pbmm2_align.aligned_bam,
+				aligned_bam_index = pbmm2_align.aligned_bam_index,
+				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
+				runtime_attributes = default_runtime_attributes
+		}
+
+		IndexData aligned_bam = {
+			"data": pbmm2_align.aligned_bam,
+			"data_index": pbmm2_align.aligned_bam_index
+		}
 	}
 
 	call DeepVariant.deepvariant {
 		input:
 			sample_id = sample.sample_id,
-			aligned_bams = smrtcell_analysis.aligned_bams,
+			aligned_bams = aligned_bam,
 			reference_fasta = reference.fasta,
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
@@ -59,7 +77,7 @@ workflow sample_analysis {
 	call PbsvCall.pbsv_call {
 		input:
 			sample_id = sample.sample_id,
-			svsigs = smrtcell_analysis.svsigs,
+			svsigs = pbsv_discover.svsig,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
@@ -75,15 +93,15 @@ workflow sample_analysis {
 	call PhaseVcf.phase_vcf {
 		input:
 			vcf = deepvariant.vcf,
-			aligned_bams = smrtcell_analysis.aligned_bams,
+			aligned_bams = aligned_bam,
 			reference_fasta = reference.fasta,
 			reference_chromosome_lengths = reference.chromosome_lengths,
 			regions = reference.chromosomes,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (bam_object in smrtcell_analysis.aligned_bams) {
-		if (length(smrtcell_analysis.aligned_bams) == 1) {
+	scatter (bam_object in aligned_bam) {
+		if (length(aligned_bam) == 1) {
 			String output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam"
 		}
 
@@ -170,18 +188,19 @@ workflow sample_analysis {
 	}
 
 	output {
-		# smrtcell_analysis output
-		Array[File] bam_stats = smrtcell_analysis.bam_stats
-		Array[File] read_length_summary = smrtcell_analysis.read_length_summary
-		Array[File] read_quality_summary = smrtcell_analysis.read_quality_summary
-		Array[IndexData] aligned_bams = smrtcell_analysis.aligned_bams
-		Array[File] svsigs = smrtcell_analysis.svsigs
+		Array[File] bam_stats = pbmm2_align.bam_stats
+		Array[File] read_length_summary = pbmm2_align.read_length_summary
+		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
+		Array[IndexData] aligned_bams = aligned_bam
+		Array[File] svsigs = pbsv_discover.svsig
 
 		IndexData small_variant_vcf = deepvariant.vcf
 		IndexData small_variant_gvcf = deepvariant.gvcf
 		File small_variant_vcf_stats = bcftools_stats.stats
 		File small_variant_roh_bed = bcftools_roh.roh_bed
+
 		IndexData sv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
+
 		IndexData phased_small_variant_vcf = phase_vcf.phased_vcf
 		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
 		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
@@ -189,10 +208,13 @@ workflow sample_analysis {
 		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
+
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
+
 		Array[File] cpg_pileups = cpg_pileup.pileups
+
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
@@ -208,6 +230,85 @@ workflow sample_analysis {
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
+	}
+}
+
+task pbmm2_align {
+	input {
+		String sample_id
+		File bam
+
+		File reference
+		File reference_index
+		String reference_name
+
+		RuntimeAttributes runtime_attributes
+	}
+
+	String movie = basename(bam, ".bam")
+
+	Int threads = 24
+	Int mem_gb = ceil(threads * 4)
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		pbmm2 align \
+			--num-threads ~{threads} \
+			--sort-memory 4G \
+			--preset CCS \
+			--sample ~{sample_id} \
+			--log-level INFO \
+			--sort \
+			--unmapped \
+			~{reference} \
+			~{bam} \
+			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
+
+		# movie stats
+		extract_read_length_and_qual.py \
+			~{bam} \
+		> ~{sample_id}.~{movie}.read_length_and_quality.tsv
+
+		awk '{{ b=int($2/1000); b=(b>39?39:b); print 1000*b "\t" $2; }}' \
+			~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=39;i++) {{ print 1000*i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_length_summary.tsv
+
+		awk '{{ print ($3>50?50:$3) "\t" $2; }}' \
+				~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=60;i++) {{ print i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_quality_summary.tsv
+	>>>
+
+	output {
+		File aligned_bam = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam"
+		File aligned_bam_index = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam.bai"
+		File bam_stats = "~{sample_id}.~{movie}.read_length_and_quality.tsv"
+		File read_length_summary = "~{sample_id}.~{movie}.read_length_summary.tsv"
+		File read_quality_summary = "~{sample_id}.~{movie}.read_quality_summary.tsv"
+	}
+
+	runtime {
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:4ead08f03854bf9d21227921fd957453e226245d5459fde3c87c91d4bdfd7f3c"
+		cpu: threads
+		memory: mem_gb + " GB"
+		disk: disk_size + " GB"
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
 	}
 }
 
@@ -267,14 +368,10 @@ task merge_bams {
 	command <<<
 		set -euo pipefail
 
-		if [[ "~{length(bams)}" -eq 1 ]]; then
-			mv ~{bams[0]} ~{output_bam_name}
-		else
-			samtools merge \
-				-@ ~{threads - 1} \
-				-o ~{output_bam_name} \
-				~{sep=' ' bams}
-		fi
+		samtools merge \
+			-@ ~{threads - 1} \
+			-o ~{output_bam_name} \
+			~{sep=' ' bams}
 
 		samtools index ~{output_bam_name}
 	>>>
