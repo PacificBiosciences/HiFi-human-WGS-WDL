@@ -82,12 +82,10 @@ workflow humanwgs {
 	}
 
 	output {
-		# sample_analysis.smrtcells_analysis output
+		# sample_analysis output
 		Array[Array[File]] bam_stats = sample_analysis.bam_stats
 		Array[Array[File]] read_length_summary = sample_analysis.read_length_summary
 		Array[Array[File]] read_quality_summary = sample_analysis.read_quality_summary
-
-		# sample_analysis output
 		Array[IndexData] small_variant_gvcfs = sample_analysis.small_variant_gvcf
 		Array[File] small_variant_vcf_stats = sample_analysis.small_variant_vcf_stats
 		Array[File] small_variant_roh_bed = sample_analysis.small_variant_roh_bed
@@ -106,6 +104,10 @@ workflow humanwgs {
 		Array[File] paraphase_output_jsons = sample_analysis.paraphase_output_json
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
 		Array[Array[File]] paraphase_vcfs = sample_analysis.paraphase_vcfs
+		Array[IndexData] hificnv_vcfs = sample_analysis.hificnv_vcf
+		Array[File] hificnv_copynum_bedgraphs = sample_analysis.hificnv_copynum_bedgraph
+		Array[File] hificnv_depth_bws = sample_analysis.hificnv_depth_bw
+		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
 
 		# cohort_analysis output
 		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf

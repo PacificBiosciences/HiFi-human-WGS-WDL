@@ -23,9 +23,63 @@
       "name": "",
       "description": "",
       "tasks": {
+        "pbmm2_align": {
+          "key": "pbmm2_align",
+          "digest": "aabohz3ve55zx4d4uhy3bteenjme4oj6",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "bam_stats": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "read_length_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                },
+                "read_quality_summary": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_numeric"
+                  ]
+                }
+              }
+            }
+          ]
+        },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "inej67mzwy6p7drzb2b6vzbmbxrhpynx",
+          "digest": "axhrixljyzd6sabv2fqg2z3mpiio5s3v",
           "tests": [
             {
               "inputs": {
@@ -49,6 +103,7 @@
         "merge_bams": {
           "key": "merge_bams",
           "digest": "s5zie2vfnfhyxumeun5vrbfyafnzeabw",
+          "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
           "tests": [
             {
               "inputs": {
@@ -73,10 +128,12 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "tzqezip3ve3y47j4dvdfmd7jah6rlimj",
+          "digest": "tp3sg66hn4yapj5hyjnv4abrhrsq2pf3",
           "tests": [
             {
               "inputs": {
+                "sample_id": "${sample_id}",
+                "sex": "MALE",
                 "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
                 "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
@@ -118,7 +175,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "tkkyjsy2vfasiq62h3ddm3tppvowk3di",
+          "digest": "ogqvcdymztyvakf5u6hmd27jhhe2bug5",
           "tests": [
             {
               "inputs": {
@@ -180,62 +237,89 @@
               }
             }
           ]
-        }
-      }
-    },
-    "workflows/smrtcell_analysis/smrtcell_analysis.wdl": {
-      "key": "workflows/smrtcell_analysis/smrtcell_analysis.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pbmm2_align": {
-          "key": "pbmm2_align",
-          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
+        },
+        "paraphase": {
+          "key": "paraphase",
+          "digest": "tbsbl3cukjehmk6e3sgvnf3owaw24rzv",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
-                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "reference_name": "GRCh38",
+                "sample_id": "${sample_id}",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
+                "out_directory": "${sample_id}.paraphase",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "output_json": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "realigned_bam": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
                   ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_and_quality.tsv",
+                }
+              }
+            }
+          ]
+        },
+        "hificnv": {
+          "key": "hificnv",
+          "digest": "nepijik7v6vvks3v3kz2immxudhe46po",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "sex": "MALE",
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "exclude_bed": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
+                "exclude_bed_index": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
+                "expected_bed_male": "${datasets_file_path}/GRCh38/hificnv/male_expected_cn.hg38.bed",
+                "expected_bed_female": "${datasets_file_path}/GRCh38/hificnv/female_expected_cn.hg38.bed",
+                "output_prefix": "hificnv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "cnv_vcf": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.vcf.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
+                    "vcftools_validator"
                   ]
                 },
-                "read_length_summary": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_length_summary.tsv",
+                "copynum_bedgraph": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.copynum.bedgraph",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
+                    "calculate_md5sum",
                     "check_tab_delimited",
                     "count_columns",
-                    "check_numeric"
+                    "check_chr_lines"
                   ]
                 },
-                "read_quality_summary": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.read_quality_summary.tsv",
+                "depth_bw": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.depth.bw",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_numeric"
+                    "bigwig_validator"
+                  ]
+                },
+                "maf_bw": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.maf.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
                   ]
                 }
               }
@@ -257,7 +341,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "zgvmaa6wtldmojg3gixeiah5aak7khb5",
+          "digest": "l7ihfntkjdyomkcfhhnnmwqawkk7pq4e",
           "tests": [
             {
               "inputs": {
@@ -336,7 +420,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "x4wk4y4sx2ne4vzhepaw2xufpml2i5e5",
+          "digest": "uz6sochgixdybuzk5hcukvz3fybdp6uk",
           "tests": [
             {
               "inputs": {
@@ -397,7 +481,7 @@
       "tasks": {
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "fowmgekesvpr6aiiln6rmntvhnkuah5i",
+          "digest": "ptsadvieuojksiqxiuww65xjcqb4owyc",
           "tests": [
             {
               "inputs": {
@@ -585,7 +669,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "obh4nkwg6jgebkdwe2kcisvta5plujxu",
+          "digest": "ztehyikkh5aysqbtbu6ao234rlkkzkh3",
           "tests": [
             {
               "inputs": {
@@ -631,7 +715,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "kich5launnchu24tv4lqjxuypubfhvso",
+          "digest": "nnbtwcqdgbqxbu2lu4w6iqoyl2lk5a2w",
           "tests": [
             {
               "inputs": {
@@ -656,7 +740,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "rzf44dvnz6rvur42tlv4fawhc42fc3i5",
+          "digest": "gxvd73efkxw2zvkuop5dqglosxgvc7bc",
           "tests": [
             {
               "inputs": {
@@ -749,7 +833,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "tr7spxi6sn77tbw66it4wwjwymvcclca",
+          "digest": "g5qadaivoa4iqokivb542s7mtc6baqec",
           "tests": [
             {
               "inputs": {
@@ -1032,7 +1116,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "wjzgmu77c3hrn5ndvne36xmhr4woxh4v",
+          "digest": "zl4ir6jskp56yz7icaolco5cfttsi577",
           "tests": [
             {
               "inputs": {
@@ -1055,7 +1139,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "sxrjiqphhojamm6eui7baehz6pqwxfvj",
+          "digest": "vkhoiclkwwfidgav3aaz3ois6clv7gc7",
           "tests": [
             {
               "inputs": {
@@ -1110,7 +1194,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "mb6mv57frblexg35xhtrw2rmfkn6gfy4",
+          "digest": "titsitdutc5jzyv67uxeqfr6slswvqot",
           "tests": [
             {
               "inputs": {
