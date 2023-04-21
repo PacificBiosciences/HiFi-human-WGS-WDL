@@ -8,12 +8,10 @@
         "sex": "String?",
         "affected": "Boolean",
         "father_id": "String?",
-        "mother_id": "String?",
-        "run_de_novo_assembly": "Boolean"
+        "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]",
-    "run_de_novo_assembly_trio": "Boolean"
+    "phenotypes": "Array[String]"
   },
   "humanwgs.reference": {
     "name": "String",
@@ -25,6 +23,12 @@
     "chromosome_lengths": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
+    "hificnv_exclude_bed": {
+        "data": "File",
+        "data_index": "File"
+      },
+    "hificnv_expected_bed_male": "File",
+    "hificnv_expected_bed_female": "File",
     "gnomad_af": "File",
     "hprc_af": "File",
     "gff": "File",
@@ -47,7 +51,7 @@
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
-  "humanwgs.backend": "String ['GCP', 'Azure', or 'AWS']",
+  "humanwgs.backend": "String ['GCP', 'Azure', 'AWS', or 'HPC']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",
   "humanwgs.aws_on_demand_queue_arn": "String? (optional); required if backend is set to 'AWS'",

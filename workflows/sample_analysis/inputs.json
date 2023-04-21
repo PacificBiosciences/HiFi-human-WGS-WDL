@@ -2,7 +2,7 @@
   "sample_analysis.sample": {
     "sample_id": "String",
     "movie_bams": "Array[File]",
-    "sex": "String",
+    "sex": "String?",
     "affected": "Boolean",
     "father_id": "String?",
     "mother_id": "String?"
@@ -17,6 +17,12 @@
     "chromosome_lengths": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
+    "hificnv_exclude_bed": {
+        "data": "File",
+        "data_index": "File"
+      },
+    "hificnv_expected_bed_male": "File",
+    "hificnv_expected_bed_female": "File",
     "gnomad_af": "File",
     "hprc_af": "File",
     "gff": "File",

@@ -8,12 +8,10 @@
         "sex": "String?",
         "affected": "Boolean",
         "father_id": "String?",
-        "mother_id": "String?",
-        "run_de_novo_assembly": "Boolean"
+        "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]",
-    "run_de_novo_assembly_trio": "Boolean"
+    "phenotypes": "Array[String]"
   },
   "humanwgs.reference": {
     "name": "GRCh38",
@@ -51,6 +49,12 @@
     "chromosome_lengths": "gs://<pb_bucket>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
     "tandem_repeat_bed": "gs://<pb_bucket>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "gs://<pb_bucket>/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+    "hificnv_exclude_bed": {
+      "data": "gs://<pb_bucket>/dataset/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
+      "data_index": "gs://<pb_bucket>/dataset/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi"
+    },
+    "hificnv_expected_bed_male": "gs://<pb_bucket>/dataset/GRCh38/hificnv/male_expected_cn.hg38.bed",
+    "hificnv_expected_bed_female": "gs://<pb_bucket>/dataset/GRCh38/hificnv/female_expected_cn.hg38.bed",
     "gnomad_af": "gs://<pb_bucket>/dataset/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
     "hprc_af": "gs://<pb_bucket>/dataset/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
     "gff": "gs://<pb_bucket>/dataset/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",

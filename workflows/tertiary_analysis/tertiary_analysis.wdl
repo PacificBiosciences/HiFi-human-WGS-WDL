@@ -156,8 +156,8 @@ task write_cohort_yaml {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/parse-cohort@sha256:94444e7e3fd151936c9bbcb8a64b6a5e7d8c59de53b256a83f15c4ea203977b4"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: "20 GB"
 		disks: "local-disk " + "20" + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -191,8 +191,8 @@ task write_ped {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:7ce6b587e6a75df225eda677f47aba060ae98da10ff9a1fbe345a43e6ac3147b"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: "20 GB"
 		disks: "local-disk " + "20" + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -237,8 +237,8 @@ task calculate_phrank {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:7ce6b587e6a75df225eda677f47aba060ae98da10ff9a1fbe345a43e6ac3147b"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -260,12 +260,14 @@ task bcftools_norm {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int threads = 2
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
 		bcftools norm \
+			--threads ~{threads - 1} \
 			--multiallelics \
 			- \
 			--output-type b \
@@ -275,7 +277,7 @@ task bcftools_norm {
 			--output-type b \
 			--output ~{vcf_basename}.norm.bcf
 
-		bcftools index ~{vcf_basename}.norm.bcf
+		bcftools index --threads ~{threads - 1} ~{vcf_basename}.norm.bcf
 	>>>
 
 	output {
@@ -285,7 +287,7 @@ task bcftools_norm {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
-		cpu: 1
+		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -341,12 +343,6 @@ task slivar_small_variant {
 		'INFO.gnomad_ac <= ~{max_gnomad_ac}',
 		'INFO.hprc_ac <= ~{max_hprc_ac}'
 	]
-	Array[String] family_x_dominant_expr = [
-		'x_dominant:(variant.CHROM == "chrX")',
-		'fam.every(segregating_dominant_x)',
-		'INFO.gnomad_ac <= ~{max_gnomad_ac}',
-		'INFO.hprc_ac <= ~{max_hprc_ac}'
-	]
 	Array[String] sample_expr = [
 		'comphet_side:sample.het',
 		'sample.GQ > ~{min_gq}'
@@ -368,7 +364,6 @@ task slivar_small_variant {
 			--family-expr '~{sep=" && " family_recessive_expr}' \
 			--family-expr '~{sep=" && " family_x_recessive_expr}' \
 			--family-expr '~{sep=" && " family_dominant_expr}' \
-			--family-expr '~{sep=" && " family_x_dominant_expr}' \
 			--sample-expr '~{sep=" && " sample_expr}' \
 			--gnotate ~{gnomad_af} \
 			--gnotate ~{hprc_af} \
@@ -455,7 +450,7 @@ task slivar_compound_hets {
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
 		cpu: 2
-		memory: "1 GB"
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -498,7 +493,6 @@ task slivar_tsv {
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
 			--sample-field dominant \
-			--sample-field x_dominant \
 			--sample-field recessive \
 			--sample-field x_recessive \
 			--csq-field BCSQ \
@@ -533,8 +527,8 @@ task slivar_tsv {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -585,7 +579,7 @@ task svpack_filter_annotated {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/svpack@sha256:912c1c3d9b4778f6f3256ba503c4a15deaae7eb9fb534ba40106f58d064682c3"
-		cpu: 1
+		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -645,8 +639,8 @@ task slivar_svpack_tsv {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar@sha256:1148503061ca622fcdda1b280a3b13ccc502728140775338689f5cfdf89c4556"
-		cpu: 1
-		memory: "1 GB"
+		cpu: 2
+		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries

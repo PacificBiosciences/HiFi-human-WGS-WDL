@@ -23,143 +23,9 @@
       "name": "",
       "description": "",
       "tasks": {
-        "bcftools_roh": {
-          "key": "bcftools_roh",
-          "digest": "inej67mzwy6p7drzb2b6vzbmbxrhpynx",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "roh_bed": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "count_bed_columns",
-                    "check_tab_delimited"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "merge_bams": {
-          "key": "merge_bams",
-          "digest": "the46x6b2ofkpt4mso53cxhvgx4fgl3i",
-          "tests": [
-            {
-              "inputs": {
-                "bams": [
-                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
-                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
-                ],
-                "output_bam_name": "${sample_id}.${reference_name}.haplotagged.bam",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "merged_bam": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "trgt": {
-          "key": "trgt",
-          "digest": "tzqezip3ve3y47j4dvdfmd7jah6rlimj",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "spanning_reads": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "samtools_quickcheck",
-                    "check_coordinate_sorted_alignment"
-                  ]
-                },
-                "repeat_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_sorted_vcf_bcf"
-                  ]
-                },
-                "trgt_dropouts": {
-                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "cpg_pileup": {
-          "key": "cpg_pileup",
-          "digest": "q2tnq5rub3rqqobyn36i7n3eu2dcsctr",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
-                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
-                "output_prefix": "${sample_id}.${reference_name}",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pileups": {
-                  "value": [
-                    "${resources_file_path}/HG005.GRCh38.combined.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap1.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
-                  ],
-                  "test_tasks": [
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_bed_columns_array",
-                    "bigwig_validator_array"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/smrtcell_analysis/smrtcell_analysis.wdl": {
-      "key": "workflows/smrtcell_analysis/smrtcell_analysis.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "54we6jqtvr6zrrilqtvuvwi6bgoiff4r",
+          "digest": "aabohz3ve55zx4d4uhy3bteenjme4oj6",
           "tests": [
             {
               "inputs": {
@@ -210,6 +76,223 @@
               }
             }
           ]
+        },
+        "bcftools_roh": {
+          "key": "bcftools_roh",
+          "digest": "axhrixljyzd6sabv2fqg2z3mpiio5s3v",
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "roh_bed": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "count_bed_columns",
+                    "check_tab_delimited"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "merge_bams": {
+          "key": "merge_bams",
+          "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
+          "tests": [
+            {
+              "inputs": {
+                "bams": [
+                  "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.haplotagged.bam",
+                  "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.haplotagged.bam"
+                ],
+                "output_bam_name": "${sample_id}.${reference_name}.haplotagged.bam",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_bam": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "trgt": {
+          "key": "trgt",
+          "digest": "tp3sg66hn4yapj5hyjnv4abrhrsq2pf3",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "sex": "MALE",
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "spanning_reads": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "samtools_quickcheck",
+                    "check_coordinate_sorted_alignment"
+                  ]
+                },
+                "repeat_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.sorted.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_sorted_vcf_bcf"
+                  ]
+                },
+                "trgt_dropouts": {
+                  "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "cpg_pileup": {
+          "key": "cpg_pileup",
+          "digest": "ogqvcdymztyvakf5u6hmd27jhhe2bug5",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pileups": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.bed",
+                    "${resources_file_path}/HG005.GRCh38.combined.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename_array",
+                    "check_tab_delimited_array",
+                    "count_bed_columns_array",
+                    "bigwig_validator_array"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "paraphase": {
+          "key": "paraphase",
+          "digest": "tbsbl3cukjehmk6e3sgvnf3owaw24rzv",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
+                "out_directory": "${sample_id}.paraphase",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_json": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "realigned_bam": {
+                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "hificnv": {
+          "key": "hificnv",
+          "digest": "nepijik7v6vvks3v3kz2immxudhe46po",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "${sample_id}",
+                "sex": "MALE",
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "phased_vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "exclude_bed": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
+                "exclude_bed_index": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
+                "expected_bed_male": "${datasets_file_path}/GRCh38/hificnv/male_expected_cn.hg38.bed",
+                "expected_bed_female": "${datasets_file_path}/GRCh38/hificnv/female_expected_cn.hg38.bed",
+                "output_prefix": "hificnv",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "cnv_vcf": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                },
+                "copynum_bedgraph": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.copynum.bedgraph",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "calculate_md5sum",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_chr_lines"
+                  ]
+                },
+                "depth_bw": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.depth.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "maf_bw": {
+                  "value": "${resources_file_path}/hificnv/hificnv.HG005.maf.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -226,7 +309,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "quwu42m27nhkimczr6ewtrcnfy3qinfx",
+          "digest": "l7ihfntkjdyomkcfhhnnmwqawkk7pq4e",
           "tests": [
             {
               "inputs": {
@@ -256,7 +339,7 @@
       "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "25d5vaiz6va4msnc33zzjfo57dlqgnmp",
+          "digest": "6akbott6gk55sz7nzmhnrkaqvnztg3gw",
           "tests": [
             {
               "inputs": {
@@ -305,7 +388,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "x4wk4y4sx2ne4vzhepaw2xufpml2i5e5",
+          "digest": "uz6sochgixdybuzk5hcukvz3fybdp6uk",
           "tests": [
             {
               "inputs": {
@@ -336,7 +419,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "k2rylyp4cjkou3cs7rt7a6wvqv2w473c",
+          "digest": "yxnm7toivkmsrrs4h3x72wdrtxd2lo72",
           "tests": [
             {
               "inputs": {
@@ -366,7 +449,7 @@
       "tasks": {
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "fowmgekesvpr6aiiln6rmntvhnkuah5i",
+          "digest": "ptsadvieuojksiqxiuww65xjcqb4owyc",
           "tests": [
             {
               "inputs": {
@@ -399,7 +482,7 @@
       "tasks": {
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "vkdaevt3laolbedhtqaxplhe4suyhata",
+          "digest": "s44b227slyhokaspyzkifpiguonh7xfc",
           "tests": [
             {
               "inputs": {
@@ -524,7 +607,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "sqhivuuxyexfmppftl7ezsx6se3qfkcy",
+          "digest": "i2tzlr7ni5gglbe7regxody2bttg35na",
           "tests": [
             {
               "inputs": {
@@ -554,7 +637,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "obh4nkwg6jgebkdwe2kcisvta5plujxu",
+          "digest": "ztehyikkh5aysqbtbu6ao234rlkkzkh3",
           "tests": [
             {
               "inputs": {
@@ -600,7 +683,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "hwrmso63iim6ykmwl3iswr7hv7fxtrtk",
+          "digest": "nnbtwcqdgbqxbu2lu4w6iqoyl2lk5a2w",
           "tests": [
             {
               "inputs": {
@@ -625,7 +708,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "bnyrj32sy65f3jwqoqdlsnjojs6fnce2",
+          "digest": "gxvd73efkxw2zvkuop5dqglosxgvc7bc",
           "tests": [
             {
               "inputs": {
@@ -842,7 +925,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "qgxyjgcunf7fcqgrgnpso4uvcgifisux",
+          "digest": "g5qadaivoa4iqokivb542s7mtc6baqec",
           "tests": [
             {
               "inputs": {
@@ -932,7 +1015,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "2aji2u2mozvqoykiudminizihevkk7yq",
+          "digest": "xd55osu4baa5ljt22cuy4khywcojbovo",
           "tests": [
             {
               "inputs": {
@@ -1044,64 +1127,6 @@
         }
       }
     },
-    "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl": {
-      "key": "workflows/de_novo_assembly_trio/de_novo_assembly_trio.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "parse_families": {
-          "key": "parse_families",
-          "digest": "lox76ajk5hjyfziqejsqc4j5deghpmd4",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_json": "${resources_file_path}/cohort.json",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "families_json": {
-                  "value": "${resources_file_path}/families.json",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_json"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "yak_count": {
-          "key": "yak_count",
-          "digest": "7yffpsq6k3ejqtgyrzujgnvmieh6gbx6",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG007",
-                "reads_fastas": [
-                  "${resources_file_path}/m64017_191216_194629.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191218_164535.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191219_225837.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_191221_052416.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200108_232219.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200112_090459.hifi_reads.fasta"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "yak": {
-                  "value": "${resources_file_path}/HG007.yak",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/tertiary_analysis/tertiary_analysis.wdl": {
       "key": "workflows/tertiary_analysis/tertiary_analysis.wdl",
       "name": "",
@@ -1109,7 +1134,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "cti7scxg6tplsaijyn4k7gz4a3blkos4",
+          "digest": "hqzjxv2yco24qutduqcvu2lo6tjhnnys",
           "tests": [
             {
               "inputs": {
@@ -1132,7 +1157,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "fdvp2nenqsvasyuydzuessu7bemenbrs",
+          "digest": "z33ywjmdqemmooowhpmz3laowtyxfsyi",
           "tests": [
             {
               "inputs": {
@@ -1156,7 +1181,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "ugp6jbmymgq63djtj333ie2mkrtvpukp",
+          "digest": "fjqmz4ee3o2d2h52upjw44lfy4bvaibn",
           "tests": [
             {
               "inputs": {
@@ -1183,7 +1208,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "t2q72yxf6gcw2hnlo2fjc3ulygubt6pk",
+          "digest": "zl4ir6jskp56yz7icaolco5cfttsi577",
           "tests": [
             {
               "inputs": {
@@ -1206,7 +1231,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "sxrjiqphhojamm6eui7baehz6pqwxfvj",
+          "digest": "vkhoiclkwwfidgav3aaz3ois6clv7gc7",
           "tests": [
             {
               "inputs": {
@@ -1236,7 +1261,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "lz4hm2lqnuzkibtczqclgntdrjxv4jbr",
+          "digest": "66egzu7zo2jti56lcmogtlkpno4eju5f",
           "tests": [
             {
               "inputs": {
@@ -1261,7 +1286,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "mxnl2l4xgxtgio37ayahwa3y2rczuaku",
+          "digest": "titsitdutc5jzyv67uxeqfr6slswvqot",
           "tests": [
             {
               "inputs": {
@@ -1298,7 +1323,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "w6gzasagowzidso7mx6ouxb27atmhig5",
+          "digest": "eopecz3mvpeqwv4a5lzxkpyni76lhq5x",
           "tests": [
             {
               "inputs": {
@@ -1333,7 +1358,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "qivpu6f5pwwbxa6vpaq4fcd6q5ohdghp",
+          "digest": "fb3rv3tslzjm4vacriulntz77h36jxyh",
           "tests": [
             {
               "inputs": {
@@ -1359,160 +1384,6 @@
           ]
         }
       }
-    },
-    "workflows/assemble_genome/assemble_genome.wdl": {
-      "key": "workflows/assemble_genome/assemble_genome.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "hifiasm_assemble": {
-          "key": "hifiasm_assemble",
-          "digest": "m6ejbzh6hfwrievpznnbc4iysautatho",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "reads_fastas": [
-                  "${resources_file_path}/m64017_200723_190224.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200730_190124.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200801_011415.hifi_reads.fasta",
-                  "${resources_file_path}/m64017_200802_073944.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200304_195708.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200309_192110.hifi_reads.fasta",
-                  "${resources_file_path}/m64109_200311_013444.hifi_reads.fasta"
-                ],
-                "runtime_attributes": "${on_demand_runtime_attributes}"
-              },
-              "output_tests": {
-                "assembly_hap_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_noseq_gfas": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.noseq.gfa",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.noseq.gfa"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_empty_lines_array"
-                  ]
-                },
-                "assembly_lowQ_beds": {
-                  "value": [
-                    "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.lowQ.bed",
-                    "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.lowQ.bed"
-                  ],
-                  "test_tasks": [
-                    "calculate_md5sum_array",
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_columns_array"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "gfa2fa": {
-          "key": "gfa2fa",
-          "digest": "liyb2m4cbkovxctcgaxwunqkn5az77ev",
-          "tests": [
-            {
-              "inputs": {
-                "gfa": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.gfa",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "zipped_fasta": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines",
-                    "fasta_validator"
-                  ]
-                },
-                "assembly_stats": {
-                  "value": "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.stats.txt",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "check_empty_lines"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "align_hifiasm": {
-          "key": "align_hifiasm",
-          "digest": "uozjfq66ztyonrplvlkdc45lxt3d2ilj",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG005",
-                "query_sequences": [
-                  "${resources_file_path}/HG005.asm.bp.hap1.p_ctg.fasta.gz",
-                  "${resources_file_path}/HG005.asm.bp.hap2.p_ctg.fasta.gz"
-                ],
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_name": "GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "asm_bam": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck",
-                    "check_coordinate_sorted_alignment"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl": {
-      "key": "workflows/de_novo_assembly_sample/de_novo_assembly_sample.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "htsbox": {
-          "key": "htsbox",
-          "digest": "hgv6puzttllbwzgmunnigqiopcq3gl7x",
-          "tests": [
-            {
-              "inputs": {
-                "bam": "${resources_file_path}/HG005.asm.GRCh38.bam",
-                "bam_index": "${resources_file_path}/HG005.asm.GRCh38.bam.bai",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "htsbox_vcf": {
-                  "value": "${resources_file_path}/HG005.asm.GRCh38.htsbox.vcf",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
     }
   },
   "engines": {
@@ -1531,14 +1402,14 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
         "preemptible_tries": 0,
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
-        "container_registry": "pacbio.azurecr.io"
+        "container_registry": "quay.io/pacbio"
       }
     },
     "engine_params": {
