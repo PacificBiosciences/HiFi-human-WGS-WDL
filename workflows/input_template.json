@@ -11,7 +11,7 @@
         "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]",
+    "phenotypes": "Array[String]"
   },
   "humanwgs.reference": {
     "name": "String",

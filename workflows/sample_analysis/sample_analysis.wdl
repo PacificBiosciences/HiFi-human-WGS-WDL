@@ -101,6 +101,10 @@ workflow sample_analysis {
 	}
 
 	scatter (bam_object in aligned_bam) {
+		if (length(aligned_bam) == 1) {
+			String output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam"
+		}
+
 		call WhatshapHaplotag.whatshap_haplotag {
 			input:
 				phased_vcf = phase_vcf.phased_vcf.data,
@@ -109,28 +113,36 @@ workflow sample_analysis {
 				aligned_bam_index = bam_object.data_index,
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
+				output_bam_name = output_bam_name,
 				runtime_attributes = default_runtime_attributes
 		}
 	}
 
-	call merge_bams {
-		input:
-			bams = whatshap_haplotag.haplotagged_bam,
-			output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
-			runtime_attributes = default_runtime_attributes
+	if (length(whatshap_haplotag.haplotagged_bam) > 1) {
+		call merge_bams {
+			input:
+				bams = whatshap_haplotag.haplotagged_bam,
+				output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
+				runtime_attributes = default_runtime_attributes
+		}
 	}
+
+	File haplotagged_bam = select_first([merge_bams.merged_bam, whatshap_haplotag.haplotagged_bam[0]])
+	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, whatshap_haplotag.haplotagged_bam_index[0]])
 
 	call Mosdepth.mosdepth {
 		input:
-			aligned_bam = merge_bams.merged_bam,
-			aligned_bam_index = merge_bams.merged_bam_index,
+			aligned_bam = haplotagged_bam,
+			aligned_bam_index = haplotagged_bam_index,
 			runtime_attributes = default_runtime_attributes
 	}
 
 	call trgt {
 		input:
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			sample_id = sample.sample_id,
+			sex = sample.sex,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
@@ -140,8 +152,8 @@ workflow sample_analysis {
 
 	call cpg_pileup {
 		input:
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
@@ -151,8 +163,8 @@ workflow sample_analysis {
 	call paraphase {
 		input:
 			sample_id = sample.sample_id,
-			bam = merge_bams.merged_bam,
-			bam_index = merge_bams.merged_bam_index,
+			bam = haplotagged_bam,
+			bam_index = haplotagged_bam_index,
 			out_directory = "~{sample.sample_id}.paraphase",
 			runtime_attributes = default_runtime_attributes
 	}
@@ -175,8 +187,7 @@ workflow sample_analysis {
 		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
 		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
 		File whatshap_stats_blocklist = phase_vcf.whatshap_stats_blocklist
-
-		IndexData merged_haplotagged_bam = {"data": merge_bams.merged_bam, "data_index": merge_bams.merged_bam_index}
+		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 
@@ -215,7 +226,7 @@ task pbmm2_align {
 	String movie = basename(bam, ".bam")
 
 	Int threads = 24
-	Int mem_gb = ceil(threads * 1.5)
+	Int mem_gb = ceil(threads * 4)
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 20)
 
 	command <<<
@@ -223,6 +234,7 @@ task pbmm2_align {
 
 		pbmm2 align \
 			--num-threads ~{threads} \
+			--sort-memory 4G \
 			--preset CCS \
 			--sample ~{sample_id} \
 			--log-level INFO \
@@ -286,6 +298,7 @@ task bcftools_roh {
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+	Int threads = 2
 	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
 	command <<<
@@ -293,6 +306,7 @@ task bcftools_roh {
 
 		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
+			--threads ~{threads - 1} \
 			--AF-dflt 0.4 \
 			~{vcf} \
 		| awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
@@ -305,7 +319,7 @@ task bcftools_roh {
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
-		cpu: 2
+		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -332,14 +346,10 @@ task merge_bams {
 	command <<<
 		set -euo pipefail
 
-		if [[ "~{length(bams)}" -eq 1 ]]; then
-			mv ~{bams[0]} ~{output_bam_name}
-		else
-			samtools merge \
-				-@ ~{threads - 1} \
-				-o ~{output_bam_name} \
-				~{sep=' ' bams}
-		fi
+		samtools merge \
+			-@ ~{threads - 1} \
+			-o ~{output_bam_name} \
+			~{sep=' ' bams}
 
 		samtools index ~{output_bam_name}
 	>>>
@@ -365,6 +375,9 @@ task merge_bams {
 
 task trgt {
 	input {
+		String sample_id
+		String? sex
+
 		File bam
 		File bam_index
 
@@ -377,6 +390,8 @@ task trgt {
 		RuntimeAttributes runtime_attributes
 	}
 
+	Boolean sex_defined = defined(sex)
+	String karyotype = if select_first([sex, "FEMALE"]) == "MALE" then "XY" else "XX"
 	String bam_basename = basename(bam, ".bam")
 	Int threads = 4
 	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 2 + 20)
@@ -384,7 +399,11 @@ task trgt {
 	command <<<
 		set -euo pipefail
 
+		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."}
+
 		trgt \
+			--threads ~{threads} \
+			--karyotype ~{karyotype} \
 			--genome ~{reference} \
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
@@ -396,6 +415,7 @@ task trgt {
 			~{bam_basename}.trgt.vcf.gz
 
 		bcftools index \
+			--threads ~{threads - 1} \
 			--tbi \
 			~{bam_basename}.trgt.sorted.vcf.gz
 
