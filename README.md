@@ -117,8 +117,11 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | File | chromosome_lengths | Reference chromosome lengths | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV).  We recommend [cnv.excluded_regions.common_50.hg38.bed.gz](https://github.com/PacificBiosciences/HiFiCNV/blob/main/docs/aux_data.md). | |
+| File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for HiFiCNV | |
+| File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for HiFiCNV | |
 | File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
-| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
+| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | |
 | File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | An array of structural variant population VCFs | |
 
@@ -132,8 +135,8 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | :- | :- | :- | :- |
 | File | slivar_js | Additional javascript functions for slivar | |
 | File | hpo_terms | [HPO](https://hpo.jax.org/app/) annotation lookups | |
-| File | hpo_dag | [HPO](https://hpo.jax.org/app/) annotation lookups | |
-| File | hpo_annotations | [HPO](https://hpo.jax.org/app/) annotation lookups | |
+| File | hpo_dag | HPO annotation lookups | |
+| File | hpo_annotations | HPO annotation lookups | |
 | File | ensembl_to_hgnc | Ensembl to HGNC gene mapping | |
 | File | lof_lookup | Loss-of-function scores per gene | |
 | File | clinvar_lookup | ClinVar annotations per gene | |
@@ -166,20 +169,24 @@ These files will be output for each sample defined in the cohort.
 | Array[File] | small_variant_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for small variants | |
 | Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by [DeepVariant](https://github.com/google/deepvariant) and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
 | Array[File] | sample_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
-| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
-| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
+| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
+| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [`whatshap haplotag`](https://whatshap.readthedocs.io/en/latest/guide.html#visualizing-phasing-results)) reads (with index) | |
 | Array[File] | haplotagged_bam_mosdepth_summary | [mosdepth](https://github.com/brentp/mosdepth) summary of median depths per chromosome | |
-| Array[File] | haplotagged_bam_mosdepth_region_bed | [mosdepth](https://github.com/brentp/mosdepth) BED of median coverage depth per 500 bp window | |
+| Array[File] | haplotagged_bam_mosdepth_region_bed | mosdepth BED of median coverage depth per 500 bp window | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | Tandem repeat genotypes from [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/vcf_files.md) (with index) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_spanning_reads | Fragments of HiFi reads spanning loci genotyped by [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/tutorial.md) (with index) | |
-| Array[File] | trgt_dropouts | Regions with insufficient coverage to genotype | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_spanning_reads | Fragments of HiFi reads spanning loci genotyped by TRGT (with index) | |
+| Array[File] | trgt_dropouts | Regions with insufficient coverage to genotype by TRGT | |
 | Array[Array[File]] | cpg_pileups | 5mCpG site methylation probability pileups generated by [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools#output-files) | |
 | Array[File] | paraphase_output | Output generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
-| Array[IndexData] | paraphase_realigned_bam | Realigned BAM for selected medically relevant genes in segmental duplications (with index), generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
-| Array[Array[File]] | paraphase_vcfs | Phased Variant calls for selected medically relevant genes in segmental duplications, generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
+| Array[IndexData] | paraphase_realigned_bam | Realigned BAM for selected medically relevant genes in segmental duplications (with index), generated by Paraphase | |
+| Array[Array[File]] | paraphase_vcfs | Phased Variant calls for selected medically relevant genes in segmental duplications, generated by Paraphase | |
+| Array[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)| hificnv_vcfs | VCF output containing copy number variant calls for the sample from [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
+| Array[File] | hificnv_copynum_bedgraphs | Copy number values calculated for each region | |
+| Array[File] | hificnv_depth_bws | Bigwig file containing the depth measurements from HiFiCNV | |
+| Array[File] | hificnv_maf_bws | Bigwig file containing the minor allele frequency measurements from DeepVariant, generated by HiFiCNV | |
 
 ## Cohort analysis
 
@@ -190,8 +197,8 @@ These files will be output if the cohort includes more than one sample.
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
 | File? | cohort_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
-| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
-| File? | cohort_whatshap_stats_blocklists | Haplotype block list written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
+| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats`| |
+| File? | cohort_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
 
 ## Tertiary analysis
 
@@ -202,11 +209,11 @@ These files will be output for each run of the workflow if `run_tertiary_analysi
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_small_variant_vcf | Small variant calls that are filtered based on population frequency and annotated with cohort information, population frequency, gene, functional impact, etc., using [slivar](https://github.com/brentp/slivar) and [`bcftools csq`](https://samtools.github.io/bcftools/howtos/csq-calling.html) | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | compound_het_small_variant_vcf | Compound heterozygotes annotated with cohort information, population frequency, gene, functional impact, etc., using [slivar](https://github.com/brentp/slivar) and [`bcftools csq`](https://samtools.github.io/bcftools/howtos/csq-calling.html) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | compound_het_small_variant_vcf | Compound heterozygotes annotated with cohort information, population frequency, gene, functional impact, etc., using slivar and `bcftools csq` | |
 | File? | filtered_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
-| File? | compound_het_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
+| File? | compound_het_small_variant_tsv | Filtered VCFs are reformatted as a human-readable TSV by `slivar tsv` | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | filtered_svpack_vcf | Structural variant calls that are filtered based on population frequency and annotated with cohort information, population frequency, gene, functional impact, etc., using [svpack](https://github.com/PacificBiosciences/svpack) | |
-| File? | filtered_svpack_tsv | Filtered VCFs are reformatted as a human-readable TSV by [`slivar tsv`](https://github.com/brentp/slivar/wiki/tsv:-creating-a-spreadsheet-from-a-filtered-VCF) | |
+| File? | filtered_svpack_tsv | Filtered VCFs are reformatted as a human-readable TSV by `slivar tsv` | |
 
 # Tool versions and Docker images
 
@@ -220,6 +227,7 @@ The Docker image used by a particular step of the workflow can be identified by 
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/bcftools) |
 | deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.1](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.1)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
+| hificnv | <ul><li>[HiFiCNV v0.1.6](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.6)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](#TODO) |
 | htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htslib) |
 | mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/mosdepth) |
 | paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.1.0](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.1.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/paraphase) |

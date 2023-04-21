@@ -104,6 +104,10 @@ workflow humanwgs {
 		Array[File] paraphase_output_jsons = sample_analysis.paraphase_output_json
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
 		Array[Array[File]] paraphase_vcfs = sample_analysis.paraphase_vcfs
+		Array[IndexData] hificnv_vcfs = sample_analysis.hificnv_vcf
+		Array[File] hificnv_copynum_bedgraphs = sample_analysis.hificnv_copynum_bedgraph
+		Array[File] hificnv_depth_bws = sample_analysis.hificnv_depth_bw
+		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
 
 		# cohort_analysis output
 		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf
