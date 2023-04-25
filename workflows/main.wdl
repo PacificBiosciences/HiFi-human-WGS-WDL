@@ -52,6 +52,7 @@ workflow humanwgs {
 		call CohortAnalysis.cohort_analysis {
 			input:
 				cohort_id = cohort.cohort_id,
+				sample_count = length(cohort.samples),
 				aligned_bams = flatten(sample_analysis.aligned_bams),
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
