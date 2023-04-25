@@ -54,23 +54,27 @@ The workflow engine that you choose will depend on where your data is located.
 
 4. Run the workflow using the engine and backend of choice ([miniwdl](#running-using-miniwdl), [Cromwell](#running-using-cromwell), [Workbench](#running-using-workbench)).
 
-### Running using miniwdl
+### Run using miniwdl
 
 `miniwdl run workflows/main.wdl -i <input_file_path.json>`
 
-### Running using Cromwell
+### Run using Cromwell
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
-### Running using Workbench
+### Run using Workbench
 
-`dnastack alpha workbench runs submit --workflow-params '@<input_file_path.json>' --url <internalId>`
+```bash
+dnastack alpha workbench runs submit \
+	--workflow-params '@<input_file_path.json>' \
+	--url <internalId>
+```
 
 See the next section for details on configuring engines and submitting workflow runs using Workbench.
 
 ## Running and monitoring workflows using Workbench
 
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines may be registered in Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
+Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines are set up in the desired backend and then registered with Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
 
 Note that a license is required to submit runs using Workbench.
 
@@ -106,7 +110,12 @@ Note that these steps assume you have already [set up and registered an engine i
 
 From the root of this repository, run:
 
-`dnastack alpha workbench workflows create --name "PacBio HumanWGS" workflows/main.wdl`
+```bash
+dnastack alpha workbench workflows create \
+	--name "PacBio HumanWGS" \
+	--description =@README.md \
+	workflows/main.wdl
+```
 
 Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
 
@@ -118,8 +127,13 @@ The inputs you use will depend on the backend where you've set up your engine. T
 
 In the following command, replace `<input_file_path.json>` with the path to your filled out inptus file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
 
-`dnastack alpha workbench runs submit --workflow-params '@<input_file_path.json>' --url <internalId> [--tags <key=value>] [--engine <engineId>]`
-
+```bash
+dnastack alpha workbench runs submit \
+	--workflow-params '@<input_file_path.json>' \
+	--url <internalId> \
+	[--tags <key=value>] \
+	[--engine <engineId>]
+```
 
 # Reference datasets and associated workflow files
 

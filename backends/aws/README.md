@@ -24,6 +24,8 @@ If you want both spot and on-demand contexts, all contexts can be deployed at on
 agc context deploy --all
 ```
 
+Note that the `miniwdl` engine run via AWS is currently not supported for this workflow.
+
 # Checking and requesting quota in AWS
 
 See [resources requirements](../../README.md#resource-requirements) for information on the minimum requirements for running the workflow. Typically in a new AWS environment, additional vCPU quota will be required.
