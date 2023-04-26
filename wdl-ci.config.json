@@ -102,7 +102,6 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "s5zie2vfnfhyxumeun5vrbfyafnzeabw",
           "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
           "tests": [
             {
@@ -201,37 +200,6 @@
                     "check_tab_delimited",
                     "count_bed_columns",
                     "bigwig_validator"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "paraphase": {
-          "key": "paraphase",
-          "digest": "tkhhyrmknvxwbc6ht7othqvtyw3y343h",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "${sample_id}",
-                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
-                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
-                "out_directory": "${sample_id}.paraphase",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "output_json": {
-                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_json"
-                  ]
-                },
-                "realigned_bam": {
-                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
                   ]
                 }
               }
@@ -605,7 +573,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "gbqpytyesm4tfowifp7tl2e3zipknbdp",
+          "digest": "bdda4j7w27byf2wwp6hp63du7okatfhj",
           "tests": [
             {
               "inputs": {
@@ -777,7 +745,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "cw5eizdd4reqibnagkdeknljww3wp6fg",
+          "digest": "iif7cuf7slykvtfsv4kbrfo3ytrrfhey",
           "tests": [
             {
               "inputs": {
@@ -827,7 +795,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "g5qadaivoa4iqokivb542s7mtc6baqec",
+          "digest": "aevlpb4kvew2d6krhw6jltdmsq2uhzmu",
           "tests": [
             {
               "inputs": {
@@ -861,7 +829,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "xd55osu4baa5ljt22cuy4khywcojbovo",
+          "digest": "pv25xkt75fayoop7ba2ubflbjirwn3jf",
           "tests": [
             {
               "inputs": {
