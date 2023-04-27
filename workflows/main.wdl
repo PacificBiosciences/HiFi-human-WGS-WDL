@@ -16,6 +16,8 @@ workflow humanwgs {
 		String deepvariant_version = "1.5.0"
 		DeepVariantModel? deepvariant_model
 
+		Int? pbsv_call_mem_gb
+
 		Boolean run_tertiary_analysis = true
 
 		# Backend configuration
@@ -131,6 +133,7 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call"}
 		run_tertiary_analysis: {help: "Run the optional tertiary analysis steps"}
 		backend: {help: "Backend where the workflow will be executed ['GCP', 'Azure', 'AWS', 'HPC']"}
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}

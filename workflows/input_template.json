@@ -50,6 +50,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.pbsv_call_mem_gb": "Int (optional)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
   "humanwgs.backend": "String ['GCP', 'Azure', 'AWS', or 'HPC']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
