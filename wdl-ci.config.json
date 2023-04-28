@@ -102,7 +102,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
+          "digest": "piuj5ncg4bscblehashhhfo6huguxxul",
           "tests": [
             {
               "inputs": {
@@ -573,7 +573,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "bdda4j7w27byf2wwp6hp63du7okatfhj",
+          "digest": "ca3bgxldtyy4m2mak5f22a5cggy7tzvs",
           "tests": [
             {
               "inputs": {
