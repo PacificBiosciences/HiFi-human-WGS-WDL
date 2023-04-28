@@ -58,6 +58,7 @@ workflow humanwgs {
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
 				reference = reference,
+				pbsv_call_mem_gb = pbsv_call_mem_gb,
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
