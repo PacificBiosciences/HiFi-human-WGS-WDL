@@ -11,6 +11,7 @@ import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 workflow cohort_analysis {
 	input {
 		String cohort_id
+		Int sample_count
 		Array[IndexData] aligned_bams
 		Array[File] svsigs
 		Array[IndexData] gvcfs
@@ -31,6 +32,7 @@ workflow cohort_analysis {
 		input:
 			sample_id = cohort_id,
 			svsigs = svsigs,
+			sample_count = sample_count,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
