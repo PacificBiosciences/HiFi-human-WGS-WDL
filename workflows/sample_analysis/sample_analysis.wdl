@@ -219,7 +219,7 @@ workflow sample_analysis {
 
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
-		Array[File]? paraphase_vcfs = paraphase.paraphase_vcfs
+		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
     
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
