@@ -216,6 +216,8 @@
                 "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
                 "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
                 "out_directory": "${sample_id}.paraphase",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
