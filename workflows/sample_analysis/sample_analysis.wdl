@@ -165,6 +165,8 @@ workflow sample_analysis {
 			sample_id = sample.sample_id,
 			bam = haplotagged_bam,
 			bam_index = haplotagged_bam_index,
+			reference = reference.fasta.data,
+			reference_index = reference.fasta.data_index,
 			out_directory = "~{sample.sample_id}.paraphase",
 			runtime_attributes = default_runtime_attributes
 	}
@@ -218,7 +220,7 @@ workflow sample_analysis {
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
-
+    
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
@@ -541,6 +543,9 @@ task paraphase {
 		File bam
 		File bam_index
 
+		File reference
+		File reference_index
+
 		String sample_id
 		String out_directory
 
@@ -556,6 +561,7 @@ task paraphase {
 
 		paraphase \
 			-b ~{bam} \
+			-r ~{reference} \
 			-o ~{out_directory}
 	>>>
 
@@ -567,7 +573,7 @@ task paraphase {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:1148d86835ec474da93beb7ba94f0c9197d0f462825e5142f547ce966dbd89ce"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:4005ed8869014e9fc451dce43657abbaebb4f0b3d35a2e31aa6758bb8560244c"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
