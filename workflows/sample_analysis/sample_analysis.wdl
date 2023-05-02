@@ -220,6 +220,7 @@ workflow sample_analysis {
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File]? paraphase_vcfs = paraphase.paraphase_vcfs
+    
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
@@ -388,7 +389,7 @@ task merge_bams {
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
+		disks: "local-disk " + disk_size + " LOCAL"
 		preemptible: runtime_attributes.preemptible_tries
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries

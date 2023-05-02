@@ -4,7 +4,7 @@ Workflows can be run in Azure by setting up [Cromwell on Azure (CoA)](https://gi
 
 ## Requirements
 
-It is recommended to run the workflow using version 4.0+ of CoA; a minimum of version 3.2+ is required.
+- [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) version 3.2+; version 4.0+ is recommended
 
 # Configuring and running the workflow
 

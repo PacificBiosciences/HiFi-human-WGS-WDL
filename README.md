@@ -44,7 +44,7 @@ The workflow engine that you choose will depend on where your data is located.
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
 
-## Setup and running the workflow
+## Setting up and running the workflow
 
 1. Install and configure the workflow execution engine of your choice following the documentation for the backend environment where your data is located. See the [backend environments](#backend-environments) section for more information on configuring engines and quotas.
 
@@ -52,27 +52,88 @@ The workflow engine that you choose will depend on where your data is located.
 
 3. Fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
 
-4. Run the workflow using the engine of choice.
+4. Run the workflow using the engine and backend of choice ([miniwdl](#running-using-miniwdl), [Cromwell](#running-using-cromwell), [Workbench](#running-using-workbench)).
 
-### Running using miniwdl
+### Run using miniwdl
 
 `miniwdl run workflows/main.wdl -i <input_file_path.json>`
 
-### Running using Cromwell
+### Run using Cromwell
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
-### Running using the Amazon Genomics CLI (AWS only)
+### Run using Workbench
 
-See [the AWS documentation](backends/aws/README.md) for information on configuring and deploying a context.
+```bash
+dnastack alpha workbench runs submit \
+	--workflow-params '@<input_file_path.json>' \
+	--url <internalId>
+```
 
-From the directory where your `agc-project.yaml` is located:
-
-`agc workflow run humanwgs --context <context> --inputsFile <input_file_path.json>`
+See the next section for details on configuring engines and submitting workflow runs using Workbench.
 
 ## Running and monitoring workflows using Workbench
 
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/). Runs may then be submitted and monitored directly in Workbench or using the CLI.
+Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines are set up in the desired backend and then registered with Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
+
+Note that a license is required to submit runs using Workbench.
+
+### Configuring an engine
+
+Workflows submitted via Workbench must be submitted to an execution engine. See [the Workbench documentation](https://docs.dnastack.com/docs/workbench-settings) for details about setting up an engine in the backend of your choice. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
+
+Once the engine has been set up, follow the documentation for registering the engine with Workbench, following which you will be able to submit workflow runs using Workbench either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the CLI](#running-the-workflow-using-the-workbench-cli).
+
+### Installing and configuring the DNAstack CLI
+
+1. Install the DNAstack CLI
+
+`python3 -m pip install --user dnastack-client-library`
+
+Confirm that the CLI is installed and available by running `dnastack --version`.
+
+2. Authenticate using the CLI
+
+`dnastack auth login`
+
+3. Configure the CLI to use workbench
+
+`dnastack use workbench.dnastack.com`
+
+You can now use the DNAstack CLI to interact with Workbench. See [the CLI documentation](https://docs.dnastack.com/docs/runs-submit) for details on available commands.
+
+### Running the workflow using the Workbench CLI
+
+Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
+
+1. Register the workflow on Workbench
+
+From the root of this repository, run:
+
+```bash
+dnastack alpha workbench workflows create \
+	--name "PacBio HumanWGS" \
+	--description =@README.md \
+	workflows/main.wdl
+```
+
+Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
+
+2. Fill out the inputs.json file
+
+The inputs you use will depend on the backend where you've set up your engine. Template files for [AWS](backends/aws/inputs.aws.json), [Azure](backends/azure/inputs.azure.json), and [GCP](backends/gcp/inputs.gcp.json) with reference file locations already filled out can be used to get started; see [the workflow inputs section](#workflow-inputs) for information on the other fields you will need to fill out.
+
+3. Submit the workflow to Workbench
+
+In the following command, replace `<input_file_path.json>` with the path to your filled out inptus file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
+
+```bash
+dnastack alpha workbench runs submit \
+	--workflow-params '@<input_file_path.json>' \
+	--url <internalId> \
+	[--tags <key=value>] \
+	[--engine <engineId>]
+```
 
 # Reference datasets and associated workflow files
 
@@ -98,7 +159,7 @@ Sample information for each sample in the workflow run.
 | :- | :- | :- | :- |
 | String | sample_id | A unique name for the sample; used to name outputs | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
-| String? | sex | Sample sex | ["MALE", "FEMALE", `null`]. If the sex field is missing or `null`, sex will be set to unknown. |
+| String? | sex | Sample sex | ["MALE", "FEMALE", `null`]. If the sex field is missing or `null`, sex will be set to unknown. Used to set the expected sex chromosome karyotype for TRGT and HiFiCNV. |
 | Boolean | affected | Is this sample affected by the phenotype? | \[true, false\] |
 | String? | father_id | Paternal `sample_id` | |
 | String? | mother_id | Maternal `sample_id` | |
@@ -147,6 +208,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | :- | :- | :- | :- |
 | String? | deepvariant_version | Version of deepvariant to use \["1.5.0"\] | |
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optonal alternate DeepVariant model file to use | |
+| Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
@@ -171,19 +233,19 @@ These files will be output for each sample defined in the cohort.
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
 | Array[File] | sample_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
-| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
-| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
+| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats`https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats  | |
+| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats`https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [`whatshap haplotag`](https://whatshap.readthedocs.io/en/latest/guide.html#visualizing-phasing-results)) reads (with index) | |
 | Array[File] | haplotagged_bam_mosdepth_summary | [mosdepth](https://github.com/brentp/mosdepth) summary of median depths per chromosome | |
-| Array[File] | haplotagged_bam_mosdepth_region_bed | mosdepth BED of median coverage depth per 500 bp window | |
+| Array[File] | haplotagged_bam_mosdepth_region_bed | mosdepthhttps://github.com/brentp/mosdepth BED of median coverage depth per 500 bp window | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | Tandem repeat genotypes from [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/vcf_files.md) (with index) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_spanning_reads | Fragments of HiFi reads spanning loci genotyped by TRGT (with index) | |
 | Array[File] | trgt_dropouts | Regions with insufficient coverage to genotype by TRGT | |
 | Array[Array[File]] | cpg_pileups | 5mCpG site methylation probability pileups generated by [pb-CpG-tools](https://github.com/PacificBiosciences/pb-CpG-tools#output-files) | |
 | Array[File] | paraphase_output | Output generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
-| Array[IndexData] | paraphase_realigned_bam | Realigned BAM for selected medically relevant genes in segmental duplications (with index), generated by Paraphase | |
-| Array[Array[File]] | paraphase_vcfs | Phased Variant calls for selected medically relevant genes in segmental duplications, generated by Paraphase | |
-| Array[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)| hificnv_vcfs | VCF output containing copy number variant calls for the sample from [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | paraphase_realigned_bam | Realigned BAM for selected medically relevant genes in segmental duplications (with index), generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
+| Array[Array[File]] | paraphase_vcfs | Phased Variant calls for selected medically relevant genes in segmental duplications, generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | hificnv_vcfs | VCF output containing copy number variant calls for the sample from [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
 | Array[File] | hificnv_copynum_bedgraphs | Copy number values calculated for each region | |
 | Array[File] | hificnv_depth_bws | Bigwig file containing the depth measurements from HiFiCNV | |
 | Array[File] | hificnv_maf_bws | Bigwig file containing the minor allele frequency measurements from DeepVariant, generated by HiFiCNV | |
@@ -197,7 +259,7 @@ These files will be output if the cohort includes more than one sample.
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
 | File? | cohort_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
-| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats`| |
+| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
 | File? | cohort_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
 
 ## Tertiary analysis
@@ -227,7 +289,7 @@ The Docker image used by a particular step of the workflow can be identified by 
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/bcftools) |
 | deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.1](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.1)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
-| hificnv | <ul><li>[HiFiCNV v0.1.6](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.6)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](#TODO) |
+| hificnv | <ul><li>[HiFiCNV v0.1.6](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.6)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/main/docker/hificnv) |
 | htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htslib) |
 | mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/mosdepth) |
 | paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.1.0](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.1.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/paraphase) |
