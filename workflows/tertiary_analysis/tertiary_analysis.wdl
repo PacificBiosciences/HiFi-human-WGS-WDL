@@ -578,7 +578,7 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack@sha256:912c1c3d9b4778f6f3256ba503c4a15deaae7eb9fb534ba40106f58d064682c3"
+		docker: "~{runtime_attributes.container_registry}/svpack@sha256:cd357d4a032e566946d651b8870658cdeed7ee98f46b6e202a8b6e3edf553507"
 		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
