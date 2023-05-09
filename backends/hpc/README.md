@@ -9,7 +9,7 @@ Either `miniwdl` or `Cromwell` can be used to run workflows on the HPC.
 
 ## Configuring
 
-An [example miniwdl.cfg file](miniwdl.cfg) is provided here. This should be placed at `~/.config/miniwdl.cfg`. This allows running workflows using a basic SLURM setup.
+An [example miniwdl.cfg file](miniwdl.cfg) is provided here. This should be placed at `~/.config/miniwdl.cfg` and edited to match your slurm configuration. This allows running workflows using a basic SLURM setup.
 
 # Installing and configuring `Cromwell`
 

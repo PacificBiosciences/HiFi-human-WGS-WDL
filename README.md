@@ -143,7 +143,7 @@ Reference datasets are hosted publicly for use in the pipeline. For data locatio
 
 ## [Cohort](workflows/humanwgs_structs.wdl)
 
-A cohort can include one or more samples. Samples need not be related.
+A cohort can include one or more samples. Samples need not be related, but if you plan to run tertiary analysis, it is best to think of a cohort as a family of related samples. We've tested cohorts of up to 5 samples with 30x coverage.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
@@ -300,6 +300,6 @@ The Docker image used by a particular step of the workflow can be identified by 
 | pyyaml | <ul><li>[pyyaml 5.3.1](https://github.com/yaml/pyyaml/releases/tag/5.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pyyaml) |
 | samtools | <ul><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/samtools) |
 | slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/slivar) |
-| svpack | <ul><li>[svpack a82598e](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/svpack) |
+| svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/8598b47771995e44799575b72bde477c21bfc213/docker/svpack) |
 | trgt | <ul><li>[trgt 0.4.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.4.0)</li><li>[samtools 1.16.1](https://github.com/samtools/samtools/releases/tag/1.16.1)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/trgt) |
 | whatshap | <ul><li>[whatshap 1.4](https://github.com/whatshap/whatshap/releases/tag/v1.4)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/whatshap) |
