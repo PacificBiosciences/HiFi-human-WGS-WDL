@@ -266,6 +266,8 @@ task bcftools_norm {
 	command <<<
 		set -euo pipefail
 
+		bcftools --version
+
 		bcftools norm \
 			--threads ~{threads - 1} \
 			--multiallelics \
@@ -355,6 +357,12 @@ task slivar_small_variant {
 	command <<<
 		set -euo pipefail
 
+		slivar --version
+
+		bcftools --version
+		
+		tabix --version
+
 		pslivar \
 			--processes ~{threads} \
 			--fasta ~{reference} \
@@ -428,6 +436,12 @@ task slivar_compound_hets {
 	command <<<
 		set -euo pipefail
 
+		slivar --version
+
+		bgzip --version
+
+		tabix --version
+
 		slivar \
 			compound-hets \
 			--skip ~{sep=',' skip_list} \
@@ -489,6 +503,8 @@ task slivar_tsv {
 
 	command <<<
 		set -euo pipefail
+
+		slivar --version
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
@@ -557,6 +573,9 @@ task svpack_filter_annotated {
 	command <<<
 		set -euo pipefail
 
+		echo "svpack version:"
+		cat /opt/svpack/.git/HEAD
+
 		svpack \
 			filter \
 			--pass-only \
@@ -578,7 +597,7 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack@sha256:912c1c3d9b4778f6f3256ba503c4a15deaae7eb9fb534ba40106f58d064682c3"
+		docker: "~{runtime_attributes.container_registry}/svpack@sha256:cd357d4a032e566946d651b8870658cdeed7ee98f46b6e202a8b6e3edf553507"
 		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
@@ -617,6 +636,8 @@ task slivar_svpack_tsv {
 
 	command <<<
 		set -euo pipefail
+
+		slivar --version
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \

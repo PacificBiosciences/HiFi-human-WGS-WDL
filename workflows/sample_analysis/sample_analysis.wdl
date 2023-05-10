@@ -257,6 +257,8 @@ task pbmm2_align {
 	command <<<
 		set -euo pipefail
 
+		pbmm2 --version
+
 		pbmm2 align \
 			--num-threads ~{threads} \
 			--sort-memory 4G \
@@ -329,6 +331,8 @@ task bcftools_roh {
 	command <<<
 		set -euo pipefail
 
+		bcftools --version
+
 		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
 			--threads ~{threads - 1} \
@@ -370,6 +374,8 @@ task merge_bams {
 
 	command <<<
 		set -euo pipefail
+
+		samtools --version
 
 		samtools merge \
 			-@ ~{threads - 1} \
@@ -426,6 +432,8 @@ task trgt {
 
 		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."}
 
+		trgt --version
+
 		trgt \
 			--threads ~{threads} \
 			--karyotype ~{karyotype} \
@@ -433,6 +441,8 @@ task trgt {
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
 			--output-prefix ~{bam_basename}.trgt
+
+		bcftools --version
 
 		bcftools sort \
 			--output-type z \
@@ -443,6 +453,8 @@ task trgt {
 			--threads ~{threads - 1} \
 			--tbi \
 			~{bam_basename}.trgt.sorted.vcf.gz
+		
+		samtools --version
 
 		samtools sort \
 			-@ ~{threads - 1} \
@@ -503,6 +515,8 @@ task cpg_pileup {
 	command <<<
 		set -euo pipefail
 
+		aligned_bam_to_cpg_scores --version
+
 		aligned_bam_to_cpg_scores \
 			--threads ~{threads} \
 			--bam ~{bam} \
@@ -558,6 +572,8 @@ task paraphase {
 
 	command <<<
 		set -euo pipefail
+
+		paraphase --version
 
 		paraphase \
 			-b ~{bam} \
@@ -624,6 +640,8 @@ task hificnv {
 		set -euo pipefail
 
 		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for HiFiCNV."}
+
+		hificnv --version
 
 		hificnv \
 			--threads ~{threads} \
