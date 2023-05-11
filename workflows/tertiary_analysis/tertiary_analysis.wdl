@@ -357,7 +357,8 @@ task slivar_small_variant {
 	command <<<
 		set -euo pipefail
 
-		slivar --version
+		# slivar has no version option
+		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+' 
 
 		bcftools --version
 		
@@ -436,7 +437,8 @@ task slivar_compound_hets {
 	command <<<
 		set -euo pipefail
 
-		slivar --version
+		# slivar has no version option
+		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
 
 		bgzip --version
 
@@ -504,7 +506,8 @@ task slivar_tsv {
 	command <<<
 		set -euo pipefail
 
-		slivar --version
+		# slivar has no version option
+		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
@@ -637,7 +640,8 @@ task slivar_svpack_tsv {
 	command <<<
 		set -euo pipefail
 
-		slivar --version
+		# slivar has no version option
+		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
