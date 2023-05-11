@@ -535,7 +535,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "boagenldylgth2nur4wj54y32gksfhaq",
+          "digest": "do4yrlhajokoginj6t7obf5bnv74h2ak",
           "tests": [
             {
               "inputs": {
@@ -991,7 +991,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "vkhoiclkwwfidgav3aaz3ois6clv7gc7",
+          "digest": "xgfz3iva5eqnk775j2pgwsn36jagqgqw",
           "tests": [
             {
               "inputs": {
@@ -1021,7 +1021,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "66egzu7zo2jti56lcmogtlkpno4eju5f",
+          "digest": "wq4dvlnqcw4urdx2acd6oinx47ku5khh",
           "tests": [
             {
               "inputs": {
@@ -1046,7 +1046,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "titsitdutc5jzyv67uxeqfr6slswvqot",
+          "digest": "bhj67yauwchm5aft7fru6rljgl2peiiu",
           "tests": [
             {
               "inputs": {
@@ -1118,7 +1118,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "fb3rv3tslzjm4vacriulntz77h36jxyh",
+          "digest": "iblo5v62tj4w2v3zzgamotyvyyzeakc5",
           "tests": [
             {
               "inputs": {
