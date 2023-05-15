@@ -17,6 +17,7 @@ workflow humanwgs {
 		DeepVariantModel? deepvariant_model
 
 		Int? pbsv_call_mem_gb
+		Int? glnexus_mem_gb
 
 		Boolean run_tertiary_analysis = true
 
@@ -60,6 +61,7 @@ workflow humanwgs {
 				gvcfs = sample_analysis.small_variant_gvcf,
 				reference = reference,
 				pbsv_call_mem_gb = pbsv_call_mem_gb,
+				glnexus_mem_gb = glnexus_mem_gb,
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
@@ -137,6 +139,7 @@ workflow humanwgs {
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call"}
+		glnexus_mem_gb: {help: "Optional amount of RAM in GB for glnexus"}
 		run_tertiary_analysis: {help: "Run the optional tertiary analysis steps"}
 		backend: {help: "Backend where the workflow will be executed ['GCP', 'Azure', 'AWS', 'HPC']"}
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
