@@ -535,7 +535,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "do4yrlhajokoginj6t7obf5bnv74h2ak",
+          "digest": "pbsdnunwx2q2jwhhcmpa7exa75bc3zax",
           "tests": [
             {
               "inputs": {
