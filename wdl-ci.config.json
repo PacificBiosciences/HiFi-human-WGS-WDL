@@ -186,19 +186,26 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "pileups": {
+                "pileup_beds": {
                   "value": [
                     "${resources_file_path}/HG005.GRCh38.combined.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.bw",
                     "${resources_file_path}/HG005.GRCh38.hap1.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
+                    "${resources_file_path}/HG005.GRCh38.hap2.bed"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
-                    "count_bed_columns",
+                    "count_bed_columns"
+                  ]
+                },
+                "pileup_bigwigs": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
                     "bigwig_validator"
                   ]
                 }
