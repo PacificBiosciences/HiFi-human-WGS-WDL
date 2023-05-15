@@ -215,7 +215,8 @@ workflow sample_analysis {
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 
-		Array[File] cpg_pileups = cpg_pileup.pileups
+		Array[File] cpg_pileup_beds = cpg_pileup.pileup_beds
+		Array[File] cpg_pileup_bigwigs = cpg_pileup.pileup_bigwigs
 
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
@@ -528,12 +529,14 @@ task cpg_pileup {
 	>>>
 
 	output {
-		Array[File] pileups = [
+		Array[File] pileup_beds = [
 			"~{output_prefix}.combined.bed",
-			"~{output_prefix}.combined.bw",
 			"~{output_prefix}.hap1.bed",
+			"~{output_prefix}.hap2.bed"
+		]
+		Array[File] pileup_bigwigs = [
+			"~{output_prefix}.combined.bw",
 			"~{output_prefix}.hap1.bw",
-			"~{output_prefix}.hap2.bed",
 			"~{output_prefix}.hap2.bw"
 		]
 	}

@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "axhrixljyzd6sabv2fqg2z3mpiio5s3v",
+          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
           "tests": [
             {
               "inputs": {
@@ -174,7 +174,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "ogqvcdymztyvakf5u6hmd27jhhe2bug5",
+          "digest": "o545dazruog72sfotluebtute4yiunqd",
           "tests": [
             {
               "inputs": {
@@ -186,19 +186,26 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "pileups": {
+                "pileup_beds": {
                   "value": [
                     "${resources_file_path}/HG005.GRCh38.combined.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.bw",
                     "${resources_file_path}/HG005.GRCh38.hap1.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
+                    "${resources_file_path}/HG005.GRCh38.hap2.bed"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
-                    "count_bed_columns",
+                    "count_bed_columns"
+                  ]
+                },
+                "pileup_bigwigs": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap1.bw",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
                     "bigwig_validator"
                   ]
                 }
@@ -685,7 +692,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "nnbtwcqdgbqxbu2lu4w6iqoyl2lk5a2w",
+          "digest": "adwcwarx5ozmifuokiw2do4wapz3yd7n",
           "tests": [
             {
               "inputs": {
