@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "",
+          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
           "tests": [
             {
               "inputs": {
@@ -692,7 +692,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "",
+          "digest": "adwcwarx5ozmifuokiw2do4wapz3yd7n",
           "tests": [
             {
               "inputs": {
