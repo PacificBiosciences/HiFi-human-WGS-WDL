@@ -125,7 +125,7 @@ The inputs you use will depend on the backend where you've set up your engine. T
 
 3. Submit the workflow to Workbench
 
-In the following command, replace `<input_file_path.json>` with the path to your filled out inptus file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
+In the following command, replace `<input_file_path.json>` with the path to your filled out inputs file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
 
 ```bash
 dnastack alpha workbench runs submit \
@@ -207,7 +207,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
 | String? | deepvariant_version | Version of deepvariant to use \["1.5.0"\] | |
-| [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optonal alternate DeepVariant model file to use | |
+| [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
 | Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
