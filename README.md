@@ -10,7 +10,7 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 # Workflow
 
-The human WGS workflow performs read alignment, small and structural variant calling, variant phasing, and optional _de novo_ assembly. The workflow can run using Azure, AWS, GCP, and HPC backends.
+This human WGS workflow performs alignment, variant calling, and variant phasing, as well as joint-calling small variants and structural variants for families, and optional variant filtering and annotation. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
 
@@ -143,7 +143,7 @@ Reference datasets are hosted publicly for use in the pipeline. For data locatio
 
 ## [Cohort](workflows/humanwgs_structs.wdl)
 
-A cohort can include one or more samples. Samples need not be related, but if you plan to run tertiary analysis, it is best to think of a cohort as a family of related samples. We've tested cohorts of up to 5 samples with 30x coverage.
+A cohort can include one or more samples. Samples need not be related, but if you plan to run tertiary analysis, it is best to think of a cohort as a family of related samples. We have tested cohorts of up to 5 samples with 30x coverage.  Larger cohorts may encounter memory issues during joint calling.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
