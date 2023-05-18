@@ -542,7 +542,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "pbsdnunwx2q2jwhhcmpa7exa75bc3zax",
+          "digest": "rjnujhi7onhoprtlqba2aqvj5jzvzora",
           "tests": [
             {
               "inputs": {
@@ -582,7 +582,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "km26i7h7gxpykgr7d7ewb3m5roaxyz4x",
+          "digest": "53w2go2kuiyvtsty6yaxqaqdlf2mki3a",
           "tests": [
             {
               "inputs": {

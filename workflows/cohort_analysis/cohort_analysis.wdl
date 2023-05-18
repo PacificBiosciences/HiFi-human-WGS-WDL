@@ -37,7 +37,7 @@ workflow cohort_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
-			pbsv_call_mem_gb = pbsv_call_mem_gb,
+			mem_gb = pbsv_call_mem_gb,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -53,7 +53,7 @@ workflow cohort_analysis {
 			gvcfs = gvcf,
 			gvcf_indices = gvcf_index,
 			reference_name = reference.name,
-			glnexus_mem_gb = glnexus_mem_gb,
+			mem_gb = glnexus_mem_gb,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -81,8 +81,8 @@ workflow cohort_analysis {
 		svsigs: {help: "pbsv svsig files for each sample and movie bam in the cohort"}
 		gvcfs: {help: "gVCF for each sample in the cohort"}
 		reference: {help: "Reference genome data"}
-		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call"}
-		glnexus_mem_gb: {help: "Optional amount of RAM in GB for glnexus"}
+		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call; default 64 for cohorts N<=3, 96 for cohorts N>3"}
+		glnexus_mem_gb: {help: "Optional amount of RAM in GB for glnexus; default 30"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }

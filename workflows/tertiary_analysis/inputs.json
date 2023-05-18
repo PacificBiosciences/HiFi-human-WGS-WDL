@@ -36,10 +36,16 @@
     "gff": "File",
     "population_vcfs": [
       {
-          "data": "File",
-          "data_index": "File"
-        }
-    ]
+        "data": "File",
+        "data_index": "File"
+      }
+    ],
+    "hificnv_exclude_bed": {
+      "data": "File",
+      "data_index": "File"
+    },
+    "hificnv_expected_bed_male": "File",
+    "hificnv_expected_bed_female": "File"
   },
   "tertiary_analysis.slivar_data": {
     "slivar_js": "File",
