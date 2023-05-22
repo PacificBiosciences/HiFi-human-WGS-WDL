@@ -838,7 +838,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "vkzrztly3wfxgcb3hmczp7aon2uvfrtw",
+          "digest": "angvgpjz6i5uh4qnzgrv3p6pyre6ub7w",
           "tests": [
             {
               "inputs": {
@@ -878,14 +878,6 @@
                     "compare_file_basename",
                     "check_gzip",
                     "vcftools_validator"
-                  ]
-                },
-                "report": {
-                  "value": "${resources_file_path}/${sample_id}.GRCh38.deepvariant.visual_report.html",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "html_validator"
                   ]
                 }
               }
