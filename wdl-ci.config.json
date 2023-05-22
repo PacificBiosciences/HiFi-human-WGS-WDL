@@ -879,14 +879,6 @@
                     "check_gzip",
                     "vcftools_validator"
                   ]
-                },
-                "report": {
-                  "value": "${resources_file_path}/${sample_id}.GRCh38.deepvariant.visual_report.html",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "html_validator"
-                  ]
                 }
               }
             }
