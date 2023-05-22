@@ -44,7 +44,7 @@
           "tests": []
         }
       }
-    },                                                                                                                    
+    },
     "workflows/sample_analysis/sample_analysis.wdl": {
       "key": "workflows/sample_analysis/sample_analysis.wdl",
       "name": "",
@@ -865,7 +865,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "angvgpjz6i5uh4qnzgrv3p6pyre6ub7w",
+          "digest": "vkzrztly3wfxgcb3hmczp7aon2uvfrtw",
           "tests": [
             {
               "inputs": {
