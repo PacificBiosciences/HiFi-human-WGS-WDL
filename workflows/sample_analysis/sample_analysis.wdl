@@ -8,9 +8,11 @@ import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/pharmcat.wdl" as Pharmcat
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
+
 
 workflow sample_analysis {
 	input {
@@ -20,6 +22,10 @@ workflow sample_analysis {
 
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
+
+         # Pharmcat
+        IndexData? pharmcat_positions
+        Int pharmcat_min_coverage = 10
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -189,6 +195,21 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+    Array[Pair[String,Map[String,IndexData]]] pharmcatsample = [(sample.sample_id, { 'aligned_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+																					 'haplotagged_bam': { 'data':haplotagged_bam, 'data_index': haplotagged_bam_index},
+																					 'gvcf': {'data': deepvariant.gvcf.data, 'data_index': deepvariant.gvcf.data_index},
+																					 'phased_vcf': { 'data':phase_vcf.phased_vcf.data, 'data_index':phase_vcf.phased_vcf.data_index}})]
+
+	call Pharmcat.pharmcat { 
+		input:
+            sample_data = pharmcatsample,
+            reference = reference.fasta,
+			reference_chromosome_lengths = reference.chromosome_lengths,
+			pharmcat_positions = select_first([pharmcat_positions]),
+			pharmcat_min_coverage = pharmcat_min_coverage,
+			default_runtime_attributes = default_runtime_attributes
+	}
+
 	output {
 		Array[File] bam_stats = pbmm2_align.bam_stats
 		Array[File] read_length_summary = pbmm2_align.read_length_summary
@@ -226,6 +247,20 @@ workflow sample_analysis {
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
 		File hificnv_maf_bw = hificnv.maf_bw
+
+        # Pharmcat output
+        Array[File] pangu_jsons = pharmcat.pangu_jsons
+        Array[File] pangu_tsvs = pharmcat.pangu_tsvs
+        Array[File] fixed_pangu_tsvs = pharmcat.fixed_pangu_tsvs
+
+        Array[File?] pharmcat_missing_pgx_vcfs = pharmcat.pharmcat_missing_pgx_vcfs
+        Array[File] pharmcat_preprocessed_filtered_vcfs = pharmcat.pharmcat_preprocessed_filtered_vcfs
+
+        Array[File] pharmcat_match_jsons = pharmcat.pharmcat_match_jsons
+        Array[File] pharmcat_phenotype_jsons = pharmcat.pharmcat_phenotype_jsons
+        Array[File] pharmcat_report_htmls = pharmcat.pharmcat_report_htmls
+        Array[File] pharmcat_report_jsons = pharmcat.pharmcat_report_jsons
+
 	}
 
 	parameter_meta {
