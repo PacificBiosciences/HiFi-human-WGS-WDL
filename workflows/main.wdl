@@ -19,6 +19,8 @@ workflow humanwgs {
 		Int? pbsv_call_mem_gb
 		Int? glnexus_mem_gb
 
+		Int pharmcat_min_coverage = 10
+
 		Boolean run_tertiary_analysis = true
 
 		# Backend configuration
@@ -47,6 +49,7 @@ workflow humanwgs {
 				reference = reference,
 				deepvariant_version = deepvariant_version,
 				deepvariant_model = deepvariant_model,
+				pharmcat_min_coverage = pharmcat_min_coverage,
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
@@ -115,6 +118,15 @@ workflow humanwgs {
 		Array[File] hificnv_copynum_bedgraphs = sample_analysis.hificnv_copynum_bedgraph
 		Array[File] hificnv_depth_bws = sample_analysis.hificnv_depth_bw
 		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
+        Array[File] pangu_jsons = sample_analysis.pangu_jsons
+        Array[File] pangu_tsvs = sample_analysis.pangu_tsvs
+        Array[File] fixed_pangu_tsvs = sample_analysis.fixed_pangu_tsvs
+        Array[File?] pharmcat_missing_pgx_vcfs = sample_analysis.pharmcat_missing_pgx_vcfs
+        Array[File] pharmcat_preprocessed_filtered_vcfs = sample_analysis.pharmcat_preprocessed_filtered_vcfs
+        Array[File] pharmcat_match_jsons = sample_analysis.pharmcat_match_jsons
+        Array[File] pharmcat_phenotype_jsons = sample_analysis.pharmcat_phenotype_jsons
+        Array[File] pharmcat_report_htmls = sample_analysis.pharmcat_report_htmls
+        Array[File] pharmcat_report_jsons = sample_analysis.pharmcat_report_jsons
 
 		# cohort_analysis output
 		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf
@@ -138,6 +150,7 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		pharmcat_min_coverage: {help: "Minimum coverage cutoff used to filter the preprocessed VCF passed to pharmcat, default = 10"}
 		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call; default 64 for cohorts N<=3, 96 for cohorts N>3"}
 		glnexus_mem_gb: {help: "Optional amount of RAM in GB for glnexus; default 30"}
 		run_tertiary_analysis: {help: "Run the optional tertiary analysis steps"}

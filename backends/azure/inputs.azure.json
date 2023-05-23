@@ -55,6 +55,10 @@
     },
     "hificnv_expected_bed_male": "/datasetpbrarediseases/dataset/GRCh38/hificnv/male_expected_cn.hg38.bed",
     "hificnv_expected_bed_female": "/datasetpbrarediseases/dataset/GRCh38/hificnv/female_expected_cn.hg38.bed",
+    "pharmcat_positions": {
+      "data": "/datasetpbrarediseases/dataset/GRCh38/pharmcat/#TODO",
+      "data_index": "/datasetpbrarediseases/dataset/GRCh38/pharmcat/#TODO"
+    },
     "gnomad_af": "/datasetpbrarediseases/dataset/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
     "hprc_af": "/datasetpbrarediseases/dataset/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
     "gff": "/datasetpbrarediseases/dataset/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
@@ -88,6 +92,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",

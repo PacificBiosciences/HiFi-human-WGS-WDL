@@ -23,11 +23,6 @@
       "name": "",
       "description": "",
       "tasks": {
-        "pangu_cyp2d6": {
-          "key": "pangu_cyp2d6",
-          "digest": "",
-          "tests": []
-        },
         "pharmcat_preprocess": {
           "key": "pharmcat_preprocess",
           "digest": "",
@@ -35,6 +30,11 @@
         },
         "filter_preprocessed_vcf": {
           "key": "filter_preprocessed_vcf",
+          "digest": "",
+          "tests": []
+        },
+        "pangu_cyp2d6": {
+          "key": "pangu_cyp2d6",
           "digest": "",
           "tests": []
         },

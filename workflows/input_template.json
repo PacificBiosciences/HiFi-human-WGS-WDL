@@ -29,6 +29,10 @@
       },
     "hificnv_expected_bed_male": "File",
     "hificnv_expected_bed_female": "File",
+    "pharmcat_positions": {
+      "data": "File",
+      "data_index": "File"
+    },
     "gnomad_af": "File",
     "hprc_af": "File",
     "gff": "File",
@@ -50,6 +54,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional)",
   "humanwgs.glnexus_mem_gb": "Int (optional)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",

@@ -13,7 +13,6 @@ import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
 import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
 
-
 workflow sample_analysis {
 	input {
 		Sample sample
@@ -23,9 +22,7 @@ workflow sample_analysis {
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
 
-         # Pharmcat
-        IndexData? pharmcat_positions
-        Int pharmcat_min_coverage = 10
+        Int pharmcat_min_coverage
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -195,17 +192,23 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-    Array[Pair[String,Map[String,IndexData]]] pharmcatsample = [(sample.sample_id, { 'aligned_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
-																					 'haplotagged_bam': { 'data':haplotagged_bam, 'data_index': haplotagged_bam_index},
-																					 'gvcf': {'data': deepvariant.gvcf.data, 'data_index': deepvariant.gvcf.data_index},
-																					 'phased_vcf': { 'data':phase_vcf.phased_vcf.data, 'data_index':phase_vcf.phased_vcf.data_index}})]
+    Array[Pair[String,Map[String,IndexData]]] pharmcatsample = [
+		(
+			sample.sample_id, {
+				'aligned_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+				'haplotagged_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+				'gvcf': {'data': deepvariant.gvcf.data, 'data_index': deepvariant.gvcf.data_index},
+				'phased_vcf': {'data': phase_vcf.phased_vcf.data, 'data_index': phase_vcf.phased_vcf.data_index}
+			}
+		)
+	]
 
 	call Pharmcat.pharmcat { 
 		input:
             sample_data = pharmcatsample,
             reference = reference.fasta,
 			reference_chromosome_lengths = reference.chromosome_lengths,
-			pharmcat_positions = select_first([pharmcat_positions]),
+			pharmcat_positions = reference.pharmcat_positions,
 			pharmcat_min_coverage = pharmcat_min_coverage,
 			default_runtime_attributes = default_runtime_attributes
 	}
@@ -248,19 +251,15 @@ workflow sample_analysis {
 		File hificnv_depth_bw = hificnv.depth_bw
 		File hificnv_maf_bw = hificnv.maf_bw
 
-        # Pharmcat output
-        Array[File] pangu_jsons = pharmcat.pangu_jsons
-        Array[File] pangu_tsvs = pharmcat.pangu_tsvs
-        Array[File] fixed_pangu_tsvs = pharmcat.fixed_pangu_tsvs
-
-        Array[File?] pharmcat_missing_pgx_vcfs = pharmcat.pharmcat_missing_pgx_vcfs
-        Array[File] pharmcat_preprocessed_filtered_vcfs = pharmcat.pharmcat_preprocessed_filtered_vcfs
-
-        Array[File] pharmcat_match_jsons = pharmcat.pharmcat_match_jsons
-        Array[File] pharmcat_phenotype_jsons = pharmcat.pharmcat_phenotype_jsons
-        Array[File] pharmcat_report_htmls = pharmcat.pharmcat_report_htmls
-        Array[File] pharmcat_report_jsons = pharmcat.pharmcat_report_jsons
-
+        File pangu_jsons = pharmcat.pangu_jsons[0]
+        File pangu_tsvs = pharmcat.pangu_tsvs[0]
+        File fixed_pangu_tsvs = pharmcat.fixed_pangu_tsvs[0]
+        File? pharmcat_missing_pgx_vcfs = pharmcat.pharmcat_missing_pgx_vcfs[0]
+        File pharmcat_preprocessed_filtered_vcfs = pharmcat.pharmcat_preprocessed_filtered_vcfs[0]
+        File pharmcat_match_jsons = pharmcat.pharmcat_match_jsons[0]
+        File pharmcat_phenotype_jsons = pharmcat.pharmcat_phenotype_jsons[0]
+        File pharmcat_report_htmls = pharmcat.pharmcat_report_htmls[0]
+        File pharmcat_report_jsons = pharmcat.pharmcat_report_jsons[0]
 	}
 
 	parameter_meta {
@@ -268,6 +267,7 @@ workflow sample_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		pharmcat_min_coverage: {help: "Minimum coverage cutoff used to filter the preprocessed VCF passed to pharmcat"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
