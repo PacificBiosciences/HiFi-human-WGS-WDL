@@ -569,7 +569,7 @@ task paraphase {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 2
+	Int threads = 4
 	Int mem_gb = 4
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
@@ -579,9 +579,10 @@ task paraphase {
 		paraphase --version
 
 		paraphase \
-			-b ~{bam} \
-			-r ~{reference} \
-			-o ~{out_directory}
+			--threads ~{threads} \
+			--bam ~{bam} \
+			--reference ~{reference} \
+			--out ~{out_directory}
 	>>>
 
 	output {
@@ -592,7 +593,7 @@ task paraphase {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:4005ed8869014e9fc451dce43657abbaebb4f0b3d35a2e31aa6758bb8560244c"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:76b77fae86e006937a76e8e43542985104ee8388dc641aa24ea38732921fca8d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
