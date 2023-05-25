@@ -165,6 +165,8 @@ workflow sample_analysis {
 			sample_id = sample.sample_id,
 			bam = haplotagged_bam,
 			bam_index = haplotagged_bam_index,
+			reference = reference.fasta.data,
+			reference_index = reference.fasta.data_index,
 			out_directory = "~{sample.sample_id}.paraphase",
 			runtime_attributes = default_runtime_attributes
 	}
@@ -213,11 +215,13 @@ workflow sample_analysis {
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 
-		Array[File] cpg_pileups = cpg_pileup.pileups
+		Array[File] cpg_pileup_beds = cpg_pileup.pileup_beds
+		Array[File] cpg_pileup_bigwigs = cpg_pileup.pileup_bigwigs
 
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
+    
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
@@ -253,6 +257,8 @@ task pbmm2_align {
 
 	command <<<
 		set -euo pipefail
+
+		pbmm2 --version
 
 		pbmm2 align \
 			--num-threads ~{threads} \
@@ -326,6 +332,8 @@ task bcftools_roh {
 	command <<<
 		set -euo pipefail
 
+		bcftools --version
+
 		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
 			--threads ~{threads - 1} \
@@ -368,6 +376,8 @@ task merge_bams {
 	command <<<
 		set -euo pipefail
 
+		samtools --version
+
 		samtools merge \
 			-@ ~{threads - 1} \
 			-o ~{output_bam_name} \
@@ -386,7 +396,7 @@ task merge_bams {
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
+		disks: "local-disk " + disk_size + " LOCAL"
 		preemptible: runtime_attributes.preemptible_tries
 		maxRetries: runtime_attributes.max_retries
 		awsBatchRetryAttempts: runtime_attributes.max_retries
@@ -423,6 +433,8 @@ task trgt {
 
 		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT."}
 
+		trgt --version
+
 		trgt \
 			--threads ~{threads} \
 			--karyotype ~{karyotype} \
@@ -430,6 +442,8 @@ task trgt {
 			--repeats ~{tandem_repeat_bed} \
 			--reads ~{bam} \
 			--output-prefix ~{bam_basename}.trgt
+
+		bcftools --version
 
 		bcftools sort \
 			--output-type z \
@@ -440,6 +454,8 @@ task trgt {
 			--threads ~{threads - 1} \
 			--tbi \
 			~{bam_basename}.trgt.sorted.vcf.gz
+		
+		samtools --version
 
 		samtools sort \
 			-@ ~{threads - 1} \
@@ -500,6 +516,8 @@ task cpg_pileup {
 	command <<<
 		set -euo pipefail
 
+		aligned_bam_to_cpg_scores --version
+
 		aligned_bam_to_cpg_scores \
 			--threads ~{threads} \
 			--bam ~{bam} \
@@ -511,18 +529,20 @@ task cpg_pileup {
 	>>>
 
 	output {
-		Array[File] pileups = [
+		Array[File] pileup_beds = [
 			"~{output_prefix}.combined.bed",
-			"~{output_prefix}.combined.bw",
 			"~{output_prefix}.hap1.bed",
+			"~{output_prefix}.hap2.bed"
+		]
+		Array[File] pileup_bigwigs = [
+			"~{output_prefix}.combined.bw",
 			"~{output_prefix}.hap1.bw",
-			"~{output_prefix}.hap2.bed",
 			"~{output_prefix}.hap2.bw"
 		]
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:28ec58610d8037613babfde1104050a9f3e93cd10667edf8aff83d918489add4"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:f4c3e6a518d49bcdbf306c671d992604532e21e17cc7777f2f07763db642dbb8"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -540,22 +560,29 @@ task paraphase {
 		File bam
 		File bam_index
 
+		File reference
+		File reference_index
+
 		String sample_id
 		String out_directory
 
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 2
+	Int threads = 4
 	Int mem_gb = 4
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
 	command <<<
 		set -euo pipefail
 
+		paraphase --version
+
 		paraphase \
-			-b ~{bam} \
-			-o ~{out_directory}
+			--threads ~{threads} \
+			--bam ~{bam} \
+			--reference ~{reference} \
+			--out ~{out_directory}
 	>>>
 
 	output {
@@ -566,7 +593,7 @@ task paraphase {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:1148d86835ec474da93beb7ba94f0c9197d0f462825e5142f547ce966dbd89ce"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:76b77fae86e006937a76e8e43542985104ee8388dc641aa24ea38732921fca8d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -617,6 +644,8 @@ task hificnv {
 		set -euo pipefail
 
 		echo ~{if sex_defined then "" else "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for HiFiCNV."}
+
+		hificnv --version
 
 		hificnv \
 			--threads ~{threads} \

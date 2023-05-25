@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "aabohz3ve55zx4d4uhy3bteenjme4oj6",
+          "digest": "dzg46ma4dzagcrbk4etephzler55oui4",
           "tests": [
             {
               "inputs": {
@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "axhrixljyzd6sabv2fqg2z3mpiio5s3v",
+          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
           "tests": [
             {
               "inputs": {
@@ -102,7 +102,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "ffoz43osmgffg34avu2s3wco4ncs2evj",
+          "digest": "hknpmhvyxdm66slmnwdmjen2wjm3muba",
           "tests": [
             {
               "inputs": {
@@ -127,7 +127,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "tp3sg66hn4yapj5hyjnv4abrhrsq2pf3",
+          "digest": "sg4rjhj22cy5tgqcugzbotk6qn7h2nrn",
           "tests": [
             {
               "inputs": {
@@ -174,7 +174,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "ogqvcdymztyvakf5u6hmd27jhhe2bug5",
+          "digest": "q6pg4iol4c54q74irxuyt3e3nfktvnt6",
           "tests": [
             {
               "inputs": {
@@ -186,20 +186,27 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "pileups": {
+                "pileup_beds": {
                   "value": [
                     "${resources_file_path}/HG005.GRCh38.combined.bed",
-                    "${resources_file_path}/HG005.GRCh38.combined.bw",
                     "${resources_file_path}/HG005.GRCh38.hap1.bed",
+                    "${resources_file_path}/HG005.GRCh38.hap2.bed"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "pileup_bigwigs": {
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.combined.bw",
                     "${resources_file_path}/HG005.GRCh38.hap1.bw",
-                    "${resources_file_path}/HG005.GRCh38.hap2.bed",
                     "${resources_file_path}/HG005.GRCh38.hap2.bw"
                   ],
                   "test_tasks": [
-                    "compare_file_basename_array",
-                    "check_tab_delimited_array",
-                    "count_bed_columns_array",
-                    "bigwig_validator_array"
+                    "compare_file_basename",
+                    "bigwig_validator"
                   ]
                 }
               }
@@ -208,7 +215,7 @@
         },
         "paraphase": {
           "key": "paraphase",
-          "digest": "tbsbl3cukjehmk6e3sgvnf3owaw24rzv",
+          "digest": "5qitkh64l7rzc6ywab7d7jjbwaxrsnal",
           "tests": [
             {
               "inputs": {
@@ -216,6 +223,8 @@
                 "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
                 "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
                 "out_directory": "${sample_id}.paraphase",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -239,7 +248,7 @@
         },
         "hificnv": {
           "key": "hificnv",
-          "digest": "nepijik7v6vvks3v3kz2immxudhe46po",
+          "digest": "lx7w222woihnfuxinxrhx6xswoja6u2z",
           "tests": [
             {
               "inputs": {
@@ -309,7 +318,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "l7ihfntkjdyomkcfhhnnmwqawkk7pq4e",
+          "digest": "hnaklilhvfhzokyogil55ymtufpzugdc",
           "tests": [
             {
               "inputs": {
@@ -339,7 +348,7 @@
       "tasks": {
         "whatshap_stats": {
           "key": "whatshap_stats",
-          "digest": "6akbott6gk55sz7nzmhnrkaqvnztg3gw",
+          "digest": "fx6u534oxskfrvjpo57wpruv3qvuy6wd",
           "tests": [
             {
               "inputs": {
@@ -388,7 +397,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "uz6sochgixdybuzk5hcukvz3fybdp6uk",
+          "digest": "ik4zsyy76etbsbuq3dapogju47ck4oxi",
           "tests": [
             {
               "inputs": {
@@ -419,7 +428,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "yxnm7toivkmsrrs4h3x72wdrtxd2lo72",
+          "digest": "zglkxnubs7arukywr6dtr2rmlrs4l6si",
           "tests": [
             {
               "inputs": {
@@ -449,7 +458,7 @@
       "tasks": {
         "whatshap_haplotag": {
           "key": "whatshap_haplotag",
-          "digest": "ptsadvieuojksiqxiuww65xjcqb4owyc",
+          "digest": "3lgrlpqwmyqwmtn325tllb7chycenhla",
           "tests": [
             {
               "inputs": {
@@ -482,7 +491,7 @@
       "tasks": {
         "whatshap_phase": {
           "key": "whatshap_phase",
-          "digest": "s44b227slyhokaspyzkifpiguonh7xfc",
+          "digest": "v6wsfphrdmgkzy6ecvdd5mzmq4l7fkfu",
           "tests": [
             {
               "inputs": {
@@ -533,7 +542,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "aptpgmivcvoe2oqukhsclkwvqq7wqmco",
+          "digest": "rjnujhi7onhoprtlqba2aqvj5jzvzora",
           "tests": [
             {
               "inputs": {
@@ -573,7 +582,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "bdda4j7w27byf2wwp6hp63du7okatfhj",
+          "digest": "53w2go2kuiyvtsty6yaxqaqdlf2mki3a",
           "tests": [
             {
               "inputs": {
@@ -607,7 +616,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "i2tzlr7ni5gglbe7regxody2bttg35na",
+          "digest": "fzvpxhpi2a5nyyys7ktoirf4ww2exbe3",
           "tests": [
             {
               "inputs": {
@@ -637,7 +646,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "ztehyikkh5aysqbtbu6ao234rlkkzkh3",
+          "digest": "3is7ye6wciqqqeh3de43nkjkemqtip6n",
           "tests": [
             {
               "inputs": {
@@ -683,7 +692,7 @@
       "tasks": {
         "split_vcf": {
           "key": "split_vcf",
-          "digest": "nnbtwcqdgbqxbu2lu4w6iqoyl2lk5a2w",
+          "digest": "adwcwarx5ozmifuokiw2do4wapz3yd7n",
           "tests": [
             {
               "inputs": {
@@ -708,7 +717,7 @@
         },
         "bcftools_concat": {
           "key": "bcftools_concat",
-          "digest": "gxvd73efkxw2zvkuop5dqglosxgvc7bc",
+          "digest": "44ywq2fpvbyvcfieryrek6wzkjiwydlk",
           "tests": [
             {
               "inputs": {
@@ -745,11 +754,11 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "cw5eizdd4reqibnagkdeknljww3wp6fg",
+          "digest": "acn7tx4he7l62firf7r5jlir2mswwnjd",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
+                "sample_id": "${sample_id}",
                 "aligned_bams": [
                   "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
                   "${resources_file_path}/HG005.m64017_200730_190124.hifi_reads.GRCh38.aligned.bam",
@@ -770,153 +779,23 @@
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "deepvariant_threads": 64,
-                "deepvariant_version": "1.4.0",
+                "task_start_index": 0,
+                "tasks_per_shard": 8,
+                "total_deepvariant_tasks": 64,
+                "deepvariant_version": "1.5.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "example_tfrecords": {
-                  "value": [
-                    "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
-                    "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
-                  ],
+                "example_tfrecord_tar": {
+                  "value": "${resources_file_path}/deepvariant/${sample_id}.0.example_tfrecords.tar.gz",
                   "test_tasks": [
-                    "compare_file_basename_array",
-                    "check_gzip_array"
+                    "compare_file_basename"
                   ]
                 },
-                "nonvariant_site_tfrecords": {
-                  "value": [
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                    "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
-                  ],
+                "nonvariant_site_tfrecord_tar": {
+                  "value": "${resources_file_path}/deepvariant/${sample_id}.0.nonvariant_site_tfrecords.tar.gz",
                   "test_tasks": [
-                    "compare_file_basename_array",
-                    "check_gzip_array"
+                    "compare_file_basename"
                   ]
                 }
               }
@@ -925,85 +804,29 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "g5qadaivoa4iqokivb542s7mtc6baqec",
+          "digest": "twtudsgxn2uwfuulbrhj2vpmkspckt3f",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
-                "example_tfrecords": [
-                  "${resources_file_path}/HG005.examples.tfrecord-00000-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00001-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00002-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00003-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00004-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00005-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00006-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00007-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00008-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00009-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00010-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00011-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00012-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00013-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00014-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00015-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00016-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00017-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00018-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00019-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00020-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00021-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00022-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00023-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00024-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00025-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00026-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00027-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00028-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00029-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00030-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00031-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00032-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00033-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00034-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00035-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00036-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00037-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00038-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00039-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00040-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00041-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00042-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00043-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00044-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00045-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00046-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00047-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00048-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00049-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00050-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00051-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00052-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00053-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00054-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00055-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00056-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00057-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00058-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00059-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00060-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00061-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00062-of-00064.gz",
-                  "${resources_file_path}/HG005.examples.tfrecord-00063-of-00064.gz"
-                ],
+                "sample_id": "${sample_id}",
                 "reference_name": "GRCh38",
-                "deepvariant_threads": 64,
-                "deepvariant_version": "1.4.0",
+                "example_tfrecord_tars": [
+                  "${resources_file_path}/deepvariant/${sample_id}.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.56.example_tfrecords.tar.gz"
+                ],
+                "total_deepvariant_tasks": 64,
+                "deepvariant_version": "1.5.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecord": {
-                  "value": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
+                  "value": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1015,88 +838,32 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "xd55osu4baa5ljt22cuy4khywcojbovo",
+          "digest": "angvgpjz6i5uh4qnzgrv3p6pyre6ub7w",
           "tests": [
             {
               "inputs": {
-                "sample_id": "HG005",
-                "tfrecord": "${resources_file_path}/HG005.GRCh38.call_variants_output.tfrecord.gz",
-                "nonvariant_site_tfrecords": [
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00000-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00001-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00002-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00003-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00004-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00005-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00006-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00007-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00008-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00009-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00010-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00011-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00012-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00013-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00014-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00015-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00016-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00017-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00018-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00019-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00020-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00021-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00022-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00023-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00024-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00025-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00026-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00027-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00028-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00029-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00030-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00031-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00032-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00033-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00034-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00035-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00036-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00037-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00038-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00039-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00040-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00041-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00042-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00043-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00044-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00045-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00046-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00047-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00048-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00049-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00050-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00051-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00052-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00053-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00054-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00055-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00056-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00057-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00058-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00059-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00060-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00061-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00062-of-00064.gz",
-                  "${resources_file_path}/HG005.gvcf.tfrecord-00063-of-00064.gz"
+                "sample_id": "${sample_id}",
+                "tfrecord": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
+                "nonvariant_site_tfrecord_tars": [
+                  "${resources_file_path}/deepvariant/${sample_id}.0.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.8.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.16.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.24.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.32.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.40.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.48.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant/${sample_id}.56.nonvariant_site_tfrecords.tar.gz"
                 ],
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
-                "deepvariant_threads": 64,
-                "deepvariant_version": "1.4.0",
+                "total_deepvariant_tasks": 64,
+                "deepvariant_version": "1.5.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                  "value": "${resources_file_path}/${sample_id}.GRCh38.deepvariant.vcf.gz",
                   "test_tasks": [
                     "calculate_md5sum",
                     "compare_file_basename",
@@ -1105,20 +872,12 @@
                   ]
                 },
                 "gvcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.g.vcf.gz",
+                  "value": "${resources_file_path}/${sample_id}.GRCh38.deepvariant.g.vcf.gz",
                   "test_tasks": [
                     "calculate_md5sum",
                     "compare_file_basename",
                     "check_gzip",
                     "vcftools_validator"
-                  ]
-                },
-                "report": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.visual_report.html",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "html_validator"
                   ]
                 }
               }
@@ -1208,7 +967,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "zl4ir6jskp56yz7icaolco5cfttsi577",
+          "digest": "hms5gmz555lpf34c42vl6n6g4p6ysmjz",
           "tests": [
             {
               "inputs": {
@@ -1231,7 +990,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "vkhoiclkwwfidgav3aaz3ois6clv7gc7",
+          "digest": "xgfz3iva5eqnk775j2pgwsn36jagqgqw",
           "tests": [
             {
               "inputs": {
@@ -1261,7 +1020,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "66egzu7zo2jti56lcmogtlkpno4eju5f",
+          "digest": "wq4dvlnqcw4urdx2acd6oinx47ku5khh",
           "tests": [
             {
               "inputs": {
@@ -1286,7 +1045,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "titsitdutc5jzyv67uxeqfr6slswvqot",
+          "digest": "bhj67yauwchm5aft7fru6rljgl2peiiu",
           "tests": [
             {
               "inputs": {
@@ -1323,7 +1082,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "eopecz3mvpeqwv4a5lzxkpyni76lhq5x",
+          "digest": "e5wxcxlxkc4zlik74532wfdfosjygqbl",
           "tests": [
             {
               "inputs": {
@@ -1358,7 +1117,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "fb3rv3tslzjm4vacriulntz77h36jxyh",
+          "digest": "iblo5v62tj4w2v3zzgamotyvyyzeakc5",
           "tests": [
             {
               "inputs": {

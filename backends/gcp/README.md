@@ -22,4 +22,6 @@ For example, the zones in region us-central1 are `"us-central1-a us-central1-b u
 
 ## Reference data hosted in GCP
 
-\<TODO>
+GCP reference data is hosted in the `us-west1` region in the bucket `gs://pacbio-wdl`. This bucket is requester-pays, meaning that users will need to [provide a billing project in their Cromwell configuration](https://cromwell.readthedocs.io/en/stable/filesystems/GoogleCloudStorage/) in order to use files located in this bucket.
+
+To avoid egress charges, Cromwell should be set up to spin up compute resources in the same region in which the data is located. If possible, add cohort data to the same region as the reference dataset, or consider mirroring this dataset in the region where your data is located. See [Google's information about data storage and egress charges for more information](https://cloud.google.com/storage/pricing).

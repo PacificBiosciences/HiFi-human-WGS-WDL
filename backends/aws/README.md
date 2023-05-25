@@ -4,13 +4,25 @@ The Amazon Genomics CLI (`agc`) allows users to orchestrate workflow execution u
 
 ## Deploying a context with `agc`
 
-Once you have installed and authenticated with the `agc`, you can deploy a context using an agc project YAML file.
+Once you have installed and authenticated with the `agc`, you can deploy a context using an agc project YAML file. This file must be named `agc-project.yaml`.
 
-An [example agc-project.yaml file](agc-project.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `humanwgsAGC`, with either (or both) a `spotContext` or an `onDemandContext`. The `spotContext` will allow you to run worklfows using [AWS spot instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html), which can result in substantial cost savings relative to using [on-demand instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-on-demand-instances.html).
+An [example agc-project.yaml file](agc-project.template.yaml) that has the workflow, reference data source, and both on-demand and spot contexts configured using Cromwell as the engine is provided here. This will create an agc project named `humanwgsAGC`, with either (or both) a `spotContext` or an `onDemandContext`. The `spotContext` will allow you to run worklfows using [AWS spot instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-spot-instances.html), which can result in substantial cost savings relative to using [on-demand instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-on-demand-instances.html).
 
 Note that deploying a context **will incur costs** even if you are not actively running workflows; ensure that [contexts that are not in use are destroyed](https://aws.github.io/amazon-genomics-cli/docs/reference/agc_context_destroy/) to avoid incurring ongoing costs.
 
-To deploy the context, from the directory containing the `agc-project.yaml` file, run:
+To deploy the agc project using the template file, first copy the template file to a file named `agc-project.yaml` (`cp agc-project.template.yaml agc-project.yaml`).
+
+In the `data` section of the `agc-project.yaml` file, add any additional s3 buckets that the workflow will require access to, for example the bucket containing sample input data. Make sure that you do not remove the section granting access to the s3://dnastack-resources bucket; this is where [reference datasets are hosted](#reference-data-hosted-in-aws).
+
+```
+data:
+  - location: s3://dnastack-resources
+    readOnly: true
+  - location: s3://<sample_data_bucket_name>
+    readOnly: true
+```
+
+Then from the directory containing the `agc-project.yaml` file, run:
 
 ```bash
 agc context deploy --context ${context}
@@ -23,6 +35,8 @@ If you want both spot and on-demand contexts, all contexts can be deployed at on
 ```
 agc context deploy --all
 ```
+
+Note that the `miniwdl` engine run via AWS is currently not supported for this workflow.
 
 # Checking and requesting quota in AWS
 
@@ -91,7 +105,7 @@ The running workflow can be monitored via [`agc workflow` commands](https://aws.
 
 # Reference data hosted in AWS
 
-AWS reference data is hosted in the `us-west-2` region  in the bucket `s3://dnastack-resources`.
+AWS reference data is hosted in the `us-west-2` region in the bucket `s3://dnastack-resources`.
 
 To use AWS reference data, add the following line to the data section of your [`agc-project.yaml`](https://aws.github.io/amazon-genomics-cli/docs/concepts/projects/):
 
@@ -101,7 +115,7 @@ data:
     readOnly: true
 ```
 
-The [AWS input file template](inputs.aws.json) has paths to the reference files in s3 prefilled. The template [agc-project.yaml](agc-project.yaml) file has this section filled out already; you will not need to edit it further if you are deploying a context using this file.
+The [AWS input file template](inputs.aws.json) has paths to the reference files in s3 prefilled. The template [agc-project.template.yaml file](agc-project.template.yaml) has this section filled out already.
 
 ### Granting access to other data files
 
