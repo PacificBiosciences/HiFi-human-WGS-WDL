@@ -24,7 +24,7 @@ The workflow requires at minimum 64 cores and 48 GB of RAM. Ensure that the back
 
 ## Reference datasets and associated workflow files
 
-Reference datasets are hosted publicly for use in the pipeline. For data locations, the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
+Reference datasets are hosted publicly for use in the pipeline. For data locations, see the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
 
 # Running the workflow
 
@@ -293,7 +293,7 @@ These files will be output for each run of the workflow if `run_tertiary_analysi
 
 # Tool versions and Docker images
 
-Docker images definitions used by the human WGS workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
+Docker images definitions used by this workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
 
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb<...>b01f80fe
