@@ -14,6 +14,13 @@ Fill out any information missing in [the inputs file](inputs.azure.json).
 
 See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
 
+## Running the workflow
+
+### Running via Workbench
+
+1. [Register the engine in Workbench](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine)
+2. [Follow the instructions in the README to run the workflow via Workbench](../../README.md#run-using-workbench)
+
 # Reference data hosted in Azure
 
 To use Azure reference data, add the following line to your `containers-to-mount` file in your Cromwell on Azure installation ([more info here](https://github.com/microsoft/CromwellOnAzure/blob/develop/docs/troubleshooting-guide.md#use-input-data-files-from-an-existing-azure-storage-account-that-my-lab-or-team-is-currently-using)):

@@ -3,88 +3,109 @@
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
 - For the snakemake version of these workflows, see [here](https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake).
-
 - Docker images used by these workflows are defined in [the wdl-dockerfiles repo](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
-
-- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common). This repository is a submodule of the wdl-humanwgs repo; ensure the submodule has been initialized prior to attempting to run the workflow  (`git submodule update --init --recursive`).
+- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common).
 
 # Workflow
 
-This human WGS workflow performs alignment, variant calling, and variant phasing, as well as joint-calling small variants and structural variants for families, and optional variant filtering and annotation. The workflow can run using Azure, AWS, GCP, and HPC backends.
+**Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
+
+The human WGS workflow performs read alignment, variant calling and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
 
+## Setup
+
+Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+
+## Resource requirements
+
+The workflow requires at minimum 64 cores and 48 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+
+## Reference datasets and associated workflow files
+
+Reference datasets are hosted publicly for use in the pipeline. For data locations, the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
+
 # Running the workflow
 
-**Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
+1. [Select a backend environment](#selecting-a-backend)
+2. [Configure a workflow execution engine in the chosen environment](#configuring-a-workflow-engine)
+3. [Optional] [Register the engine in Workbench](#registering-a-workflow-engine-in-workbench)
+4. [Fill out the inputs JSON file for your cohort](#filling-out-the-inputs-json)
+5. [Run the workflow](#running-the-workflow-1)
 
-Some tasks and workflows are pulled in from other repositories. Make sure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+## Selecting a backend
 
-## Backend environments
+The workflow can be run on Azure, AWS, GCP, or HPC. Your choice of backend will largely be determined by the location of your data.
 
-The workflow can be run on Azure, AWS, GCP, or HPC. For backend-specific configuration, see the relevant documentation:
+For backend-specific configuration, see the relevant documentation:
 
 - [Azure](backends/azure)
 - [AWS](backends/aws)
 - [GCP](backends/gcp)
 - [HPC](backends/hpc)
 
-## Resource requirements
+## Configuring a workflow engine
 
-The workflow requires at minimum 64 cores and 48 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+An execution engine is required to run workflows. Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
 
-## Workflow engines
-
-Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
-
-The workflow engine that you choose will depend on where your data is located.
+See [Workbench's documentation](https://docs.dnastack.com/docs/introduction-to-engines-and-backends) as well as the [backend-specific documentation](backends) for details on setting up an engine.
 
 | Engine | Azure | AWS | GCP | HPC |
 | :- | :- | :- | :- | :- |
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
 
-## Setting up and running the workflow
+## Registering a workflow engine in Workbench
 
-1. Install and configure the workflow execution engine of your choice following the documentation for the backend environment where your data is located. See the [backend environments](#backend-environments) section for more information on configuring engines and quotas.
+Once an engine has been configured, it can optionally be registered in [Workbench](https://workbench.dnastack.com/) to enable a unified interface for workflow submission, monitoring, and statistics. Once configured, workflow runs may be submitted either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the Workbench CLI](#run-using-workbench).
 
-2. Select the input template file ([Azure](backends/azure/inputs.azure.json), [AWS](backends/aws/inputs.aws.json), [GCP](backends/gcp/inputs.gcp.json), [HPC](backends/hpc/inputs.hpc.json)) that matches the backend environment where you will be executing the workflows. These files have reference dataset information prefilled. If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
+See [Workbench's documentation](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine) for details on how to register an engine in Workbench. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
 
-3. Fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
+Workbench requires a license to use. For information on obtaining a license or to set up a demo, please contact [support@dnastack.com](mailto:support@dnastack.com).
 
-4. Run the workflow using the engine and backend of choice ([miniwdl](#running-using-miniwdl), [Cromwell](#running-using-cromwell), [Workbench](#running-using-workbench)).
+## Filling out the inputs JSON
 
-### Run using miniwdl
+The input to a workflow run is defined in JSON format. Template input files with reference dataset information filled out are available for each backend:
+
+- [Azure](backends/azure/inputs.azure.json)
+- [AWS](backends/aws/inputs.aws.json)
+- [GCP](backends/gcp/inputs.gcp.json)
+- [HPC](backends/hpc/inputs.hpc.json)
+
+Using the appropriate inputs template file, fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
+
+If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
+
+## Running the workflow
+
+Run the workflow using the engine and backend that you have configured ([miniwdl](#run-directly-using-miniwdl), [Cromwell](#run-directly-using-cromwell), [Workbench](#run-using-workbench)).
+
+Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the engine directly on the machine on which it has been deployed. Depending on the backend you have configured, you may be able to submit workflows using different methods (e.g. using trigger files in Azure, or using the Amazon Genomics CLI in AWS). Calls to the Workbench CLI will be the same regardless of the engine/backend combination.
+
+### Run directly using miniwdl
 
 `miniwdl run workflows/main.wdl -i <input_file_path.json>`
 
-### Run using Cromwell
+### Run directly using Cromwell
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
 ### Run using Workbench
 
-```bash
-dnastack alpha workbench runs submit \
-	--workflow-params '@<input_file_path.json>' \
-	--url <internalId>
-```
+Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/). Workbench presents a unified interface to the respective backends and engines. Workflow runs may be submitted and monitored either [directly in-browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or using the command-line interface (CLI) (see below).
 
-See the next section for details on configuring engines and submitting workflow runs using Workbench.
+Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
 
-## Running and monitoring workflows using Workbench
+1. [Install and configure the DNAstack CLI](#installing-and-configuring-the-dnastack-cli)
+2. [Register the workflow on Workbench](#registering-the-workflow-on-workbench)
+3. [Submit a workflow run](#submitting-workflow-runs-via-workbench)
 
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines are set up in the desired backend and then registered with Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
+Steps (1) and (2) are one-time setup, following which any number of workflow runs may be submitted.
 
-Note that a license is required to submit runs using Workbench.
+For assistance and licensing, please contact [support@dnastack.com](mailto:support@dnastack.com).
 
-### Configuring an engine
-
-Workflows submitted via Workbench must be submitted to an execution engine. See [the Workbench documentation](https://docs.dnastack.com/docs/workbench-settings) for details about setting up an engine in the backend of your choice. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
-
-Once the engine has been set up, follow the documentation for registering the engine with Workbench, following which you will be able to submit workflow runs using Workbench either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the CLI](#running-the-workflow-using-the-workbench-cli).
-
-### Installing and configuring the DNAstack CLI
+#### Installing and configuring the DNAstack CLI
 
 1. Install the DNAstack CLI
 
@@ -100,13 +121,9 @@ Confirm that the CLI is installed and available by running `dnastack --version`.
 
 `dnastack use workbench.dnastack.com`
 
-You can now use the DNAstack CLI to interact with Workbench. See [the CLI documentation](https://docs.dnastack.com/docs/runs-submit) for details on available commands.
+You can now use the DNAstack CLI to interact with Workbench.
 
-### Running the workflow using the Workbench CLI
-
-Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
-
-1. Register the workflow on Workbench
+#### Registering the workflow on Workbench
 
 From the root of this repository, run:
 
@@ -116,30 +133,25 @@ dnastack alpha workbench workflows create \
 	--description =@README.md \
 	workflows/main.wdl
 ```
-
 Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
 
-2. Fill out the inputs.json file
+This step only needs to be completed once, when initially registering the workflow. Following this initial setup, additional runs may be submitted by using the same `internalId` recorded here.
 
-The inputs you use will depend on the backend where you've set up your engine. Template files for [AWS](backends/aws/inputs.aws.json), [Azure](backends/azure/inputs.azure.json), and [GCP](backends/gcp/inputs.gcp.json) with reference file locations already filled out can be used to get started; see [the workflow inputs section](#workflow-inputs) for information on the other fields you will need to fill out.
+#### Submitting workflow runs via Workbench
 
-3. Submit the workflow to Workbench
-
-In the following command, replace `<input_file_path.json>` with the path to your filled out inputs file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
+In the following command, replace `<input_file_path.json>` with the path to your filled out inputs file, and `<internalId>` with the ID you noted in step (1). If no engine is provided, the default engine you have configured will be used.
 
 ```bash
-dnastack alpha workbench runs submit \
-	--workflow-params '@<input_file_path.json>' \
+dnastack workbench runs submit \
+	--workflow-params @<input_file_path.json> \
 	--url <internalId> \
 	[--tags <key=value>] \
 	[--engine <engineId>]
 ```
 
-# Reference datasets and associated workflow files
-
-Reference datasets are hosted publicly for use in the pipeline. For data locations, the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
-
 # Workflow inputs
+
+This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially [run/backend-specific sections](#other-inputs) will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](backends).
 
 ## [Cohort](workflows/humanwgs_structs.wdl)
 
