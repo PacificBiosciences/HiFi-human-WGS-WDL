@@ -26,6 +26,7 @@ workflow humanwgs {
 		String? zones
 		String? aws_spot_queue_arn
 		String? aws_on_demand_queue_arn
+		String? container_registry
 
 		Boolean preemptible
 	}
@@ -35,7 +36,8 @@ workflow humanwgs {
 			backend = backend,
 			zones = zones,
 			aws_spot_queue_arn = aws_spot_queue_arn,
-			aws_on_demand_queue_arn = aws_on_demand_queue_arn
+			aws_on_demand_queue_arn = aws_on_demand_queue_arn,
+			container_registry = container_registry
 	}
 
 	RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
@@ -145,6 +147,7 @@ workflow humanwgs {
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
 		aws_spot_queue_arn: {help: "Queue ARN for the spot batch queue; required if backend is set to 'AWS'"}
 		aws_on_demand_queue_arn: {help: "Queue ARN for the on demand batch queue; required if backend is set to 'AWS'"}
+		container_registry: {help: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used."}
 		preemptible: {help: "Where possible, run tasks preemptibly"}
 	}
 }

@@ -92,6 +92,5 @@
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
   "humanwgs.backend": "HPC",
-  "humanwgs.zones": "String",
-  "humanwgs.preemptible": "Boolean"
+  "humanwgs.preemptible": true
 }
