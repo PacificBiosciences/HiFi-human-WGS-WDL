@@ -20,7 +20,7 @@ Some tasks and workflows are pulled in from other repositories. Ensure you have 
 
 ## Resource requirements
 
-The workflow requires at minimum 64 cores and 48 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+The workflow requires at minimum 64 cores and 96 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
 
 ## Reference datasets and associated workflow files
 
