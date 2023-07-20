@@ -263,7 +263,7 @@ task pbmm2_align {
 		pbmm2 align \
 			--num-threads ~{threads} \
 			--sort-memory 4G \
-			--preset CCS \
+			--preset HIFI \
 			--sample ~{sample_id} \
 			--log-level INFO \
 			--sort \
