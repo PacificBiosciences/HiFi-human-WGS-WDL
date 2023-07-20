@@ -19,7 +19,7 @@ workflow humanwgs {
 		Int? pbsv_call_mem_gb
 		Int? glnexus_mem_gb
 
-		Boolean run_tertiary_analysis = true
+		Boolean run_tertiary_analysis = false
 
 		# Backend configuration
 		String backend

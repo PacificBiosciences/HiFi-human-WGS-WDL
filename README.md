@@ -222,7 +222,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
@@ -279,7 +279,7 @@ These files will be output if the cohort includes more than one sample.
 
 ## Tertiary analysis
 
-These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true` (this is the default). The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
+These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true`. The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
 - If the number of samples is equal to one, the files being annotated in this step are the sample small variant VCF and SV VCF.
 - If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called small variant VCF and the cohort SV VCF.
 
