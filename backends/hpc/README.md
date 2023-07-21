@@ -33,11 +33,6 @@ See [the inputs section of the main README](../../README.md#workflow-inputs) for
 
 `cromwell run workflows/main.wdl -i <inputs_json_file>`
 
-### Running via Workbench
-
-1. [Register the engine in Workbench](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine)
-2. [Follow the instructions in the README to run the workflow via Workbench](../../README.md#run-using-workbench)
-
 # Reference data bundle
 
 ![https://doi.org/10.5281/zenodo.7922357](https://zenodo.org/badge/DOI/10.5281/zenodo.7922357.svg)
