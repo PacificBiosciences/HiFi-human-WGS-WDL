@@ -161,7 +161,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 | :- | :- | :- | :- |
 | String | cohort_id | A unique name for the cohort; used to name outputs | |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
-| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort | |
+| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `HP:0000001`, can be used. | |
 
 ### [Sample](workflows/humanwgs_structs.wdl)
 
