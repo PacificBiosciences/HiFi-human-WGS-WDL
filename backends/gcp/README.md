@@ -22,6 +22,10 @@ For example, the zones in region us-central1 are `"us-central1-a us-central1-b u
 
 ## Running the workflow
 
+### Running via Google's genomics Pipelines API
+
+[Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used as an example for how to run the workflow.
+
 
 # Reference data hosted in GCP
 
