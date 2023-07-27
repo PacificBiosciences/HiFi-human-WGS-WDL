@@ -1,8 +1,11 @@
+# DISCLAIMER
+
+TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.
+
 # wdl-humanwgs
 
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
-- For the snakemake version of these workflows, see [here](https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake).
 - Docker images used by these workflows are defined in [the wdl-dockerfiles repo](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
 - Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common).
 
@@ -30,9 +33,8 @@ Reference datasets are hosted publicly for use in the pipeline. For data locatio
 
 1. [Select a backend environment](#selecting-a-backend)
 2. [Configure a workflow execution engine in the chosen environment](#configuring-a-workflow-engine)
-3. [Optional] [Register the engine in Workbench](#registering-a-workflow-engine-in-workbench)
-4. [Fill out the inputs JSON file for your cohort](#filling-out-the-inputs-json)
-5. [Run the workflow](#running-the-workflow-1)
+3. [Fill out the inputs JSON file for your cohort](#filling-out-the-inputs-json)
+4. [Run the workflow](#running-the-workflow-1)
 
 ## Selecting a backend
 
@@ -49,20 +51,12 @@ For backend-specific configuration, see the relevant documentation:
 
 An execution engine is required to run workflows. Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
 
-See [Workbench's documentation](https://docs.dnastack.com/docs/introduction-to-engines-and-backends) as well as the [backend-specific documentation](backends) for details on setting up an engine.
+See the [backend-specific documentation](backends) for details on setting up an engine.
 
 | Engine | Azure | AWS | GCP | HPC |
 | :- | :- | :- | :- | :- |
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
-
-## Registering a workflow engine in Workbench
-
-Once an engine has been configured, it can optionally be registered in [Workbench](https://workbench.dnastack.com/) to enable a unified interface for workflow submission, monitoring, and statistics. Once configured, workflow runs may be submitted either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the Workbench CLI](#run-using-workbench).
-
-See [Workbench's documentation](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine) for details on how to register an engine in Workbench. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
-
-Workbench requires a license to use. For information on obtaining a license or to set up a demo, please contact [support@dnastack.com](mailto:support@dnastack.com).
 
 ## Filling out the inputs JSON
 
@@ -79,9 +73,9 @@ If using an HPC backend, you will need to download the reference bundle and repl
 
 ## Running the workflow
 
-Run the workflow using the engine and backend that you have configured ([miniwdl](#run-directly-using-miniwdl), [Cromwell](#run-directly-using-cromwell), [Workbench](#run-using-workbench)).
+Run the workflow using the engine and backend that you have configured ([miniwdl](#run-directly-using-miniwdl), [Cromwell](#run-directly-using-cromwell)).
 
-Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the engine directly on the machine on which it has been deployed. Depending on the backend you have configured, you may be able to submit workflows using different methods (e.g. using trigger files in Azure, or using the Amazon Genomics CLI in AWS). Calls to the Workbench CLI will be the same regardless of the engine/backend combination.
+Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the engine directly on the machine on which it has been deployed. Depending on the backend you have configured, you may be able to submit workflows using different methods (e.g. using trigger files in Azure, or using the Amazon Genomics CLI in AWS).
 
 ### Run directly using miniwdl
 
@@ -90,64 +84,6 @@ Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the eng
 ### Run directly using Cromwell
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
-
-### Run using Workbench
-
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/). Workbench presents a unified interface to the respective backends and engines. Workflow runs may be submitted and monitored either [directly in-browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or using the command-line interface (CLI) (see below).
-
-Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
-
-1. [Install and configure the DNAstack CLI](#installing-and-configuring-the-dnastack-cli)
-2. [Register the workflow on Workbench](#registering-the-workflow-on-workbench)
-3. [Submit a workflow run](#submitting-workflow-runs-via-workbench)
-
-Steps (1) and (2) are one-time setup, following which any number of workflow runs may be submitted.
-
-For assistance and licensing, please contact [support@dnastack.com](mailto:support@dnastack.com).
-
-#### Installing and configuring the DNAstack CLI
-
-1. Install the DNAstack CLI
-
-`python3 -m pip install --user dnastack-client-library`
-
-Confirm that the CLI is installed and available by running `dnastack --version`.
-
-2. Authenticate using the CLI
-
-`dnastack auth login`
-
-3. Configure the CLI to use workbench
-
-`dnastack use workbench.dnastack.com`
-
-You can now use the DNAstack CLI to interact with Workbench.
-
-#### Registering the workflow on Workbench
-
-From the root of this repository, run:
-
-```bash
-dnastack alpha workbench workflows create \
-	--name "PacBio HumanWGS" \
-	--description =@README.md \
-	workflows/main.wdl
-```
-Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
-
-This step only needs to be completed once, when initially registering the workflow. Following this initial setup, additional runs may be submitted by using the same `internalId` recorded here.
-
-#### Submitting workflow runs via Workbench
-
-In the following command, replace `<input_file_path.json>` with the path to your filled out inputs file, and `<internalId>` with the ID you noted in step (1). If no engine is provided, the default engine you have configured will be used.
-
-```bash
-dnastack workbench runs submit \
-	--workflow-params @<input_file_path.json> \
-	--url <internalId> \
-	[--tags <key=value>] \
-	[--engine <engineId>]
-```
 
 # Workflow inputs
 
@@ -222,7 +158,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
@@ -279,7 +215,7 @@ These files will be output if the cohort includes more than one sample.
 
 ## Tertiary analysis
 
-These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true` (this is the default). The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
+These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true`. The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
 - If the number of samples is equal to one, the files being annotated in this step are the sample small variant VCF and SV VCF.
 - If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called small variant VCF and the cohort SV VCF.
 

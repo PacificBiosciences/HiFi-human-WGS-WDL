@@ -318,8 +318,8 @@ task slivar_small_variant {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Float max_gnomad_af = 0.01
-	Float max_hprc_af = 0.01
+	Float max_gnomad_af = 0.03
+	Float max_hprc_af = 0.03
 	Int max_gnomad_nhomalt = 4
 	Int max_hprc_nhomalt = 4
 	Int max_gnomad_ac = 4

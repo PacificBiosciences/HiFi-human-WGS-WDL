@@ -22,10 +22,10 @@ For example, the zones in region us-central1 are `"us-central1-a us-central1-b u
 
 ## Running the workflow
 
-### Running via Workbench
+### Running via Google's genomics Pipelines API
 
-1. [Register the engine in Workbench](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine)
-2. [Follow the instructions in the README to run the workflow via Workbench](../../README.md#run-using-workbench)
+[Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used as an example for how to run the workflow.
+
 
 # Reference data hosted in GCP
 

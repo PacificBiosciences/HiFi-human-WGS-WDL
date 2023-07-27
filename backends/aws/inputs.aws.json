@@ -90,7 +90,7 @@
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
-  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
+  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
   "humanwgs.backend": "AWS",
   "humanwgs.zones": "us-east-2a us-east-2b us-east-2c",
   "humanwgs.aws_spot_queue_arn": "",

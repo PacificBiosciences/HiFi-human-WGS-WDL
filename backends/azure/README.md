@@ -16,10 +16,9 @@ See [the inputs section of the main README](../../README.md#workflow-inputs) for
 
 ## Running the workflow
 
-### Running via Workbench
+### Running via Cromwell on Azure
 
-1. [Register the engine in Workbench](https://docs.dnastack.com/docs/connecting-to-a-workflow-engine)
-2. [Follow the instructions in the README to run the workflow via Workbench](../../README.md#run-using-workbench)
+Instructions for running a workflow from Cromwell on Azure are described in [the Cromwell on Azure documentation](https://github.com/microsoft/CromwellOnAzure/wiki/Running-Workflows).
 
 # Reference data hosted in Azure
 
