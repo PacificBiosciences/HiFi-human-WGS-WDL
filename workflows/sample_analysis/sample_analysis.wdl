@@ -263,7 +263,7 @@ task pbmm2_align {
 		pbmm2 align \
 			--num-threads ~{threads} \
 			--sort-memory 4G \
-			--preset CCS \
+			--preset HIFI \
 			--sample ~{sample_id} \
 			--log-level INFO \
 			--sort \
@@ -529,16 +529,8 @@ task cpg_pileup {
 	>>>
 
 	output {
-		Array[File] pileup_beds = [
-			"~{output_prefix}.combined.bed",
-			"~{output_prefix}.hap1.bed",
-			"~{output_prefix}.hap2.bed"
-		]
-		Array[File] pileup_bigwigs = [
-			"~{output_prefix}.combined.bw",
-			"~{output_prefix}.hap1.bw",
-			"~{output_prefix}.hap2.bw"
-		]
+		Array[File] pileup_beds = glob("~{output_prefix}.*.bed")
+		Array[File] pileup_bigwigs = glob("~{output_prefix}.*.bw")
 	}
 
 	runtime {

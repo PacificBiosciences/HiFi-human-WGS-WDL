@@ -14,6 +14,12 @@ Fill out any information missing in [the inputs file](inputs.azure.json).
 
 See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
 
+## Running the workflow
+
+### Running via Cromwell on Azure
+
+Instructions for running a workflow from Cromwell on Azure are described in [the Cromwell on Azure documentation](https://github.com/microsoft/CromwellOnAzure/wiki/Running-Workflows).
+
 # Reference data hosted in Azure
 
 To use Azure reference data, add the following line to your `containers-to-mount` file in your Cromwell on Azure installation ([more info here](https://github.com/microsoft/CromwellOnAzure/blob/develop/docs/troubleshooting-guide.md#use-input-data-files-from-an-existing-azure-storage-account-that-my-lab-or-team-is-currently-using)):

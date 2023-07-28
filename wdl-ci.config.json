@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "dzg46ma4dzagcrbk4etephzler55oui4",
+          "digest": "pt32pza4ixkxvdrdgeok5qbyi557dpoa",
           "tests": [
             {
               "inputs": {
@@ -174,7 +174,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "q6pg4iol4c54q74irxuyt3e3nfktvnt6",
+          "digest": "cinr72vwzoyq6lri7qi7xjq3ppzd7u4c",
           "tests": [
             {
               "inputs": {
@@ -990,7 +990,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "xgfz3iva5eqnk775j2pgwsn36jagqgqw",
+          "digest": "betwggtcswgjiicesikqety24zamxnli",
           "tests": [
             {
               "inputs": {

@@ -1,6 +1,6 @@
 # Configuring the Amazon Genomics CLI
 
-The Amazon Genomics CLI (`agc`) allows users to orchestrate workflow execution using AWS Batch. See the [getting started docs](https://aws.github.io/amazon-genomics-cli/docs/) for information on installing and using the `agc` to configure and run workflows.
+The Amazon Genomics CLI (`agc`) allows users to orchestrate workflow execution using AWS Batch. See the [Workbench documentation](https://docs.dnastack.com/docs/cromwell-on-aws-amazon-genomics-cli) for information on installing and using the `agc` to configure and run workflows. The following section provides additional information on deploying a project using the `agc`.
 
 ## Deploying a context with `agc`
 
@@ -97,6 +97,8 @@ For example, the zones in region us-east-2 are `"us-east-2a us-east-2b us-east-2
 
 ## Running the workflow
 
+### Running via `agc`
+
 From the directory where your `agc-project.yaml` is located, run:
 
 `agc workflow run humanwgs --context <context> --inputsFile <input_file_path.json>`
@@ -114,7 +116,6 @@ data:
   - location: s3://dnastack-resources
     readOnly: true
 ```
-
 The [AWS input file template](inputs.aws.json) has paths to the reference files in s3 prefilled. The template [agc-project.template.yaml file](agc-project.template.yaml) has this section filled out already.
 
 ### Granting access to other data files

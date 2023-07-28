@@ -25,11 +25,11 @@ See [the inputs section of the main README](../../README.md#workflow-inputs) for
 
 ## Running the workflow
 
-### Via miniwdl
+### Running via miniwdl
 
 `miniwdl run workflows/main.wdl -i <inputs_json_file>`
 
-### Via Cromwell
+### Running via Cromwell
 
 `cromwell run workflows/main.wdl -i <inputs_json_file>`
 

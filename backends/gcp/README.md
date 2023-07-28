@@ -20,7 +20,14 @@ gcloud compute zones list | grep <region>
 
 For example, the zones in region us-central1 are `"us-central1-a us-central1-b us-central1c us-central1f"`.
 
-## Reference data hosted in GCP
+## Running the workflow
+
+### Running via Google's genomics Pipelines API
+
+[Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used as an example for how to run the workflow.
+
+
+# Reference data hosted in GCP
 
 GCP reference data is hosted in the `us-west1` region in the bucket `gs://pacbio-wdl`. This bucket is requester-pays, meaning that users will need to [provide a billing project in their Cromwell configuration](https://cromwell.readthedocs.io/en/stable/filesystems/GoogleCloudStorage/) in order to use files located in this bucket.
 

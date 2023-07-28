@@ -1,145 +1,93 @@
+# DISCLAIMER
+
+TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.
+
 # wdl-humanwgs
 
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
-- For the snakemake version of these workflows, see [here](https://github.com/PacificBiosciences/pb-human-wgs-workflow-snakemake).
-
 - Docker images used by these workflows are defined in [the wdl-dockerfiles repo](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
-
-- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common). This repository is a submodule of the wdl-humanwgs repo; ensure the submodule has been initialized prior to attempting to run the workflow  (`git submodule update --init --recursive`).
+- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common).
 
 # Workflow
 
-This human WGS workflow performs alignment, variant calling, and variant phasing, as well as joint-calling small variants and structural variants for families, and optional variant filtering and annotation. The workflow can run using Azure, AWS, GCP, and HPC backends.
+**Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
+
+The human WGS workflow performs read alignment, variant calling and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
 
+## Setup
+
+Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+
+## Resource requirements
+
+The workflow requires at minimum 64 cores and 96 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+
+## Reference datasets and associated workflow files
+
+Reference datasets are hosted publicly for use in the pipeline. For data locations, see the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
+
 # Running the workflow
 
-**Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
+1. [Select a backend environment](#selecting-a-backend)
+2. [Configure a workflow execution engine in the chosen environment](#configuring-a-workflow-engine)
+3. [Fill out the inputs JSON file for your cohort](#filling-out-the-inputs-json)
+4. [Run the workflow](#running-the-workflow-1)
 
-Some tasks and workflows are pulled in from other repositories. Make sure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+## Selecting a backend
 
-## Backend environments
+The workflow can be run on Azure, AWS, GCP, or HPC. Your choice of backend will largely be determined by the location of your data.
 
-The workflow can be run on Azure, AWS, GCP, or HPC. For backend-specific configuration, see the relevant documentation:
+For backend-specific configuration, see the relevant documentation:
 
 - [Azure](backends/azure)
 - [AWS](backends/aws)
 - [GCP](backends/gcp)
 - [HPC](backends/hpc)
 
-## Resource requirements
+## Configuring a workflow engine
 
-The workflow requires at minimum 64 cores and 48 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+An execution engine is required to run workflows. Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
 
-## Workflow engines
-
-Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
-
-The workflow engine that you choose will depend on where your data is located.
+See the [backend-specific documentation](backends) for details on setting up an engine.
 
 | Engine | Azure | AWS | GCP | HPC |
 | :- | :- | :- | :- | :- |
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | Supported via the [Amazon Genomics CLI](https://aws.amazon.com/genomics-cli/) | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
 
-## Setting up and running the workflow
+## Filling out the inputs JSON
 
-1. Install and configure the workflow execution engine of your choice following the documentation for the backend environment where your data is located. See the [backend environments](#backend-environments) section for more information on configuring engines and quotas.
+The input to a workflow run is defined in JSON format. Template input files with reference dataset information filled out are available for each backend:
 
-2. Select the input template file ([Azure](backends/azure/inputs.azure.json), [AWS](backends/aws/inputs.aws.json), [GCP](backends/gcp/inputs.gcp.json), [HPC](backends/hpc/inputs.hpc.json)) that matches the backend environment where you will be executing the workflows. These files have reference dataset information prefilled. If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
+- [Azure](backends/azure/inputs.azure.json)
+- [AWS](backends/aws/inputs.aws.json)
+- [GCP](backends/gcp/inputs.gcp.json)
+- [HPC](backends/hpc/inputs.hpc.json)
 
-3. Fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
+Using the appropriate inputs template file, fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
 
-4. Run the workflow using the engine and backend of choice ([miniwdl](#running-using-miniwdl), [Cromwell](#running-using-cromwell), [Workbench](#running-using-workbench)).
+If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
 
-### Run using miniwdl
+## Running the workflow
+
+Run the workflow using the engine and backend that you have configured ([miniwdl](#run-directly-using-miniwdl), [Cromwell](#run-directly-using-cromwell)).
+
+Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the engine directly on the machine on which it has been deployed. Depending on the backend you have configured, you may be able to submit workflows using different methods (e.g. using trigger files in Azure, or using the Amazon Genomics CLI in AWS).
+
+### Run directly using miniwdl
 
 `miniwdl run workflows/main.wdl -i <input_file_path.json>`
 
-### Run using Cromwell
+### Run directly using Cromwell
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
-### Run using Workbench
-
-```bash
-dnastack alpha workbench runs submit \
-	--workflow-params '@<input_file_path.json>' \
-	--url <internalId>
-```
-
-See the next section for details on configuring engines and submitting workflow runs using Workbench.
-
-## Running and monitoring workflows using Workbench
-
-Rather than running a workflow directly using an engine, engines can be configured using [Workbench](https://workbench.dnastack.com/), a software suite that enables users to easily configure, run, and monitor workflow runs across backend environments. Engines are set up in the desired backend and then registered with Workbench, following which runs may be submitted and monitored either directly in-browser or using the command-line interface (CLI).
-
-Note that a license is required to submit runs using Workbench.
-
-### Configuring an engine
-
-Workflows submitted via Workbench must be submitted to an execution engine. See [the Workbench documentation](https://docs.dnastack.com/docs/workbench-settings) for details about setting up an engine in the backend of your choice. Backend-specific resources and default configurations that may be required as part of engine setup may also be found in the [backends](backends) directory.
-
-Once the engine has been set up, follow the documentation for registering the engine with Workbench, following which you will be able to submit workflow runs using Workbench either [via the browser](https://docs.dnastack.com/docs/accessing-the-workbench-gui) or [via the CLI](#running-the-workflow-using-the-workbench-cli).
-
-### Installing and configuring the DNAstack CLI
-
-1. Install the DNAstack CLI
-
-`python3 -m pip install --user dnastack-client-library`
-
-Confirm that the CLI is installed and available by running `dnastack --version`.
-
-2. Authenticate using the CLI
-
-`dnastack auth login`
-
-3. Configure the CLI to use workbench
-
-`dnastack use workbench.dnastack.com`
-
-You can now use the DNAstack CLI to interact with Workbench. See [the CLI documentation](https://docs.dnastack.com/docs/runs-submit) for details on available commands.
-
-### Running the workflow using the Workbench CLI
-
-Note that these steps assume you have already [set up and registered an engine in Workbench](https://docs.dnastack.com/docs/workbench-settings).
-
-1. Register the workflow on Workbench
-
-From the root of this repository, run:
-
-```bash
-dnastack alpha workbench workflows create \
-	--name "PacBio HumanWGS" \
-	--description =@README.md \
-	workflows/main.wdl
-```
-
-Note the `internalId` field of the returned JSON. This will be used as the `--url` value when submitting workflow runs.
-
-2. Fill out the inputs.json file
-
-The inputs you use will depend on the backend where you've set up your engine. Template files for [AWS](backends/aws/inputs.aws.json), [Azure](backends/azure/inputs.azure.json), and [GCP](backends/gcp/inputs.gcp.json) with reference file locations already filled out can be used to get started; see [the workflow inputs section](#workflow-inputs) for information on the other fields you will need to fill out.
-
-3. Submit the workflow to Workbench
-
-In the following command, replace `<input_file_path.json>` with the path to your filled out inputs file, and `<internalId>` with the ID you noted in step 1. If no engine is provided, the default engine you have configured will be used.
-
-```bash
-dnastack alpha workbench runs submit \
-	--workflow-params '@<input_file_path.json>' \
-	--url <internalId> \
-	[--tags <key=value>] \
-	[--engine <engineId>]
-```
-
-# Reference datasets and associated workflow files
-
-Reference datasets are hosted publicly for use in the pipeline. For data locations, the [backend-specific documentation](backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
-
 # Workflow inputs
+
+This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially [run/backend-specific sections](#other-inputs) will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](backends).
 
 ## [Cohort](workflows/humanwgs_structs.wdl)
 
@@ -149,7 +97,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 | :- | :- | :- | :- |
 | String | cohort_id | A unique name for the cohort; used to name outputs | |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
-| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort | |
+| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `HP:0000001`, can be used. | |
 
 ### [Sample](workflows/humanwgs_structs.wdl)
 
@@ -210,11 +158,12 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[true\] | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
 | String? | aws_on_demand_queue_arn | Queue ARN for the on demand batch queue; required if backend is set to 'AWS' and `preemptible` is set to `false` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
+| String? | container_registry | Container registry where workflow images are hosted. If left blank, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used. | |
 | Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. | \[true, false\] |
 
 # Workflow outputs
@@ -266,7 +215,7 @@ These files will be output if the cohort includes more than one sample.
 
 ## Tertiary analysis
 
-These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true` (this is the default). The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
+These files will be output for each run of the workflow if `run_tertiary_analysis` is set to `true`. The files that are being annotated will depend on whether the number of samples is equal to or greater than one:
 - If the number of samples is equal to one, the files being annotated in this step are the sample small variant VCF and SV VCF.
 - If the number of samples is greater than one, the files being annotated in this step are the phased, joint-called small variant VCF and the cohort SV VCF.
 
@@ -281,7 +230,7 @@ These files will be output for each run of the workflow if `run_tertiary_analysi
 
 # Tool versions and Docker images
 
-Docker images definitions used by the human WGS workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
+Docker images definitions used by this workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
 
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb<...>b01f80fe
