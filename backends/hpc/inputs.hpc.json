@@ -82,7 +82,7 @@
     "hpo_terms": "<local_path_prefix>/dataset/hpo/hpoTerms.txt",
     "hpo_dag": "<local_path_prefix>/dataset/hpo/hpoDag.txt",
     "hpo_annotations": "<local_path_prefix>/dataset/hpo/ensembl.hpoPhenotype.tsv",
-    "ensembl_to_hgnc": "<local_path_prefix>/dataset/hpo/ensembl.hgncSymbol.tsv",
+    "ensembl_to_hgnc": "<local_path_prefix>/dataset/genes/ensembl.hgncSymbol.tsv",
     "lof_lookup": "<local_path_prefix>/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "<local_path_prefix>/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },

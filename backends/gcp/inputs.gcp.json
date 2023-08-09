@@ -82,7 +82,7 @@
     "hpo_terms": "gs://pacbio-wdl/dataset/hpo/hpoTerms.txt",
     "hpo_dag": "gs://pacbio-wdl/dataset/hpo/hpoDag.txt",
     "hpo_annotations": "gs://pacbio-wdl/dataset/hpo/ensembl.hpoPhenotype.tsv",
-    "ensembl_to_hgnc": "gs://pacbio-wdl/dataset/hpo/ensembl.hgncSymbol.tsv",
+    "ensembl_to_hgnc": "gs://pacbio-wdl/dataset/genes/ensembl.hgncSymbol.tsv",
     "lof_lookup": "gs://pacbio-wdl/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "gs://pacbio-wdl/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },
