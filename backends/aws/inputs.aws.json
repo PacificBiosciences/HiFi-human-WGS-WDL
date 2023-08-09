@@ -82,7 +82,7 @@
     "hpo_terms": "s3://dnastack-resources/dataset/hpo/hpoTerms.txt",
     "hpo_dag": "s3://dnastack-resources/dataset/hpo/hpoDag.txt",
     "hpo_annotations": "s3://dnastack-resources/dataset/hpo/ensembl.hpoPhenotype.tsv",
-    "ensembl_to_hgnc": "s3://dnastack-resources/dataset/hpo/ensembl.hgncSymbol.tsv",
+    "ensembl_to_hgnc": "s3://dnastack-resources/dataset/genes/ensembl.hgncSymbol.tsv",
     "lof_lookup": "s3://dnastack-resources/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "s3://dnastack-resources/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },

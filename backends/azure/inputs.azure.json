@@ -82,7 +82,7 @@
     "hpo_terms": "/datasetpbrarediseases/dataset/hpo/hpoTerms.txt",
     "hpo_dag": "/datasetpbrarediseases/dataset/hpo/hpoDag.txt",
     "hpo_annotations": "/datasetpbrarediseases/dataset/hpo/ensembl.hpoPhenotype.tsv",
-    "ensembl_to_hgnc": "/datasetpbrarediseases/dataset/hpo/ensembl.hgncSymbol.tsv",
+    "ensembl_to_hgnc": "/datasetpbrarediseases/dataset/genes/ensembl.hgncSymbol.tsv",
     "lof_lookup": "/datasetpbrarediseases/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "/datasetpbrarediseases/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },
