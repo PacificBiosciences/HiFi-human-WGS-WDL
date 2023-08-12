@@ -48,6 +48,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.gpu": "Boolean (optional, default = false)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional)",
   "humanwgs.glnexus_mem_gb": "Int (optional)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
@@ -55,5 +56,9 @@
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",
   "humanwgs.aws_on_demand_queue_arn": "String? (optional); required if backend is set to 'AWS'",
+  "humanwgs.aws_accelerator_type": "String? (optional); required if backend is set to 'AWS' and gpu is set to true",
+  "humanwgs.hpc_partition": "String? (optional); required if backend is set to 'HPC'",
+  "humanwgs.hpc_partition_gpu": "String? (optional); optional if backend is set to 'HPC' and gpu is set to true",
+  "humanwgs.hpc_accelerator_type": "String? (optional); optional if backend is set to 'HPC' and gpu is set to true",
   "humanwgs.preemptible": "Boolean"
 }

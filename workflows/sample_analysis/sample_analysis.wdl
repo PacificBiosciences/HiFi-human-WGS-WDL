@@ -19,6 +19,7 @@ workflow sample_analysis {
 
 		String deepvariant_version
 		DeepVariantModel? deepvariant_model
+		Boolean gpu
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -56,6 +57,7 @@ workflow sample_analysis {
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
 			deepvariant_model = deepvariant_model,
+			gpu = gpu,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
@@ -241,6 +243,7 @@ workflow sample_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		gpu: {help: "Where possible, use GPU accelerated tasks"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }

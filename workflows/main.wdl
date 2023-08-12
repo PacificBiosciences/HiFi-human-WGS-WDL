@@ -15,6 +15,7 @@ workflow humanwgs {
 
 		String deepvariant_version = "1.5.0"
 		DeepVariantModel? deepvariant_model
+		Boolean gpu = false
 
 		Int? pbsv_call_mem_gb
 		Int? glnexus_mem_gb
@@ -26,6 +27,10 @@ workflow humanwgs {
 		String? zones
 		String? aws_spot_queue_arn
 		String? aws_on_demand_queue_arn
+		String? aws_accelerator_type
+		String? hpc_partition
+		String? hpc_partition_gpu
+		String? hpc_accelerator_type
 		String? container_registry
 
 		Boolean preemptible
@@ -37,6 +42,10 @@ workflow humanwgs {
 			zones = zones,
 			aws_spot_queue_arn = aws_spot_queue_arn,
 			aws_on_demand_queue_arn = aws_on_demand_queue_arn,
+			aws_accelerator_type = aws_accelerator_type,
+			hpc_partition = hpc_partition,
+			hpc_partition_gpu = hpc_partition_gpu,
+			hpc_accelerator_type = hpc_accelerator_type,
 			container_registry = container_registry
 	}
 
@@ -49,6 +58,7 @@ workflow humanwgs {
 				reference = reference,
 				deepvariant_version = deepvariant_version,
 				deepvariant_model = deepvariant_model,
+				gpu = gpu,
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
@@ -158,6 +168,7 @@ workflow humanwgs {
 		slivar_data: {help: "Data files used for annotation with slivar (required if `run_tertiary_analysis` is set to `true`)"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		gpu: {help: "Where possible, use GPU accelerated tasks; default false"}
 		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call; default 64 for cohorts N<=3, 96 for cohorts N>3"}
 		glnexus_mem_gb: {help: "Optional amount of RAM in GB for glnexus; default 30"}
 		run_tertiary_analysis: {help: "Run the optional tertiary analysis steps"}
@@ -165,6 +176,10 @@ workflow humanwgs {
 		zones: {help: "Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'"}
 		aws_spot_queue_arn: {help: "Queue ARN for the spot batch queue; required if backend is set to 'AWS'"}
 		aws_on_demand_queue_arn: {help: "Queue ARN for the on demand batch queue; required if backend is set to 'AWS'"}
+		aws_accelerator_type: {help: "AWS GPU type; optional if backend is set to 'AWS'"}
+		hpc_partition: {help: "Default HPC partition or queue for most tasks; required if backend is set to 'HPC'"}
+		hpc_partition_gpu: {help: "HPC partition with GPUs, if available; optional if backend is set to 'HPC'"}
+		hpc_accelerator_type: {help: "HPC GPU type; optional if backend is set to 'HPC'"}
 		container_registry: {help: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used."}
 		preemptible: {help: "Where possible, run tasks preemptibly"}
 	}

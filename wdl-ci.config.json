@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "pt32pza4ixkxvdrdgeok5qbyi557dpoa",
+          "digest": "lio5zvrope5n2zukm4k5i7vdjjqc5iip",
           "tests": [
             {
               "inputs": {
@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
+          "digest": "raky2zrwd3z5cmcsq7tclybg4bbuyywy",
           "tests": [
             {
               "inputs": {
@@ -102,7 +102,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "2t6zs72j2tisqwk7z4oyryecv5lolayw",
+          "digest": "mhjxpwytth6hx5g5s7zfxqt4seewmlm6",
           "tests": [
             {
               "inputs": {
@@ -230,7 +230,7 @@
         },
         "paraphase": {
           "key": "paraphase",
-          "digest": "5qitkh64l7rzc6ywab7d7jjbwaxrsnal",
+          "digest": "jwxhw2umfefy2ofupwo4tr4hvberb2fp",
           "tests": [
             {
               "inputs": {
@@ -363,7 +363,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "ik4zsyy76etbsbuq3dapogju47ck4oxi",
+          "digest": "4wfsjtsrlxxho6af5aeupn7di6cikszb",
           "tests": [
             {
               "inputs": {
@@ -394,7 +394,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "zglkxnubs7arukywr6dtr2rmlrs4l6si",
+          "digest": "ykfyycigrikywcnpoegyfwrmd5s5ib5q",
           "tests": [
             {
               "inputs": {
@@ -464,7 +464,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "53w2go2kuiyvtsty6yaxqaqdlf2mki3a",
+          "digest": "b5quvmyyq5qub5rbtcctq5ybg4idn5pe",
           "tests": [
             {
               "inputs": {
@@ -498,7 +498,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "fzvpxhpi2a5nyyys7ktoirf4ww2exbe3",
+          "digest": "7asntoz4lzvmtkm2sk3nk7v33p25vjwq",
           "tests": [
             {
               "inputs": {
@@ -528,7 +528,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "3is7ye6wciqqqeh3de43nkjkemqtip6n",
+          "digest": "mxdd3igqjkjg32zneomwx7opz77vonoe",
           "tests": [
             {
               "inputs": {
@@ -574,7 +574,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "35kzpf37semcoxs7frzvhjrc4zvwoyan",
+          "digest": "6cyzt5ye2ripaww5qvgmtm2wqa5ruwbr",
           "tests": [
             {
               "inputs": {
@@ -624,7 +624,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "a6ksi3haiz5pye7p64c67zeeauit7gqf",
+          "digest": "bwxg5k3phk6nbzcn4z4ywpe2dit4g6kr",
           "tests": [
             {
               "inputs": {
@@ -642,6 +642,7 @@
                 ],
                 "total_deepvariant_tasks": 64,
                 "deepvariant_version": "1.5.0",
+                "gpu": false,
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -658,7 +659,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "angvgpjz6i5uh4qnzgrv3p6pyre6ub7w",
+          "digest": "fvj6h4in7afpevk3yzunymkd3qtc65hq",
           "tests": [
             {
               "inputs": {
@@ -713,7 +714,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "hqzjxv2yco24qutduqcvu2lo6tjhnnys",
+          "digest": "h7yvpjhpt5zhffsuitksxgp4l6zuveqg",
           "tests": [
             {
               "inputs": {
@@ -736,7 +737,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "z33ywjmdqemmooowhpmz3laowtyxfsyi",
+          "digest": "ap5wa44fzx32i2tjyp452fdllqz7ua4z",
           "tests": [
             {
               "inputs": {
@@ -760,7 +761,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "fjqmz4ee3o2d2h52upjw44lfy4bvaibn",
+          "digest": "t5c3qyurthj2ulox4gfwwqqhlpcqzjiw",
           "tests": [
             {
               "inputs": {
@@ -787,7 +788,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "hms5gmz555lpf34c42vl6n6g4p6ysmjz",
+          "digest": "dvghsdqccbtzgziaz7cw4ns7wsiu74ka",
           "tests": [
             {
               "inputs": {
@@ -810,7 +811,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "betwggtcswgjiicesikqety24zamxnli",
+          "digest": "ur2ikl247djhekd3q6wacmw4tfdwycto",
           "tests": [
             {
               "inputs": {
@@ -840,7 +841,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "wq4dvlnqcw4urdx2acd6oinx47ku5khh",
+          "digest": "32phggx2rkoxtjq5h5jtme6stkomie2t",
           "tests": [
             {
               "inputs": {
@@ -865,7 +866,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "bhj67yauwchm5aft7fru6rljgl2peiiu",
+          "digest": "xkflwz6pj5ct5cl7thjgjkdzmgdjknaj",
           "tests": [
             {
               "inputs": {
@@ -902,7 +903,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "e5wxcxlxkc4zlik74532wfdfosjygqbl",
+          "digest": "drdzdpkvdwjwxjnaehsfjk66dmirtzxe",
           "tests": [
             {
               "inputs": {
@@ -937,7 +938,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "iblo5v62tj4w2v3zzgamotyvyyzeakc5",
+          "digest": "5x5qlgvci6ng3w527nbkaraaaywmnqef",
           "tests": [
             {
               "inputs": {
@@ -1217,6 +1218,9 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
+        "accelerator_type": "",
+        "hpc_partition": "",
+        "hpc_partition_gpu": "",
         "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
@@ -1224,6 +1228,9 @@
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
+        "accelerator_type": "",
+        "hpc_partition": "",
+        "hpc_partition_gpu": "",
         "container_registry": "quay.io/pacbio"
       }
     },

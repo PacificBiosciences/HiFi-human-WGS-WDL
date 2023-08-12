@@ -60,9 +60,13 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.gpu": "Boolean (optional, default = false)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
   "humanwgs.backend": "HPC",
+  "humanwgs.hpc_partition": "String",
+  "humanwgs.hpc_partition_gpu": "String? (optional); optional if backend is set to 'HPC' and gpu is set to true",
+  "humanwgs.hpc_accelerator_type": "String? (optional); optional if backend is set to 'HPC' and gpu is set to true",
   "humanwgs.preemptible": true
 }
