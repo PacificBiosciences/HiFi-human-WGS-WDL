@@ -24,34 +24,43 @@ workflow sample_analysis {
 	}
 
 	scatter (movie_bam in sample.movie_bams) {
-		call pbmm2_align {
+		call split_ubam {
 			input:
 				sample_id = sample.sample_id,
 				bam = movie_bam,
-				reference = reference.fasta.data,
-				reference_index = reference.fasta.data_index,
-				reference_name = reference.name,
 				runtime_attributes = default_runtime_attributes
 		}
 
-		call PbsvDiscover.pbsv_discover {
-			input:
-				aligned_bam = pbmm2_align.aligned_bam,
-				aligned_bam_index = pbmm2_align.aligned_bam_index,
-				reference_tandem_repeat_bed = reference.tandem_repeat_bed,
-				runtime_attributes = default_runtime_attributes
-		}
+		scatter (ubam_chunk in if (length(split_ubam.ubam_chunks) > 0) then split_ubam.ubam_chunks else [movie_bam]) {
+			call pbmm2_align {
+				input:
+					sample_id = sample.sample_id,
+					bam = ubam_chunk,
+					reference = reference.fasta.data,
+					reference_index = reference.fasta.data_index,
+					reference_name = reference.name,
+					runtime_attributes = default_runtime_attributes
+			}
 
-		IndexData aligned_bam = {
-			"data": pbmm2_align.aligned_bam,
-			"data_index": pbmm2_align.aligned_bam_index
+			call PbsvDiscover.pbsv_discover {
+				input:
+					aligned_bam = pbmm2_align.aligned_bam,
+					aligned_bam_index = pbmm2_align.aligned_bam_index,
+					reference_tandem_repeat_bed = reference.tandem_repeat_bed,
+					runtime_attributes = default_runtime_attributes
+			}
+
+			IndexData aligned_bam = {
+				"data": pbmm2_align.aligned_bam,
+				"data_index": pbmm2_align.aligned_bam_index
+			}
 		}
 	}
 
 	call DeepVariant.deepvariant {
 		input:
 			sample_id = sample.sample_id,
-			aligned_bams = aligned_bam,
+			aligned_bams = flatten(aligned_bam),
 			reference_fasta = reference.fasta,
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
@@ -76,7 +85,7 @@ workflow sample_analysis {
 	call PbsvCall.pbsv_call {
 		input:
 			sample_id = sample.sample_id,
-			svsigs = pbsv_discover.svsig,
+			svsigs = flatten(pbsv_discover.svsig),
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			reference_name = reference.name,
@@ -101,7 +110,7 @@ workflow sample_analysis {
 			refname = reference.name,
 			sample_ids = [sample.sample_id],
 			vcfs = [deepvariant.vcf, zipped_pbsv_vcf],
-			bams = aligned_bam,
+			bams = flatten(aligned_bam),
 			haplotag = true,
 			reference_fasta = reference.fasta,
 			default_runtime_attributes = default_runtime_attributes
@@ -193,11 +202,11 @@ workflow sample_analysis {
 
 	output {
 		# per movie stats, alignments, and svsigs
-		Array[File] bam_stats = pbmm2_align.bam_stats
-		Array[File] read_length_summary = pbmm2_align.read_length_summary
-		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
-		Array[IndexData] aligned_bams = aligned_bam
-		Array[File] svsigs = pbsv_discover.svsig
+		Array[File] bam_stats = split_ubam.bam_stats
+		Array[File] read_length_summary = split_ubam.read_length_summary
+		Array[File] read_quality_summary = split_ubam.read_quality_summary
+		Array[IndexData] aligned_bams = flatten(aligned_bam)
+		Array[File] svsigs = flatten(pbsv_discover.svsig)
 
 		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
@@ -245,6 +254,84 @@ workflow sample_analysis {
 	}
 }
 
+task split_ubam{
+	input {
+		String sample_id
+		File bam
+
+		RuntimeAttributes runtime_attributes
+	}
+
+	String movie = basename(bam, ".bam")
+	Int num_chunks = 6
+
+	Int disk_size = ceil(size(bam, "GB") * 2 + 20)
+
+	command <<<
+		set -euo pipefail
+
+		# movie stats
+		extract_read_length_and_qual.py --version
+
+		extract_read_length_and_qual.py \
+			~{bam} \
+		> ~{sample_id}.~{movie}.read_length_and_quality.tsv
+
+		awk '{{ b=int($2/1000); b=(b>39?39:b); print 1000*b "\t" $2; }}' \
+			~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=39;i++) {{ print 1000*i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_length_summary.tsv
+
+		awk '{{ print ($3>50?50:$3) "\t" $2; }}' \
+				~{sample_id}.~{movie}.read_length_and_quality.tsv \
+			| sort -k1,1g \
+			| datamash -g 1 count 1 sum 2 \
+			| awk 'BEGIN {{ for(i=0;i<=60;i++) {{ print i"\t0\t0"; }} }} {{ print; }}' \
+			| sort -k1,1g \
+			| datamash -g 1 sum 2 sum 3 \
+		> ~{sample_id}.~{movie}.read_quality_summary.tsv
+
+		if (( ~{num_chunks} > 1 )); then
+			# max reads per chunk is ceil(num_reads / num_chunks)
+			num_reads=$(wc -l < ~{sample_id}.~{movie}.read_length_and_quality.tsv)
+			# shellcheck disable=SC2004
+			(( max_reads_per_chunk=(($num_reads + ~{num_chunks} - 1) / ~{num_chunks}) ))
+			echo "num_reads: $num_reads"
+			echo "num_chunks: ~{num_chunks}"
+			echo "max_reads_per_chunk: $max_reads_per_chunk"
+
+			# split bam
+			split_bam.py --version
+
+			split_bam.py ~{bam} $max_reads_per_chunk
+		fi
+	>>>
+
+	output {
+		File bam_stats = "~{sample_id}.~{movie}.read_length_and_quality.tsv"
+		File read_length_summary = "~{sample_id}.~{movie}.read_length_summary.tsv"
+		File read_quality_summary = "~{sample_id}.~{movie}.read_quality_summary.tsv"
+		Array[File] ubam_chunks = glob("*.chunk_*.bam")
+	}
+
+	runtime {
+		docker: "~{runtime_attributes.container_registry}/pysam@sha256:1e0c0c3738139f4cc3632a3447152ce6397fd589a216c9f4dd604fb691219c1f"
+		cpu: 2
+		memory: "8 GB"
+		disk: disk_size + " GB"
+		disks: "local-disk " + disk_size + " HDD"
+		preemptible: runtime_attributes.preemptible_tries
+		maxRetries: runtime_attributes.max_retries
+		awsBatchRetryAttempts: runtime_attributes.max_retries
+		queueArn: runtime_attributes.queue_arn
+		zones: runtime_attributes.zones
+	}
+}
+
 task pbmm2_align {
 	input {
 		String sample_id
@@ -279,37 +366,11 @@ task pbmm2_align {
 			~{reference} \
 			~{bam} \
 			~{sample_id}.~{movie}.~{reference_name}.aligned.bam
-
-		# movie stats
-		extract_read_length_and_qual.py \
-			~{bam} \
-		> ~{sample_id}.~{movie}.read_length_and_quality.tsv
-
-		awk '{{ b=int($2/1000); b=(b>39?39:b); print 1000*b "\t" $2; }}' \
-			~{sample_id}.~{movie}.read_length_and_quality.tsv \
-			| sort -k1,1g \
-			| datamash -g 1 count 1 sum 2 \
-			| awk 'BEGIN {{ for(i=0;i<=39;i++) {{ print 1000*i"\t0\t0"; }} }} {{ print; }}' \
-			| sort -k1,1g \
-			| datamash -g 1 sum 2 sum 3 \
-		> ~{sample_id}.~{movie}.read_length_summary.tsv
-
-		awk '{{ print ($3>50?50:$3) "\t" $2; }}' \
-				~{sample_id}.~{movie}.read_length_and_quality.tsv \
-			| sort -k1,1g \
-			| datamash -g 1 count 1 sum 2 \
-			| awk 'BEGIN {{ for(i=0;i<=60;i++) {{ print i"\t0\t0"; }} }} {{ print; }}' \
-			| sort -k1,1g \
-			| datamash -g 1 sum 2 sum 3 \
-		> ~{sample_id}.~{movie}.read_quality_summary.tsv
 	>>>
 
 	output {
 		File aligned_bam = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam"
 		File aligned_bam_index = "~{sample_id}.~{movie}.~{reference_name}.aligned.bam.bai"
-		File bam_stats = "~{sample_id}.~{movie}.read_length_and_quality.tsv"
-		File read_length_summary = "~{sample_id}.~{movie}.read_length_summary.tsv"
-		File read_quality_summary = "~{sample_id}.~{movie}.read_quality_summary.tsv"
 	}
 
 	runtime {

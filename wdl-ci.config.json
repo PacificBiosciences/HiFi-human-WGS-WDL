@@ -23,22 +23,26 @@
       "name": "",
       "description": "",
       "tasks": {
-        "pbmm2_align": {
-          "key": "pbmm2_align",
-          "digest": "pt32pza4ixkxvdrdgeok5qbyi557dpoa",
+        "split_ubam": {
+          "key": "split_ubam",
+          "digest": "refnlglfhebi2uli5q4jpr3xb37ccv2r",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG005",
                 "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
-                "reference_name": "GRCh38",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                "ubam_chunks": {
+                  "value": [
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_0.bam",
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_1.bam",
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_2.bam",
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_3.bam",
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_4.bam",
+                    "${resources_file_path}/m64017_200723_190224.hifi_reads.chunk_5.bam"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
@@ -71,6 +75,31 @@
                     "check_tab_delimited",
                     "count_columns",
                     "check_numeric"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "pbmm2_align": {
+          "key": "pbmm2_align",
+          "digest": "obcqvhyvxr2iro327z7nuaheliqtrq5w",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG005",
+                "bam": "${input_file_path}/small_HG005/m64017_200723_190224.hifi_reads.bam",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "reference_name": "GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/HG005.m64017_200723_190224.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
                   ]
                 }
               }
