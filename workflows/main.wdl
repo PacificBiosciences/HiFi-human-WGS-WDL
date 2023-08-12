@@ -54,10 +54,15 @@ workflow humanwgs {
 	}
 
 	if (length(cohort.samples) > 1) {
+
+		scatter (sample in cohort.samples) {
+			String sample_id = sample.sample_id
+		}
+		
 		call CohortAnalysis.cohort_analysis {
 			input:
 				cohort_id = cohort.cohort_id,
-				sample_count = length(cohort.samples),
+				sample_ids = sample_id,
 				aligned_bams = flatten(sample_analysis.aligned_bams),
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
@@ -70,12 +75,12 @@ workflow humanwgs {
 
 	if (run_tertiary_analysis) {
 		IndexData slivar_small_variant_input_vcf = select_first([
-			cohort_analysis.phased_joint_called_vcf,
+			cohort_analysis.phased_joint_small_variant_vcf,
 			sample_analysis.phased_small_variant_vcf[0]
 		])
 		IndexData slivar_sv_input_vcf = select_first([
-			cohort_analysis.sv_vcf,
-			sample_analysis.sv_vcf[0]
+			cohort_analysis.phased_joint_sv_vcf,
+			sample_analysis.phased_sv_vcf[0]
 		])
 
 		call TertiaryAnalysis.tertiary_analysis {
@@ -97,11 +102,11 @@ workflow humanwgs {
 		Array[IndexData] small_variant_gvcfs = sample_analysis.small_variant_gvcf
 		Array[File] small_variant_vcf_stats = sample_analysis.small_variant_vcf_stats
 		Array[File] small_variant_roh_bed = sample_analysis.small_variant_roh_bed
-		Array[IndexData] sample_sv_vcfs = sample_analysis.sv_vcf
 		Array[IndexData] sample_phased_small_variant_vcfs = sample_analysis.phased_small_variant_vcf
-		Array[File] sample_whatshap_stats_gtfs = sample_analysis.whatshap_stats_gtf
-		Array[File] sample_whatshap_stats_tsvs = sample_analysis.whatshap_stats_tsv
-		Array[File] sample_whatshap_stats_blocklists = sample_analysis.whatshap_stats_blocklist
+		Array[IndexData] sample_phased_sv_vcfs = sample_analysis.phased_sv_vcf
+		Array[File] sample_hiphase_stats = sample_analysis.hiphase_stats
+		Array[File] sample_hiphase_blocks = sample_analysis.hiphase_blocks
+		Array[File] sample_hiphase_haplotags = sample_analysis.hiphase_haplotags
 		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
 		Array[File] haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
 		Array[File] haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
@@ -119,11 +124,11 @@ workflow humanwgs {
 		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
 
 		# cohort_analysis output
-		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf
-		IndexData? cohort_phased_joint_called_vcf = cohort_analysis.phased_joint_called_vcf
-		File? cohort_whatshap_stats_gtfs = cohort_analysis.whatshap_stats_gtf
-		File? cohort_whatshap_stats_tsvs = cohort_analysis.whatshap_stats_tsv
-		File? cohort_whatshap_stats_blocklists = cohort_analysis.whatshap_stats_blocklist
+		IndexData? cohort_sv_vcf = cohort_analysis.phased_joint_sv_vcf
+		IndexData? cohort_small_variant_vcf = cohort_analysis.phased_joint_small_variant_vcf
+		File? cohort_hiphase_stats = cohort_analysis.hiphase_stats
+		File? cohort_hiphase_blocks = cohort_analysis.hiphase_blocks
+		File? cohort_hiphase_haplotags = cohort_analysis.hiphase_haplotags
 
 		# tertiary_analysis output
 		IndexData? filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf

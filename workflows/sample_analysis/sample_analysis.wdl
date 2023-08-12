@@ -9,8 +9,7 @@ import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
-import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
+import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
 	input {
@@ -90,45 +89,33 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call PhaseVcf.phase_vcf {
+	call HiPhase.hiphase {
+		# vcfs order: small variants, SVs
 		input:
-			vcf = deepvariant.vcf,
-			aligned_bams = aligned_bam,
+			id = sample.sample_id,
+			refname = reference.name,
+			sample_ids = [sample.sample_id],
+			vcfs = [deepvariant.vcf, {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}],
+			bams = aligned_bam,
+			haplotag = true,
 			reference_fasta = reference.fasta,
-			reference_chromosome_lengths = reference.chromosome_lengths,
-			regions = reference.chromosomes,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (bam_object in aligned_bam) {
-		if (length(aligned_bam) == 1) {
-			String output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam"
+	if (length(hiphase.haplotagged_bams) > 1) {
+		scatter (bam_object in hiphase.haplotagged_bams) {
+			File bam_to_merge = bam_object.data
 		}
-
-		call WhatshapHaplotag.whatshap_haplotag {
-			input:
-				phased_vcf = phase_vcf.phased_vcf.data,
-				phased_vcf_index = phase_vcf.phased_vcf.data_index,
-				aligned_bam = bam_object.data,
-				aligned_bam_index = bam_object.data_index,
-				reference = reference.fasta.data,
-				reference_index = reference.fasta.data_index,
-				output_bam_name = output_bam_name,
-				runtime_attributes = default_runtime_attributes
-		}
-	}
-
-	if (length(whatshap_haplotag.haplotagged_bam) > 1) {
 		call merge_bams {
 			input:
-				bams = whatshap_haplotag.haplotagged_bam,
+				bams = bam_to_merge,
 				output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
 				runtime_attributes = default_runtime_attributes
 		}
 	}
 
-	File haplotagged_bam = select_first([merge_bams.merged_bam, whatshap_haplotag.haplotagged_bam[0]])
-	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, whatshap_haplotag.haplotagged_bam_index[0]])
+	File haplotagged_bam = select_first([merge_bams.merged_bam, hiphase.haplotagged_bams[0].data])
+	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, hiphase.haplotagged_bams[0].data_index])
 
 	call Mosdepth.mosdepth {
 		input:
@@ -177,8 +164,8 @@ workflow sample_analysis {
 			sex = sample.sex,
 			bam = haplotagged_bam,
 			bam_index = haplotagged_bam_index,
-			phased_vcf = phase_vcf.phased_vcf.data,
-			phased_vcf_index = phase_vcf.phased_vcf.data_index,
+			phased_vcf = hiphase.phased_vcfs[0].data,
+			phased_vcf_index = hiphase.phased_vcfs[0].data_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			exclude_bed = reference.hificnv_exclude_bed.data,
@@ -196,17 +183,16 @@ workflow sample_analysis {
 		Array[IndexData] aligned_bams = aligned_bam
 		Array[File] svsigs = pbsv_discover.svsig
 
-		IndexData small_variant_vcf = deepvariant.vcf
 		IndexData small_variant_gvcf = deepvariant.gvcf
 		File small_variant_vcf_stats = bcftools_stats.stats
 		File small_variant_roh_bed = bcftools_roh.roh_bed
 
-		IndexData sv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
-
-		IndexData phased_small_variant_vcf = phase_vcf.phased_vcf
-		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
-		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
-		File whatshap_stats_blocklist = phase_vcf.whatshap_stats_blocklist
+		# phased_vcfs order: small variants, SVs
+		IndexData phased_small_variant_vcf = hiphase.phased_vcfs[0]
+		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
+		File hiphase_stats = hiphase.hiphase_stats
+		File hiphase_blocks = hiphase.hiphase_blocks
+		File hiphase_haplotags = hiphase.hiphase_haplotags
 		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed

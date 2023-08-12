@@ -180,12 +180,12 @@ These files will be output for each sample defined in the cohort.
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | Small variants (SNPs and INDELs < 50bp) gVCFs called by [DeepVariant](https://github.com/google/deepvariant) (with index) | |
 | Array[File] | small_variant_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for small variants | |
 | Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
-| Array[File] | sample_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
-| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
-| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [`whatshap haplotag`](https://whatshap.readthedocs.io/en/latest/guide.html#visualizing-phasing-results)) reads (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [HiPhase](https://github.com/PacificBiosciences/HiPhase) (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
+| Array[File] | sample_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
+| Array[File] | sample_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
+| Array[File] | sample_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotagged-bam-files)) reads (with index) | |
 | Array[File] | haplotagged_bam_mosdepth_summary | [mosdepth](https://github.com/brentp/mosdepth) summary of median depths per chromosome | |
 | Array[File] | haplotagged_bam_mosdepth_region_bed | mosdepthhttps://github.com/brentp/mosdepth BED of median coverage depth per 500 bp window | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | Tandem repeat genotypes from [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/vcf_files.md) (with index) | |
@@ -207,11 +207,11 @@ These files will be output if the cohort includes more than one sample.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
-| File? | cohort_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
-| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
-| File? | cohort_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_small_variant_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [HiPhase](https://github.com/PacificBiosciences/HiPhase) (with index) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
+| File? | cohort_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
+| File? | cohort_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
+| File? | cohort_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
 
 ## Tertiary analysis
 
@@ -253,4 +253,4 @@ The Docker image used by a particular step of the workflow can be identified by 
 | slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/slivar) |
 | svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/8598b47771995e44799575b72bde477c21bfc213/docker/svpack) |
 | trgt | <ul><li>[trgt 0.4.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.4.0)</li><li>[samtools 1.16.1](https://github.com/samtools/samtools/releases/tag/1.16.1)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/trgt) |
-| whatshap | <ul><li>[whatshap 1.4](https://github.com/whatshap/whatshap/releases/tag/v1.4)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/whatshap) |
+| hiphase | <ul><li>[HiPhase 0.10.2](https://github.com/PacificBiosciences/HiPhase/releases/tag/v0.10.2)</li><li>[samtools 1.16](https://github.com/samtools/samtools/releases/tag/1.16)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/48ec02a2eed235583934217417f5697f14931a1a/docker/hiphase) |
