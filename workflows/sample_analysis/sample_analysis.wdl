@@ -371,7 +371,7 @@ task merge_bams {
 	}
 
 	Int threads = 8
-	Int disk_size = ceil(size(bams[0], "GB") * length(bams) * 2 + 20)
+	Int disk_size = ceil(size(bams, "GB") * 2 + 20)
 
 	command <<<
 		set -euo pipefail
