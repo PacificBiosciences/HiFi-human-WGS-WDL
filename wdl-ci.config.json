@@ -1011,33 +1011,6 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/pharmcat.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/pharmcat.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pangu_cyp2d6": {
-          "key": "pangu_cyp2d6",
-          "digest": "",
-          "tests": []
-        },
-        "pharmcat_preprocess": {
-          "key": "pharmcat_preprocess",
-          "digest": "",
-          "tests": []
-        },
-        "filter_preprocessed_vcf": {
-          "key": "filter_preprocessed_vcf",
-          "digest": "",
-          "tests": []
-        },
-        "run_pharmcat": {
-          "key": "run_pharmcat",
-          "digest": "",
-          "tests": []
-        }
-      }
-    },
     "workflows/wdl-common/wdl/workflows/hiphase/hiphase.wdl": {
       "key": "workflows/wdl-common/wdl/workflows/hiphase/hiphase.wdl",
       "name": "",
