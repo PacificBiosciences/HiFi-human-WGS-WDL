@@ -552,68 +552,6 @@
       "description": "",
       "tasks": {}
     },
-    "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl": {
-      "key": "workflows/wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "split_vcf": {
-          "key": "split_vcf",
-          "digest": "adwcwarx5ozmifuokiw2do4wapz3yd7n",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "vcf_index": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz.tbi",
-                "region": "chr6",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "region_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "bcftools_concat": {
-          "key": "bcftools_concat",
-          "digest": "khx3kb536qnzcxwsvovrdafc7de6l7pc",
-          "tests": [
-            {
-              "inputs": {
-                "vcfs": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz",
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz"
-                ],
-                "vcf_indices": [
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr6.phased.vcf.gz.tbi",
-                  "${resources_file_path}/HG005.GRCh38.deepvariant.chr7.phased.vcf.gz.tbi"
-                ],
-                "output_vcf_name": "HG005.GRCh38.deepvariant.phased.vcf.gz",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "concatenated_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.phased.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl": {
       "key": "workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl",
       "name": "",
