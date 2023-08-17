@@ -956,13 +956,15 @@
       "tasks": {
         "run_hiphase": {
           "key": "run_hiphase",
-          "digest": "",
+          "digest": "z5kipmtsexf4ilkkxlvefvb3fhjiq2iz",
           "tests": [
             {
               "inputs": {
                 "id": "HG005",
                 "refname": "GRCh38",
-                "sample_ids": ["HG005"],
+                "sample_ids": [
+                  "HG005"
+                ],
                 "vcfs": [
                   "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
                   "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz"
