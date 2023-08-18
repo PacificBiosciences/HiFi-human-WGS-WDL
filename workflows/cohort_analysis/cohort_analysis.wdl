@@ -49,6 +49,11 @@ workflow cohort_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	IndexData zipped_pbsv_vcf = {
+		"data": zip_index_vcf.zipped_vcf,
+		"data_index": zip_index_vcf.zipped_vcf_index
+	}
+
 	call Glnexus.glnexus {
 		input:
 			cohort_id = cohort_id,
@@ -59,13 +64,18 @@ workflow cohort_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	IndexData glnexus_vcf = {
+		"data": glnexus.vcf,
+		"data_index": glnexus.vcf_index
+	}
+
 	call HiPhase.hiphase {
 		# VCF order: small variants, SVs
 		input:
 			id = cohort_id,
 			refname = reference.name,
 			sample_ids = sample_ids,
-			vcfs = [{"data": glnexus.vcf, "data_index": glnexus.vcf_index}, {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}],
+			vcfs = [glnexus_vcf, zipped_pbsv_vcf],
 			bams = aligned_bams,
 			haplotag = false,
 			reference_fasta = reference.fasta,

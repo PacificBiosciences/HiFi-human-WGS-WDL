@@ -89,19 +89,25 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	IndexData zipped_pbsv_vcf = {
+		"data": zip_index_vcf.zipped_vcf,
+		"data_index": zip_index_vcf.zipped_vcf_index
+	}
+
 	call HiPhase.hiphase {
 		# vcfs order: small variants, SVs
 		input:
 			id = sample.sample_id,
 			refname = reference.name,
 			sample_ids = [sample.sample_id],
-			vcfs = [deepvariant.vcf, {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}],
+			vcfs = [deepvariant.vcf, zipped_pbsv_vcf],
 			bams = aligned_bam,
 			haplotag = true,
 			reference_fasta = reference.fasta,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
+	# merge haplotagged bams if there are multiple
 	if (length(hiphase.haplotagged_bams) > 1) {
 		scatter (bam_object in hiphase.haplotagged_bams) {
 			File bam_to_merge = bam_object.data
@@ -114,6 +120,7 @@ workflow sample_analysis {
 		}
 	}
 
+	# select the merged bam if it exists, otherwise select the first (only) haplotagged bam
 	File haplotagged_bam = select_first([merge_bams.merged_bam, hiphase.haplotagged_bams[0].data])
 	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, hiphase.haplotagged_bams[0].data_index])
 
@@ -177,16 +184,19 @@ workflow sample_analysis {
 	}
 
 	output {
+		# per movie stats, alignments, and svsigs
 		Array[File] bam_stats = pbmm2_align.bam_stats
 		Array[File] read_length_summary = pbmm2_align.read_length_summary
 		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
 		Array[File] svsigs = pbsv_discover.svsig
 
+		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
 		File small_variant_vcf_stats = bcftools_stats.stats
 		File small_variant_roh_bed = bcftools_roh.roh_bed
 
+		# per sample final phased variant calls and haplotagged alignments
 		# phased_vcfs order: small variants, SVs
 		IndexData phased_small_variant_vcf = hiphase.phased_vcfs[0]
 		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
@@ -197,17 +207,21 @@ workflow sample_analysis {
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 
+		# per sample trgt outputs
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 
+		# per sample cpg outputs
 		Array[File] cpg_pileup_beds = cpg_pileup.pileup_beds
 		Array[File] cpg_pileup_bigwigs = cpg_pileup.pileup_bigwigs
 
+		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
-    
+
+		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
