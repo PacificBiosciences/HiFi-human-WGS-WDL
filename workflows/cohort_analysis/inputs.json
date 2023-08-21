@@ -1,6 +1,6 @@
 {
   "cohort_analysis.cohort_id": "String",
-  "cohort_analysis.sample_count": "Int",
+  "cohort_analysis.sample_ids": "Array[String]",
   "cohort_analysis.aligned_bams": [
     {
       "data": "File",
