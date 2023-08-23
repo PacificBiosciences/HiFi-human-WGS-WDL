@@ -85,6 +85,26 @@ Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the eng
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
+If Cromwell is running in server mode, the workflow can be submitted using cURL. Fill in the values of CROMWELL_URL and INPUTS_JSON below, then from the root of the repository, run:
+
+```bash
+# The base URL (and port, if applicable) of your Cromwell server
+CROMWELL_URL=
+# The path to your inputs JSON file
+INPUTS_JSON=
+
+(cd workflows && zip -r dependencies.zip humanwgs_structs.wdl  cohort_analysis/ sample_analysis/ tertiary_analysis/ wdl-common/)
+curl -X "POST" \
+  "${CROMWELL_URL}/api/workflows/v1" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "workflowSource=@workflows/main.wdl" \
+  -F "workflowInputs=@${INPUTS_JSON};type=application/json" \
+  -F "workflowDependencies=@workflows/dependencies.zip;type=application/zip"
+```
+
+To specify [workflow options](https://cromwell.readthedocs.io/en/latest/wf_options/Overview/), add the following to the request (assuming your options file is a file called `options.json` located in the `pwd`): `-F "workflowOptions=@options.json;type=application/json"`.
+
 # Workflow inputs
 
 This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially [run/backend-specific sections](#other-inputs) will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](backends).
