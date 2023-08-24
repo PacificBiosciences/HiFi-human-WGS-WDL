@@ -35,6 +35,7 @@
   },
   "sample_analysis.deepvariant_version": "String",
   "sample_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "sample_analysis.gpu": "Boolean",
   "sample_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",

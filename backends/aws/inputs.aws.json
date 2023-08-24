@@ -88,6 +88,7 @@
   },
   "humanwgs.deepvariant_version": "String (optional)",
   "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.gpu": "Boolean (optional, default = false)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
   "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
@@ -95,5 +96,6 @@
   "humanwgs.zones": "us-east-2a us-east-2b us-east-2c",
   "humanwgs.aws_spot_queue_arn": "",
   "humanwgs.aws_on_demand_queue_arn": "",
+  "humanwgs.aws_accelerator_type": "String? (optional); required if backend is set to 'AWS' and gpu is set to true; one of [\"nvidia-tesla-a10g\", \"nvidia-tesla-t4\", \"nvidia-tesla-t4-a10g\"]",
   "humanwgs.preemptible": "Boolean"
 }
