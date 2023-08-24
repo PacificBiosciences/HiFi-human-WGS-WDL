@@ -1211,6 +1211,9 @@
         "max_retries": 3,
         "zones": "",
         "queue_arn": "",
+        "accelerator_type": "",
+        "hpc_partition": "",
+        "hpc_partition_gpu": "",
         "container_registry": "quay.io/pacbio"
       },
       "on_demand_runtime_attributes": {
@@ -1218,6 +1221,9 @@
         "max_retries": 0,
         "zones": "",
         "queue_arn": "",
+        "accelerator_type": "",
+        "hpc_partition": "",
+        "hpc_partition_gpu": "",
         "container_registry": "quay.io/pacbio"
       }
     },
