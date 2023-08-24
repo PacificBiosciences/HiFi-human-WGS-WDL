@@ -627,6 +627,7 @@
                 ],
                 "total_deepvariant_tasks": 64,
                 "deepvariant_version": "1.5.0",
+                "gpu": false,
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
