@@ -149,14 +149,14 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV).  We recommend [cnv.excluded_regions.common_50.hg38.bed.gz](https://github.com/PacificBiosciences/HiFiCNV/blob/main/docs/aux_data.md). | |
 | File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for HiFiCNV | |
 | File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for HiFiCNV | |
-| File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
-| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | |
-| File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | An array of structural variant population VCFs | |
+| File? | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | required if `run_tertiary_analysis` is set to `true` |
+| File? | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | required if `run_tertiary_analysis` is set to `true` |
+| File? | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | required if `run_tertiary_analysis` is set to `true` |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | population_vcfs | An array of structural variant population VCFs | required if `run_tertiary_analysis` is set to `true` |
 
 ## [SlivarData](workflows/humanwgs_structs.wdl)
 
-Files associated with `slivar` annotation.
+Files associated with `slivar` annotation.  These are required if `run_tertiary_analysis` is set to `true`.
 
 These files are hosted publicly in each of the cloud backends; see `backends/${backend}/inputs.${backend}.json`.
 

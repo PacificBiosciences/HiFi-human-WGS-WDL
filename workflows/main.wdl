@@ -11,7 +11,7 @@ workflow humanwgs {
 		Cohort cohort
 
 		ReferenceData reference
-		SlivarData slivar_data
+		SlivarData? slivar_data
 
 		String deepvariant_version = "1.5.0"
 		DeepVariantModel? deepvariant_model
@@ -73,7 +73,7 @@ workflow humanwgs {
 		}
 	}
 
-	if (run_tertiary_analysis) {
+	if (run_tertiary_analysis && defined(slivar_data) && defined(reference.gnomad_af) && defined(reference.hprc_af) && defined(reference.gff) && defined(reference.population_vcfs)) {
 		IndexData slivar_small_variant_input_vcf = select_first([
 			cohort_analysis.phased_joint_small_variant_vcf,
 			sample_analysis.phased_small_variant_vcf[0]
@@ -89,7 +89,7 @@ workflow humanwgs {
 				small_variant_vcf = slivar_small_variant_input_vcf,
 				sv_vcf = slivar_sv_input_vcf,
 				reference = reference,
-				slivar_data = slivar_data,
+				slivar_data = select_first([slivar_data]),
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
@@ -156,7 +156,7 @@ workflow humanwgs {
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
 		reference: {help: "Reference genome data"}
-		slivar_data: {help: "Data files used for annotation with slivar"}
+		slivar_data: {help: "Data files used for annotation with slivar (required if `run_tertiary_analysis` is set to `true`)"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call; default 64 for cohorts N<=3, 96 for cohorts N>3"}
