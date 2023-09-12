@@ -660,7 +660,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:0bd33af16b788859750ea1711d49e332b9db49cc3e2431297fb00d437d93ebe9"
+		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:1f1bacf210b173b982572cd56802f73f59f62aea14a6a47e7ac8caeef3766ceb"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
