@@ -85,7 +85,7 @@ workflow tertiary_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (vcf_object in reference.population_vcfs) {
+	scatter (vcf_object in select_first([reference.population_vcfs])) {
 		File population_vcf = vcf_object.data
 		File population_vcf_index = vcf_object.data_index
 	}
