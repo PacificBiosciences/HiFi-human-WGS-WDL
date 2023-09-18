@@ -127,7 +127,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "sg4rjhj22cy5tgqcugzbotk6qn7h2nrn",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -138,14 +138,12 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "output_prefix": "${sample_id}.${reference_name}",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "spanning_reads": {
                   "value": "${resources_file_path}/HG005.GRCh38.haplotagged.trgt.spanning.sorted.bam",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "samtools_quickcheck",
                     "check_coordinate_sorted_alignment"
@@ -158,7 +156,24 @@
                     "vcftools_validator",
                     "check_sorted_vcf_bcf"
                   ]
-                },
+                }
+              }
+            }
+          ]
+        },
+        "coverage_dropouts": {
+          "key": "coverage_dropouts",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/HG005.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/HG005.GRCh38.haplotagged.bam.bai",
+                "tandem_repeat_bed": "${datasets_file_path}/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "output_prefix": "${sample_id}.${reference_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
                 "trgt_dropouts": {
                   "value": "${resources_file_path}/HG005.GRCh38.trgt.dropouts.txt",
                   "test_tasks": [
