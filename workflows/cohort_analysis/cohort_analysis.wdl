@@ -33,7 +33,7 @@ workflow cohort_analysis {
 
 	call PbsvCall.pbsv_call {
 		input:
-			sample_id = cohort_id,
+			sample_id = cohort_id + ".joint",
 			svsigs = svsigs,
 			sample_count = sample_count,
 			reference = reference.fasta.data,
@@ -56,7 +56,7 @@ workflow cohort_analysis {
 
 	call Glnexus.glnexus {
 		input:
-			cohort_id = cohort_id,
+			cohort_id = cohort_id + ".joint",
 			gvcfs = gvcf,
 			gvcf_indices = gvcf_index,
 			reference_name = reference.name,
@@ -72,7 +72,7 @@ workflow cohort_analysis {
 	call HiPhase.hiphase {
 		# VCF order: small variants, SVs
 		input:
-			id = cohort_id,
+			id = cohort_id + ".joint",
 			refname = reference.name,
 			sample_ids = sample_ids,
 			vcfs = [glnexus_vcf, zipped_pbsv_vcf],
@@ -87,7 +87,6 @@ workflow cohort_analysis {
 		IndexData phased_joint_sv_vcf = hiphase.phased_vcfs[1]
 		File hiphase_stats = hiphase.hiphase_stats
 		File hiphase_blocks = hiphase.hiphase_blocks
-		File hiphase_haplotags = hiphase.hiphase_haplotags
 	}
 
 	parameter_meta {
