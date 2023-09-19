@@ -85,6 +85,26 @@ Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the eng
 
 `java -jar <cromwell_jar_path> run workflows/main.wdl -i <input_file_path.json>`
 
+If Cromwell is running in server mode, the workflow can be submitted using cURL. Fill in the values of CROMWELL_URL and INPUTS_JSON below, then from the root of the repository, run:
+
+```bash
+# The base URL (and port, if applicable) of your Cromwell server
+CROMWELL_URL=
+# The path to your inputs JSON file
+INPUTS_JSON=
+
+(cd workflows && zip -r dependencies.zip humanwgs_structs.wdl  cohort_analysis/ sample_analysis/ tertiary_analysis/ wdl-common/)
+curl -X "POST" \
+  "${CROMWELL_URL}/api/workflows/v1" \
+  -H "accept: application/json" \
+  -H "Content-Type: multipart/form-data" \
+  -F "workflowSource=@workflows/main.wdl" \
+  -F "workflowInputs=@${INPUTS_JSON};type=application/json" \
+  -F "workflowDependencies=@workflows/dependencies.zip;type=application/zip"
+```
+
+To specify [workflow options](https://cromwell.readthedocs.io/en/latest/wf_options/Overview/), add the following to the request (assuming your options file is a file called `options.json` located in the `pwd`): `-F "workflowOptions=@options.json;type=application/json"`.
+
 # Workflow inputs
 
 This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially [run/backend-specific sections](#other-inputs) will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](backends).
@@ -122,21 +142,19 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | :- | :- | :- | :- |
 | String | name | Reference name; used to name outputs (e.g., "GRCh38") | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | fasta | Reference genome and index | |
-| Array[String] | chromosomes | Chromosomes to phase, typically `chr{1..22} chr{X,Y}` | |
-| File | chromosome_lengths | Reference chromosome lengths | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | hificnv_exclude_bed | Compressed BED and index of regions to exclude from calling by [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV).  We recommend [cnv.excluded_regions.common_50.hg38.bed.gz](https://github.com/PacificBiosciences/HiFiCNV/blob/main/docs/aux_data.md). | |
 | File | hificnv_expected_bed_male | BED of expected copy number for male karyotype for HiFiCNV | |
 | File | hificnv_expected_bed_female | BED of expected copy number for female karyotype for HiFiCNV | |
-| File | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | |
-| File | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | |
-| File | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | population_vcfs | An array of structural variant population VCFs | |
+| File? | gnomad_af | [gnomAD](https://gnomad.broadinstitute.org/) v3.1 allele frequences in [`slivar gnotate`](https://github.com/brentp/slivar/wiki/gnotate) format | required if `run_tertiary_analysis` is set to `true` |
+| File? | hprc_af | Allele frequences in ~100 [Human Pangenome Reference Consortium (HPRC)](https://humanpangenome.org/) samples in `slivar gnotate` format | required if `run_tertiary_analysis` is set to `true` |
+| File? | gff | [Ensembl](https://useast.ensembl.org/index.html) GFF3 reference annotation | required if `run_tertiary_analysis` is set to `true` |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)?] | population_vcfs | An array of structural variant population VCFs | required if `run_tertiary_analysis` is set to `true` |
 
 ## [SlivarData](workflows/humanwgs_structs.wdl)
 
-Files associated with `slivar` annotation.
+Files associated with `slivar` annotation.  These are required if `run_tertiary_analysis` is set to `true`.
 
 These files are hosted publicly in each of the cloud backends; see `backends/${backend}/inputs.${backend}.json`.
 
@@ -180,12 +198,12 @@ These files will be output for each sample defined in the cohort.
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | Small variants (SNPs and INDELs < 50bp) gVCFs called by [DeepVariant](https://github.com/google/deepvariant) (with index) | |
 | Array[File] | small_variant_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for small variants | |
 | Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
-| Array[File] | sample_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats) | |
-| Array[File] | sample_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
-| Array[File] | sample_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
-| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [`whatshap haplotag`](https://whatshap.readthedocs.io/en/latest/guide.html#visualizing-phasing-results)) reads (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [HiPhase](https://github.com/PacificBiosciences/HiPhase) (with index) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
+| Array[File] | sample_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
+| Array[File] | sample_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
+| Array[File] | sample_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
+| Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | merged_haplotagged_bam | Aligned (by [pbmm2](https://github.com/PacificBiosciences/pbmm2)), haplotagged (by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotagged-bam-files)) reads (with index) | |
 | Array[File] | haplotagged_bam_mosdepth_summary | [mosdepth](https://github.com/brentp/mosdepth) summary of median depths per chromosome | |
 | Array[File] | haplotagged_bam_mosdepth_region_bed | mosdepthhttps://github.com/brentp/mosdepth BED of median coverage depth per 500 bp window | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | trgt_repeat_vcf | Tandem repeat genotypes from [TRGT](https://github.com/PacificBiosciences/trgt/blob/main/docs/vcf_files.md) (with index) | |
@@ -207,11 +225,11 @@ These files will be output if the cohort includes more than one sample.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) (with index) | |
-| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_phased_joint_called_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [WhatsHap](https://whatshap.readthedocs.io/en/latest/) (with index) | |
-| File? | cohort_whatshap_stats_tsvs | Phase block statistics written by [`whatshap stats`](https://whatshap.readthedocs.io/en/latest/guide.html#whatshap-stats)  | |
-| File? | cohort_whatshap_stats_gtfs | Phase block GTF written by `whatshap stats` | |
-| File? | cohort_whatshap_stats_blocklists | Haplotype block list written by `whatshap stats` | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_small_variant_vcf | Small variants called by [DeepVariant](https://github.com/google/deepvariant), joint-called by [GLnexus](https://github.com/dnanexus-rnd/GLnexus), and phased by [HiPhase](https://github.com/PacificBiosciences/HiPhase) (with index) | |
+| [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
+| File? | cohort_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
+| File? | cohort_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
+| File? | cohort_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
 
 ## Tertiary analysis
 
@@ -240,12 +258,12 @@ The Docker image used by a particular step of the workflow can be identified by 
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/bcftools) |
 | deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.1](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.1)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
-| hificnv | <ul><li>[HiFiCNV v0.1.6](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.6)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/main/docker/hificnv) |
+| hificnv | <ul><li>[HiFiCNV v0.1.7](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.7)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/a11f567d549512332e83ea868af183317573ddff/docker/hificnv) |
 | htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/htslib) |
 | mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/mosdepth) |
 | paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.2.3](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.2.3)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/42ba3dab6766533b95dce6146a22ce620c535ef9/docker/paraphase) |
 | parse-cohort | <ul><li>python 3.8.10; custom scripts</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/parse-cohort) |
-| pb-cpg-tools | <ul><li>[pb-CpG-tools v2.3.1](https://github.com/PacificBiosciences/pb-CpG-tools/releases/tag/v2.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/bb65fcbe05c3a42e6b37364c883471db47ef8de3/docker/pb-cpg-tools) |
+| pb-cpg-tools | <ul><li>[pb-CpG-tools v2.3.2](https://github.com/PacificBiosciences/pb-CpG-tools/releases/tag/v2.3.2)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/2d51e727b03dda9f2a5aebb4f436d706c53e8a9e/docker/pb-cpg-tools) |
 | pbmm2 | <ul><li>[pbmm2 1.10.0](https://github.com/PacificBiosciences/pbmm2/releases/tag/v1.10.0)</li><li>[datamash 1.1.0](https://ftp.gnu.org/gnu/datamash/)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pbmm2) |
 | pbsv | <ul><li>[pbsv 2.9.0](https://github.com/PacificBiosciences/pbsv/releases/tag/v2.9.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pbsv) |
 | pyyaml | <ul><li>[pyyaml 5.3.1](https://github.com/yaml/pyyaml/releases/tag/5.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/pyyaml) |
@@ -253,4 +271,4 @@ The Docker image used by a particular step of the workflow can be identified by 
 | slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/slivar) |
 | svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/8598b47771995e44799575b72bde477c21bfc213/docker/svpack) |
 | trgt | <ul><li>[trgt 0.4.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.4.0)</li><li>[samtools 1.16.1](https://github.com/samtools/samtools/releases/tag/1.16.1)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/trgt) |
-| whatshap | <ul><li>[whatshap 1.4](https://github.com/whatshap/whatshap/releases/tag/v1.4)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a/docker/whatshap) |
+| hiphase | <ul><li>[HiPhase 0.10.2](https://github.com/PacificBiosciences/HiPhase/releases/tag/v0.10.2)</li><li>[samtools 1.16](https://github.com/samtools/samtools/releases/tag/1.16)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/48ec02a2eed235583934217417f5697f14931a1a/docker/hiphase) |

@@ -248,7 +248,7 @@
         },
         "hificnv": {
           "key": "hificnv",
-          "digest": "lx7w222woihnfuxinxrhx6xswoja6u2z",
+          "digest": "psaxd6rqtbmjgoatfwbkdhvpd7e2qhpn",
           "tests": [
             {
               "inputs": {
@@ -262,8 +262,8 @@
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "exclude_bed": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
                 "exclude_bed_index": "${datasets_file_path}/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
-                "expected_bed_male": "${datasets_file_path}/GRCh38/hificnv/male_expected_cn.hg38.bed",
-                "expected_bed_female": "${datasets_file_path}/GRCh38/hificnv/female_expected_cn.hg38.bed",
+                "expected_bed_male": "${datasets_file_path}/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+                "expected_bed_female": "${datasets_file_path}/GRCh38/hificnv/expected_cn.hg38.XX.bed",
                 "output_prefix": "hificnv",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
