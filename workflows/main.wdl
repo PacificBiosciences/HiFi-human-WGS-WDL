@@ -142,7 +142,6 @@ workflow humanwgs {
 		IndexData? cohort_small_variant_vcf = cohort_analysis.phased_joint_small_variant_vcf
 		File? cohort_hiphase_stats = cohort_analysis.hiphase_stats
 		File? cohort_hiphase_blocks = cohort_analysis.hiphase_blocks
-		File? cohort_hiphase_haplotags = cohort_analysis.hiphase_haplotags
 
 		# tertiary_analysis output
 		IndexData? filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf

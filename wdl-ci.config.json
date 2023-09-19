@@ -318,7 +318,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "hnaklilhvfhzokyogil55ymtufpzugdc",
+          "digest": "tonasjakl7qvwzmqfh7hmvryiljgrolj",
           "tests": [
             {
               "inputs": {
