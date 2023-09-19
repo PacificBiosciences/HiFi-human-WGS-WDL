@@ -1178,14 +1178,6 @@
                     "check_tab_delimited",
                     "count_columns"
                   ]
-                },
-                "hiphase_haplotags": {
-                  "value": "${resources_file_path}/hiphase/hg005-small-cohort.GRCh38.hiphase.haplotags.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
-                  ]
                 }
               }
             }
