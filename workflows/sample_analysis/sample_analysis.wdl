@@ -9,8 +9,7 @@ import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
-import "../wdl-common/wdl/workflows/phase_vcf/phase_vcf.wdl" as PhaseVcf
-import "../wdl-common/wdl/tasks/whatshap_haplotag.wdl" as WhatshapHaplotag
+import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
 	input {
@@ -90,45 +89,40 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call PhaseVcf.phase_vcf {
+	IndexData zipped_pbsv_vcf = {
+		"data": zip_index_vcf.zipped_vcf,
+		"data_index": zip_index_vcf.zipped_vcf_index
+	}
+
+	call HiPhase.hiphase {
+		# vcfs order: small variants, SVs
 		input:
-			vcf = deepvariant.vcf,
-			aligned_bams = aligned_bam,
+			id = sample.sample_id,
+			refname = reference.name,
+			sample_ids = [sample.sample_id],
+			vcfs = [deepvariant.vcf, zipped_pbsv_vcf],
+			bams = aligned_bam,
+			haplotag = true,
 			reference_fasta = reference.fasta,
-			reference_chromosome_lengths = reference.chromosome_lengths,
-			regions = reference.chromosomes,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (bam_object in aligned_bam) {
-		if (length(aligned_bam) == 1) {
-			String output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam"
+	# merge haplotagged bams if there are multiple
+	if (length(hiphase.haplotagged_bams) > 1) {
+		scatter (bam_object in hiphase.haplotagged_bams) {
+			File bam_to_merge = bam_object.data
 		}
-
-		call WhatshapHaplotag.whatshap_haplotag {
-			input:
-				phased_vcf = phase_vcf.phased_vcf.data,
-				phased_vcf_index = phase_vcf.phased_vcf.data_index,
-				aligned_bam = bam_object.data,
-				aligned_bam_index = bam_object.data_index,
-				reference = reference.fasta.data,
-				reference_index = reference.fasta.data_index,
-				output_bam_name = output_bam_name,
-				runtime_attributes = default_runtime_attributes
-		}
-	}
-
-	if (length(whatshap_haplotag.haplotagged_bam) > 1) {
 		call merge_bams {
 			input:
-				bams = whatshap_haplotag.haplotagged_bam,
+				bams = bam_to_merge,
 				output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
 				runtime_attributes = default_runtime_attributes
 		}
 	}
 
-	File haplotagged_bam = select_first([merge_bams.merged_bam, whatshap_haplotag.haplotagged_bam[0]])
-	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, whatshap_haplotag.haplotagged_bam_index[0]])
+	# select the merged bam if it exists, otherwise select the first (only) haplotagged bam
+	File haplotagged_bam = select_first([merge_bams.merged_bam, hiphase.haplotagged_bams[0].data])
+	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, hiphase.haplotagged_bams[0].data_index])
 
 	call Mosdepth.mosdepth {
 		input:
@@ -177,8 +171,8 @@ workflow sample_analysis {
 			sex = sample.sex,
 			bam = haplotagged_bam,
 			bam_index = haplotagged_bam_index,
-			phased_vcf = phase_vcf.phased_vcf.data,
-			phased_vcf_index = phase_vcf.phased_vcf.data_index,
+			phased_vcf = hiphase.phased_vcfs[0].data,
+			phased_vcf_index = hiphase.phased_vcfs[0].data_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			exclude_bed = reference.hificnv_exclude_bed.data,
@@ -190,38 +184,44 @@ workflow sample_analysis {
 	}
 
 	output {
+		# per movie stats, alignments, and svsigs
 		Array[File] bam_stats = pbmm2_align.bam_stats
 		Array[File] read_length_summary = pbmm2_align.read_length_summary
 		Array[File] read_quality_summary = pbmm2_align.read_quality_summary
 		Array[IndexData] aligned_bams = aligned_bam
 		Array[File] svsigs = pbsv_discover.svsig
 
-		IndexData small_variant_vcf = deepvariant.vcf
+		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
 		File small_variant_vcf_stats = bcftools_stats.stats
 		File small_variant_roh_bed = bcftools_roh.roh_bed
 
-		IndexData sv_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
-
-		IndexData phased_small_variant_vcf = phase_vcf.phased_vcf
-		File whatshap_stats_gtf = phase_vcf.whatshap_stats_gtf
-		File whatshap_stats_tsv = phase_vcf.whatshap_stats_tsv
-		File whatshap_stats_blocklist = phase_vcf.whatshap_stats_blocklist
+		# per sample final phased variant calls and haplotagged alignments
+		# phased_vcfs order: small variants, SVs
+		IndexData phased_small_variant_vcf = hiphase.phased_vcfs[0]
+		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
+		File hiphase_stats = hiphase.hiphase_stats
+		File hiphase_blocks = hiphase.hiphase_blocks
+		File hiphase_haplotags = select_first([hiphase.hiphase_haplotags])
 		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 
+		# per sample trgt outputs
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
 		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
 		File trgt_dropouts = trgt.trgt_dropouts
 
+		# per sample cpg outputs
 		Array[File] cpg_pileup_beds = cpg_pileup.pileup_beds
 		Array[File] cpg_pileup_bigwigs = cpg_pileup.pileup_bigwigs
 
+		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
 		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
-    
+
+		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
@@ -371,7 +371,7 @@ task merge_bams {
 	}
 
 	Int threads = 8
-	Int disk_size = ceil(size(bams[0], "GB") * length(bams) * 2 + 20)
+	Int disk_size = ceil(size(bams, "GB") * 2 + 20)
 
 	command <<<
 		set -euo pipefail
@@ -534,7 +534,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:f4c3e6a518d49bcdbf306c671d992604532e21e17cc7777f2f07763db642dbb8"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:86f10db35d1008962c782c49cfaca640762df553c0fd24eb293604ac304f467c"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -660,7 +660,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:0bd33af16b788859750ea1711d49e332b9db49cc3e2431297fb00d437d93ebe9"
+		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:1f1bacf210b173b982572cd56802f73f59f62aea14a6a47e7ac8caeef3766ceb"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
