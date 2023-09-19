@@ -60,9 +60,9 @@ workflow tertiary_analysis {
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			slivar_js = slivar_data.slivar_js,
-			gnomad_af = reference.gnomad_af,
-			hprc_af = reference.hprc_af,
-			gff = reference.gff,
+			gnomad_af = select_first([reference.gnomad_af]),
+			hprc_af = select_first([reference.hprc_af]),
+			gff = select_first([reference.gff]),
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -85,7 +85,7 @@ workflow tertiary_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (vcf_object in reference.population_vcfs) {
+	scatter (vcf_object in select_first([reference.population_vcfs])) {
 		File population_vcf = vcf_object.data
 		File population_vcf_index = vcf_object.data_index
 	}
@@ -95,7 +95,7 @@ workflow tertiary_analysis {
 			sv_vcf = sv_vcf.data,
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
-			gff = reference.gff,
+			gff = select_first([reference.gff]),
 			runtime_attributes = default_runtime_attributes
 	}
 
