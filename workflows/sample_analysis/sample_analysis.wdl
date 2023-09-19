@@ -202,7 +202,7 @@ workflow sample_analysis {
 		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
 		File hiphase_stats = hiphase.hiphase_stats
 		File hiphase_blocks = hiphase.hiphase_blocks
-		File hiphase_haplotags = hiphase.hiphase_haplotags
+		File hiphase_haplotags = select_first([hiphase.hiphase_haplotags])
 		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
