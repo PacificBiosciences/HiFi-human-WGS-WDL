@@ -424,7 +424,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "6gjfnb6skgcygmrilbujmoazkxgljpiz",
+          "digest": "4jz5jgrdccgii5ldycmjryzajkrdscji",
           "tests": [
             {
               "inputs": {
@@ -464,7 +464,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "b5quvmyyq5qub5rbtcctq5ybg4idn5pe",
+          "digest": "zyo2lnnyup4ilhqktgmqr4qmkppimpoe",
           "tests": [
             {
               "inputs": {
@@ -659,7 +659,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "fvj6h4in7afpevk3yzunymkd3qtc65hq",
+          "digest": "afmkoy2hy4lcyolms7n6lgzuzudr7uxx",
           "tests": [
             {
               "inputs": {
