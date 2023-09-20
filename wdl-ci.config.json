@@ -127,7 +127,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "ylzep5nroxhzjff43gkc6fs25ydor7dd",
+          "digest": "iquu5vdqsnqecn7kgsmotlnyb2kqmio4",
           "tests": [
             {
               "inputs": {
@@ -163,7 +163,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "3el45hg36hlyx5cswr3dkvqfg644cvbn",
+          "digest": "lia7roxkeuk5ami4ncw4p4ofbnsaoncb",
           "tests": [
             {
               "inputs": {
@@ -189,7 +189,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "74akcurzi4imy7ilihfshvwltcop4fpn",
+          "digest": "iljd4kgb3sffqhqd44kttyhmtszlf7yl",
           "tests": [
             {
               "inputs": {
@@ -263,7 +263,7 @@
         },
         "hificnv": {
           "key": "hificnv",
-          "digest": "psaxd6rqtbmjgoatfwbkdhvpd7e2qhpn",
+          "digest": "zupuuya2sodlz227rnfdqsgvgitks45u",
           "tests": [
             {
               "inputs": {
@@ -333,7 +333,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "tonasjakl7qvwzmqfh7hmvryiljgrolj",
+          "digest": "5nhdspt67jeikr6roxkbkuw75txxhyx5",
           "tests": [
             {
               "inputs": {
@@ -424,7 +424,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "4jz5jgrdccgii5ldycmjryzajkrdscji",
+          "digest": "zni6osfdah6y2fqqzfkfa7sohkh3ho6q",
           "tests": [
             {
               "inputs": {
@@ -464,7 +464,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "zyo2lnnyup4ilhqktgmqr4qmkppimpoe",
+          "digest": "fwsgj64p2ommdwqdgp7xsfn7g635gq4b",
           "tests": [
             {
               "inputs": {
@@ -659,7 +659,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "afmkoy2hy4lcyolms7n6lgzuzudr7uxx",
+          "digest": "xepbg4rxlegynlzzy3okwaendpl6gvhq",
           "tests": [
             {
               "inputs": {
@@ -972,7 +972,7 @@
       "tasks": {
         "run_hiphase": {
           "key": "run_hiphase",
-          "digest": "xatrrdjr62djm6qpgugmcow4vz42wcqz",
+          "digest": "kxz37h6oblckxicisubuvauobt3svoyj",
           "tests": [
             {
               "inputs": {
