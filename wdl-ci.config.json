@@ -127,7 +127,7 @@
         },
         "trgt": {
           "key": "trgt",
-          "digest": "",
+          "digest": "ylzep5nroxhzjff43gkc6fs25ydor7dd",
           "tests": [
             {
               "inputs": {
@@ -163,7 +163,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "",
+          "digest": "3el45hg36hlyx5cswr3dkvqfg644cvbn",
           "tests": [
             {
               "inputs": {
