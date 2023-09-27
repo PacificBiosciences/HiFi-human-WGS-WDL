@@ -1,9 +1,50 @@
+# The first line refers to the version 1.2 of the .dockstore.yml schema
 version: 1.2
+
+# An array of workflows. Each element corresponds to a workflow on Dockstore.
 workflows:
-  - name: wdl-humanwgs
-    subclass: WDL
+
+  # The optional workflow name for a workflow, which may only consist of alphanumerics
+  # and internal underscores and hyphens, but no spaces or other characters. Names may not exceed 256 characters.
+  # If using a .dockstore.yml with multiple workflows, this field is required
+  # to uniquely identify workflows in the repository.
+  #
+  # It should be noted that having the name come first is an arbitrary decision.
+  # You could use subclass instead, for instance. Provided arrays are not broken
+  # up, the order of fields within a .dockstore.yml is not important.
+  #- name: HiFi-human-WGS-WDL
+
+    # The descriptor language used for the workflow. CWL, WDL, NFL (Nextflow), or GALAXY.
+    # This cannot be changed once the workflow is registered.
+  - subclass: WDL
+
+    # Workflow-wide setting that will affect ALL branches/tags; only set this as needed in a main branch.
+    # Set to true to publish an unpublished workflow, or false to unpublish a published workflow.
+    # Omitting the publish setting leaves the publish-state unchanged (recommended for all non-primary branches).
+    # publish: <Boolean>
+
+    # The absolute path to the primary descriptor file in the Git repository.
+    # - For CWL, the primary descriptor is a .cwl file.
+    # - For WDL, the primary descriptor is a .wdl file.
+    # - For Galaxy, the primary descriptor is a .ga file.
+    # - Nextflow differs from these as the primary descriptor is a nextflow.config file.
     primaryDescriptorPath: /workflows/main.wdl
+
+    # An optional array of absolute paths to test parameter files in the Git repository.
+    # For example...
+    # testParameterFiles:
+    #   - /null-model/null-model.json
+    #   - /null-model/null-model-binary.json
+    # testParameterFiles: <String Array>
+
+    # An optional path to a workflow-specific readme in the Git repository. If not provided, Dockstore will show
+    # the readme.md present at the root of the Git repository if it is present.
+    # If you have multiple workflows in a single Git repository, it is recommend to give each one a readme.
     readMePath: /README.md
+
+    # An optional array of authorship information.
+    # Note that if orcid is present, then all other fields will be ignored, as information will be taken from orcid.
+    # If orcid is not present, make sure to at a minimum include the name field for each author.
     authors:
       - orcid: 0000-0001-5921-2022 # Juniper Lake
       - orcid: 0000-0001-7628-5645 # Gregory Concepcion
@@ -11,6 +52,18 @@ workflows:
       - orcid: 0000-0002-7422-1194 # William Rowell
       - orcid: 0000-0002-5507-0896 # Heather Ward
       - orcid: 0009-0001-0205-4614 # Karen Fang
+
+    # A boolean that will change the default version to be displayed on Dockstore. Default: False.
+    # A value of true will automatically display the latest tag updated as default.
+    # A value of false will retain the default version that has been specified via the Dockstore UI.
+    latestTagAsDefault: False
+
+    # The optional filters section allow specifying sets of Git branches and tags to include for the workflow.
+    # If no filters are given, all branches and tags are included.
+    # Branches and tags are arrays of pattern-strings.
+    # Pattern-strings use Unix-style Glob syntax by default (Ex: `develop`, `myworkflow/**`)
+    # https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/nio/file/FileSystem.html#getPathMatcher(java.lang.String)
+    # or RegEx when the string is surrounded by / (Ex: `/develop/`, `/myworkflow\/.*/`).
     filters:
-      branches: /.*dockstore/
-      tags: /.*dockstore/
+      branches: /develop/
+      tags: /v.*/
