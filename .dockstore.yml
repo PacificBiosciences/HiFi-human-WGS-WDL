@@ -12,11 +12,11 @@ workflows:
   # It should be noted that having the name come first is an arbitrary decision.
   # You could use subclass instead, for instance. Provided arrays are not broken
   # up, the order of fields within a .dockstore.yml is not important.
-  #- name: HiFi-human-WGS-WDL
+  - name: HiFi-human-WGS-WDL
 
     # The descriptor language used for the workflow. CWL, WDL, NFL (Nextflow), or GALAXY.
     # This cannot be changed once the workflow is registered.
-  - subclass: WDL
+    subclass: WDL
 
     # Workflow-wide setting that will affect ALL branches/tags; only set this as needed in a main branch.
     # Set to true to publish an unpublished workflow, or false to unpublish a published workflow.
