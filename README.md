@@ -13,7 +13,7 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 **Workflow entrypoint**: [workflows/main.wdl](workflows/main.wdl)
 
-The human WGS workflow performs read alignment, variant calling and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available. The workflow can run using Azure, AWS, GCP, and HPC backends.
+The HiFi human WGS WDL workflow performs read alignment, variant calling and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
 ![Human WGS workflow diagram](workflows/main.graphviz.svg "Human WGS workflow diagram")
 
