@@ -197,7 +197,8 @@ These files will be output for each sample defined in the cohort.
 | Array[Array[File]] | read_quality_summary | For each input BAM, read quality distribution (per input BAM) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | small_variant_gvcfs | Small variants (SNPs and INDELs < 50bp) gVCFs called by [DeepVariant](https://github.com/google/deepvariant) (with index) | |
 | Array[File] | small_variant_vcf_stats | [`bcftools stats`](https://samtools.github.io/bcftools/bcftools.html#stats) summary statistics for small variants | |
-| Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) | |
+| Array[File] | small_variant_roh_out | Output of [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) using `--AF-dflt 0.4` | |
+| Array[File] | small_variant_roh_bed | Regions of homozygosity determiend by [`bcftools roh`](https://samtools.github.io/bcftools/howtos/roh-calling.html) using `--AF-dflt 0.4` | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_small_variant_vcfs | Small variants called by DeepVariant and phased by [HiPhase](https://github.com/PacificBiosciences/HiPhase) (with index) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | sample_phased_sv_vcfs | Structural variants called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
 | Array[File] | sample_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |

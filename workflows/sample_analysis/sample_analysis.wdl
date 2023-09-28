@@ -202,6 +202,7 @@ workflow sample_analysis {
 		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
 		File small_variant_vcf_stats = bcftools_stats.stats
+		File small_variant_roh_out = bcftools_roh.roh_out
 		File small_variant_roh_bed = bcftools_roh.roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments
@@ -342,16 +343,20 @@ task bcftools_roh {
 
 		bcftools --version
 
-		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
 		bcftools roh \
 			--threads ~{threads - 1} \
 			--AF-dflt 0.4 \
 			~{vcf} \
-		| awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
+		> ~{vcf_basename}.bcftools_roh.out
+
+		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
+		awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
+			~{vcf_basename}.bcftools_roh.out \
 		>> ~{vcf_basename}.roh.bed
 	>>>
 
 	output {
+		File roh_out = "~{vcf_basename}.bcftools_roh.out"
 		File roh_bed = "~{vcf_basename}.roh.bed"
 	}
 
