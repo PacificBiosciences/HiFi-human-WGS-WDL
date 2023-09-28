@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "pt32pza4ixkxvdrdgeok5qbyi557dpoa",
+          "digest": "3r4icze5zkps7m6xoruzvnfzk2fp4gqd",
           "tests": [
             {
               "inputs": {
@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
+          "digest": "v4tn45bkdxpnbdjjs2td32pzkmwfiqfi",
           "tests": [
             {
               "inputs": {
@@ -102,7 +102,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "2t6zs72j2tisqwk7z4oyryecv5lolayw",
+          "digest": "ihskwtepnuvcllzbe3k2m73kuju37l34",
           "tests": [
             {
               "inputs": {
@@ -189,7 +189,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "74akcurzi4imy7ilihfshvwltcop4fpn",
+          "digest": "yw7vg33vgv3pomq6ozzy3dq65wklrc62",
           "tests": [
             {
               "inputs": {
@@ -230,7 +230,7 @@
         },
         "paraphase": {
           "key": "paraphase",
-          "digest": "5qitkh64l7rzc6ywab7d7jjbwaxrsnal",
+          "digest": "gzktyxvdrw73el5khnudlpu23x34lbxv",
           "tests": [
             {
               "inputs": {
@@ -263,7 +263,7 @@
         },
         "hificnv": {
           "key": "hificnv",
-          "digest": "psaxd6rqtbmjgoatfwbkdhvpd7e2qhpn",
+          "digest": "v5u3yha66r3tfyhzvhaye47h6u6q3glv",
           "tests": [
             {
               "inputs": {
@@ -333,7 +333,7 @@
       "tasks": {
         "bcftools_stats": {
           "key": "bcftools_stats",
-          "digest": "tonasjakl7qvwzmqfh7hmvryiljgrolj",
+          "digest": "cu73ojtpnhesxaa2jh7a7l23vlieds3i",
           "tests": [
             {
               "inputs": {
@@ -363,7 +363,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "ik4zsyy76etbsbuq3dapogju47ck4oxi",
+          "digest": "uqkzepaarj4mxxlx2ly6kjqpezztbarh",
           "tests": [
             {
               "inputs": {
@@ -394,7 +394,7 @@
       "tasks": {
         "zip_index_vcf": {
           "key": "zip_index_vcf",
-          "digest": "zglkxnubs7arukywr6dtr2rmlrs4l6si",
+          "digest": "cflenxzb6uj2ujfv4pkllo3vztdkev45",
           "tests": [
             {
               "inputs": {
@@ -464,7 +464,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "zyo2lnnyup4ilhqktgmqr4qmkppimpoe",
+          "digest": "ptzjrqbvzgvdhb52u3qrlr4iclxvktg5",
           "tests": [
             {
               "inputs": {
@@ -498,7 +498,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "fzvpxhpi2a5nyyys7ktoirf4ww2exbe3",
+          "digest": "x336uu76d5c6nzls2vgntvoqrnhex5q4",
           "tests": [
             {
               "inputs": {
@@ -528,7 +528,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "3is7ye6wciqqqeh3de43nkjkemqtip6n",
+          "digest": "4uqrkpwl5zu5f5s53ef2ic6trlefamvi",
           "tests": [
             {
               "inputs": {
@@ -713,7 +713,7 @@
       "tasks": {
         "write_cohort_yaml": {
           "key": "write_cohort_yaml",
-          "digest": "hqzjxv2yco24qutduqcvu2lo6tjhnnys",
+          "digest": "sqxqqo3fiojgj6t5ldw5druizzqwh2v5",
           "tests": [
             {
               "inputs": {
@@ -736,7 +736,7 @@
         },
         "write_ped": {
           "key": "write_ped",
-          "digest": "z33ywjmdqemmooowhpmz3laowtyxfsyi",
+          "digest": "opte5yq6pvlotpxywpqd33km3j3jb6y3",
           "tests": [
             {
               "inputs": {
@@ -760,7 +760,7 @@
         },
         "calculate_phrank": {
           "key": "calculate_phrank",
-          "digest": "fjqmz4ee3o2d2h52upjw44lfy4bvaibn",
+          "digest": "jpck2axvvdp6dxrf2msxn3z2p3lkcoip",
           "tests": [
             {
               "inputs": {
@@ -787,7 +787,7 @@
         },
         "bcftools_norm": {
           "key": "bcftools_norm",
-          "digest": "hms5gmz555lpf34c42vl6n6g4p6ysmjz",
+          "digest": "5nl66yjctlih3vcwe6gio7upi6zm6st5",
           "tests": [
             {
               "inputs": {
@@ -810,7 +810,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "betwggtcswgjiicesikqety24zamxnli",
+          "digest": "3olxcrbpuemodr32rtp5reu7hkxpvh3n",
           "tests": [
             {
               "inputs": {
@@ -840,7 +840,7 @@
         },
         "slivar_compound_hets": {
           "key": "slivar_compound_hets",
-          "digest": "wq4dvlnqcw4urdx2acd6oinx47ku5khh",
+          "digest": "cj5kbogcwjmjpyeb7qwpg5pomygx2vil",
           "tests": [
             {
               "inputs": {
@@ -865,7 +865,7 @@
         },
         "slivar_tsv": {
           "key": "slivar_tsv",
-          "digest": "bhj67yauwchm5aft7fru6rljgl2peiiu",
+          "digest": "tz264zjvupikaa74waq76wa3vrduejx7",
           "tests": [
             {
               "inputs": {
@@ -902,7 +902,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "e5wxcxlxkc4zlik74532wfdfosjygqbl",
+          "digest": "picjo4pk7b7gy2nkcae4ssak6pztevqv",
           "tests": [
             {
               "inputs": {
@@ -937,7 +937,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "iblo5v62tj4w2v3zzgamotyvyyzeakc5",
+          "digest": "nizbjqia5xoqanjo67nmcwwa3m5y7eko",
           "tests": [
             {
               "inputs": {
@@ -971,7 +971,7 @@
       "tasks": {
         "run_hiphase": {
           "key": "run_hiphase",
-          "digest": "cgr3txrfgd33s5kfq5egazluojqmyz6d",
+          "digest": "3l3ce75ajoiafdlwfkbfda6taahtfuym",
           "tests": [
             {
               "inputs": {
