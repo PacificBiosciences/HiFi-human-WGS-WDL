@@ -314,7 +314,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:4ead08f03854bf9d21227921fd957453e226245d5459fde3c87c91d4bdfd7f3c"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:1013aa0fd5fb42c607d78bfe3ec3d19e7781ad3aa337bf84d144c61ed7d51fa1"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -361,7 +361,7 @@ task bcftools_roh {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
+		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:46720a7ab5feba5be06d5269454a6282deec13060e296f0bc441749f6f26fdec"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -405,7 +405,7 @@ task merge_bams {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/samtools@sha256:83ca955c4a83f72f2cc229f41450eea00e73333686f3ed76f9f4984a985c85bb"
+		docker: "~{runtime_attributes.container_registry}/samtools@sha256:cbe496e16773d4ad6f2eec4bd1b76ff142795d160f9dd418318f7162dcdaa685"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -581,7 +581,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:86f10db35d1008962c782c49cfaca640762df553c0fd24eb293604ac304f467c"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:b95ff1c53bb16e53b8c24f0feaf625a4663973d80862518578437f44385f509b"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -632,7 +632,7 @@ task paraphase {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:76b77fae86e006937a76e8e43542985104ee8388dc641aa24ea38732921fca8d"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:186dec5f6dabedf8c90fe381cd8f934d31fe74310175efee9ca4f603deac954d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -707,7 +707,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:1f1bacf210b173b982572cd56802f73f59f62aea14a6a47e7ac8caeef3766ceb"
+		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:19fdde99ad2454598ff7d82f27209e96184d9a6bb92dc0485cc7dbe87739b3c2"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
