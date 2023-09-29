@@ -491,7 +491,9 @@
               },
               "output_tests": {
                 "pbsv_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                  "value": [
+                    "${resources_file_path}/HG005.GRCh38.chr6.pbsv.vcf"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator"
