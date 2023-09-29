@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "cdlg76jdsf6cvxr72yswncp57qrweu6c",
+          "digest": "wyp43tacw5ovlm24ypisltgmgilpudcp",
           "tests": [
             {
               "inputs": {
@@ -369,7 +369,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "uqkzepaarj4mxxlx2ly6kjqpezztbarh",
+          "digest": "6xurkq5v2c4w4l6qzjp4jzntk2bitrmw",
           "tests": [
             {
               "inputs": {
