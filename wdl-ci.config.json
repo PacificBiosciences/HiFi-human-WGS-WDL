@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "cdlg76jdsf6cvxr72yswncp57qrweu6c",
+          "digest": "wyp43tacw5ovlm24ypisltgmgilpudcp",
           "tests": [
             {
               "inputs": {
