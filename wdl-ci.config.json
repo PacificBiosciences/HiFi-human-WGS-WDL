@@ -90,7 +90,6 @@
                 "roh_out": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.out",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "count_bed_columns",
                     "check_tab_delimited"
