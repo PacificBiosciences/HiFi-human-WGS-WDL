@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "v4tn45bkdxpnbdjjs2td32pzkmwfiqfi",
+          "digest": "cdlg76jdsf6cvxr72yswncp57qrweu6c",
           "tests": [
             {
               "inputs": {
@@ -87,6 +87,12 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
+                "roh_out": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.bcftools_roh.out",
+                  "test_tasks": [
+                    "compare_file_basename"
+                  ]
+                },
                 "roh_bed": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.roh.bed",
                   "test_tasks": [
