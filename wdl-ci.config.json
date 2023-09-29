@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "js7ti2urbbukjifmknlvakbmdlty5apk",
+          "digest": "cdlg76jdsf6cvxr72yswncp57qrweu6c",
           "tests": [
             {
               "inputs": {
