@@ -7,7 +7,12 @@
       "data_index": "File"
     }
   ],
-  "cohort_analysis.svsigs": "Array[File]",
+  "cohort_analysis.svsigs": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
   "cohort_analysis.gvcfs": [
     {
       "data": "File",
@@ -20,6 +25,7 @@
       "data": "File",
       "data_index": "File"
     },
+    "pbsv_splits": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
