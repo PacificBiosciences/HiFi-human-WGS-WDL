@@ -90,9 +90,7 @@
                 "roh_out": {
                   "value": "${resources_file_path}/HG005.GRCh38.deepvariant.bcftools_roh.out",
                   "test_tasks": [
-                    "compare_file_basename",
-                    "count_bed_columns",
-                    "check_tab_delimited"
+                    "compare_file_basename"
                   ]
                 },
                 "roh_bed": {
