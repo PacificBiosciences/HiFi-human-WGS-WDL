@@ -79,7 +79,7 @@
         },
         "bcftools_roh": {
           "key": "bcftools_roh",
-          "digest": "cdlg76jdsf6cvxr72yswncp57qrweu6c",
+          "digest": "wyp43tacw5ovlm24ypisltgmgilpudcp",
           "tests": [
             {
               "inputs": {
@@ -369,7 +369,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "uqkzepaarj4mxxlx2ly6kjqpezztbarh",
+          "digest": "lbv7nwockw3wcbkfvapzoc2wv7fcodnw",
           "tests": [
             {
               "inputs": {
@@ -481,7 +481,9 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
-                "regions": [ "chr6" ],
+                "regions": [
+                  "chr6"
+                ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
