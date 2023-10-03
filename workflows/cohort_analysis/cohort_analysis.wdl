@@ -50,7 +50,7 @@ workflow cohort_analysis {
 
 	call ConcatVcf.concat_vcf {
 		input:
-			vcfs = flatten(pbsv_call.pbsv_vcf),
+			vcfs = pbsv_call.pbsv_vcf,
 			output_vcf_name = "~{cohort_id}.joint.~{reference.name}.pbsv.vcf",
 			runtime_attributes = default_runtime_attributes
 	}

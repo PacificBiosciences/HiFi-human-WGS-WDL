@@ -91,7 +91,7 @@ workflow sample_analysis {
 
 	call ConcatVcf.concat_vcf {
 		input:
-			vcfs = flatten(pbsv_call.pbsv_vcf),
+			vcfs = pbsv_call.pbsv_vcf,
 			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf",
 			runtime_attributes = default_runtime_attributes
 	}
