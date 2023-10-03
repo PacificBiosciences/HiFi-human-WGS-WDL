@@ -8,6 +8,7 @@ import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
@@ -22,6 +23,8 @@ workflow sample_analysis {
 
 		RuntimeAttributes default_runtime_attributes
 	}
+
+	Array[Array[String]] pbsv_splits = read_json(reference.pbsv_splits)
 
 	scatter (movie_bam in sample.movie_bams) {
 		call pbmm2_align {
@@ -73,19 +76,29 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call PbsvCall.pbsv_call {
+	scatter (region_set in pbsv_splits) {
+		call PbsvCall.pbsv_call {
+			input:
+				sample_id = sample.sample_id,
+				svsigs = pbsv_discover.svsig,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				reference_name = reference.name,
+				regions = region_set,
+				runtime_attributes = default_runtime_attributes
+		}
+	}
+
+	call ConcatVcf.concat_vcf {
 		input:
-			sample_id = sample.sample_id,
-			svsigs = pbsv_discover.svsig,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			reference_name = reference.name,
+			vcfs = flatten(pbsv_call.pbsv_vcf),
+			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf",
 			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
-			vcf = pbsv_call.pbsv_vcf,
+			vcf = concat_vcf.concatenated_vcf,
 			runtime_attributes = default_runtime_attributes
 	}
 

@@ -4,6 +4,7 @@ version 1.0
 
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/tasks/glnexus.wdl" as Glnexus
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
@@ -25,27 +26,38 @@ workflow cohort_analysis {
 	}
 
 	Int sample_count = length(sample_ids)
+	Array[Array[String]] pbsv_splits = read_json(reference.pbsv_splits)
 
 	scatter (gvcf_object in gvcfs) {
 		File gvcf = gvcf_object.data
 		File gvcf_index = gvcf_object.data_index
 	}
 
-	call PbsvCall.pbsv_call {
+	scatter (region_set in pbsv_splits) {
+		call PbsvCall.pbsv_call {
+			input:
+				sample_id = cohort_id + ".joint",
+				svsigs = svsigs,
+				sample_count = sample_count,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				reference_name = reference.name,
+				regions = region_set,
+				mem_gb = pbsv_call_mem_gb,
+				runtime_attributes = default_runtime_attributes
+		}
+	}
+
+	call ConcatVcf.concat_vcf {
 		input:
-			sample_id = cohort_id + ".joint",
-			svsigs = svsigs,
-			sample_count = sample_count,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			reference_name = reference.name,
-			mem_gb = pbsv_call_mem_gb,
+			vcfs = flatten(pbsv_call.pbsv_vcf),
+			output_vcf_name = "~{cohort_id}.joint.~{reference.name}.pbsv.vcf",
 			runtime_attributes = default_runtime_attributes
 	}
 
 	call ZipIndexVcf.zip_index_vcf {
 		input:
-			vcf = pbsv_call.pbsv_vcf,
+			vcf = concat_vcf.concatenated_vcf,
 			runtime_attributes = default_runtime_attributes
 	}
 

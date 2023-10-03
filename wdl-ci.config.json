@@ -481,6 +481,7 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
+                "regions": [ "chr6" ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
