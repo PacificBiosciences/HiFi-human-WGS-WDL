@@ -440,7 +440,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "fnnqhxt6mj443vwr6jydkzbnwxdxmnyt",
+          "digest": "74dzkdthagrt7twghinxtwqe6myrmtuc",
           "tests": [
             {
               "inputs": {
@@ -478,7 +478,7 @@
       "tasks": {
         "concat_vcf": {
           "key": "concat_vcf",
-          "digest": "",
+          "digest": "ntfiawmetxbdacle2l7mpu5tkz2jmtz2",
           "tests": [
             {
               "inputs": {
