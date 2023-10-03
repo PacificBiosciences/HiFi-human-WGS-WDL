@@ -9,7 +9,6 @@ import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
-import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
@@ -92,19 +91,14 @@ workflow sample_analysis {
 	call ConcatVcf.concat_vcf {
 		input:
 			vcfs = pbsv_call.pbsv_vcf,
-			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf",
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call ZipIndexVcf.zip_index_vcf {
-		input:
-			vcf = concat_vcf.concatenated_vcf,
+			vcf_indices = pbsv_call.pbsv_vcf_index,
+			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf.gz",
 			runtime_attributes = default_runtime_attributes
 	}
 
 	IndexData zipped_pbsv_vcf = {
-		"data": zip_index_vcf.zipped_vcf,
-		"data_index": zip_index_vcf.zipped_vcf_index
+		"data": concat_vcf.concatenated_vcf,
+		"data_index": concat_vcf.concatenated_vcf_index
 	}
 
 	call HiPhase.hiphase {

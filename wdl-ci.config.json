@@ -393,36 +393,6 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "zip_index_vcf": {
-          "key": "zip_index_vcf",
-          "digest": "cflenxzb6uj2ujfv4pkllo3vztdkev45",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "zipped_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/wdl-common/wdl/tasks/glnexus.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/glnexus.wdl",
       "name": "",
@@ -488,10 +458,48 @@
               },
               "output_tests": {
                 "pbsv_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
-                    "vcftools_validator"
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/concat_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/concat_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "concat_vcf": {
+          "key": "concat_vcf",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/HG005.GRCh38.chr5.pbsv.vcf.gz",
+                  "${resources_file_path}/HG005.GRCh38.chr6.pbsv.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.chr5.pbsv.vcf.gz.tbi",
+                  "${resources_file_path}/HG005.GRCh38.chr6.pbsv.vcf.gz.tbi"
+                ],
+                "output_vcf_name": "HG005.GRCh38.chr5chr6.pbsv.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "concatenated_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.chr5chr6.pbsv.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
                   ]
                 }
               }
