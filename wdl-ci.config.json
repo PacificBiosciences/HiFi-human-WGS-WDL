@@ -79,7 +79,7 @@
         },
         "bcftools": {
           "key": "bcftools",
-          "digest": "",
+          "digest": "cbfxlhk575vhxbh6spw7ceyhn2ljf7vu",
           "tests": [
             {
               "inputs": {
