@@ -119,8 +119,6 @@ workflow humanwgs {
 		Array[File] hificnv_depth_bws = sample_analysis.hificnv_depth_bw
 		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
         Array[File] pangu_jsons = sample_analysis.pangu_jsons
-        Array[File] pangu_tsvs = sample_analysis.pangu_tsvs
-        Array[File] fixed_pangu_tsvs = sample_analysis.fixed_pangu_tsvs
         Array[File?] pharmcat_missing_pgx_vcfs = sample_analysis.pharmcat_missing_pgx_vcfs
         Array[File] pharmcat_preprocessed_filtered_vcfs = sample_analysis.pharmcat_preprocessed_filtered_vcfs
         Array[File] pharmcat_match_jsons = sample_analysis.pharmcat_match_jsons

@@ -251,8 +251,6 @@ workflow sample_analysis {
 		File hificnv_depth_bw = hificnv.depth_bw
 		File hificnv_maf_bw = hificnv.maf_bw
 
-        File pangu_jsons = pharmcat.pangu_jsons[0]
-        File pangu_tsvs = pharmcat.pangu_tsvs[0]
         File fixed_pangu_tsvs = pharmcat.fixed_pangu_tsvs[0]
         File? pharmcat_missing_pgx_vcfs = pharmcat.pharmcat_missing_pgx_vcfs[0]
         File pharmcat_preprocessed_filtered_vcfs = pharmcat.pharmcat_preprocessed_filtered_vcfs[0]
