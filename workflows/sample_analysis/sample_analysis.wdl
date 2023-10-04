@@ -8,7 +8,7 @@ import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
-import "../wdl-common/wdl/tasks/pharmcat.wdl" as Pharmcat
+import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
@@ -194,22 +194,11 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-    Array[Pair[String,Map[String,IndexData]]] pharmcatsample = [
-		(
-			sample.sample_id, {
-				'aligned_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
-				'haplotagged_bam': {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
-				'gvcf': {'data': deepvariant.gvcf.data, 'data_index': deepvariant.gvcf.data_index},
-				'phased_vcf': {'data': phase_vcf.phased_vcf.data, 'data_index': phase_vcf.phased_vcf.data_index}
-			}
-		)
-	]
-
 	call Pharmcat.pharmcat { 
 		input:
-            sample_data = pharmcatsample,
+			haplotagged_bam = {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+            phased_vcf = hiphase.phased_vcfs[0],
             reference = reference.fasta,
-			reference_chromosome_lengths = reference.chromosome_lengths,
 			pharmcat_positions = reference.pharmcat_positions,
 			pharmcat_min_coverage = pharmcat_min_coverage,
 			default_runtime_attributes = default_runtime_attributes
@@ -260,13 +249,14 @@ workflow sample_analysis {
 		File hificnv_depth_bw = hificnv.depth_bw
 		File hificnv_maf_bw = hificnv.maf_bw
 
-		File pangu_jsons = pharmcat.pangu_jsons[0]
-        File? pharmcat_missing_pgx_vcfs = pharmcat.pharmcat_missing_pgx_vcfs[0]
-        File pharmcat_preprocessed_filtered_vcfs = pharmcat.pharmcat_preprocessed_filtered_vcfs[0]
-        File pharmcat_match_jsons = pharmcat.pharmcat_match_jsons[0]
-        File pharmcat_phenotype_jsons = pharmcat.pharmcat_phenotype_jsons[0]
-        File pharmcat_report_htmls = pharmcat.pharmcat_report_htmls[0]
-        File pharmcat_report_jsons = pharmcat.pharmcat_report_jsons[0]
+		# per sample pharmcat and pangu outputs
+		File pangu_json = pharmcat.pangu_json
+        File? pharmcat_missing_pgx_vcf = pharmcat.pharmcat_missing_pgx_vcf
+        File pharmcat_preprocessed_filtered_vcf = pharmcat.pharmcat_preprocessed_filtered_vcf
+        File pharmcat_match_json = pharmcat.pharmcat_match_json
+        File pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
+        File pharmcat_report_html = pharmcat.pharmcat_report_html
+        File pharmcat_report_json = pharmcat.pharmcat_report_json
 	}
 
 	parameter_meta {
