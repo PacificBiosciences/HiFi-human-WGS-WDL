@@ -133,7 +133,7 @@ task write_yaml_ped_phrank {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:sha256:af6f0689a7412b1edf76bd4bf6434e7fa6a86192eebf19573e8618880d9c1dbb"
+		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:af6f0689a7412b1edf76bd4bf6434e7fa6a86192eebf19573e8618880d9c1dbb"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
