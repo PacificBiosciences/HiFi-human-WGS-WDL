@@ -28,8 +28,8 @@
     "hificnv_expected_bed_male": "s3://dnastack-resources/dataset/GRCh38/hificnv/expected_cn.hg38.XY.bed",
     "hificnv_expected_bed_female": "s3://dnastack-resources/dataset/GRCh38/hificnv/expected_cn.hg38.XX.bed",
     "pharmcat_positions": {
-      "data": "s3://dnastack-resources/dataset/GRCh38/pharmcat/#TODO",
-      "data_index": "s3://dnastack-resources/dataset/GRCh38/pharmcat/#TODO"
+      "data": "s3://dnastack-resources/dataset/GRCh38/pharmcat/pharmcat_positions.vcf.bgz",
+      "data_index": "s3://dnastack-resources/dataset/GRCh38/pharmcat/pharmcat_positions.vcf.bgz.csi"
     },
     "gnomad_af": "s3://dnastack-resources/dataset/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
     "hprc_af": "s3://dnastack-resources/dataset/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
