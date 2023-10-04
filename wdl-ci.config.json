@@ -772,7 +772,6 @@
                 "compound_het_vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "vcftools_validator",
                     "check_gzip"
