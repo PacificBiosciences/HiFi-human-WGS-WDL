@@ -19,42 +19,14 @@
       "data": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
       "data_index": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai"
     },
-    "chromosomes": [
-      "chr1",
-      "chr2",
-      "chr3",
-      "chr4",
-      "chr5",
-      "chr6",
-      "chr7",
-      "chr8",
-      "chr9",
-      "chr10",
-      "chr11",
-      "chr12",
-      "chr13",
-      "chr14",
-      "chr15",
-      "chr16",
-      "chr17",
-      "chr18",
-      "chr19",
-      "chr20",
-      "chr21",
-      "chr22",
-      "chrX",
-      "chrY",
-      "chrM"
-    ],
-    "chromosome_lengths": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.chr_lengths.txt",
     "tandem_repeat_bed": "/datasetpbrarediseases/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "/datasetpbrarediseases/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "hificnv_exclude_bed": {
       "data": "/datasetpbrarediseases/dataset/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
       "data_index": "/datasetpbrarediseases/dataset/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi"
     },
-    "hificnv_expected_bed_male": "/datasetpbrarediseases/dataset/GRCh38/hificnv/male_expected_cn.hg38.bed",
-    "hificnv_expected_bed_female": "/datasetpbrarediseases/dataset/GRCh38/hificnv/female_expected_cn.hg38.bed",
+    "hificnv_expected_bed_male": "/datasetpbrarediseases/dataset/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+    "hificnv_expected_bed_female": "/datasetpbrarediseases/dataset/GRCh38/hificnv/expected_cn.hg38.XX.bed",
     "pharmcat_positions": {
       "data": "/datasetpbrarediseases/dataset/GRCh38/pharmcat/#TODO",
       "data_index": "/datasetpbrarediseases/dataset/GRCh38/pharmcat/#TODO"
@@ -86,7 +58,7 @@
     "hpo_terms": "/datasetpbrarediseases/dataset/hpo/hpoTerms.txt",
     "hpo_dag": "/datasetpbrarediseases/dataset/hpo/hpoDag.txt",
     "hpo_annotations": "/datasetpbrarediseases/dataset/hpo/ensembl.hpoPhenotype.tsv",
-    "ensembl_to_hgnc": "/datasetpbrarediseases/dataset/hpo/ensembl.hgncSymbol.tsv",
+    "ensembl_to_hgnc": "/datasetpbrarediseases/dataset/genes/ensembl.hgncSymbol.tsv",
     "lof_lookup": "/datasetpbrarediseases/dataset/slivar/lof_lookup.v2.1.1.txt",
     "clinvar_lookup": "/datasetpbrarediseases/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },
@@ -95,7 +67,7 @@
   "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",
-  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
+  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
   "humanwgs.backend": "Azure",
   "humanwgs.preemptible": "Boolean"
 }

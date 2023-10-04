@@ -19,8 +19,6 @@
       "data": "File",
       "data_index": "File"
     },
-    "chromosomes": "Array[String]",
-    "chromosome_lengths": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
@@ -57,7 +55,7 @@
   "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional)",
   "humanwgs.glnexus_mem_gb": "Int (optional)",
-  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = true)",
+  "humanwgs.run_tertiary_analysis": "Boolean (optional, default = false)",
   "humanwgs.backend": "String ['GCP', 'Azure', 'AWS', or 'HPC']",
   "humanwgs.zones": "String? (optional); required if backend is set to 'GCP' or 'AWS'",
   "humanwgs.aws_spot_queue_arn": "String? (optional); required if backend is set to 'AWS'",

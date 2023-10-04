@@ -13,8 +13,6 @@
       "data": "File",
       "data_index": "File"
     },
-    "chromosomes": "Array[String]",
-    "chromosome_lengths": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
