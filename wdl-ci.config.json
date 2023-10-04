@@ -18,8 +18,8 @@
       "description": "",
       "tasks": {}
     },
-    "workflows/wdl-common/wdl/tasks/pharmcat.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/pharmcat.wdl",
+    "workflows/wdl-common/wdl/workflows/pharmcat/pharmcat.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/pharmcat/pharmcat.wdl",
       "name": "",
       "description": "",
       "tasks": {
