@@ -5,7 +5,6 @@ version 1.0
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
-import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
@@ -59,17 +58,11 @@ workflow sample_analysis {
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	call BcftoolsStats.bcftools_stats {
+	call bcftools {
 		input:
 			vcf = deepvariant.vcf.data,
-			params = "--apply-filters PASS --samples ~{sample.sample_id}",
+			stats_params = "--apply-filters PASS --samples ~{sample.sample_id}",
 			reference = reference.fasta.data,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call bcftools_roh {
-		input:
-			vcf = deepvariant.vcf.data,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -201,9 +194,9 @@ workflow sample_analysis {
 
 		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
-		File small_variant_vcf_stats = bcftools_stats.stats
-		File small_variant_roh_out = bcftools_roh.roh_out
-		File small_variant_roh_bed = bcftools_roh.roh_bed
+		File small_variant_vcf_stats = bcftools.stats
+		File small_variant_roh_out = bcftools.roh_out
+		File small_variant_roh_bed = bcftools.roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments
 		# phased_vcfs order: small variants, SVs
@@ -327,21 +320,33 @@ task pbmm2_align {
 	}
 }
 
-task bcftools_roh {
+task bcftools {
 	input {
 		File vcf
+
+		String? stats_params
+		File reference
 
 		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+
 	Int threads = 2
-	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
+	Int reference_size = if (defined(reference)) then ceil(size(reference, "GB")) else 0
+	Int disk_size = ceil((size(vcf, "GB") + reference_size) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
 		bcftools --version
+
+		bcftools stats \
+			--threads ~{threads - 1} \
+			~{stats_params} \
+			~{"--fasta-ref " + reference} \
+			~{vcf} \
+		> ~{vcf_basename}.stats.txt
 
 		bcftools roh \
 			--threads ~{threads - 1} \
@@ -356,6 +361,7 @@ task bcftools_roh {
 	>>>
 
 	output {
+		File stats = "~{vcf_basename}.stats.txt"
 		File roh_out = "~{vcf_basename}.bcftools_roh.out"
 		File roh_bed = "~{vcf_basename}.roh.bed"
 	}

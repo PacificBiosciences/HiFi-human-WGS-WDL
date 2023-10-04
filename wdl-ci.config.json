@@ -77,13 +77,15 @@
             }
           ]
         },
-        "bcftools_roh": {
-          "key": "bcftools_roh",
-          "digest": "wyp43tacw5ovlm24ypisltgmgilpudcp",
+        "bcftools": {
+          "key": "bcftools",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
+                "stats_params": "--apply-filters PASS --samples HG005",
+                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -100,6 +102,13 @@
                     "compare_file_basename",
                     "count_bed_columns",
                     "check_tab_delimited"
+                  ]
+                },
+                "stats": {
+                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_empty_lines"
                   ]
                 }
               }
@@ -331,36 +340,6 @@
       "name": "",
       "description": "",
       "tasks": {}
-    },
-    "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/bcftools_stats.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "bcftools_stats": {
-          "key": "bcftools_stats",
-          "digest": "cu73ojtpnhesxaa2jh7a7l23vlieds3i",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.gz",
-                "params": "--apply-filters PASS --samples ${sample_id}",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "stats": {
-                  "value": "${resources_file_path}/HG005.GRCh38.deepvariant.vcf.stats.txt",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_empty_lines"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
     },
     "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/pbsv_discover.wdl",
@@ -717,14 +696,18 @@
       "name": "",
       "description": "",
       "tasks": {
-        "write_cohort_yaml": {
-          "key": "write_cohort_yaml",
-          "digest": "sqxqqo3fiojgj6t5ldw5druizzqwh2v5",
+        "write_yaml_ped_phrank": {
+          "key": "write_yaml_ped_phrank",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "cohort_id": "hg005-small-cohort",
                 "cohort_json": "${resources_file_path}/cohort.json",
+                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
+                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
+                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
+                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -735,22 +718,7 @@
                     "compare_file_basename",
                     "check_yaml"
                   ]
-                }
-              }
-            }
-          ]
-        },
-        "write_ped": {
-          "key": "write_ped",
-          "digest": "opte5yq6pvlotpxywpqd33km3j3jb6y3",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
+                },
                 "pedigree": {
                   "value": "${resources_file_path}/hg005-small-cohort.ped",
                   "test_tasks": [
@@ -759,26 +727,7 @@
                     "check_tab_delimited",
                     "count_columns"
                   ]
-                }
-              }
-            }
-          ]
-        },
-        "calculate_phrank": {
-          "key": "calculate_phrank",
-          "digest": "jpck2axvvdp6dxrf2msxn3z2p3lkcoip",
-          "tests": [
-            {
-              "inputs": {
-                "cohort_id": "hg005-small-cohort",
-                "cohort_yaml": "${resources_file_path}/hg005-small-cohort.yml",
-                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
-                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
-                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
-                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
+                },
                 "phrank_lookup": {
                   "value": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
                   "test_tasks": [
@@ -791,37 +740,14 @@
             }
           ]
         },
-        "bcftools_norm": {
-          "key": "bcftools_norm",
-          "digest": "5nl66yjctlih3vcwe6gio7upi6zm6st5",
+        "slivar_small_variant": {
+          "key": "slivar_small_variant",
+          "digest": "",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz",
                 "vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.vcf.gz.tbi",
-                "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "normalized_bcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_sorted_vcf_bcf"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "slivar_small_variant": {
-          "key": "slivar_small_variant",
-          "digest": "3olxcrbpuemodr32rtp5reu7hkxpvh3n",
-          "tests": [
-            {
-              "inputs": {
-                "bcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf",
-                "bcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.bcf.csi",
                 "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
@@ -829,6 +755,9 @@
                 "gnomad_af": "${datasets_file_path}/GRCh38/slivar_gnotate/gnomad.hg38.v3.custom.v1.zip",
                 "hprc_af": "${datasets_file_path}/GRCh38/slivar_gnotate/hprc.deepvariant.glnexus.hg38.v1.zip",
                 "gff": "${datasets_file_path}/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
+                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -839,23 +768,7 @@
                     "vcftools_validator",
                     "check_gzip"
                   ]
-                }
-              }
-            }
-          ]
-        },
-        "slivar_compound_hets": {
-          "key": "slivar_compound_hets",
-          "digest": "cj5kbogcwjmjpyeb7qwpg5pomygx2vil",
-          "tests": [
-            {
-              "inputs": {
-                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                "filtered_vcf_index": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz.tbi",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
+                },
                 "compound_het_vcf": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
                   "test_tasks": [
@@ -864,26 +777,7 @@
                     "vcftools_validator",
                     "check_gzip"
                   ]
-                }
-              }
-            }
-          ]
-        },
-        "slivar_tsv": {
-          "key": "slivar_tsv",
-          "digest": "tz264zjvupikaa74waq76wa3vrduejx7",
-          "tests": [
-            {
-              "inputs": {
-                "filtered_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.vcf.gz",
-                "compound_het_vcf": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.compound_hets.vcf.gz",
-                "pedigree": "${resources_file_path}/hg005-small-cohort.ped",
-                "lof_lookup": "${datasets_file_path}/slivar/lof_lookup.v2.1.1.txt",
-                "clinvar_lookup": "${datasets_file_path}/slivar/clinvar_gene_desc.20221214T183140.txt",
-                "phrank_lookup": "${resources_file_path}/hg005-small-cohort_phrank.tsv",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
+                },
                 "filtered_tsv": {
                   "value": "${resources_file_path}/hg005-small-cohort.GRCh38.deepvariant.glnexus.phased.norm.slivar.tsv",
                   "test_tasks": [
@@ -930,7 +824,7 @@
               },
               "output_tests": {
                 "svpack_vcf": {
-                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf",
+                  "value": "${resources_file_path}/hg005-small-cohort.GRCh38.pbsv.svpack.vcf.gz",
                   "test_tasks": [
                     "calculate_md5sum",
                     "compare_file_basename",

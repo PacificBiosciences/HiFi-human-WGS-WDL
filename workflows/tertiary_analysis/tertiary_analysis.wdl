@@ -4,7 +4,6 @@ version 1.0
 # This workflow is run on a phased single-sample VCF if there is only a single individual in the cohort, otherwise it is run on the joint-called phased VCF.
 
 import "../humanwgs_structs.wdl"
-import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
 
 workflow tertiary_analysis {
 	input {
@@ -19,24 +18,10 @@ workflow tertiary_analysis {
 		RuntimeAttributes default_runtime_attributes
 	}
 
-	call write_cohort_yaml {
+	call write_yaml_ped_phrank {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_json = write_json(cohort),
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call write_ped {
-		input:
-			cohort_id = cohort.cohort_id,
-			cohort_yaml = write_cohort_yaml.cohort_yaml,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call calculate_phrank {
-		input:
-			cohort_id = cohort.cohort_id,
-			cohort_yaml = write_cohort_yaml.cohort_yaml,
 			hpo_terms = slivar_data.hpo_terms,
 			hpo_dag = slivar_data.hpo_dag,
 			hpo_annotations = slivar_data.hpo_annotations,
@@ -44,44 +29,20 @@ workflow tertiary_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call bcftools_norm {
+	call slivar_small_variant {
 		input:
 			vcf = small_variant_vcf.data,
 			vcf_index = small_variant_vcf.data_index,
-			reference = reference.fasta.data,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call slivar_small_variant {
-		input:
-			bcf = bcftools_norm.normalized_bcf,
-			bcf_index = bcftools_norm.normalized_bcf_index,
-			pedigree = write_ped.pedigree,
+			pedigree = write_yaml_ped_phrank.pedigree,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			slivar_js = slivar_data.slivar_js,
 			gnomad_af = select_first([reference.gnomad_af]),
 			hprc_af = select_first([reference.hprc_af]),
 			gff = select_first([reference.gff]),
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call slivar_compound_hets {
-		input:
-			filtered_vcf = slivar_small_variant.filtered_vcf,
-			filtered_vcf_index = slivar_small_variant.filtered_vcf_index,
-			pedigree = write_ped.pedigree,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call slivar_tsv {
-		input:
-			filtered_vcf = slivar_small_variant.filtered_vcf,
-			compound_het_vcf = slivar_compound_hets.compound_het_vcf,
-			pedigree = write_ped.pedigree,
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = calculate_phrank.phrank_lookup,
+			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -99,28 +60,22 @@ workflow tertiary_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call ZipIndexVcf.zip_index_vcf {
-		input:
-			vcf = svpack_filter_annotated.svpack_vcf,
-			runtime_attributes = default_runtime_attributes
-	}
-
 	call slivar_svpack_tsv {
 		input:
-			filtered_vcf = zip_index_vcf.zipped_vcf,
-			pedigree = write_ped.pedigree,
+			filtered_vcf = svpack_filter_annotated.svpack_vcf,
+			pedigree = write_yaml_ped_phrank.pedigree,
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = calculate_phrank.phrank_lookup,
+			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
 	output {
 		IndexData filtered_small_variant_vcf = {"data": slivar_small_variant.filtered_vcf, "data_index": slivar_small_variant.filtered_vcf_index}
-		IndexData compound_het_small_variant_vcf = {"data": slivar_compound_hets.compound_het_vcf, "data_index": slivar_compound_hets.compound_het_vcf_index}
-		File filtered_small_variant_tsv = slivar_tsv.filtered_tsv
-		File compound_het_small_variant_tsv = slivar_tsv.compound_het_tsv
-		IndexData filtered_svpack_vcf = {"data": zip_index_vcf.zipped_vcf, "data_index": zip_index_vcf.zipped_vcf_index}
+		IndexData compound_het_small_variant_vcf = {"data": slivar_small_variant.compound_het_vcf, "data_index": slivar_small_variant.compound_het_vcf_index}
+		File filtered_small_variant_tsv = slivar_small_variant.filtered_tsv
+		File compound_het_small_variant_tsv = slivar_small_variant.compound_het_tsv
+		IndexData filtered_svpack_vcf = {"data": svpack_filter_annotated.svpack_vcf, "data_index": svpack_filter_annotated.svpack_vcf_index}
 		File filtered_svpack_tsv = slivar_svpack_tsv.svpack_tsv
 	}
 
@@ -134,79 +89,10 @@ workflow tertiary_analysis {
 	}
 }
 
-task write_cohort_yaml {
+task write_yaml_ped_phrank {
 	input {
 		String cohort_id
 		File cohort_json
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	command <<<
-		set -euo pipefail
-
-		parse_cohort.py \
-			--cohort_json ~{cohort_json} \
-			--write_cohort_yaml ~{cohort_id}.yml
-	>>>
-
-	output {
-		File cohort_yaml = "~{cohort_id}.yml"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/parse-cohort@sha256:8f7d03f79e162b31e572cc1936771912d6664d0572481be9e66846e5885bb59d"
-		cpu: 2
-		memory: "4 GB"
-		disk: "20 GB"
-		disks: "local-disk " + "20" + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task write_ped {
-	input {
-		String cohort_id
-		File cohort_yaml
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	command <<<
-		set -euo pipefail
-
-		yaml2ped.py \
-			~{cohort_yaml} \
-			~{cohort_id} \
-			~{cohort_id}.ped
-	>>>
-
-	output {
-		File pedigree = "~{cohort_id}.ped"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:fd5f3da5b41591fea224455a80a6d611909c206fa50cc760404e5c9ba1f829ff"
-		cpu: 2
-		memory: "4 GB"
-		disk: "20 GB"
-		disks: "local-disk " + "20" + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task calculate_phrank {
-	input {
-		String cohort_id
-		File cohort_yaml
 
 		File hpo_terms
 		File hpo_dag
@@ -221,75 +107,34 @@ task calculate_phrank {
 	command <<<
 		set -euo pipefail
 
-		python3 /opt/scripts/calculate_phrank.py \
+		parse_cohort.py \
+			--cohort_json ~{cohort_json} \
+			--write_cohort_yaml ~{cohort_id}.yml
+
+		yaml2ped.py \
+			~{cohort_id}.yml \
+			~{cohort_id} \
+			~{cohort_id}.ped
+
+		calculate_phrank.py \
 			~{hpo_terms} \
 			~{hpo_dag} \
 			~{hpo_annotations} \
 			~{ensembl_to_hgnc} \
-			~{cohort_yaml} \
+			~{cohort_id}.yml \
 			~{cohort_id} \
 			~{cohort_id}_phrank.tsv
 	>>>
 
 	output {
+		File cohort_yaml = "~{cohort_id}.yml"
+		File pedigree = "~{cohort_id}.ped"
 		File phrank_lookup = "~{cohort_id}_phrank.tsv"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:fd5f3da5b41591fea224455a80a6d611909c206fa50cc760404e5c9ba1f829ff"
+		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:sha256:af6f0689a7412b1edf76bd4bf6434e7fa6a86192eebf19573e8618880d9c1dbb"
 		cpu: 2
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task bcftools_norm {
-	input {
-		File vcf
-		File vcf_index
-
-		File reference
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	String vcf_basename = basename(vcf, ".vcf.gz")
-	Int threads = 2
-	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		bcftools --version
-
-		bcftools norm \
-			--threads ~{threads - 1} \
-			--multiallelics \
-			- \
-			--output-type b \
-			--fasta-ref ~{reference} \
-			~{vcf} \
-		| bcftools sort \
-			--output-type b \
-			--output ~{vcf_basename}.norm.bcf
-
-		bcftools index --threads ~{threads - 1} ~{vcf_basename}.norm.bcf
-	>>>
-
-	output {
-		File normalized_bcf = "~{vcf_basename}.norm.bcf"
-		File normalized_bcf_index = "~{vcf_basename}.norm.bcf.csi"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:46720a7ab5feba5be06d5269454a6282deec13060e296f0bc441749f6f26fdec"
-		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
@@ -303,8 +148,9 @@ task bcftools_norm {
 
 task slivar_small_variant {
 	input {
-		File bcf
-		File bcf_index
+		File vcf
+		File vcf_index
+
 		File pedigree
 
 		File reference
@@ -314,6 +160,10 @@ task slivar_small_variant {
 		File gnomad_af
 		File hprc_af
 		File gff
+
+		File lof_lookup
+		File clinvar_lookup
+		File phrank_lookup
 
 		RuntimeAttributes runtime_attributes
 	}
@@ -349,21 +199,53 @@ task slivar_small_variant {
 		'comphet_side:sample.het',
 		'sample.GQ > ~{min_gq}'
 	]
+	Array[String] skip_list = [
+		'non_coding_transcript',
+		'intron',
+		'non_coding',
+		'upstream_gene',
+		'downstream_gene',
+		'non_coding_transcript_exon',
+		'NMD_transcript',
+		'5_prime_UTR',
+		'3_prime_UTR'
+	]
+	Array[String] info_fields = [
+		'gnomad_af',
+		'hprc_af',
+		'gnomad_nhomalt',
+		'hprc_nhomalt',
+		'gnomad_ac',
+		'hprc_ac'
+	]
 
-	String bcf_basename = basename(bcf, ".bcf")
+	String vcf_basename = basename(vcf, ".vcf.gz")
 	Int threads = 8
-	Int disk_size = ceil((size(bcf, "GB") + size(reference, "GB") + size(gnomad_af, "GB") + size(hprc_af, "GB") + size(gff, "GB")) * 2 + 20)
+	Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB") + size(gnomad_af, "GB") + size(hprc_af, "GB") + size(gff, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
+		bcftools --version
+
+		bcftools norm \
+			--threads ~{threads - 1} \
+			--multiallelics \
+			- \
+			--output-type b \
+			--fasta-ref ~{reference} \
+			~{vcf} \
+		| bcftools sort \
+			--output-type b \
+			--output ~{vcf_basename}.norm.bcf
+
+		bcftools index \
+			--threads ~{threads - 1} \
+			--tbi ~{vcf_basename}.norm.bcf
+
 		# slivar has no version option
 		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+' 
-
-		bcftools --version
 		
-		tabix --version
-
 		pslivar \
 			--processes ~{threads} \
 			--fasta ~{reference} \
@@ -376,7 +258,7 @@ task slivar_small_variant {
 			--sample-expr '~{sep=" && " sample_expr}' \
 			--gnotate ~{gnomad_af} \
 			--gnotate ~{hprc_af} \
-			--vcf ~{bcf} \
+			--vcf ~{vcf_basename}.norm.bcf \
 			--ped ~{pedigree} \
 		| bcftools csq \
 			--local-csq \
@@ -386,128 +268,27 @@ task slivar_small_variant {
 			--fasta-ref ~{reference} \
 			- \
 			--output-type z \
-			--output ~{bcf_basename}.slivar.vcf.gz
+			--output ~{vcf_basename}.norm.slivar.vcf.gz
 
-		tabix ~{bcf_basename}.slivar.vcf.gz
-	>>>
-
-	output {
-		File filtered_vcf = "~{bcf_basename}.slivar.vcf.gz"
-		File filtered_vcf_index = "~{bcf_basename}.slivar.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar@sha256:0a09289ccb760da310669906c675be02fd16b18bbedc971605a587275e34966c"
-		cpu: threads
-		memory: "16 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task slivar_compound_hets {
-	input {
-		File filtered_vcf
-		File filtered_vcf_index
-		File pedigree
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	Array[String] skip_list = [
-		'non_coding_transcript',
-		'intron',
-		'non_coding',
-		'upstream_gene',
-		'downstream_gene',
-		'non_coding_transcript_exon',
-		'NMD_transcript',
-		'5_prime_UTR',
-		'3_prime_UTR'
-	]
-
-	String vcf_basename = basename(filtered_vcf, ".vcf.gz")
-	Int disk_size = ceil(size(filtered_vcf, "GB") * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		# slivar has no version option
-		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
-
-		bgzip --version
-
-		tabix --version
+		bcftools index \
+			--threads ~{threads - 1} \
+			--tbi ~{vcf_basename}.norm.slivar.vcf.gz
 
 		slivar \
 			compound-hets \
 			--skip ~{sep=',' skip_list} \
-			--vcf ~{filtered_vcf} \
+			--vcf ~{vcf_basename}.norm.slivar.vcf.gz \
 			--sample-field comphet_side \
 			--ped ~{pedigree} \
 			--allow-non-trios \
 		| add_comphet_phase.py \
-		> ~{vcf_basename}.compound_hets.vcf
-
-		bgzip ~{vcf_basename}.compound_hets.vcf
-		tabix ~{vcf_basename}.compound_hets.vcf.gz
-	>>>
-
-	output {
-		File compound_het_vcf = "~{vcf_basename}.compound_hets.vcf.gz"
-		File compound_het_vcf_index = "~{vcf_basename}.compound_hets.vcf.gz.tbi"
-	}
-
-	runtime {
-		docker: "~{runtime_attributes.container_registry}/slivar@sha256:0a09289ccb760da310669906c675be02fd16b18bbedc971605a587275e34966c"
-		cpu: 2
-		memory: "4 GB"
-		disk: disk_size + " GB"
-		disks: "local-disk " + disk_size + " HDD"
-		preemptible: runtime_attributes.preemptible_tries
-		maxRetries: runtime_attributes.max_retries
-		awsBatchRetryAttempts: runtime_attributes.max_retries
-		queueArn: runtime_attributes.queue_arn
-		zones: runtime_attributes.zones
-	}
-}
-
-task slivar_tsv {
-	input {
-		File filtered_vcf
-		File compound_het_vcf
-		File pedigree
-
-		File lof_lookup
-		File clinvar_lookup
-		File phrank_lookup
-
-		RuntimeAttributes runtime_attributes
-	}
-
-	Array[String] info_fields = [
-		'gnomad_af',
-		'hprc_af',
-		'gnomad_nhomalt',
-		'hprc_nhomalt',
-		'gnomad_ac',
-		'hprc_ac'
-	]
-
-	String filtered_vcf_basename = basename(filtered_vcf, ".vcf.gz")
-	String compound_het_vcf_basename = basename(compound_het_vcf, ".vcf.gz")
-	Int disk_size = ceil((size(filtered_vcf, "GB") + size(compound_het_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
-
-	command <<<
-		set -euo pipefail
-
-		# slivar has no version option
-		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
+		| bcftools view \
+			--output-type z \
+			--output ~{vcf_basename}.compound_hets.vcf.gz
+		
+		bcftools index \
+			--threads ~{threads - 1} \
+			--tbi ~{vcf_basename}.compound_hets.vcf.gz
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
@@ -520,9 +301,9 @@ task slivar_tsv {
 			--gene-description ~{phrank_lookup} \
 			--ped ~{pedigree} \
 			--out /dev/stdout \
-			~{filtered_vcf} \
+			~{vcf_basename}.norm.slivar.vcf.gz \
 		| sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
-		> ~{filtered_vcf_basename}.tsv
+		> ~{vcf_basename}.norm.slivar.tsv
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
@@ -534,20 +315,24 @@ task slivar_tsv {
 			--gene-description ~{phrank_lookup} \
 			--ped ~{pedigree} \
 			--out /dev/stdout \
-			~{compound_het_vcf} \
+			~{vcf_basename}.compound_hets.vcf.gz \
 		| sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
-		> ~{compound_het_vcf_basename}.tsv
+		> ~{vcf_basename}.compound_hets.tsv
 	>>>
 
 	output {
-		File filtered_tsv = "~{filtered_vcf_basename}.tsv"
-		File compound_het_tsv = "~{compound_het_vcf_basename}.tsv"
+		File filtered_vcf = "~{vcf_basename}.norm.slivar.vcf.gz"
+		File filtered_vcf_index = "~{vcf_basename}.norm.slivar.vcf.gz.tbi"
+		File compound_het_vcf = "~{vcf_basename}.compound_hets.vcf.gz"
+		File compound_het_vcf_index = "~{vcf_basename}.compound_hets.vcf.gz.tbi"
+		File filtered_tsv = "~{vcf_basename}.norm.slivar.tsv"
+		File compound_het_tsv = "~{vcf_basename}.compound_hets.tsv"
 	}
 
 	runtime {
 		docker: "~{runtime_attributes.container_registry}/slivar@sha256:0a09289ccb760da310669906c675be02fd16b18bbedc971605a587275e34966c"
-		cpu: 2
-		memory: "4 GB"
+		cpu: threads
+		memory: "16 GB"
 		disk: disk_size + " GB"
 		disks: "local-disk " + disk_size + " HDD"
 		preemptible: runtime_attributes.preemptible_tries
@@ -593,14 +378,23 @@ task svpack_filter_annotated {
 			tagzygosity \
 			- \
 		> ~{sv_vcf_basename}.svpack.vcf
+
+		bgzip --version
+
+		bgzip ~{sv_vcf_basename}.svpack.vcf
+
+		tabix --version
+
+		tabix -p vcf ~{sv_vcf_basename}.svpack.vcf.gz
 	>>>
 
 	output {
-		File svpack_vcf = "~{sv_vcf_basename}.svpack.vcf"
+		File svpack_vcf = "~{sv_vcf_basename}.svpack.vcf.gz"
+		File svpack_vcf_index = "~{sv_vcf_basename}.svpack.vcf.gz.tbi"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack@sha256:456c067b1121363425a93af38c96e1d86de5c4f126a54c8837cd82f1b0932d58"
+		docker: "~{runtime_attributes.container_registry}/svpack@sha256:a680421cb517e1fa4a3097838719a13a6bd655a5e6980ace1b03af9dd707dd75"
 		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
