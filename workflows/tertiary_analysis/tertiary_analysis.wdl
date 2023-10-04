@@ -241,7 +241,7 @@ task slivar_small_variant {
 
 		bcftools index \
 			--threads ~{threads - 1} \
-			--tbi ~{vcf_basename}.norm.bcf
+			~{vcf_basename}.norm.bcf
 
 		# slivar has no version option
 		slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+' 
@@ -284,11 +284,11 @@ task slivar_small_variant {
 		| add_comphet_phase.py \
 		| bcftools view \
 			--output-type z \
-			--output ~{vcf_basename}.compound_hets.vcf.gz
-		
+			--output ~{vcf_basename}.norm.slivar.compound_hets.vcf.gz
+
 		bcftools index \
 			--threads ~{threads - 1} \
-			--tbi ~{vcf_basename}.compound_hets.vcf.gz
+			--tbi ~{vcf_basename}.norm.slivar.compound_hets.vcf.gz
 
 		slivar tsv \
 			--info-field ~{sep=' --info-field ' info_fields} \
@@ -315,18 +315,18 @@ task slivar_small_variant {
 			--gene-description ~{phrank_lookup} \
 			--ped ~{pedigree} \
 			--out /dev/stdout \
-			~{vcf_basename}.compound_hets.vcf.gz \
+			~{vcf_basename}.norm.slivar.compound_hets.vcf.gz \
 		| sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
-		> ~{vcf_basename}.compound_hets.tsv
+		> ~{vcf_basename}.norm.slivar.compound_hets.tsv
 	>>>
 
 	output {
 		File filtered_vcf = "~{vcf_basename}.norm.slivar.vcf.gz"
 		File filtered_vcf_index = "~{vcf_basename}.norm.slivar.vcf.gz.tbi"
-		File compound_het_vcf = "~{vcf_basename}.compound_hets.vcf.gz"
-		File compound_het_vcf_index = "~{vcf_basename}.compound_hets.vcf.gz.tbi"
+		File compound_het_vcf = "~{vcf_basename}.norm.slivar.compound_hets.vcf.gz"
+		File compound_het_vcf_index = "~{vcf_basename}.norm.slivar.compound_hets.vcf.gz.tbi"
 		File filtered_tsv = "~{vcf_basename}.norm.slivar.tsv"
-		File compound_het_tsv = "~{vcf_basename}.compound_hets.tsv"
+		File compound_het_tsv = "~{vcf_basename}.norm.slivar.compound_hets.tsv"
 	}
 
 	runtime {

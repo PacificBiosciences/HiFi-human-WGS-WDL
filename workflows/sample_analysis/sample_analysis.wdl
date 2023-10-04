@@ -361,7 +361,7 @@ task bcftools {
 	>>>
 
 	output {
-		File stats = "~{vcf_basename}.stats.txt"
+		File stats = "~{vcf_basename}.vcf.stats.txt"
 		File roh_out = "~{vcf_basename}.bcftools_roh.out"
 		File roh_bed = "~{vcf_basename}.roh.bed"
 	}
