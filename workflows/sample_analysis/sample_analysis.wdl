@@ -346,7 +346,7 @@ task bcftools {
 			~{stats_params} \
 			~{"--fasta-ref " + reference} \
 			~{vcf} \
-		> ~{vcf_basename}.stats.txt
+		> ~{vcf_basename}.vcf.stats.txt
 
 		bcftools roh \
 			--threads ~{threads - 1} \
