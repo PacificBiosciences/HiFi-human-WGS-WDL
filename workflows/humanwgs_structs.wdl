@@ -6,6 +6,8 @@ struct ReferenceData {
 	String name
 	IndexData fasta
 
+	File pbsv_splits
+
 	File tandem_repeat_bed
 	File trgt_tandem_repeat_bed
 
