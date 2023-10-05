@@ -200,6 +200,7 @@ workflow sample_analysis {
 				haplotagged_bam = {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
 				phased_vcf = hiphase.phased_vcfs[0],
 				reference = reference.fasta,
+				pangu_mode = 'wgs',
 				pharmcat_positions = select_first([reference.pharmcat_positions]),
 				pharmcat_min_coverage = pharmcat_min_coverage,
 				default_runtime_attributes = default_runtime_attributes
