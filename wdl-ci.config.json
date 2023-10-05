@@ -369,7 +369,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "uqkzepaarj4mxxlx2ly6kjqpezztbarh",
+          "digest": "lbv7nwockw3wcbkfvapzoc2wv7fcodnw",
           "tests": [
             {
               "inputs": {
@@ -385,36 +385,6 @@
                     "compare_file_basename",
                     "check_gzip",
                     "check_empty_lines"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/zip_index_vcf.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "zip_index_vcf": {
-          "key": "zip_index_vcf",
-          "digest": "cflenxzb6uj2ujfv4pkllo3vztdkev45",
-          "tests": [
-            {
-              "inputs": {
-                "vcf": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "zipped_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
                   ]
                 }
               }
@@ -470,7 +440,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "ptzjrqbvzgvdhb52u3qrlr4iclxvktg5",
+          "digest": "77yon47d6t327ocrw6bed3dccyq5t3va",
           "tests": [
             {
               "inputs": {
@@ -481,14 +451,55 @@
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
+                "regions": [
+                  "chr6"
+                ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "pbsv_vcf": {
-                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf",
+                  "value": "${resources_file_path}/HG005.GRCh38.pbsv.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
-                    "vcftools_validator"
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/concat_vcf.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/concat_vcf.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "concat_vcf": {
+          "key": "concat_vcf",
+          "digest": "ntfiawmetxbdacle2l7mpu5tkz2jmtz2",
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/HG005.GRCh38.chr5.pbsv.vcf.gz",
+                  "${resources_file_path}/HG005.GRCh38.chr6.pbsv.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/HG005.GRCh38.chr5.pbsv.vcf.gz.tbi",
+                  "${resources_file_path}/HG005.GRCh38.chr6.pbsv.vcf.gz.tbi"
+                ],
+                "output_vcf_name": "HG005.GRCh38.chr5chr6.pbsv.vcf.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "concatenated_vcf": {
+                  "value": "${resources_file_path}/HG005.GRCh38.chr5chr6.pbsv.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
                   ]
                 }
               }
