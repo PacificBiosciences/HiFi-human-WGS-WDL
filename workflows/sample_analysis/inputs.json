@@ -21,10 +21,7 @@
     },
     "hificnv_expected_bed_male": "File",
     "hificnv_expected_bed_female": "File",
-    "pharmcat_positions": {
-      "data": "File",
-      "data_index": "File"
-    },
+    "pharmcat_positions": "WomCompositeType {\n data -> File\ndata_index -> File \n}? (optional)",
     "gnomad_af": "File",
     "hprc_af": "File",
     "gff": "File",

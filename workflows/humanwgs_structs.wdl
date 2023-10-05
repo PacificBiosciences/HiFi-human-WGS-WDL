@@ -13,7 +13,7 @@ struct ReferenceData {
 	File hificnv_expected_bed_male
 	File hificnv_expected_bed_female
 
-	IndexData pharmcat_positions
+	IndexData? pharmcat_positions
 
 	File? gnomad_af
 	File? hprc_af

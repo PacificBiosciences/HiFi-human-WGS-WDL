@@ -194,14 +194,16 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call Pharmcat.pharmcat { 
-		input:
-			haplotagged_bam = {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
-            phased_vcf = hiphase.phased_vcfs[0],
-            reference = reference.fasta,
-			pharmcat_positions = reference.pharmcat_positions,
-			pharmcat_min_coverage = pharmcat_min_coverage,
-			default_runtime_attributes = default_runtime_attributes
+	if (defined(reference.pharmcat_positions)) {
+		call Pharmcat.pharmcat { 
+			input:
+				haplotagged_bam = {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+				phased_vcf = hiphase.phased_vcfs[0],
+				reference = reference.fasta,
+				pharmcat_positions = select_first([reference.pharmcat_positions]),
+				pharmcat_min_coverage = pharmcat_min_coverage,
+				default_runtime_attributes = default_runtime_attributes
+		}
 	}
 
 	output {
@@ -250,13 +252,13 @@ workflow sample_analysis {
 		File hificnv_maf_bw = hificnv.maf_bw
 
 		# per sample pharmcat and pangu outputs
-		File pangu_json = pharmcat.pangu_json
+		File? pangu_json = pharmcat.pangu_json
         File? pharmcat_missing_pgx_vcf = pharmcat.pharmcat_missing_pgx_vcf
-        File pharmcat_preprocessed_filtered_vcf = pharmcat.pharmcat_preprocessed_filtered_vcf
-        File pharmcat_match_json = pharmcat.pharmcat_match_json
-        File pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
-        File pharmcat_report_html = pharmcat.pharmcat_report_html
-        File pharmcat_report_json = pharmcat.pharmcat_report_json
+        File? pharmcat_preprocessed_filtered_vcf = pharmcat.pharmcat_preprocessed_filtered_vcf
+        File? pharmcat_match_json = pharmcat.pharmcat_match_json
+        File? pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
+        File? pharmcat_report_html = pharmcat.pharmcat_report_html
+        File? pharmcat_report_json = pharmcat.pharmcat_report_json
 	}
 
 	parameter_meta {

@@ -142,13 +142,13 @@ workflow humanwgs {
 		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
 
 		# per sample pharmcat and pangu outputs
-        Array[File] pangu_jsons = sample_analysis.pangu_json
+        Array[File?] pangu_jsons = sample_analysis.pangu_json
         Array[File?] pharmcat_missing_pgx_vcfs = sample_analysis.pharmcat_missing_pgx_vcf
-        Array[File] pharmcat_preprocessed_filtered_vcfs = sample_analysis.pharmcat_preprocessed_filtered_vcf
-        Array[File] pharmcat_match_jsons = sample_analysis.pharmcat_match_json
-        Array[File] pharmcat_phenotype_jsons = sample_analysis.pharmcat_phenotype_json
-        Array[File] pharmcat_report_htmls = sample_analysis.pharmcat_report_html
-        Array[File] pharmcat_report_jsons = sample_analysis.pharmcat_report_json
+        Array[File?] pharmcat_preprocessed_filtered_vcfs = sample_analysis.pharmcat_preprocessed_filtered_vcf
+        Array[File?] pharmcat_match_jsons = sample_analysis.pharmcat_match_json
+        Array[File?] pharmcat_phenotype_jsons = sample_analysis.pharmcat_phenotype_json
+        Array[File?] pharmcat_report_htmls = sample_analysis.pharmcat_report_html
+        Array[File?] pharmcat_report_jsons = sample_analysis.pharmcat_report_json
 
 		# cohort_analysis output
 		IndexData? cohort_sv_vcf = cohort_analysis.phased_joint_sv_vcf
