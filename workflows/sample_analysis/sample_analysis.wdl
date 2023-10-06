@@ -5,10 +5,9 @@ version 1.0
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
-import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
-import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
@@ -23,6 +22,8 @@ workflow sample_analysis {
 
 		RuntimeAttributes default_runtime_attributes
 	}
+
+	Array[Array[String]] pbsv_splits = read_json(reference.pbsv_splits)
 
 	scatter (movie_bam in sample.movie_bams) {
 		call pbmm2_align {
@@ -61,39 +62,38 @@ workflow sample_analysis {
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	call BcftoolsStats.bcftools_stats {
+	call bcftools {
 		input:
 			vcf = deepvariant.vcf.data,
-			params = "--apply-filters PASS --samples ~{sample.sample_id}",
+			stats_params = "--apply-filters PASS --samples ~{sample.sample_id}",
 			reference = reference.fasta.data,
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call bcftools_roh {
-		input:
-			vcf = deepvariant.vcf.data,
-			runtime_attributes = default_runtime_attributes
+	scatter (region_set in pbsv_splits) {
+		call PbsvCall.pbsv_call {
+			input:
+				sample_id = sample.sample_id,
+				svsigs = pbsv_discover.svsig,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				reference_name = reference.name,
+				regions = region_set,
+				runtime_attributes = default_runtime_attributes
+		}
 	}
 
-	call PbsvCall.pbsv_call {
+	call ConcatVcf.concat_vcf {
 		input:
-			sample_id = sample.sample_id,
-			svsigs = pbsv_discover.svsig,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			reference_name = reference.name,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call ZipIndexVcf.zip_index_vcf {
-		input:
-			vcf = pbsv_call.pbsv_vcf,
+			vcfs = pbsv_call.pbsv_vcf,
+			vcf_indices = pbsv_call.pbsv_vcf_index,
+			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf.gz",
 			runtime_attributes = default_runtime_attributes
 	}
 
 	IndexData zipped_pbsv_vcf = {
-		"data": zip_index_vcf.zipped_vcf,
-		"data_index": zip_index_vcf.zipped_vcf_index
+		"data": concat_vcf.concatenated_vcf,
+		"data_index": concat_vcf.concatenated_vcf_index
 	}
 
 	call HiPhase.hiphase {
@@ -203,8 +203,9 @@ workflow sample_analysis {
 
 		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
-		File small_variant_vcf_stats = bcftools_stats.stats
-		File small_variant_roh_bed = bcftools_roh.roh_bed
+		File small_variant_vcf_stats = bcftools.stats
+		File small_variant_roh_out = bcftools.roh_out
+		File small_variant_roh_bed = bcftools.roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments
 		# phased_vcfs order: small variants, SVs
@@ -316,7 +317,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:4ead08f03854bf9d21227921fd957453e226245d5459fde3c87c91d4bdfd7f3c"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:1013aa0fd5fb42c607d78bfe3ec3d19e7781ad3aa337bf84d144c61ed7d51fa1"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -329,37 +330,54 @@ task pbmm2_align {
 	}
 }
 
-task bcftools_roh {
+task bcftools {
 	input {
 		File vcf
+
+		String? stats_params
+		File reference
 
 		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+
 	Int threads = 2
-	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
+	Int reference_size = if (defined(reference)) then ceil(size(reference, "GB")) else 0
+	Int disk_size = ceil((size(vcf, "GB") + reference_size) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
 		bcftools --version
 
-		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
+		bcftools stats \
+			--threads ~{threads - 1} \
+			~{stats_params} \
+			~{"--fasta-ref " + reference} \
+			~{vcf} \
+		> ~{vcf_basename}.vcf.stats.txt
+
 		bcftools roh \
 			--threads ~{threads - 1} \
 			--AF-dflt 0.4 \
 			~{vcf} \
-		| awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
+		> ~{vcf_basename}.bcftools_roh.out
+
+		echo -e "#chr\\tstart\\tend\\tqual" > ~{vcf_basename}.roh.bed
+		awk -v OFS='\t' '$1=="RG" {{ print $3, $4, $5, $8 }}' \
+			~{vcf_basename}.bcftools_roh.out \
 		>> ~{vcf_basename}.roh.bed
 	>>>
 
 	output {
+		File stats = "~{vcf_basename}.vcf.stats.txt"
+		File roh_out = "~{vcf_basename}.bcftools_roh.out"
 		File roh_bed = "~{vcf_basename}.roh.bed"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:36d91d5710397b6d836ff87dd2a924cd02fdf2ea73607f303a8544fbac2e691f"
+		docker: "~{runtime_attributes.container_registry}/bcftools@sha256:46720a7ab5feba5be06d5269454a6282deec13060e296f0bc441749f6f26fdec"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -403,7 +421,7 @@ task merge_bams {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/samtools@sha256:83ca955c4a83f72f2cc229f41450eea00e73333686f3ed76f9f4984a985c85bb"
+		docker: "~{runtime_attributes.container_registry}/samtools@sha256:cbe496e16773d4ad6f2eec4bd1b76ff142795d160f9dd418318f7162dcdaa685"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -579,7 +597,7 @@ task cpg_pileup {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:86f10db35d1008962c782c49cfaca640762df553c0fd24eb293604ac304f467c"
+		docker: "~{runtime_attributes.container_registry}/pb-cpg-tools@sha256:b95ff1c53bb16e53b8c24f0feaf625a4663973d80862518578437f44385f509b"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -630,7 +648,7 @@ task paraphase {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:76b77fae86e006937a76e8e43542985104ee8388dc641aa24ea38732921fca8d"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:186dec5f6dabedf8c90fe381cd8f934d31fe74310175efee9ca4f603deac954d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -705,7 +723,7 @@ task hificnv {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:1f1bacf210b173b982572cd56802f73f59f62aea14a6a47e7ac8caeef3766ceb"
+		docker: "~{runtime_attributes.container_registry}/hificnv@sha256:19fdde99ad2454598ff7d82f27209e96184d9a6bb92dc0485cc7dbe87739b3c2"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"

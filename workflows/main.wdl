@@ -115,6 +115,7 @@ workflow humanwgs {
 		# per sample small variant calls
 		Array[IndexData] small_variant_gvcfs = sample_analysis.small_variant_gvcf
 		Array[File] small_variant_vcf_stats = sample_analysis.small_variant_vcf_stats
+		Array[File] small_variant_roh_out = sample_analysis.small_variant_roh_out
 		Array[File] small_variant_roh_bed = sample_analysis.small_variant_roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments

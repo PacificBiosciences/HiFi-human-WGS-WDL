@@ -19,6 +19,7 @@
       "data": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
       "data_index": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai"
     },
+    "pbsv_splits": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.pbsv_splits.json",
     "tandem_repeat_bed": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "s3://dnastack-resources/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "hificnv_exclude_bed": {

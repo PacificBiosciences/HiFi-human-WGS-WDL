@@ -19,6 +19,7 @@
       "data": "<local_path_prefix>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
       "data_index": "<local_path_prefix>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai"
     },
+    "pbsv_splits": "<local_path_prefix>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.pbsv_splits.json",
     "tandem_repeat_bed": "<local_path_prefix>/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "<local_path_prefix>/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "hificnv_exclude_bed": {
