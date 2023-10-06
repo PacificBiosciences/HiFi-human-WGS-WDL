@@ -13,6 +13,7 @@
       "data": "File",
       "data_index": "File"
     },
+    "pbsv_splits": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
