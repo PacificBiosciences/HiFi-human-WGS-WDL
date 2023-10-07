@@ -25,7 +25,7 @@
       "tasks": {
         "pbmm2_align": {
           "key": "pbmm2_align",
-          "digest": "3r4icze5zkps7m6xoruzvnfzk2fp4gqd",
+          "digest": "w2oal5mobil437wvd5nl2locerxhboq3",
           "tests": [
             {
               "inputs": {
@@ -79,7 +79,7 @@
         },
         "bcftools": {
           "key": "bcftools",
-          "digest": "cbfxlhk575vhxbh6spw7ceyhn2ljf7vu",
+          "digest": "lfnunuuvfnn4dz72jrshoa7zbnfdwxyn",
           "tests": [
             {
               "inputs": {
@@ -117,7 +117,7 @@
         },
         "merge_bams": {
           "key": "merge_bams",
-          "digest": "ihskwtepnuvcllzbe3k2m73kuju37l34",
+          "digest": "5oe3yoizylcolbv26wvcjyrvr7hxprto",
           "tests": [
             {
               "inputs": {
@@ -204,7 +204,7 @@
         },
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "yw7vg33vgv3pomq6ozzy3dq65wklrc62",
+          "digest": "ewwinahaqqzvr45ymext7shub3hiyy6s",
           "tests": [
             {
               "inputs": {
@@ -245,7 +245,7 @@
         },
         "paraphase": {
           "key": "paraphase",
-          "digest": "gzktyxvdrw73el5khnudlpu23x34lbxv",
+          "digest": "jg4ojndsppqtskgmprazzse2qbxuhlgk",
           "tests": [
             {
               "inputs": {
@@ -278,7 +278,7 @@
         },
         "hificnv": {
           "key": "hificnv",
-          "digest": "v5u3yha66r3tfyhzvhaye47h6u6q3glv",
+          "digest": "s6dzncslqobwfzyiyjjrhh7x2h73y3sd",
           "tests": [
             {
               "inputs": {
@@ -348,7 +348,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "lbv7nwockw3wcbkfvapzoc2wv7fcodnw",
+          "digest": "kjf77267bp5dz5mmqdeiwhbzhrrd2aku",
           "tests": [
             {
               "inputs": {
@@ -419,7 +419,7 @@
       "tasks": {
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "77yon47d6t327ocrw6bed3dccyq5t3va",
+          "digest": "2kvbbiozwc2duredwduwadnsucsq5qxq",
           "tests": [
             {
               "inputs": {
@@ -457,7 +457,7 @@
       "tasks": {
         "concat_vcf": {
           "key": "concat_vcf",
-          "digest": "ntfiawmetxbdacle2l7mpu5tkz2jmtz2",
+          "digest": "esrr4gjdnhnnqrts34t2xvgjsnxobt66",
           "tests": [
             {
               "inputs": {
@@ -494,7 +494,7 @@
       "tasks": {
         "samtools_fasta": {
           "key": "samtools_fasta",
-          "digest": "x336uu76d5c6nzls2vgntvoqrnhex5q4",
+          "digest": "l3a2na2ixgu34l2jxzyjcakk4miefpzt",
           "tests": [
             {
               "inputs": {
@@ -524,7 +524,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "4uqrkpwl5zu5f5s53ef2ic6trlefamvi",
+          "digest": "wctz4jl4syqktn2neyuea2azuv3d5mgc",
           "tests": [
             {
               "inputs": {
@@ -710,7 +710,7 @@
       "tasks": {
         "write_yaml_ped_phrank": {
           "key": "write_yaml_ped_phrank",
-          "digest": "e4yxyjj6vw35pxz434pgfalxpa4xh72n",
+          "digest": "oidne4vmq2frddilqpqw7b4ptootq2qq",
           "tests": [
             {
               "inputs": {
@@ -754,7 +754,7 @@
         },
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "rrak4b2uphyuonanbjtyjnub2vu5mkkl",
+          "digest": "zput6gxxfnfbpk4aipbvjov4ypvweszo",
           "tests": [
             {
               "inputs": {
@@ -813,7 +813,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "iyov6j7rcjp3llujj37q3clgpcbfduzh",
+          "digest": "rqrbrplkrcs5ugfaxcd2lhsabkqt3q5f",
           "tests": [
             {
               "inputs": {
@@ -848,7 +848,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "nizbjqia5xoqanjo67nmcwwa3m5y7eko",
+          "digest": "jdseaihsr24scpxsxopvnnty65ve6b2w",
           "tests": [
             {
               "inputs": {
