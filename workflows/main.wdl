@@ -11,7 +11,7 @@ workflow humanwgs {
 		Cohort cohort
 
 		ReferenceData reference
-		SlivarData slivar_data
+		SlivarData? slivar_data
 
 		String deepvariant_version = "1.5.0"
 		DeepVariantModel? deepvariant_model
@@ -54,10 +54,15 @@ workflow humanwgs {
 	}
 
 	if (length(cohort.samples) > 1) {
+
+		scatter (sample in cohort.samples) {
+			String sample_id = sample.sample_id
+		}
+		
 		call CohortAnalysis.cohort_analysis {
 			input:
 				cohort_id = cohort.cohort_id,
-				sample_count = length(cohort.samples),
+				sample_ids = sample_id,
 				aligned_bams = flatten(sample_analysis.aligned_bams),
 				svsigs = flatten(sample_analysis.svsigs),
 				gvcfs = sample_analysis.small_variant_gvcf,
@@ -68,14 +73,14 @@ workflow humanwgs {
 		}
 	}
 
-	if (run_tertiary_analysis) {
+	if (run_tertiary_analysis && defined(slivar_data) && defined(reference.gnomad_af) && defined(reference.hprc_af) && defined(reference.gff) && defined(reference.population_vcfs)) {
 		IndexData slivar_small_variant_input_vcf = select_first([
-			cohort_analysis.phased_joint_called_vcf,
+			cohort_analysis.phased_joint_small_variant_vcf,
 			sample_analysis.phased_small_variant_vcf[0]
 		])
 		IndexData slivar_sv_input_vcf = select_first([
-			cohort_analysis.sv_vcf,
-			sample_analysis.sv_vcf[0]
+			cohort_analysis.phased_joint_sv_vcf,
+			sample_analysis.phased_sv_vcf[0]
 		])
 
 		call TertiaryAnalysis.tertiary_analysis {
@@ -84,46 +89,60 @@ workflow humanwgs {
 				small_variant_vcf = slivar_small_variant_input_vcf,
 				sv_vcf = slivar_sv_input_vcf,
 				reference = reference,
-				slivar_data = slivar_data,
+				slivar_data = select_first([slivar_data]),
 				default_runtime_attributes = default_runtime_attributes
 		}
 	}
 
 	output {
 		# sample_analysis output
+
+		# per movie stats, alignments
 		Array[Array[File]] bam_stats = sample_analysis.bam_stats
 		Array[Array[File]] read_length_summary = sample_analysis.read_length_summary
 		Array[Array[File]] read_quality_summary = sample_analysis.read_quality_summary
+
+		# per sample small variant calls
 		Array[IndexData] small_variant_gvcfs = sample_analysis.small_variant_gvcf
 		Array[File] small_variant_vcf_stats = sample_analysis.small_variant_vcf_stats
+		Array[File] small_variant_roh_out = sample_analysis.small_variant_roh_out
 		Array[File] small_variant_roh_bed = sample_analysis.small_variant_roh_bed
-		Array[IndexData] sample_sv_vcfs = sample_analysis.sv_vcf
+
+		# per sample final phased variant calls and haplotagged alignments
 		Array[IndexData] sample_phased_small_variant_vcfs = sample_analysis.phased_small_variant_vcf
-		Array[File] sample_whatshap_stats_gtfs = sample_analysis.whatshap_stats_gtf
-		Array[File] sample_whatshap_stats_tsvs = sample_analysis.whatshap_stats_tsv
-		Array[File] sample_whatshap_stats_blocklists = sample_analysis.whatshap_stats_blocklist
+		Array[IndexData] sample_phased_sv_vcfs = sample_analysis.phased_sv_vcf
+		Array[File] sample_hiphase_stats = sample_analysis.hiphase_stats
+		Array[File] sample_hiphase_blocks = sample_analysis.hiphase_blocks
+		Array[File] sample_hiphase_haplotags = sample_analysis.hiphase_haplotags
 		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
 		Array[File] haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
 		Array[File] haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
+		
+		# per sample trgt outputs
 		Array[IndexData] trgt_spanning_reads = sample_analysis.trgt_spanning_reads
 		Array[IndexData] trgt_repeat_vcf = sample_analysis.trgt_repeat_vcf
 		Array[File] trgt_dropouts = sample_analysis.trgt_dropouts
+
+		# per sample cpg outputs
 		Array[Array[File]] cpg_pileup_beds = sample_analysis.cpg_pileup_beds
 		Array[Array[File]] cpg_pileup_bigwigs = sample_analysis.cpg_pileup_bigwigs
+
+		# per sample paraphase outputs
 		Array[File] paraphase_output_jsons = sample_analysis.paraphase_output_json
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
 		Array[Array[File]] paraphase_vcfs = sample_analysis.paraphase_vcfs
+
+		# per sample hificnv outputs
 		Array[IndexData] hificnv_vcfs = sample_analysis.hificnv_vcf
 		Array[File] hificnv_copynum_bedgraphs = sample_analysis.hificnv_copynum_bedgraph
 		Array[File] hificnv_depth_bws = sample_analysis.hificnv_depth_bw
 		Array[File] hificnv_maf_bws = sample_analysis.hificnv_maf_bw
 
 		# cohort_analysis output
-		IndexData? cohort_sv_vcf = cohort_analysis.sv_vcf
-		IndexData? cohort_phased_joint_called_vcf = cohort_analysis.phased_joint_called_vcf
-		File? cohort_whatshap_stats_gtfs = cohort_analysis.whatshap_stats_gtf
-		File? cohort_whatshap_stats_tsvs = cohort_analysis.whatshap_stats_tsv
-		File? cohort_whatshap_stats_blocklists = cohort_analysis.whatshap_stats_blocklist
+		IndexData? cohort_sv_vcf = cohort_analysis.phased_joint_sv_vcf
+		IndexData? cohort_small_variant_vcf = cohort_analysis.phased_joint_small_variant_vcf
+		File? cohort_hiphase_stats = cohort_analysis.hiphase_stats
+		File? cohort_hiphase_blocks = cohort_analysis.hiphase_blocks
 
 		# tertiary_analysis output
 		IndexData? filtered_small_variant_vcf = tertiary_analysis.filtered_small_variant_vcf
@@ -137,7 +156,7 @@ workflow humanwgs {
 	parameter_meta {
 		cohort: {help: "Sample information for the cohort"}
 		reference: {help: "Reference genome data"}
-		slivar_data: {help: "Data files used for annotation with slivar"}
+		slivar_data: {help: "Data files used for annotation with slivar (required if `run_tertiary_analysis` is set to `true`)"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		deepvariant_model: {help: "Optional deepvariant model file to use"}
 		pbsv_call_mem_gb: {help: "Optional amount of RAM in GB for pbsv_call; default 64 for cohorts N<=3, 96 for cohorts N>3"}

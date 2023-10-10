@@ -6,8 +6,7 @@ struct ReferenceData {
 	String name
 	IndexData fasta
 
-	Array[String] chromosomes
-	File chromosome_lengths
+	File pbsv_splits
 
 	File tandem_repeat_bed
 	File trgt_tandem_repeat_bed
@@ -16,11 +15,11 @@ struct ReferenceData {
 	File hificnv_expected_bed_male
 	File hificnv_expected_bed_female
 
-	File gnomad_af
-	File hprc_af
-	File gff
+	File? gnomad_af
+	File? hprc_af
+	File? gff
 
-	Array[IndexData] population_vcfs
+	Array[IndexData]? population_vcfs
 }
 
 struct Sample {

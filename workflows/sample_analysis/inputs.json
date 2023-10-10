@@ -13,8 +13,7 @@
       "data": "File",
       "data_index": "File"
     },
-    "chromosomes": "Array[String]",
-    "chromosome_lengths": "File",
+    "pbsv_splits": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
@@ -23,15 +22,10 @@
     },
     "hificnv_expected_bed_male": "File",
     "hificnv_expected_bed_female": "File",
-    "gnomad_af": "File",
-    "hprc_af": "File",
-    "gff": "File",
-    "population_vcfs": [
-      {
-        "data": "File",
-        "data_index": "File"
-      }
-    ]
+    "gnomad_af": "File? (optional)",
+    "hprc_af": "File? (optional)",
+    "gff": "File? (optional)",
+    "population_vcfs": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]? (optional)"
   },
   "sample_analysis.deepvariant_version": "String",
   "sample_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",

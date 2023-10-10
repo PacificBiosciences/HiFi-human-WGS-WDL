@@ -27,8 +27,7 @@
       "data": "File",
       "data_index": "File"
     },
-    "chromosomes": "Array[String]",
-    "chromosome_lengths": "File",
+    "pbsv_splits": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "gnomad_af": "File",
