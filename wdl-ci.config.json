@@ -457,7 +457,7 @@
       "tasks": {
         "concat_vcf": {
           "key": "concat_vcf",
-          "digest": "ntfiawmetxbdacle2l7mpu5tkz2jmtz2",
+          "digest": "xkyvutmrg3gz6zgabdmwcjvcbwrbwwp7",
           "tests": [
             {
               "inputs": {
