@@ -68,7 +68,9 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
-	scatter (region_set in pbsv_splits) {
+	scatter (shard_index in range(length(pbsv_splits))) {
+        Array[String] region_set = pbsv_splits[shard_index]
+
 		call PbsvCall.pbsv_call {
 			input:
 				sample_id = sample.sample_id,
@@ -76,6 +78,7 @@ workflow sample_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
+				shard_index = shard_index,
 				regions = region_set,
 				runtime_attributes = default_runtime_attributes
 		}
