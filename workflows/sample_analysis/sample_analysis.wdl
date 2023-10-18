@@ -78,6 +78,7 @@ workflow sample_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
+				shard_index = shard_index,
 				regions = region_set,
 				runtime_attributes = default_runtime_attributes
 		}
