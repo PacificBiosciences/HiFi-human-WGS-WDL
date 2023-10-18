@@ -32,7 +32,9 @@ workflow cohort_analysis {
 		File gvcf_index = gvcf_object.data_index
 	}
 
-	scatter (region_set in pbsv_splits) {
+	scatter (shard_index in range(length(pbsv_splits))) {
+        Array[String] region_set = pbsv_splits[shard_index]
+
 		call PbsvCall.pbsv_call {
 			input:
 				sample_id = cohort_id + ".joint",
@@ -41,6 +43,7 @@ workflow cohort_analysis {
 				reference = reference.fasta.data,
 				reference_index = reference.fasta.data_index,
 				reference_name = reference.name,
+				shard_index = shard_index,
 				regions = region_set,
 				mem_gb = pbsv_call_mem_gb,
 				runtime_attributes = default_runtime_attributes
