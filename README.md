@@ -19,7 +19,7 @@ PacBio WGS Variant Pipeline performs read alignment, variant calling, and phasin
 
 ## Setup
 
-Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+We recommend cloning the repo rather than downloading the release package.  Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
 
 ## Resource requirements
 
@@ -117,7 +117,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 | :- | :- | :- | :- |
 | String | cohort_id | A unique name for the cohort; used to name outputs | |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
-| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `HP:0000001`, can be used. | |
+| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `"HP:0000001"`, can be used. | |
 
 ### [Sample](workflows/humanwgs_structs.wdl)
 
@@ -140,7 +140,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | name | Reference name; used to name outputs (e.g., "GRCh38") | |
+| String | name | Reference name; used to name outputs (e.g., "GRCh38") | Note: The workflow currently only supports GRCh38 and provides GCA_000001405.15_GRCh38_no_alt_analysis_set. |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | fasta | Reference genome and index | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
@@ -176,7 +176,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 | [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | \[true, false\] |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
