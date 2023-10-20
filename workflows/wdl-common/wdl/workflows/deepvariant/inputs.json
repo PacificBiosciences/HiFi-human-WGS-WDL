@@ -1,0 +1,23 @@
+{
+  "deepvariant.sample_id": "String",
+  "deepvariant.aligned_bams": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "deepvariant.reference_fasta": {
+    "data": "File",
+    "data_index": "File"
+    },
+  "deepvariant.reference_name": "String",
+  "deepvariant.deepvariant_version": "String",
+  "deepvariant.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "deepvariant.default_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
+}
