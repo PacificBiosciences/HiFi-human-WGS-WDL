@@ -230,7 +230,6 @@ These files will be output if the cohort includes more than one sample.
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
 | File? | cohort_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
 | File? | cohort_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
-| File? | cohort_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
 
 ## Tertiary analysis
 
