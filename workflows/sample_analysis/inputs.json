@@ -1,7 +1,9 @@
 {
   "sample_analysis.sample": {
     "sample_id": "String",
-    "movie_bams": "Array[File]",
+    "movie_bams": [
+      "File"
+    ],
     "sex": "String? (optional)",
     "affected": "Boolean",
     "father_id": "String? (optional)",
