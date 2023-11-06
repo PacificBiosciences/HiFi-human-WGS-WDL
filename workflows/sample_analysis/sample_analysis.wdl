@@ -317,7 +317,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@https://github.com/PacificBiosciences/wdl-dockerfiles/pull/37"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:db137a83ccda90e1c4c8f332e09eeab3a3a21e6b610edb146ee5bee39be00733"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
