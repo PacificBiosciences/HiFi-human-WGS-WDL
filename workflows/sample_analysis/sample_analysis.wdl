@@ -317,7 +317,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:db137a83ccda90e1c4c8f332e09eeab3a3a21e6b610edb146ee5bee39be00733"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:d92495f9a81d5d7edc8b394e4fa5f942027a37f9143ac4ab6cfeda1b7b320d2e"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
