@@ -97,40 +97,28 @@ workflow sample_analysis {
 		"data_index": concat_vcf.concatenated_vcf_index
 	}
 
-	call HiPhase.hiphase {
-		# vcfs order: small variants, SVs
-		input:
-			id = sample.sample_id,
-			refname = reference.name,
-			sample_ids = [sample.sample_id],
-			vcfs = [deepvariant.vcf, zipped_pbsv_vcf],
-			bams = aligned_bam,
-			haplotag = true,
-			reference_fasta = reference.fasta,
-			default_runtime_attributes = default_runtime_attributes
-	}
-
-	# merge haplotagged bams if there are multiple
-	if (length(hiphase.haplotagged_bams) > 1) {
-		scatter (bam_object in hiphase.haplotagged_bams) {
+	# merge aligned bams if there are multiple
+	if (length(aligned_bam) > 1) {
+		scatter (bam_object in aligned_bam) {
 			File bam_to_merge = bam_object.data
 		}
 		call merge_bams {
 			input:
 				bams = bam_to_merge,
-				output_bam_name = "~{sample.sample_id}.~{reference.name}.haplotagged.bam",
+				output_bam_name = "~{sample.sample_id}.~{reference.name}.bam",
 				runtime_attributes = default_runtime_attributes
 		}
 	}
 
-	# select the merged bam if it exists, otherwise select the first (only) haplotagged bam
-	File haplotagged_bam = select_first([merge_bams.merged_bam, hiphase.haplotagged_bams[0].data])
-	File haplotagged_bam_index = select_first([merge_bams.merged_bam_index, hiphase.haplotagged_bams[0].data_index])
+	# select the merged bam if it exists, otherwise select the first (only) aligned bam
+	File aligned_bam_data = select_first([merge_bams.merged_bam, aligned_bam[0].data])
+	File aligned_bam_index = select_first([merge_bams.merged_bam_index, aligned_bam[0].data_index])
+	IndexData aligned_bam = {"data": aligned_bam_data, "data_index": aligned_bam_index}
 
 	call Mosdepth.mosdepth {
 		input:
-			aligned_bam = haplotagged_bam,
-			aligned_bam_index = haplotagged_bam_index,
+			aligned_bam = aligned_bam_data,
+			aligned_bam_index = aligned_bam_index,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -138,12 +126,30 @@ workflow sample_analysis {
 		input:
 			sample_id = sample.sample_id,
 			sex = sample.sex,
-			bam = haplotagged_bam,
-			bam_index = haplotagged_bam_index,
+			bam = aligned_bam_data,
+			bam_index = aligned_bam_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
 			runtime_attributes = default_runtime_attributes
+	}
+
+	IndexData trgt_vcf = {
+		"data": trgt.repeat_vcf,
+		"data_index": trgt.repeat_vcf_index
+	}
+
+	call HiPhase.hiphase {
+		# vcfs order: small variants, SVs, TRGT
+		input:
+			id = sample.sample_id,
+			refname = reference.name,
+			sample_ids = [sample.sample_id],
+			vcfs = [deepvariant.vcf, zipped_pbsv_vcf, trgt_vcf],
+			bams = [aligned_bam],
+			haplotag = true,
+			reference_fasta = reference.fasta,
+			default_runtime_attributes = default_runtime_attributes
 	}
 
 	call coverage_dropouts {
@@ -209,7 +215,7 @@ workflow sample_analysis {
 		File small_variant_roh_bed = bcftools.roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments
-		# phased_vcfs order: small variants, SVs
+		# phased_vcfs order: small variants, SVs, TRGT
 		IndexData phased_small_variant_vcf = hiphase.phased_vcfs[0]
 		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
 		File hiphase_stats = hiphase.hiphase_stats
@@ -221,7 +227,7 @@ workflow sample_analysis {
 
 		# per sample trgt outputs
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
-		IndexData trgt_repeat_vcf = {"data": trgt.repeat_vcf, "data_index": trgt.repeat_vcf_index}
+		IndexData trgt_repeat_vcf = hiphase.phased_vcfs[2]
 		File trgt_dropouts = coverage_dropouts.trgt_dropouts
 
 		# per sample cpg outputs
