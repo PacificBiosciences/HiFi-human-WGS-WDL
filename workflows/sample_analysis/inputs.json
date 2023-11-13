@@ -30,7 +30,7 @@
     "population_vcfs": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]? (optional)"
   },
   "sample_analysis.deepvariant_version": "String",
-  "sample_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "sample_analysis.custom_deepvariant_model_tar": "File (optional)",
   "sample_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",
