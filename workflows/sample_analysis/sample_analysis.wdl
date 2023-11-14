@@ -152,10 +152,30 @@ workflow sample_analysis {
 			default_runtime_attributes = default_runtime_attributes
 	}
 
+	IndexData haplotagged_bam = {
+		"data": hiphase.haplotagged_bams[0].data,
+		"data_index": hiphase.haplotagged_bams[0].data_index
+	}
+
+	IndexData phased_small_variant_vcf = {
+		"data": hiphase.phased_vcfs[0].data,
+		"data_index": hiphase.phased_vcfs[0].data_index
+	}
+
+	IndexData phased_sv_vcf = {
+		"data": hiphase.phased_vcfs[1].data,
+		"data_index": hiphase.phased_vcfs[1].data_index
+	}
+
+	IndexData phased_trgt_vcf = {
+		"data": hiphase.phased_vcfs[2].data,
+		"data_index": hiphase.phased_vcfs[2].data_index
+	}
+
 	call coverage_dropouts {
 		input:
-			bam = haplotagged_bam,
-			bam_index = haplotagged_bam_index,
+			bam = haplotagged_bam.data,
+			bam_index = haplotagged_bam.data_index,
 			tandem_repeat_bed = reference.trgt_tandem_repeat_bed,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			runtime_attributes = default_runtime_attributes
@@ -163,8 +183,8 @@ workflow sample_analysis {
 
 	call cpg_pileup {
 		input:
-			bam = haplotagged_bam,
-			bam_index = haplotagged_bam_index,
+			bam = haplotagged_bam.data,
+			bam_index = haplotagged_bam.data_index,
 			output_prefix = "~{sample.sample_id}.~{reference.name}",
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
@@ -174,8 +194,8 @@ workflow sample_analysis {
 	call paraphase {
 		input:
 			sample_id = sample.sample_id,
-			bam = haplotagged_bam,
-			bam_index = haplotagged_bam_index,
+			bam = haplotagged_bam.data,
+			bam_index = haplotagged_bam.data_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			out_directory = "~{sample.sample_id}.paraphase",
@@ -186,10 +206,10 @@ workflow sample_analysis {
 		input:
 			sample_id = sample.sample_id,
 			sex = sample.sex,
-			bam = haplotagged_bam,
-			bam_index = haplotagged_bam_index,
-			phased_vcf = hiphase.phased_vcfs[0].data,
-			phased_vcf_index = hiphase.phased_vcfs[0].data_index,
+			bam = haplotagged_bam.data,
+			bam_index = haplotagged_bam.data_index,
+			phased_vcf = phased_small_variant_vcf.data,
+			phased_vcf_index = phased_small_variant_vcf.data_index,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			exclude_bed = reference.hificnv_exclude_bed.data,
@@ -216,18 +236,18 @@ workflow sample_analysis {
 
 		# per sample final phased variant calls and haplotagged alignments
 		# phased_vcfs order: small variants, SVs, TRGT
-		IndexData phased_small_variant_vcf = hiphase.phased_vcfs[0]
-		IndexData phased_sv_vcf = hiphase.phased_vcfs[1]
+		IndexData phased_small_variant_vcf = phased_small_variant_vcf
+		IndexData phased_sv_vcf = phased_sv_vcf
 		File hiphase_stats = hiphase.hiphase_stats
 		File hiphase_blocks = hiphase.hiphase_blocks
 		File hiphase_haplotags = select_first([hiphase.hiphase_haplotags])
-		IndexData merged_haplotagged_bam = {"data": haplotagged_bam, "data_index": haplotagged_bam_index}
+		IndexData merged_haplotagged_bam = haplotagged_bam
 		File haplotagged_bam_mosdepth_summary = mosdepth.summary
 		File haplotagged_bam_mosdepth_region_bed = mosdepth.region_bed
 
 		# per sample trgt outputs
 		IndexData trgt_spanning_reads = {"data": trgt.spanning_reads, "data_index": trgt.spanning_reads_index}
-		IndexData trgt_repeat_vcf = hiphase.phased_vcfs[2]
+		IndexData trgt_repeat_vcf = phased_trgt_vcf
 		File trgt_dropouts = coverage_dropouts.trgt_dropouts
 
 		# per sample cpg outputs
