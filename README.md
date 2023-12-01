@@ -1,8 +1,6 @@
-# DISCLAIMER
+<h1 align="center"><img width="300px" src="images/logo_wdl_workflows.svg"/></h1>
 
-TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.
-
-# PacBio WGS Variant Pipeline
+<h1 align="center">PacBio WGS Variant Pipeline</h1>
 
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
@@ -15,7 +13,7 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 PacBio WGS Variant Pipeline performs read alignment, variant calling, and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available for HiFi human WGS. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
-![PacBio WGS Variant Pipeline diagram](workflows/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
+![PacBio WGS Variant Pipeline diagram](images/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
 
 ## Setup
 
@@ -47,9 +45,11 @@ For backend-specific configuration, see the relevant documentation:
 - [GCP](backends/gcp)
 - [HPC](backends/hpc)
 
-## Configuring a workflow engine
+## Configuring a workflow engine and container runtime
 
 An execution engine is required to run workflows. Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
+
+Because workflow dependencies are containerized, a container runtime is required. This workflow has been tested with [Docker](https://docs.docker.com/get-docker/) and [Singularity](https://docs.sylabs.io/guides/3.10/user-guide/) container runtimes.
 
 See the [backend-specific documentation](backends) for details on setting up an engine.
 
@@ -271,3 +271,9 @@ The Docker image used by a particular step of the workflow can be identified by 
 | slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/slivar) |
 | svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[htslib 1.18](https://github.com/samtools/htslib/releases/tag/1.18)</li><li>[pysam 0.21.0](https://github.com/pysam-developers/pysam/releases/tag/v0.21.0)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/8edbc516abc0ff43ac279b48018003923721b054/docker/svpack) |
 | trgt | <ul><li>[trgt 0.5.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.5.0)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[bcftools 1.18](https://github.com/samtools/bcftools/releases/tag/1.18)</li><li>[pysam 0.21.0](https://github.com/pysam-developers/pysam/releases/tag/v0.21.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/d2a45e0213ac3fa631a51a48757c442d3ed550b6/docker/trgt) |
+
+---
+
+## DISCLAIMER
+
+TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.
