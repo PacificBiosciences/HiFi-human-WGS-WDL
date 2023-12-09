@@ -654,7 +654,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "eavpd5ea4f3hizmzlo4upk2abd5u6cim",
+          "digest": "jsx4n7nswvlktdwsp6u3anzlbtmki3tk",
           "tests": [
             {
               "inputs": {
