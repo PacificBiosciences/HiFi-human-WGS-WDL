@@ -249,24 +249,24 @@
           "tests": [
             {
               "inputs": {
-                "sample_id": "${sample_id}",
-                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam",
-                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG005.GRCh38.paraphase.test.bam.bai",
-                "out_directory": "${sample_id}.paraphase",
+                "sample_id": "HG002",
+                "bam": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG002.GRCh38.haplotagged.paraphase_region_v3.bam",
+                "bam_index": "/coac74908838b5dd7/inputs/small_dataset/paraphase/HG002.GRCh38.haplotagged.paraphase_region_v3.bam.bai",
+                "out_directory": "HG002.paraphase",
                 "reference": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "output_json": {
-                  "value": "${resources_file_path}/paraphase/${sample_id}.json",
+                  "value": "${resources_file_path}/paraphase/HG002.json",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_json"
                   ]
                 },
                 "realigned_bam": {
-                  "value": "${resources_file_path}/paraphase/${sample_id}_realigned_tagged.bam",
+                  "value": "${resources_file_path}/paraphase/HG002_realigned_tagged.bam",
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
