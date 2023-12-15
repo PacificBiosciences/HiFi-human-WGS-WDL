@@ -570,7 +570,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "35kzpf37semcoxs7frzvhjrc4zvwoyan",
+          "digest": "3jfeho4suf23enopqj23cx6ygviftqny",
           "tests": [
             {
               "inputs": {
@@ -620,7 +620,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "kytisx2zskpyhpxi6kgs6e42tpip7aex",
+          "digest": "ehblbh453m7dvjesw2573kuuxitgaduj",
           "tests": [
             {
               "inputs": {
@@ -654,7 +654,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "jsx4n7nswvlktdwsp6u3anzlbtmki3tk",
+          "digest": "ey7zqpajaeesvsg372rehhjmkpqld2qx",
           "tests": [
             {
               "inputs": {
