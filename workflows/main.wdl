@@ -130,7 +130,7 @@ workflow humanwgs {
 		# per sample paraphase outputs
 		Array[File] paraphase_output_jsons = sample_analysis.paraphase_output_json
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
-		Array[File] paraphase_vcfs = sample_analysis.paraphase_vcfs
+		Array[File?] paraphase_vcfs = sample_analysis.paraphase_vcfs
 
 		# per sample hificnv outputs
 		Array[IndexData] hificnv_vcfs = sample_analysis.hificnv_vcf
