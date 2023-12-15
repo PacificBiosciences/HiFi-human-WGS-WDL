@@ -598,7 +598,7 @@
                 "task_start_index": 0,
                 "tasks_per_shard": 8,
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -637,12 +637,12 @@
                   "${resources_file_path}/deepvariant/${sample_id}.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "tfrecord": {
-                  "value": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
+                "tfrecords_tar": {
+                  "value": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -659,7 +659,7 @@
             {
               "inputs": {
                 "sample_id": "${sample_id}",
-                "tfrecord": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
+                "tfrecords_tar": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tar.gz",
                 "nonvariant_site_tfrecord_tars": [
                   "${resources_file_path}/deepvariant/${sample_id}.0.nonvariant_site_tfrecords.tar.gz",
                   "${resources_file_path}/deepvariant/${sample_id}.8.nonvariant_site_tfrecords.tar.gz",
@@ -674,7 +674,7 @@
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
