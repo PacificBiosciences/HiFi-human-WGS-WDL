@@ -570,7 +570,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "35kzpf37semcoxs7frzvhjrc4zvwoyan",
+          "digest": "3jfeho4suf23enopqj23cx6ygviftqny",
           "tests": [
             {
               "inputs": {
@@ -598,7 +598,7 @@
                 "task_start_index": 0,
                 "tasks_per_shard": 8,
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -620,7 +620,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "a6ksi3haiz5pye7p64c67zeeauit7gqf",
+          "digest": "rywffaewvhwakdysxejsrqbz7bqwzt2o",
           "tests": [
             {
               "inputs": {
@@ -637,12 +637,12 @@
                   "${resources_file_path}/deepvariant/${sample_id}.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "tfrecord": {
-                  "value": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
+                "tfrecords_tar": {
+                  "value": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -654,12 +654,12 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "afmkoy2hy4lcyolms7n6lgzuzudr7uxx",
+          "digest": "ey7zqpajaeesvsg372rehhjmkpqld2qx",
           "tests": [
             {
               "inputs": {
                 "sample_id": "${sample_id}",
-                "tfrecord": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tfrecord.gz",
+                "tfrecords_tar": "${resources_file_path}/deepvariant/${sample_id}.GRCh38.call_variants_output.tar.gz",
                 "nonvariant_site_tfrecord_tars": [
                   "${resources_file_path}/deepvariant/${sample_id}.0.nonvariant_site_tfrecords.tar.gz",
                   "${resources_file_path}/deepvariant/${sample_id}.8.nonvariant_site_tfrecords.tar.gz",
@@ -674,7 +674,7 @@
                 "reference_index": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "reference_name": "GRCh38",
                 "total_deepvariant_tasks": 64,
-                "deepvariant_version": "1.5.0",
+                "deepvariant_version": "1.6.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
