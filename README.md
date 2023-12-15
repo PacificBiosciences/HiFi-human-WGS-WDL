@@ -172,8 +172,8 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String? | deepvariant_version | Version of deepvariant to use \["1.5.0"\] | |
-| [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
+| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | |
+ | File? | custom_deepvariant_model_tar | Optional alternate DeepVariant [custom model](https://github.com/PacificBiosciences/wdl-common/blob/8d868818b62345fdb64ab104238d406d65334b3e/wdl/workflows/deepvariant/README.md) to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
 | Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[`false`\] | \[`true`, `false`\] |
@@ -256,7 +256,7 @@ The Docker image used by a particular step of the workflow can be identified by 
 | Image | Major tool versions | Links |
 | :- | :- | :- |
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/bcftools) |
-| deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
+| deepvariant | User-defined; default is version [1.6.0](https://github.com/google/deepvariant/releases/tag/v1.6.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.3](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.3)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
 | hificnv | <ul><li>[HiFiCNV v0.1.7](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.7)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/0b0fbe939648087e9fdea4497ae08dc76538ebf0/docker/hificnv) |
 | hiphase | <ul><li>[HiPhase 1.0.0](https://github.com/PacificBiosciences/HiPhase/releases/tag/v1.0.0)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[bcftools 1.18](https://github.com/samtools/bcftools/releases/tag/1.18)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/d26db6204409dfeff56e169cdba0cc14bc272f15/docker/hiphase) |

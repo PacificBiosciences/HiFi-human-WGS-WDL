@@ -17,7 +17,7 @@ workflow sample_analysis {
 		ReferenceData reference
 
 		String deepvariant_version
-		DeepVariantModel? deepvariant_model
+		File? custom_deepvariant_model_tar
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -56,7 +56,7 @@ workflow sample_analysis {
 			reference_fasta = reference.fasta,
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
-			deepvariant_model = deepvariant_model,
+			custom_deepvariant_model_tar = custom_deepvariant_model_tar,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
@@ -244,7 +244,7 @@ workflow sample_analysis {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
-		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		custom_deepvariant_model_tar: {help: "Optional deepvariant model to use"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
