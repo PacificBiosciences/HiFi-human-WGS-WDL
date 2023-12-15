@@ -231,7 +231,7 @@ workflow sample_analysis {
 		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
-		File paraphase_vcfs = paraphase.paraphase_vcfs
+		File? paraphase_vcfs = paraphase.paraphase_vcfs
 
 		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
@@ -639,16 +639,18 @@ task paraphase {
 			--reference ~{reference} \
 			--out ~{out_directory}
 
-		cd ~{out_directory} \
-			&& tar zcvf ~{out_directory}.tar.gz ~{sample_id}_vcfs/*.vcf \
-			&& mv ~{out_directory}.tar.gz ../
+		if ls ~{out_directory}/~{sample_id}_vcfs/*.vcf &> /dev/null; then
+			cd ~{out_directory} \
+				&& tar zcvf ~{out_directory}.tar.gz ~{sample_id}_vcfs/*.vcf \
+				&& mv ~{out_directory}.tar.gz ../
+		fi
 	>>>
 
 	output {
 		File output_json = "~{out_directory}/~{sample_id}.json"
 		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
 		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
-		File paraphase_vcfs = "~{out_directory}.tar.gz"
+		File? paraphase_vcfs = "~{out_directory}.tar.gz"
 	}
 
 	runtime {
