@@ -231,7 +231,7 @@ workflow sample_analysis {
 		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
-		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
+		File paraphase_vcfs = paraphase.paraphase_vcfs
 
 		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
@@ -624,8 +624,8 @@ task paraphase {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 4
-	Int mem_gb = 4
+	Int threads = 8
+	Int mem_gb = 16
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
 	command <<<
@@ -638,17 +638,21 @@ task paraphase {
 			--bam ~{bam} \
 			--reference ~{reference} \
 			--out ~{out_directory}
+
+		cd ~{out_directory} \
+			&& tar zcvf ~{out_directory}.tar.gz ~{sample_id}_vcfs/*.vcf \
+			&& mv ~{out_directory}.tar.gz ../
 	>>>
 
 	output {
 		File output_json = "~{out_directory}/~{sample_id}.json"
 		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
 		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
-		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
+		File paraphase_vcfs = "~{out_directory}.tar.gz"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:186dec5f6dabedf8c90fe381cd8f934d31fe74310175efee9ca4f603deac954d"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:b9852d1a43485b13c563aaddcb32bacc7f0c9088c2ca007051b9888e9fe5617d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
