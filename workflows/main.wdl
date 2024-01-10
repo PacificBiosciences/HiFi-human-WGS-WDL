@@ -115,8 +115,8 @@ workflow humanwgs {
 		Array[File] sample_hiphase_blocks = sample_analysis.hiphase_blocks
 		Array[File] sample_hiphase_haplotags = sample_analysis.hiphase_haplotags
 		Array[IndexData] merged_haplotagged_bam = sample_analysis.merged_haplotagged_bam
-		Array[File] haplotagged_bam_mosdepth_summary = sample_analysis.haplotagged_bam_mosdepth_summary
-		Array[File] haplotagged_bam_mosdepth_region_bed = sample_analysis.haplotagged_bam_mosdepth_region_bed
+		Array[File] mosdepth_summary = sample_analysis.mosdepth_summary
+		Array[File] mosdepth_region_bed = sample_analysis.mosdepth_region_bed
 		
 		# per sample trgt outputs
 		Array[IndexData] trgt_spanning_reads = sample_analysis.trgt_spanning_reads
