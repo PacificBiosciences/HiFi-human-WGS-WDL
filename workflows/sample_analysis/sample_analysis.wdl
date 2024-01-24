@@ -265,7 +265,7 @@ task pbmm2_align {
 
 	Int threads = 24
 	Int mem_gb = ceil(threads * 4)
-	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 20)
+	Int disk_size = ceil((size(bam, "GB") + size(reference, "GB")) * 4 + 21)
 
 	command <<<
 		set -euo pipefail
