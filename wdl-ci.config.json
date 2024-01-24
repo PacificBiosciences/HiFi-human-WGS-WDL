@@ -1116,6 +1116,11 @@
       "key": "c3213beb-97bc-4adc-9bd8-cdb3ac83b398",
       "enabled": false,
       "name": "PacBio CoA"
+    },
+    "abc123": {
+      "key": "abc123",
+      "enabled": true,
+      "name": "pacbio-hpc"
     }
   },
   "test_params": {
