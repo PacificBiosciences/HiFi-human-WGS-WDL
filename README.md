@@ -1,4 +1,4 @@
-<h1 align="center"><img width="300px" src="images/logo_wdl_workflows.svg"/></h1>
+<h1 align="center"><img width="300px" src="https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/raw/main/images/logo_wdl_workflows.svg"/></h1>
 
 <h1 align="center">PacBio WGS Variant Pipeline</h1>
 
@@ -13,7 +13,7 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 PacBio WGS Variant Pipeline performs read alignment, variant calling, and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available for HiFi human WGS. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
-![PacBio WGS Variant Pipeline diagram](images/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
+![PacBio WGS Variant Pipeline diagram](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/raw/main/images/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
 
 ## Setup
 
