@@ -348,7 +348,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "lbv7nwockw3wcbkfvapzoc2wv7fcodnw",
+          "digest": "5vepq2yx3lzgx2qlwb7ikrdbpbzyqsfi",
           "tests": [
             {
               "inputs": {
@@ -570,7 +570,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "3jfeho4suf23enopqj23cx6ygviftqny",
+          "digest": "35kzpf37semcoxs7frzvhjrc4zvwoyan",
           "tests": [
             {
               "inputs": {
@@ -620,7 +620,7 @@
         },
         "deepvariant_call_variants": {
           "key": "deepvariant_call_variants",
-          "digest": "rywffaewvhwakdysxejsrqbz7bqwzt2o",
+          "digest": "kytisx2zskpyhpxi6kgs6e42tpip7aex",
           "tests": [
             {
               "inputs": {
@@ -654,7 +654,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "ey7zqpajaeesvsg372rehhjmkpqld2qx",
+          "digest": "bwqf7ktzjtyvickugkj4uxdmixnhoqmk",
           "tests": [
             {
               "inputs": {
@@ -881,7 +881,7 @@
       "tasks": {
         "run_hiphase": {
           "key": "run_hiphase",
-          "digest": "6k2rtel3k6747xhcfnjufqfzgcnb7g5v",
+          "digest": "6qxqz7p56asf3z6f6cqwebdsd57fs4lh",
           "tests": [
             {
               "inputs": {
