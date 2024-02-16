@@ -1114,8 +1114,13 @@
   "engines": {
     "c3213beb-97bc-4adc-9bd8-cdb3ac83b398": {
       "key": "c3213beb-97bc-4adc-9bd8-cdb3ac83b398",
-      "enabled": true,
+      "enabled": false,
       "name": "PacBio CoA"
+    },
+    "abc123": {
+      "key": "abc123",
+      "enabled": true,
+      "name": "pacbio-hpc"
     }
   },
   "test_params": {
@@ -1142,6 +1147,11 @@
         "input_file_path": "/coac74908838b5dd7/inputs/small_dataset/chr6.p23",
         "resources_file_path": "/coac74908838b5dd7/inputs/wdl-ci/humanwgs",
         "datasets_file_path": "/datasetpbrarediseases/dataset"
+      },
+      "abc123": {
+        "input_file_path": "/pbi/collections/appslabht/cromwell_output/testdata/inputs/chr6.p23",
+        "resources_file_path": "/pbi/collections/appslabht/cromwell_output/testdata/wdl-ci/humanwgs",
+        "datasets_file_path": "/pbi/collections/appslabht/cromwell_output/testdata/datasetpbrarediseases/dataset"
       }
     }
   }
