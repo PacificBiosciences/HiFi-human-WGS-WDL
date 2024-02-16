@@ -502,7 +502,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:07e9d2be1590fc1dd45e6e2a6b9f5869ee6d83f5a1ca47c8ea84e114b70573b6"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -545,7 +545,7 @@ task coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:07e9d2be1590fc1dd45e6e2a6b9f5869ee6d83f5a1ca47c8ea84e114b70573b6"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
