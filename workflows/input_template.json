@@ -43,8 +43,8 @@
     "clinvar_lookup": "File"
   },
   "humanwgs.deepvariant_version": "String? (optional)",
-  "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
-  "humanwgs.pharmcat_min_coverage": "Int? (optional, default = 10)",
+  "humanwgs.custom_deepvariant_model_tar": "File (optional)",
+  "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int? (optional)",
   "humanwgs.glnexus_mem_gb": "Int? (optional)",
   "humanwgs.run_tertiary_analysis": "Boolean? (optional, default = false)",

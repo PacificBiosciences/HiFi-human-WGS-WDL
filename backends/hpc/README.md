@@ -35,14 +35,14 @@ See [the inputs section of the main README](../../README.md#workflow-inputs) for
 
 # Reference data bundle
 
-![https://doi.org/10.5281/zenodo.8381621](https://zenodo.org/badge/DOI/10.5281/zenodo.8381621.svg)
+![https://doi.org/10.5281/zenodo.8415406](https://zenodo.org/badge/DOI/10.5281/zenodo.8415406.svg)
 
-Reference data is hosted on Zenodo at [10.5281/zenodo.8381621](https://zenodo.org/record/8381621).  Download the reference data bundle and extract it to a location on your HPC, then update the input template file with the path to the reference data.
+Reference data is hosted on Zenodo at [10.5281/zenodo.8415406](https://zenodo.org/record/8415406).  Download the reference data bundle and extract it to a location on your HPC, then update the input template file with the path to the reference data.
 
 ```bash
 # download the reference data bundle
-wget https://zenodo.org/record/8381621/files/wdl-humanwgs.v1.0.1.resources.tgz
+wget https://zenodo.org/record/8415406/files/wdl-humanwgs.v1.0.2.resources.tgz
 
 # extract the reference data bundle and rename as dataset
-tar -xzf wdl-humanwgs.v1.0.1.resources.tgz && mv static_resources dataset
+tar -xzf wdl-humanwgs.v1.0.2.resources.tgz && mv static_resources dataset
 ```

@@ -4,14 +4,18 @@
     "samples": [
       {
         "sample_id": "String",
-        "movie_bams": "Array[File]",
+        "movie_bams": [
+          "File"
+        ],
         "sex": "String?",
         "affected": "Boolean",
         "father_id": "String?",
         "mother_id": "String?"
       }
     ],
-    "phenotypes": "Array[String]"
+    "phenotypes": [
+      "String"
+    ]
   },
   "humanwgs.reference": {
     "name": "GRCh38",
@@ -19,6 +23,7 @@
       "data": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
       "data_index": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai"
     },
+    "pbsv_splits": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.pbsv_splits.json",
     "tandem_repeat_bed": "s3://dnastack-resources/dataset/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
     "trgt_tandem_repeat_bed": "s3://dnastack-resources/dataset/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
     "hificnv_exclude_bed": {
@@ -63,7 +68,7 @@
     "clinvar_lookup": "s3://dnastack-resources/dataset/slivar/clinvar_gene_desc.20221214T183140.txt"
   },
   "humanwgs.deepvariant_version": "String (optional)",
-  "humanwgs.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "humanwgs.custom_deepvariant_model_tar": "File (optional)",
   "humanwgs.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs.pbsv_call_mem_gb": "Int (optional, default = if N<=3: 64 else 96)",
   "humanwgs.glnexus_mem_gb": "Int (optional, default = 30)",

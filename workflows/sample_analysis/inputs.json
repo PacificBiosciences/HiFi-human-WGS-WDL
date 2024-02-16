@@ -1,7 +1,9 @@
 {
   "sample_analysis.sample": {
     "sample_id": "String",
-    "movie_bams": "Array[File]",
+    "movie_bams": [
+      "File"
+    ],
     "sex": "String? (optional)",
     "affected": "Boolean",
     "father_id": "String? (optional)",
@@ -13,6 +15,7 @@
       "data": "File",
       "data_index": "File"
     },
+    "pbsv_splits": "File",
     "tandem_repeat_bed": "File",
     "trgt_tandem_repeat_bed": "File",
     "hificnv_exclude_bed": {
@@ -28,7 +31,7 @@
     "population_vcfs": "Array[WomCompositeType {\n data -> File\ndata_index -> File \n}]? (optional)"
   },
   "sample_analysis.deepvariant_version": "String",
-  "sample_analysis.deepvariant_model": "WomCompositeType {\n model -> WomCompositeType {\n data -> File\ndata_index -> File \n}\nmetadata -> File \n}? (optional)",
+  "sample_analysis.custom_deepvariant_model_tar": "File (optional)",
   "sample_analysis.pharmcat_min_coverage": "Int (optional, default = 10)",
   "sample_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",

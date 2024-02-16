@@ -5,11 +5,10 @@ version 1.0
 import "../humanwgs_structs.wdl"
 import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
-import "../wdl-common/wdl/tasks/bcftools_stats.wdl" as BcftoolsStats
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
 import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
-import "../wdl-common/wdl/tasks/zip_index_vcf.wdl" as ZipIndexVcf
+import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
@@ -19,12 +18,14 @@ workflow sample_analysis {
 		ReferenceData reference
 
 		String deepvariant_version
-		DeepVariantModel? deepvariant_model
+		File? custom_deepvariant_model_tar
 
         Int pharmcat_min_coverage
 
 		RuntimeAttributes default_runtime_attributes
 	}
+
+	Array[Array[String]] pbsv_splits = read_json(reference.pbsv_splits)
 
 	scatter (movie_bam in sample.movie_bams) {
 		call pbmm2_align {
@@ -58,43 +59,45 @@ workflow sample_analysis {
 			reference_fasta = reference.fasta,
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
-			deepvariant_model = deepvariant_model,
+			custom_deepvariant_model_tar = custom_deepvariant_model_tar,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
-	call BcftoolsStats.bcftools_stats {
+	call bcftools {
 		input:
 			vcf = deepvariant.vcf.data,
-			params = "--apply-filters PASS --samples ~{sample.sample_id}",
+			stats_params = "--apply-filters PASS --samples ~{sample.sample_id}",
 			reference = reference.fasta.data,
 			runtime_attributes = default_runtime_attributes
 	}
 
-	call bcftools_roh {
-		input:
-			vcf = deepvariant.vcf.data,
-			runtime_attributes = default_runtime_attributes
+	scatter (shard_index in range(length(pbsv_splits))) {
+        Array[String] region_set = pbsv_splits[shard_index]
+
+		call PbsvCall.pbsv_call {
+			input:
+				sample_id = sample.sample_id,
+				svsigs = pbsv_discover.svsig,
+				reference = reference.fasta.data,
+				reference_index = reference.fasta.data_index,
+				reference_name = reference.name,
+				shard_index = shard_index,
+				regions = region_set,
+				runtime_attributes = default_runtime_attributes
+		}
 	}
 
-	call PbsvCall.pbsv_call {
+	call ConcatVcf.concat_vcf {
 		input:
-			sample_id = sample.sample_id,
-			svsigs = pbsv_discover.svsig,
-			reference = reference.fasta.data,
-			reference_index = reference.fasta.data_index,
-			reference_name = reference.name,
-			runtime_attributes = default_runtime_attributes
-	}
-
-	call ZipIndexVcf.zip_index_vcf {
-		input:
-			vcf = pbsv_call.pbsv_vcf,
+			vcfs = pbsv_call.pbsv_vcf,
+			vcf_indices = pbsv_call.pbsv_vcf_index,
+			output_vcf_name = "~{sample.sample_id}.~{reference.name}.pbsv.vcf.gz",
 			runtime_attributes = default_runtime_attributes
 	}
 
 	IndexData zipped_pbsv_vcf = {
-		"data": zip_index_vcf.zipped_vcf,
-		"data_index": zip_index_vcf.zipped_vcf_index
+		"data": concat_vcf.concatenated_vcf,
+		"data_index": concat_vcf.concatenated_vcf_index
 	}
 
 	call HiPhase.hiphase {
@@ -217,9 +220,9 @@ workflow sample_analysis {
 
 		# per sample small variant calls
 		IndexData small_variant_gvcf = deepvariant.gvcf
-		File small_variant_vcf_stats = bcftools_stats.stats
-		File small_variant_roh_out = bcftools_roh.roh_out
-		File small_variant_roh_bed = bcftools_roh.roh_bed
+		File small_variant_vcf_stats = bcftools.stats
+		File small_variant_roh_out = bcftools.roh_out
+		File small_variant_roh_bed = bcftools.roh_bed
 
 		# per sample final phased variant calls and haplotagged alignments
 		# phased_vcfs order: small variants, SVs
@@ -244,7 +247,7 @@ workflow sample_analysis {
 		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
-		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
+		File? paraphase_vcfs = paraphase.paraphase_vcfs
 
 		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
@@ -266,7 +269,7 @@ workflow sample_analysis {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
-		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		custom_deepvariant_model_tar: {help: "Optional deepvariant model to use"}
 		pharmcat_min_coverage: {help: "Minimum coverage cutoff used to filter the preprocessed VCF passed to pharmcat"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
@@ -340,7 +343,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:1013aa0fd5fb42c607d78bfe3ec3d19e7781ad3aa337bf84d144c61ed7d51fa1"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:ed9dcb4db98c81967fff15f50fca89c8495b1f270eee00e9bec92f46d14d7e2f"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -353,21 +356,33 @@ task pbmm2_align {
 	}
 }
 
-task bcftools_roh {
+task bcftools {
 	input {
 		File vcf
+
+		String? stats_params
+		File reference
 
 		RuntimeAttributes runtime_attributes
 	}
 
 	String vcf_basename = basename(vcf, ".vcf.gz")
+
 	Int threads = 2
-	Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
+	Int reference_size = if (defined(reference)) then ceil(size(reference, "GB")) else 0
+	Int disk_size = ceil((size(vcf, "GB") + reference_size) * 2 + 20)
 
 	command <<<
 		set -euo pipefail
 
 		bcftools --version
+
+		bcftools stats \
+			--threads ~{threads - 1} \
+			~{stats_params} \
+			~{"--fasta-ref " + reference} \
+			~{vcf} \
+		> ~{vcf_basename}.vcf.stats.txt
 
 		bcftools roh \
 			--threads ~{threads - 1} \
@@ -382,6 +397,7 @@ task bcftools_roh {
 	>>>
 
 	output {
+		File stats = "~{vcf_basename}.vcf.stats.txt"
 		File roh_out = "~{vcf_basename}.bcftools_roh.out"
 		File roh_bed = "~{vcf_basename}.roh.bed"
 	}
@@ -512,7 +528,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:8c9f236eb3422e79d7843ffd59e1cbd9b76774525f20d88cd68ca64eb63054eb"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -555,7 +571,7 @@ task coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:8c9f236eb3422e79d7843ffd59e1cbd9b76774525f20d88cd68ca64eb63054eb"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -634,8 +650,8 @@ task paraphase {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 4
-	Int mem_gb = 4
+	Int threads = 8
+	Int mem_gb = 16
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
 	command <<<
@@ -648,17 +664,23 @@ task paraphase {
 			--bam ~{bam} \
 			--reference ~{reference} \
 			--out ~{out_directory}
+
+		if ls ~{out_directory}/~{sample_id}_vcfs/*.vcf &> /dev/null; then
+			cd ~{out_directory} \
+				&& tar zcvf ~{out_directory}.tar.gz ~{sample_id}_vcfs/*.vcf \
+				&& mv ~{out_directory}.tar.gz ../
+		fi
 	>>>
 
 	output {
 		File output_json = "~{out_directory}/~{sample_id}.json"
 		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
 		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
-		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
+		File? paraphase_vcfs = "~{out_directory}.tar.gz"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:186dec5f6dabedf8c90fe381cd8f934d31fe74310175efee9ca4f603deac954d"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:b9852d1a43485b13c563aaddcb32bacc7f0c9088c2ca007051b9888e9fe5617d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"

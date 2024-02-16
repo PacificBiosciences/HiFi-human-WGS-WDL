@@ -13,8 +13,8 @@ workflow humanwgs {
 		ReferenceData reference
 		SlivarData? slivar_data
 
-		String deepvariant_version = "1.5.0"
-		DeepVariantModel? deepvariant_model
+		String deepvariant_version = "1.6.0"
+		File? custom_deepvariant_model_tar
 
 		Int? pbsv_call_mem_gb
 		Int? glnexus_mem_gb
@@ -50,7 +50,7 @@ workflow humanwgs {
 				sample = sample,
 				reference = reference,
 				deepvariant_version = deepvariant_version,
-				deepvariant_model = deepvariant_model,
+				custom_deepvariant_model_tar = custom_deepvariant_model_tar,
 				pharmcat_min_coverage = pharmcat_min_coverage,
 				default_runtime_attributes = default_runtime_attributes
 		}
@@ -133,7 +133,7 @@ workflow humanwgs {
 		# per sample paraphase outputs
 		Array[File] paraphase_output_jsons = sample_analysis.paraphase_output_json
 		Array[IndexData] paraphase_realigned_bams = sample_analysis.paraphase_realigned_bam
-		Array[Array[File]] paraphase_vcfs = sample_analysis.paraphase_vcfs
+		Array[File?] paraphase_vcfs = sample_analysis.paraphase_vcfs
 
 		# per sample hificnv outputs
 		Array[IndexData] hificnv_vcfs = sample_analysis.hificnv_vcf

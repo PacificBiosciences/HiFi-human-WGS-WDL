@@ -1,8 +1,6 @@
-# DISCLAIMER
+<h1 align="center"><img width="300px" src="https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/raw/main/images/logo_wdl_workflows.svg"/></h1>
 
-TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.
-
-# PacBio WGS Variant Pipeline
+<h1 align="center">PacBio WGS Variant Pipeline</h1>
 
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
@@ -15,11 +13,11 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 PacBio WGS Variant Pipeline performs read alignment, variant calling, and phasing. Joint-calling of small variants and structural variants for cohorts and optional variant filtering and annotation is also available for HiFi human WGS. The workflow can run using Azure, AWS, GCP, and HPC backends.
 
-![PacBio WGS Variant Pipeline diagram](workflows/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
+![PacBio WGS Variant Pipeline diagram](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/raw/main/images/main.graphviz.svg "PacBio WGS Variant Pipeline diagram")
 
 ## Setup
 
-Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+We recommend cloning the repo rather than downloading the release package.  Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
 
 ## Resource requirements
 
@@ -47,9 +45,11 @@ For backend-specific configuration, see the relevant documentation:
 - [GCP](backends/gcp)
 - [HPC](backends/hpc)
 
-## Configuring a workflow engine
+## Configuring a workflow engine and container runtime
 
 An execution engine is required to run workflows. Two popular engines for running WDL-based workflows are [`miniwdl`](https://miniwdl.readthedocs.io/en/latest/getting_started.html) and [`Cromwell`](https://cromwell.readthedocs.io/en/stable/tutorials/FiveMinuteIntro/).
+
+Because workflow dependencies are containerized, a container runtime is required. This workflow has been tested with [Docker](https://docs.docker.com/get-docker/) and [Singularity](https://docs.sylabs.io/guides/3.10/user-guide/) container runtimes.
 
 See the [backend-specific documentation](backends) for details on setting up an engine.
 
@@ -117,7 +117,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 | :- | :- | :- | :- |
 | String | cohort_id | A unique name for the cohort; used to name outputs | |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
-| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `HP:0000001`, can be used. | |
+| Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `"HP:0000001"`, can be used. | |
 
 ### [Sample](workflows/humanwgs_structs.wdl)
 
@@ -128,7 +128,7 @@ Sample information for each sample in the workflow run.
 | String | sample_id | A unique name for the sample; used to name outputs | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
 | String? | sex | Sample sex | ["MALE", "FEMALE", `null`]. If the sex field is missing or `null`, sex will be set to unknown. Used to set the expected sex chromosome karyotype for TRGT and HiFiCNV. |
-| Boolean | affected | Is this sample affected by the phenotype? | \[true, false\] |
+| Boolean | affected | Is this sample affected by the phenotype? | \[`true`, `false`\] |
 | String? | father_id | Paternal `sample_id` | |
 | String? | mother_id | Maternal `sample_id` | |
 
@@ -140,7 +140,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | name | Reference name; used to name outputs (e.g., "GRCh38") | |
+| String | name | Reference name; used to name outputs (e.g., "GRCh38") | Note: The workflow currently only supports GRCh38 and provides GCA_000001405.15_GRCh38_no_alt_analysis_set. |
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl) | fasta | Reference genome and index | |
 | File | tandem_repeat_bed | Tandem repeat locations used by [pbsv](https://github.com/PacificBiosciences/pbsv) to normalize SV representation | |
 | File | trgt_tandem_repeat_bed | Tandem repeat sites to be genotyped by [TRGT](https://github.com/PacificBiosciences/trgt) | |
@@ -173,17 +173,17 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String? | deepvariant_version | Version of deepvariant to use \["1.5.0"\] | |
-| [DeepVariantModel](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | deepvariant_model | Optional alternate DeepVariant model file to use | |
+| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | |
+ | File? | custom_deepvariant_model_tar | Optional alternate DeepVariant [custom model](https://github.com/PacificBiosciences/wdl-common/blob/8d868818b62345fdb64ab104238d406d65334b3e/wdl/workflows/deepvariant/README.md) to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
-| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[false\] | |
+| Boolean? | run_tertiary_analysis | Run the optional tertiary analysis steps \[`false`\] | \[`true`, `false`\] |
 | String | backend | Backend where the workflow will be executed | \["Azure", "AWS", "GCP", "HPC"\] |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | <ul><li>[Determining available zones in AWS](backends/aws/README.md#determining-available-zones)</li><li>[Determining available zones in GCP](backends/gcp/README.md#determining-available-zones)</li></ul> |
 | String? | aws_spot_queue_arn | Queue ARN for the spot batch queue; required if backend is set to 'AWS' and `preemptible` is set to `true` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
 | String? | aws_on_demand_queue_arn | Queue ARN for the on demand batch queue; required if backend is set to 'AWS' and `preemptible` is set to `false` | [Determining the AWS queue ARN](backends/aws/README.md#determining-the-aws-batch-queue-arn) |
 | String? | container_registry | Container registry where workflow images are hosted. If left blank, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used. | |
-| Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. | \[true, false\] |
+| Boolean | preemptible | If set to `true`, run tasks preemptibly where possible. On-demand VMs will be used only for tasks that run for >24 hours if the backend is set to GCP. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. | \[`true`, `false`\] |
 
 # Workflow outputs
 
@@ -215,7 +215,7 @@ These files will be output for each sample defined in the cohort.
 | Array[Array[File]] | cpg_pileup_bigwigs | 5mCpG site methylation probability pileups generated by pb-CpG-tools | |
 | Array[File] | paraphase_output | Output generated by [Paraphase](https://github.com/PacificBiosciences/paraphase) | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | paraphase_realigned_bam | Realigned BAM for selected medically relevant genes in segmental duplications (with index), generated by Paraphase | |
-| Array[Array[File]] | paraphase_vcfs | Phased Variant calls for selected medically relevant genes in segmental duplications, generated by Paraphase | |
+| Array[File] | paraphase_vcfs | Tarball of phased variant calls for selected medically relevant genes in segmental duplications, generated by Paraphase | |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | hificnv_vcfs | VCF output containing copy number variant calls for the sample from [HiFiCNV](https://github.com/PacificBiosciences/HiFiCNV) | |
 | Array[File] | hificnv_copynum_bedgraphs | Copy number values calculated for each region | |
 | Array[File] | hificnv_depth_bws | Bigwig file containing the depth measurements from HiFiCNV | |
@@ -238,7 +238,6 @@ These files will be output if the cohort includes more than one sample.
 | [IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)? | cohort_sv_vcf | Structural variants joint-called by [pbsv](https://github.com/PacificBiosciences/pbsv) and phased by HiPhase (with index) | |
 | File? | cohort_hiphase_stats | Phase block summary statistics written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#chromosome-summary-file---summary-file) | |
 | File? | cohort_hiphase_blocks | Phase block list written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#phase-block-file---blocks-file) | |
-| File? | cohort_hiphase_haplotags | Per-read haplotag information, written by [HiPhase](https://github.com/PacificBiosciences/HiPhase/blob/main/docs/user_guide.md#haplotag-file---haplotag-file) | |
 
 ## Tertiary analysis
 
@@ -265,21 +264,27 @@ The Docker image used by a particular step of the workflow can be identified by 
 | Image | Major tool versions | Links |
 | :- | :- | :- |
 | bcftools | <ul><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/bcftools) |
-| deepvariant | User-defined; default is version [1.5.0](https://github.com/google/deepvariant/releases/tag/v1.5.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
+| deepvariant | User-defined; default is version [1.6.0](https://github.com/google/deepvariant/releases/tag/v1.6.0) | [DeepVariant GitHub](https://github.com/google/deepvariant) |
 | glnexus | <ul><li>[glnexus v1.4.3](https://github.com/dnanexus-rnd/GLnexus/releases/tag/v1.4.3)</li></ul> | [GLnexus GitHub](https://github.com/dnanexus-rnd/GLnexus) |
 | hificnv | <ul><li>[HiFiCNV v0.1.7](https://github.com/PacificBiosciences/HiFiCNV/releases/tag/v0.1.7)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/0b0fbe939648087e9fdea4497ae08dc76538ebf0/docker/hificnv) |
-| hiphase | <ul><li>[HiPhase 0.10.2](https://github.com/PacificBiosciences/HiPhase/releases/tag/v0.10.2)</li><li>[samtools 1.16](https://github.com/samtools/samtools/releases/tag/1.16)</li><li>[bcftools 1.16](https://github.com/samtools/bcftools/releases/tag/1.16)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/hiphase) |
+| hiphase | <ul><li>[HiPhase 1.0.0](https://github.com/PacificBiosciences/HiPhase/releases/tag/v1.0.0)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[bcftools 1.18](https://github.com/samtools/bcftools/releases/tag/1.18)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/d26db6204409dfeff56e169cdba0cc14bc272f15/docker/hiphase) |
 | htslib | <ul><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/htslib) |
 | mosdepth | <ul><li>[mosdepth 0.2.9](https://github.com/brentp/mosdepth/releases/tag/v0.2.9)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/mosdepth) |
 | pangu | <ul><li>[pangu 0.2.2](https://github.com/PacificBiosciences/pangu/releases/tag/v0.2.2)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/pangu) |
-| paraphase | <ul><li>[minimap2 2.17](https://github.com/lh3/minimap2/releases/tag/v2.17)</li><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li><li>[paraphase 2.2.3](https://github.com/PacificBiosciences/paraphase/releases/tag/v2.2.3)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/paraphase) |
+| paraphase | <ul><li>[minimap2 2.26](https://github.com/lh3/minimap2/releases/tag/v2.26)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[paraphase 3.0.0](https://github.com/PacificBiosciences/paraphase)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/4f510e5f434cc138577853f56558b90e059fd770/docker/paraphase) |
 | parse-cohort | <ul><li>python 3.8.10; custom scripts</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/5b3e15e5da2963bb81a51170f82e37209407d5fc/docker/parse-cohort) |
 | pb-cpg-tools | <ul><li>[pb-CpG-tools v2.3.2](https://github.com/PacificBiosciences/pb-CpG-tools/releases/tag/v2.3.2)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/7481837d3b0f539adf4f64209a65cf28eebf3dba/docker/pb-cpg-tools) |
-| pbmm2 | <ul><li>[pbmm2 1.10.0](https://github.com/PacificBiosciences/pbmm2/releases/tag/v1.10.0)</li><li>[datamash 1.1.0](https://ftp.gnu.org/gnu/datamash/)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/pbmm2) |
-| pbsv | <ul><li>[pbsv 2.9.0](https://github.com/PacificBiosciences/pbsv/releases/tag/v2.9.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/pbsv) |
+| pbmm2 | <ul><li>[pbmm2 1.13.1](https://github.com/PacificBiosciences/pbmm2/releases/tag/v1.13.1)</li><li>[datamash 1.1.0](https://ftp.gnu.org/gnu/datamash/)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/6d3d818dce6f97454ac29f4ed96637e450a19f63/docker/pbmm2) |
+| pbsv | <ul><li>[pbsv 2.9.0](https://github.com/PacificBiosciences/pbsv/releases/tag/v2.9.0)</li><li>[htslib 1.14](https://github.com/samtools/htslib/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/f9e33a757e6d8cb15696ac930a2efd0fd7a885d8/docker/pbsv) |
 | pharmcat | <ul><li>[pharmcat 2.3.0](https://github.com/PharmGKB/PharmCAT/releases/tag/v2.3.0)</li></ul> | [Dockerhub](https://hub.docker.com/layers/pgkb/pharmcat/2.3.0/images/sha256-3446377bdb0ced9e8419463b0b9f0aa48290a2c73345adf751a15c6420b18988) |
-| pyyaml | <ul><li>[pyyaml 5.3.1](https://github.com/yaml/pyyaml/releases/tag/5.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/pyyaml) |
+| pyyaml | <ul><li>[pyyaml 5.3.1](https://github.com/yaml/pyyaml/releases/tag/5.3.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/f72e862bca2f209b9909e6043ef0197975762f27/docker/pyyaml) |
 | samtools | <ul><li>[samtools 1.14](https://github.com/samtools/samtools/releases/tag/1.14)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/samtools) |
 | slivar | <ul><li>[slivar 0.2.2](https://github.com/brentp/slivar/releases/tag/v0.2.2)</li><li>[bcftools 1.14](https://github.com/samtools/bcftools/releases/tag/1.14)</li><li>[vcfpy 0.13.3](https://github.com/bihealth/vcfpy/releases/tag/v0.13.3)</li><li>[pysam 0.19.1](https://github.com/pysam-developers/pysam/releases/tag/v0.19.1)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/slivar) |
-| svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[pysam 0.16.0.1](https://github.com/pysam-developers/pysam/releases/tag/v0.16.0.1)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3560fcc5a84e044067cea9c9a7669cfc2659178e/docker/svpack) |
-| trgt | <ul><li>[trgt 0.5.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.5.0)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[bcftools 1.18](https://github.com/samtools/bcftools/releases/tag/1.18)</li><li>[pysam 0.21.0](https://github.com/pysam-developers/pysam/releases/tag/v0.21.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/d2a45e0213ac3fa631a51a48757c442d3ed550b6/docker/trgt) |
+| svpack | <ul><li>[svpack 36180ae6](https://github.com/PacificBiosciences/svpack/tree/a82598ebc4013bf32e70295b83b380ada6302c4a)</li><li>[htslib 1.18](https://github.com/samtools/htslib/releases/tag/1.18)</li><li>[pysam 0.21.0](https://github.com/pysam-developers/pysam/releases/tag/v0.21.0)</li> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/8edbc516abc0ff43ac279b48018003923721b054/docker/svpack) |
+| trgt | <ul><li>[trgt 0.8.0](https://github.com/PacificBiosciences/trgt/releases/tag/v0.7.0)</li><li>[samtools 1.18](https://github.com/samtools/samtools/releases/tag/1.18)</li><li>[bcftools 1.18](https://github.com/samtools/bcftools/releases/tag/1.18)</li><li>[pysam 0.21.0](https://github.com/pysam-developers/pysam/releases/tag/v0.21.0)</li></ul> | [Dockerfile](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/3bbc033f8f942b10a304b4fa907957a789c73ef7/docker/trgt) |
+
+---
+
+## DISCLAIMER
+
+TO THE GREATEST EXTENT PERMITTED BY APPLICABLE LAW, THIS WEBSITE AND ITS CONTENT, INCLUDING ALL SOFTWARE, SOFTWARE CODE, SITE-RELATED SERVICES, AND DATA, ARE PROVIDED "AS IS," WITH ALL FAULTS, WITH NO REPRESENTATIONS OR WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, ANY WARRANTIES OF MERCHANTABILITY, SATISFACTORY QUALITY, NON-INFRINGEMENT OR FITNESS FOR A PARTICULAR PURPOSE. ALL WARRANTIES ARE REJECTED AND DISCLAIMED. YOU ASSUME TOTAL RESPONSIBILITY AND RISK FOR YOUR USE OF THE FOREGOING. PACBIO IS NOT OBLIGATED TO PROVIDE ANY SUPPORT FOR ANY OF THE FOREGOING, AND ANY SUPPORT PACBIO DOES PROVIDE IS SIMILARLY PROVIDED WITHOUT REPRESENTATION OR WARRANTY OF ANY KIND. NO ORAL OR WRITTEN INFORMATION OR ADVICE SHALL CREATE A REPRESENTATION OR WARRANTY OF ANY KIND. ANY REFERENCES TO SPECIFIC PRODUCTS OR SERVICES ON THE WEBSITES DO NOT CONSTITUTE OR IMPLY A RECOMMENDATION OR ENDORSEMENT BY PACBIO.

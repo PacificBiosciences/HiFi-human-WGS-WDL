@@ -1,13 +1,17 @@
 {
   "cohort_analysis.cohort_id": "String",
-  "cohort_analysis.sample_ids": "Array[String]",
+  "cohort_analysis.sample_ids": [
+    "String"
+  ],
   "cohort_analysis.aligned_bams": [
     {
       "data": "File",
       "data_index": "File"
     }
   ],
-  "cohort_analysis.svsigs": "Array[File]",
+  "cohort_analysis.svsigs": [
+    "File"
+  ],
   "cohort_analysis.gvcfs": [
     {
       "data": "File",
@@ -26,6 +30,7 @@
       "data": "File",
       "data_index": "File"
     },
+    "pbsv_splits": "File",
     "hificnv_expected_bed_male": "File",
     "hificnv_expected_bed_female": "File",
     "gnomad_af": "File? (optional)",
