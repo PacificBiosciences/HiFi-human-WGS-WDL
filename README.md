@@ -172,7 +172,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | |
+| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | This release is only compatible with DeepVariant [1.6](https://github.com/google/deepvariant/releases/tag/v1.6.0). |
  | File? | custom_deepvariant_model_tar | Optional alternate DeepVariant [custom model](https://github.com/PacificBiosciences/wdl-common/blob/8d868818b62345fdb64ab104238d406d65334b3e/wdl/workflows/deepvariant/README.md) to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
