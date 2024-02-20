@@ -115,7 +115,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | cohort_id | A unique name for the cohort; used to name outputs | |
+| String | cohort_id | A unique name for the cohort; used to name outputs | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
 | Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `"HP:0000001"`, can be used. | |
 
@@ -125,12 +125,12 @@ Sample information for each sample in the workflow run.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | sample_id | A unique name for the sample; used to name outputs | |
+| String | sample_id | A unique name for the sample; used to name outputs | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
 | String? | sex | Sample sex | ["MALE", "FEMALE", `null`]. If the sex field is missing or `null`, sex will be set to unknown. Used to set the expected sex chromosome karyotype for TRGT and HiFiCNV. |
 | Boolean | affected | Is this sample affected by the phenotype? | \[`true`, `false`\] |
-| String? | father_id | Paternal `sample_id` | |
-| String? | mother_id | Maternal `sample_id` | |
+| String? | father_id | Paternal `sample_id` | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
+| String? | mother_id | Maternal `sample_id` | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 
 ## [ReferenceData](workflows/humanwgs_structs.wdl)
 
