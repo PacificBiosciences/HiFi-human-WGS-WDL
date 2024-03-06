@@ -41,7 +41,7 @@ Reference data is hosted on Zenodo at [10.5281/zenodo.8415406](https://zenodo.or
 
 ```bash
 # download the reference data bundle
-wget https://zenodo.org/record/8415406/files/wdl-humanwgs.v1.0.2.resources.tgz
+wget https://zenodo.org/records/8415406/files/wdl-humanwgs.v1.0.2.resource.tgz
 
 # extract the reference data bundle and rename as dataset
 tar -xzf wdl-humanwgs.v1.0.2.resources.tgz && mv static_resources dataset

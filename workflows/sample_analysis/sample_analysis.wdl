@@ -17,7 +17,7 @@ workflow sample_analysis {
 		ReferenceData reference
 
 		String deepvariant_version
-		DeepVariantModel? deepvariant_model
+		File? custom_deepvariant_model_tar
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -56,7 +56,7 @@ workflow sample_analysis {
 			reference_fasta = reference.fasta,
 			reference_name = reference.name,
 			deepvariant_version = deepvariant_version,
-			deepvariant_model = deepvariant_model,
+			custom_deepvariant_model_tar = custom_deepvariant_model_tar,
 			default_runtime_attributes = default_runtime_attributes
 	}
 
@@ -231,7 +231,7 @@ workflow sample_analysis {
 		# per sample paraphase outputs
 		File paraphase_output_json = paraphase.output_json
 		IndexData paraphase_realigned_bam = {"data": paraphase.realigned_bam, "data_index": paraphase.realigned_bam_index}
-		Array[File] paraphase_vcfs = paraphase.paraphase_vcfs
+		File? paraphase_vcfs = paraphase.paraphase_vcfs
 
 		# per sample hificnv outputs
 		IndexData hificnv_vcf = {"data": hificnv.cnv_vcf, "data_index": hificnv.cnv_vcf_index}
@@ -244,7 +244,7 @@ workflow sample_analysis {
 		sample: {help: "Sample information and associated data files"}
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
-		deepvariant_model: {help: "Optional deepvariant model file to use"}
+		custom_deepvariant_model_tar: {help: "Optional deepvariant model to use"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
@@ -317,7 +317,7 @@ task pbmm2_align {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:1013aa0fd5fb42c607d78bfe3ec3d19e7781ad3aa337bf84d144c61ed7d51fa1"
+		docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:ed9dcb4db98c81967fff15f50fca89c8495b1f270eee00e9bec92f46d14d7e2f"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
@@ -502,7 +502,7 @@ task trgt {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:8c9f236eb3422e79d7843ffd59e1cbd9b76774525f20d88cd68ca64eb63054eb"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -545,7 +545,7 @@ task coverage_dropouts {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/trgt@sha256:8c9f236eb3422e79d7843ffd59e1cbd9b76774525f20d88cd68ca64eb63054eb"
+		docker: "~{runtime_attributes.container_registry}/trgt@sha256:88eaa6b6c7d440a48d7f0036e46a2ce4b37cf5be8bd84921eaa69e3c11b98556"
 		cpu: threads
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -624,8 +624,8 @@ task paraphase {
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int threads = 4
-	Int mem_gb = 4
+	Int threads = 8
+	Int mem_gb = 16
 	Int disk_size = ceil(size(bam, "GB") + 20)
 
 	command <<<
@@ -638,17 +638,23 @@ task paraphase {
 			--bam ~{bam} \
 			--reference ~{reference} \
 			--out ~{out_directory}
+
+		if ls ~{out_directory}/~{sample_id}_vcfs/*.vcf &> /dev/null; then
+			cd ~{out_directory} \
+				&& tar zcvf ~{out_directory}.tar.gz ~{sample_id}_vcfs/*.vcf \
+				&& mv ~{out_directory}.tar.gz ../
+		fi
 	>>>
 
 	output {
 		File output_json = "~{out_directory}/~{sample_id}.json"
 		File realigned_bam = "~{out_directory}/~{sample_id}_realigned_tagged.bam"
 		File realigned_bam_index = "~{out_directory}/~{sample_id}_realigned_tagged.bam.bai"
-		Array[File] paraphase_vcfs = glob("~{out_directory}/~{sample_id}_vcfs/*.vcf")
+		File? paraphase_vcfs = "~{out_directory}.tar.gz"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:186dec5f6dabedf8c90fe381cd8f934d31fe74310175efee9ca4f603deac954d"
+		docker: "~{runtime_attributes.container_registry}/paraphase@sha256:b9852d1a43485b13c563aaddcb32bacc7f0c9088c2ca007051b9888e9fe5617d"
 		cpu: threads
 		memory: mem_gb + " GB"
 		disk: disk_size + " GB"
