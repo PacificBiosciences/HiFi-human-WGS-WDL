@@ -24,6 +24,7 @@
     },
     "hificnv_expected_bed_male": "File",
     "hificnv_expected_bed_female": "File",
+    "pharmcat_positions": "WomCompositeType {\n data -> File\ndata_index -> File \n}? (optional)",
     "gnomad_af": "File? (optional)",
     "hprc_af": "File? (optional)",
     "gff": "File? (optional)",
@@ -31,6 +32,7 @@
   },
   "sample_analysis.deepvariant_version": "String",
   "sample_analysis.custom_deepvariant_model_tar": "File (optional)",
+  "sample_analysis.pharmcat_min_coverage": "Int (optional, default = 10)",
   "sample_analysis.default_runtime_attributes": {
     "preemptible_tries": "Int",
     "max_retries": "Int",

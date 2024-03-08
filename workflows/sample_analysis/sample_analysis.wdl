@@ -7,6 +7,7 @@ import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
 import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
 import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
@@ -18,6 +19,8 @@ workflow sample_analysis {
 
 		String deepvariant_version
 		File? custom_deepvariant_model_tar
+
+        Int pharmcat_min_coverage
 
 		RuntimeAttributes default_runtime_attributes
 	}
@@ -194,6 +197,19 @@ workflow sample_analysis {
 			runtime_attributes = default_runtime_attributes
 	}
 
+	if (defined(reference.pharmcat_positions)) {
+		call Pharmcat.pharmcat { 
+			input:
+				haplotagged_bam = {'data': haplotagged_bam, 'data_index': haplotagged_bam_index},
+				phased_vcf = hiphase.phased_vcfs[0],
+				reference = reference.fasta,
+				pangu_mode = 'wgs',
+				pharmcat_positions = select_first([reference.pharmcat_positions]),
+				pharmcat_min_coverage = pharmcat_min_coverage,
+				default_runtime_attributes = default_runtime_attributes
+		}
+	}
+
 	output {
 		# per movie stats, alignments, and svsigs
 		Array[File] bam_stats = pbmm2_align.bam_stats
@@ -238,6 +254,15 @@ workflow sample_analysis {
 		File hificnv_copynum_bedgraph = hificnv.copynum_bedgraph
 		File hificnv_depth_bw = hificnv.depth_bw
 		File hificnv_maf_bw = hificnv.maf_bw
+
+		# per sample pharmcat and pangu outputs
+		File? pangu_json = pharmcat.pangu_json
+        File? pharmcat_missing_pgx_vcf = pharmcat.pharmcat_missing_pgx_vcf
+        File? pharmcat_preprocessed_filtered_vcf = pharmcat.pharmcat_preprocessed_filtered_vcf
+        File? pharmcat_match_json = pharmcat.pharmcat_match_json
+        File? pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
+        File? pharmcat_report_html = pharmcat.pharmcat_report_html
+        File? pharmcat_report_json = pharmcat.pharmcat_report_json
 	}
 
 	parameter_meta {
@@ -245,6 +270,7 @@ workflow sample_analysis {
 		reference: {help: "Reference genome data"}
 		deepvariant_version: {help: "Version of deepvariant to use"}
 		custom_deepvariant_model_tar: {help: "Optional deepvariant model to use"}
+		pharmcat_min_coverage: {help: "Minimum coverage cutoff used to filter the preprocessed VCF passed to pharmcat"}
 		default_runtime_attributes: {help: "Default RuntimeAttributes; spot if preemptible was set to true, otherwise on_demand"}
 	}
 }
