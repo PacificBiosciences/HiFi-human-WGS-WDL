@@ -348,7 +348,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "lbv7nwockw3wcbkfvapzoc2wv7fcodnw",
+          "digest": "winvogvhhjzlbxhsknadxpvwfj6f37wm",
           "tests": [
             {
               "inputs": {
@@ -654,7 +654,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "ey7zqpajaeesvsg372rehhjmkpqld2qx",
+          "digest": "nxh4wiylfi7ngy6cxe65ovrzrwdoutja",
           "tests": [
             {
               "inputs": {
@@ -881,7 +881,7 @@
       "tasks": {
         "run_hiphase": {
           "key": "run_hiphase",
-          "digest": "6k2rtel3k6747xhcfnjufqfzgcnb7g5v",
+          "digest": "6qxqz7p56asf3z6f6cqwebdsd57fs4lh",
           "tests": [
             {
               "inputs": {
