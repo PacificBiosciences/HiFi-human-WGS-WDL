@@ -709,7 +709,7 @@
       "tasks": {
         "write_yaml_ped_phrank": {
           "key": "write_yaml_ped_phrank",
-          "digest": "e4yxyjj6vw35pxz434pgfalxpa4xh72n",
+          "digest": "4efgfhkb2mx3blda3i2qksjsqomcwqel",
           "tests": [
             {
               "inputs": {
