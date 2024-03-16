@@ -115,7 +115,7 @@ A cohort can include one or more samples. Samples need not be related, but if yo
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | cohort_id | A unique name for the cohort; used to name outputs | |
+| String | cohort_id | A unique name for the cohort; used to name outputs | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 | Array[[Sample](#sample)] | samples | The set of samples for the cohort. At least one sample must be defined. | |
 | Array[String] | phenotypes | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort. If no particular phenotypes are desired, the root HPO term, `"HP:0000001"`, can be used. | |
 
@@ -125,12 +125,12 @@ Sample information for each sample in the workflow run.
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String | sample_id | A unique name for the sample; used to name outputs | |
+| String | sample_id | A unique name for the sample; used to name outputs | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 | Array[[IndexData](https://github.com/PacificBiosciences/wdl-common/blob/main/wdl/structs.wdl)] | movie_bams | The set of unaligned movie BAMs associated with this sample | |
 | String? | sex | Sample sex | ["MALE", "FEMALE", `null`]. If the sex field is missing or `null`, sex will be set to unknown. Used to set the expected sex chromosome karyotype for TRGT and HiFiCNV. |
 | Boolean | affected | Is this sample affected by the phenotype? | \[`true`, `false`\] |
-| String? | father_id | Paternal `sample_id` | |
-| String? | mother_id | Maternal `sample_id` | |
+| String? | father_id | Paternal `sample_id` | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
+| String? | mother_id | Maternal `sample_id` | Alphanumeric characters, underscore (`_`), and dash (`-`) are allowed. |
 
 ## [ReferenceData](workflows/humanwgs_structs.wdl)
 
@@ -173,7 +173,7 @@ These files are hosted publicly in each of the cloud backends; see `backends/${b
 
 | Type | Name | Description | Notes |
 | :- | :- | :- | :- |
-| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | |
+| String? | deepvariant_version | Version of deepvariant to use \["1.6.0"\] | This release is only compatible with DeepVariant [1.6](https://github.com/google/deepvariant/releases/tag/v1.6.0). |
  | File? | custom_deepvariant_model_tar | Optional alternate DeepVariant [custom model](https://github.com/PacificBiosciences/wdl-common/blob/8d868818b62345fdb64ab104238d406d65334b3e/wdl/workflows/deepvariant/README.md) to use | |
 | Int? | pbsv_call_mem_gb | Optionally set RAM (GB) for pbsv_call during cohort analysis | |
 | Int? | glnexus_mem_gb | Optionally set RAM (GB) for GLnexus during cohort analysis | |
