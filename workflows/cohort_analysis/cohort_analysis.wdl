@@ -33,7 +33,7 @@ workflow cohort_analysis {
 	}
 
 	scatter (shard_index in range(length(pbsv_splits))) {
-        Array[String] region_set = pbsv_splits[shard_index]
+		Array[String] region_set = pbsv_splits[shard_index]
 
 		call PbsvCall.pbsv_call {
 			input:
