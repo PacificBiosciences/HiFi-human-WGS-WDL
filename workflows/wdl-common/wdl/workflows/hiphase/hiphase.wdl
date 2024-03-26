@@ -32,18 +32,12 @@ workflow hiphase {
 	}
 
 	# for samples, haplotag BAMs
-	if (haplotag &&  length(sample_ids) > 1) {
+	if (haplotag) {
 		scatter (bam_object in bams) {
 			# generate an array of haplotagged BAM names that match the input BAMs
 			String haplotagged_bam_name = basename(bam_object.data, ".bam") + ".haplotagged.bam"
 			String haplotagged_bam_index_name = basename(bam_object.data, ".bam") + ".haplotagged.bam.bai"
 		}
-	}
-
-	if (haplotag && length(sample_ids) == 1) {
-		# if there's only one sample, normalize the name
-		Array[String] single_haplotagged_bam_name = ["~{id}.~{refname}.haplotagged.bam"]
-		Array[String] single_haplotagged_bam_index_name = ["~{id}.~{refname}.haplotagged.bam.bai"]
 	}
 
 	call run_hiphase {
@@ -57,8 +51,8 @@ workflow hiphase {
 			phased_vcf_index_names = phased_vcf_index_name,
 			bams = bam,
 			bam_indices = bam_index,
-			haplotagged_bam_names = select_first([haplotagged_bam_name, single_haplotagged_bam_name, []]),
-			haplotagged_bam_index_names = select_first([haplotagged_bam_index_name, single_haplotagged_bam_index_name, []]),
+			haplotagged_bam_names = select_first([haplotagged_bam_name, []]),
+			haplotagged_bam_index_names = select_first([haplotagged_bam_index_name, []]),
 			reference = reference_fasta.data,
 			reference_index = reference_fasta.data_index,
 			runtime_attributes = default_runtime_attributes
