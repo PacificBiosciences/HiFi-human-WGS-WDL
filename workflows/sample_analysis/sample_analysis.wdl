@@ -3,12 +3,12 @@ version 1.0
 # Run for each sample in the cohort. Aligns reads from each movie to the reference genome, then calls and phases small and structural variants.
 
 import "../humanwgs_structs.wdl"
-import "../wdl-common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
-import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
-import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
-import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
-import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
-import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
+import "../wdl_common/wdl/tasks/pbsv_discover.wdl" as PbsvDiscover
+import "../wdl_common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
+import "../wdl_common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl_common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl_common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
+import "../wdl_common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow sample_analysis {
 	input {

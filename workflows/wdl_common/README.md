@@ -1,4 +1,4 @@
-# wdl-common
+# wdl_common
 
 Workflows and tasks reused across PacBio workflows.
 

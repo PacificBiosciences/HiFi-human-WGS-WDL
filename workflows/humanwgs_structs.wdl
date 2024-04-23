@@ -1,6 +1,6 @@
 version 1.0
 
-import "wdl-common/wdl/structs.wdl"
+import "wdl_common/wdl/structs.wdl"
 
 struct ReferenceData {
 	String name
