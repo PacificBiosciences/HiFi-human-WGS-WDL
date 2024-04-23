@@ -1,0 +1,28 @@
+{
+  "pharmcat.sample_id": "String",
+  "pharmcat.haplotagged_bam": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "pharmcat.phased_vcf": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "pharmcat.reference": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "pharmcat.pangu_mode": "String (optional, default = \"capture\")",
+  "pharmcat.pharmcat_positions": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "pharmcat.pharmcat_min_coverage": "Int",
+  "pharmcat.default_runtime_attributes": {
+    "max_retries": "Int",
+    "queue_arn": "String",
+    "container_registry": "String",
+    "preemptible_tries": "Int",
+    "zones": "String"
+  }
+}
