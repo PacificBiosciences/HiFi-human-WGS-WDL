@@ -1,0 +1,266 @@
+version 1.0
+
+import "../wdl-common/wdl/structs.wdl"
+import "../wdl-common/wdl/tasks/pbmm2.wdl" as Pbmm2
+import "../wdl-common/wdl/tasks/merge_bam_stats.wdl" as MergeBamStats
+import "../wdl-common/wdl/tasks/pbsv.wdl" as Pbsv
+import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
+import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
+import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
+import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
+import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
+import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
+import "../wdl-common/wdl/tasks/hificnv.wdl" as Hificnv
+
+workflow upstream {
+  meta {
+    description: "Given a set of HiFi reads for a human sample, run steps upstream of phasing."
+  }
+
+  parameter_meta {
+    sample_id: {
+      name: "Sample ID"
+    }
+    sex: {
+      name: "Sample sex",
+      choices: ["MALE", "FEMALE"]
+    }
+    hifi_reads: {
+      name: "HiFi reads (BAMs)"
+    }
+    ref_map_file: {
+      name: "TSV containing reference genome information"
+    }
+    deepvariant_version: {
+      name: "DeepVariant version"
+    }
+    custom_deepvariant_model_tar: {
+      name: "Custom DeepVariant model tarball"
+    }
+    single_sample: {
+      name: "Single sample workflow"
+    }
+    gpu: {
+      name: "Use GPU for DeepVariant"
+    }
+    default_runtime_attributes: {
+      name: "Runtime attribute structure"
+    }
+  }
+
+  input {
+    String sample_id
+    String? sex
+    Array[File] hifi_reads
+
+    File ref_map_file
+
+    String deepvariant_version
+    File? custom_deepvariant_model_tar
+
+    Boolean single_sample = false
+
+    Boolean gpu
+
+    RuntimeAttributes default_runtime_attributes
+  }
+
+  Map  [String, String] ref_map    = read_map(ref_map_file)
+  Array[Array[String]] pbsv_splits = read_json(ref_map["pbsv_splits"])  # !FileCoercion
+
+  scatter (hifi_read_bam in hifi_reads) {
+    call Pbmm2.pbmm2_align_wgs as pbmm2_align {
+      input:
+        sample_id          = sample_id,
+        bam                = hifi_read_bam,
+        ref_fasta          = ref_map["fasta"],       # !FileCoercion
+        ref_index          = ref_map["fasta_index"], # !FileCoercion
+        ref_name           = ref_map["name"],
+        runtime_attributes = default_runtime_attributes
+    }
+    call Pbsv.pbsv_discover {
+      input:
+        aligned_bam        = pbmm2_align.aligned_bam,
+        aligned_bam_index  = pbmm2_align.aligned_bam_index,
+        trf_bed            = ref_map["pbsv_tandem_repeat_bed"], # !FileCoercion
+        runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  call MergeBamStats.merge_bam_stats {
+    input:
+      sample_id            = sample_id,
+      bam_stats            = pbmm2_align.bam_stats,
+      runtime_attributes   = default_runtime_attributes
+  }
+
+  # merge aligned bams if there are multiple
+  if (length(pbmm2_align.aligned_bam) > 1) {
+    call Samtools.samtools_merge {
+      input:
+        bams               = pbmm2_align.aligned_bam,
+        out_prefix         = "~{sample_id}.~{ref_map['name']}",
+        runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  # select the merged bam if it exists, otherwise select the first (only) aligned bam
+  File aligned_bam_data  = select_first([samtools_merge.merged_bam, pbmm2_align.aligned_bam[0]])
+  File aligned_bam_index = select_first([samtools_merge.merged_bam_index, pbmm2_align.aligned_bam_index[0]])
+
+  call Mosdepth.mosdepth {
+    input:
+      sample_id          = sample_id,
+      ref_name           = ref_map["name"],
+      aligned_bam        = aligned_bam_data,
+      aligned_bam_index  = aligned_bam_index,
+      infer_sex          = true,
+      runtime_attributes = default_runtime_attributes
+  }
+
+  call DeepVariant.deepvariant {
+    input:
+      sample_id                    = sample_id,
+      sex                          = select_first([sex, mosdepth.inferred_sex]),
+      aligned_bams                 = [aligned_bam_data],
+      aligned_bam_indices          = [aligned_bam_index],
+      ref_fasta                    = ref_map["fasta"],                           # !FileCoercion
+      ref_index                    = ref_map["fasta_index"],                     # !FileCoercion
+      ref_name                     = ref_map["name"],
+      ref_par_regions_bed          = ref_map["deepvariant_par_bed"],             # !FileCoercion
+      ref_allosomes                = ref_map["deepvariant_haploid_contigs"],     # !FileCoercion
+      deepvariant_version          = deepvariant_version,
+      custom_deepvariant_model_tar = custom_deepvariant_model_tar,
+      gpu                          = gpu,
+      default_runtime_attributes   = default_runtime_attributes
+  }
+
+  call Trgt.trgt {
+    input:
+      sample_id          = sample_id,
+      sex                = select_first([sex, mosdepth.inferred_sex]),
+      aligned_bam        = aligned_bam_data,
+      aligned_bam_index  = aligned_bam_index,
+      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
+      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
+  call Paraphase.paraphase {
+    input:
+      aligned_bam        = aligned_bam_data,
+      aligned_bam_index  = aligned_bam_index,
+      ref_fasta          = ref_map["fasta"],         # !FileCoercion
+      ref_index          = ref_map["fasta_index"],   # !FileCoercion
+      sample_id          = sample_id,
+      runtime_attributes = default_runtime_attributes
+  }
+
+  call Hificnv.hificnv {
+    input:
+      sample_id           = sample_id,
+      sex                 = select_first([sex, mosdepth.inferred_sex]),
+      aligned_bam         = aligned_bam_data,
+      aligned_bam_index   = aligned_bam_index,
+      vcf                 = deepvariant.vcf,
+      vcf_index           = deepvariant.vcf_index,
+      ref_fasta           = ref_map["fasta"],                       # !FileCoercion
+      ref_index           = ref_map["fasta_index"],                 # !FileCoercion
+      ref_name            = ref_map["name"],
+      exclude_bed         = ref_map["hificnv_exclude_bed"],         # !FileCoercion
+      exclude_bed_index   = ref_map["hificnv_exclude_bed_index"],   # !FileCoercion
+      expected_male_bed   = ref_map["hificnv_expected_bed_male"],   # !FileCoercion
+      expected_female_bed = ref_map["hificnv_expected_bed_female"], # !FileCoercion
+      runtime_attributes  = default_runtime_attributes
+  }
+
+  if (single_sample) {
+    scatter (shard_index in range(length(pbsv_splits))) {
+      Array[String] region_set = pbsv_splits[shard_index]
+
+      call Pbsv.pbsv_call {
+        input:
+          sample_id          = sample_id,
+          svsigs             = pbsv_discover.svsig,
+          ref_fasta          = ref_map["fasta"],       # !FileCoercion
+          ref_index          = ref_map["fasta_index"], # !FileCoercion
+          ref_name           = ref_map["name"],
+          shard_index        = shard_index,
+          regions            = region_set,
+          runtime_attributes = default_runtime_attributes
+      }
+    }
+
+    # concatenate pbsv vcfs
+    call Bcftools.concat_pbsv_vcf {
+      input:
+        vcfs               = pbsv_call.vcf,
+        vcf_indices        = pbsv_call.vcf_index,
+        out_prefix         = "~{sample_id}.~{ref_map['name']}.structural_variants",
+        runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  output {
+    # bam stats
+    File  read_length_and_quality  = merge_bam_stats.read_length_and_quality
+    File  read_length_histogram    = merge_bam_stats.read_length_histogram
+    File  read_quality_histogram   = merge_bam_stats.read_quality_histogram
+    Int   stat_num_reads           = merge_bam_stats.stat_num_reads
+    Float stat_read_length_mean    = merge_bam_stats.stat_read_length_mean
+    Float stat_read_length_median  = merge_bam_stats.stat_read_length_median
+    Float stat_read_quality_mean   = merge_bam_stats.stat_read_quality_mean
+    Float stat_read_quality_median = merge_bam_stats.stat_read_quality_median
+
+    # alignments
+    File  out_bam                  = aligned_bam_data
+    File  out_bam_index            = aligned_bam_index
+
+    # mosdepth outputs
+    File   mosdepth_summary    = mosdepth.summary
+    File   mosdepth_region_bed = mosdepth.region_bed
+    String inferred_sex        = mosdepth.inferred_sex
+    Float  stat_mean_depth     = mosdepth.stat_mean_depth
+
+    # per movie sv signatures
+    # if we've already called variants, no need to keep these
+    Array[File] svsigs = if single_sample then [] else pbsv_discover.svsig
+
+    # pbsv outputs for single sample
+    File? sv_vcf       = concat_pbsv_vcf.concatenated_vcf
+    File? sv_vcf_index = concat_pbsv_vcf.concatenated_vcf_index
+
+    # small variant outputs
+    File small_variant_vcf        = deepvariant.vcf
+    File small_variant_vcf_index  = deepvariant.vcf_index
+    File small_variant_gvcf       = deepvariant.gvcf
+    File small_variant_gvcf_index = deepvariant.gvcf_index
+
+    # trgt outputs
+    File trgt_vcf                  = trgt.vcf
+    File trgt_vcf_index            = trgt.vcf_index
+    File trgt_spanning_reads       = trgt.bam
+    File trgt_spanning_reads_index = trgt.bam_index
+    Int stat_trgt_genotyped_count  = trgt.stat_genotyped_count
+    Int stat_trgt_uncalled_count   = trgt.stat_uncalled_count
+
+    # paraphase outputs
+    File  paraphase_output_json         = paraphase.out_json
+    File  paraphase_realigned_bam       = paraphase.bam
+    File  paraphase_realigned_bam_index = paraphase.bam_index
+    File? paraphase_vcfs                = paraphase.vcfs_tar
+
+    # per sample hificnv outputs
+    File cnv_vcf              = hificnv.cnv_vcf
+    File cnv_vcf_index        = hificnv.cnv_vcf_index
+    File cnv_copynum_bedgraph = hificnv.copynum_bedgraph
+    File cnv_depth_bw         = hificnv.depth_bw
+    File cnv_maf_bw           = hificnv.maf_bw
+    Int  stat_cnv_DUP_count   = hificnv.stat_DUP_count
+    Int  stat_cnv_DEL_count   = hificnv.stat_DEL_count
+    Int  stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
+    Int  stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
+  }
+}
