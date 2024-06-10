@@ -707,7 +707,7 @@
       "name": "",
       "description": "",
       "tasks": {
-        "write_yaml_ped_phrank": {
+        "write_ped_phrank": {
           "key": "write_yaml_ped_phrank",
           "digest": "e4yxyjj6vw35pxz434pgfalxpa4xh72n",
           "tests": [
@@ -715,21 +715,13 @@
               "inputs": {
                 "cohort_id": "hg005-small-cohort",
                 "cohort_json": "${resources_file_path}/cohort.json",
-                "hpo_terms": "${datasets_file_path}/hpo/hpoTerms.txt",
-                "hpo_dag": "${datasets_file_path}/hpo/hpoDag.txt",
-                "hpo_annotations": "${datasets_file_path}/hpo/ensembl.hpoPhenotype.tsv",
-                "ensembl_to_hgnc": "${datasets_file_path}/hpo/ensembl.hgncSymbol.tsv",
+                "phenotypes": [
+                  "HP:0001250",
+                  "HP:0001263"
+                ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "cohort_yaml": {
-                  "value": "${resources_file_path}/hg005-small-cohort.yml",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "check_yaml"
-                  ]
-                },
                 "pedigree": {
                   "value": "${resources_file_path}/hg005-small-cohort.ped",
                   "test_tasks": [

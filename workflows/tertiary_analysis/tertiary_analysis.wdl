@@ -18,14 +18,11 @@ workflow tertiary_analysis {
 		RuntimeAttributes default_runtime_attributes
 	}
 
-	call write_yaml_ped_phrank {
+	call write_ped_phrank {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_json = write_json(cohort),
-			hpo_terms = slivar_data.hpo_terms,
-			hpo_dag = slivar_data.hpo_dag,
-			hpo_annotations = slivar_data.hpo_annotations,
-			ensembl_to_hgnc = slivar_data.ensembl_to_hgnc,
+			phenotypes = cohort.phenotypes,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -33,7 +30,7 @@ workflow tertiary_analysis {
 		input:
 			vcf = small_variant_vcf.data,
 			vcf_index = small_variant_vcf.data_index,
-			pedigree = write_yaml_ped_phrank.pedigree,
+			pedigree = write_ped_phrank.pedigree,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			slivar_js = slivar_data.slivar_js,
@@ -42,7 +39,7 @@ workflow tertiary_analysis {
 			gff = select_first([reference.gff]),
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
+			phrank_lookup = write_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -63,10 +60,10 @@ workflow tertiary_analysis {
 	call slivar_svpack_tsv {
 		input:
 			filtered_vcf = svpack_filter_annotated.svpack_vcf,
-			pedigree = write_yaml_ped_phrank.pedigree,
+			pedigree = write_ped_phrank.pedigree,
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
+			phrank_lookup = write_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -89,20 +86,17 @@ workflow tertiary_analysis {
 	}
 }
 
-task write_yaml_ped_phrank {
+task write_ped_phrank {
 	input {
 		String cohort_id
 		File cohort_json
 
-		File hpo_terms
-		File hpo_dag
-		File hpo_annotations
-		File ensembl_to_hgnc
+		Array[String] phenotypes
 
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int disk_size = ceil((size(hpo_terms, "GB") + size(hpo_dag, "GB") + size(hpo_annotations, "GB") + size(ensembl_to_hgnc, "GB")) * 2 + 20)
+	Int disk_size = 20
 
 	command <<<
 		set -euo pipefail
@@ -146,7 +140,7 @@ task write_yaml_ped_phrank {
 
 		def parse_family(family):
 				"""For a family struct, return a list of lists of PED fields for each sample."""
-				family_id = family["family_id"]
+				family_id = family["cohort_id"]
 				samples = []
 				for sample in family["samples"]:
 						samples.append(parse_sample(family_id, sample))
@@ -155,7 +149,7 @@ task write_yaml_ped_phrank {
 
 		def write_ped(samples):
 				"""Write PED format to stdout."""
-				tsv_writer = csv.writer(sys.stdout, delimiter="\t")
+				tsv_writer = csv.writer(sys.stdout, delimiter="\\t")
 				for sample in samples:
 						tsv_writer.writerow(sample)
 
@@ -172,31 +166,32 @@ task write_yaml_ped_phrank {
 						sys.exit(0)
 				main()
 		EOF
-    
-		chmod +x json2ped.py
 
-		json2ped.py \
-			~{cohort_json} \
-			> ~{cohort_id}.ped
+		python3 ./json2ped.py ~{cohort_json} > ~{cohort_id}.ped
+
+		cat ~{cohort_id}.ped
+
+		# ENV HPO_TERMS_TSV "/opt/data/hpo/hpoTerms.txt"
+		# ENV HPO_DAG_TSV "/opt/data/hpo/hpoDag.txt"
+		# ENV ENSEMBL_TO_HPO_TSV "/opt/data/hpo/ensembl.hpoPhenotype.tsv"
+		# ENV ENSEMBL_TO_HGNC "/opt/data/genes/ensembl.hgncSymbol.tsv"
 
 		calculate_phrank.py \
-			~{hpo_terms} \
-			~{hpo_dag} \
-			~{hpo_annotations} \
-			~{ensembl_to_hgnc} \
-			~{cohort_id}.yml \
-			~{cohort_id} \
+			"${HPO_TERMS_TSV}" \
+			"${HPO_DAG_TSV}" \
+			"${ENSEMBL_TO_HPO_TSV}" \
+			"${ENSEMBL_TO_HGNC}" \
+			~{sep="," phenotypes} \
 			~{cohort_id}_phrank.tsv
 	>>>
 
 	output {
-		File cohort_yaml = "~{cohort_id}.yml"
 		File pedigree = "~{cohort_id}.ped"
 		File phrank_lookup = "~{cohort_id}_phrank.tsv"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:af6f0689a7412b1edf76bd4bf6434e7fa6a86192eebf19573e8618880d9c1dbb"
+		docker: "~{runtime_attributes.container_registry}/wgs_tertiary@sha256:46f14de75798b54a38055a364a23ca1c9497bf810fee860431b78abc553434f2"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
