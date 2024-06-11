@@ -51,6 +51,7 @@ workflow tertiary_analysis {
 	call svpack_filter_annotated {
 		input:
 			sv_vcf = sv_vcf.data,
+			pedigree = write_ped_phrank.pedigree,
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
 			gff = select_first([reference.gff]),
@@ -404,6 +405,7 @@ task slivar_small_variant {
 task svpack_filter_annotated {
 	input {
 		File sv_vcf
+		File pedigree
 
 		Array[File] population_vcfs
 		Array[File] population_vcf_indices
@@ -422,6 +424,8 @@ task svpack_filter_annotated {
 		echo "svpack version:"
 		cat /opt/svpack/.git/HEAD
 
+		affected=$(awk -F'\t' '$6 ~ /2/ {{ print $2 }}' ~{pedigree} | paste -sd',')
+
 		svpack \
 			filter \
 			--pass-only \
@@ -434,6 +438,7 @@ task svpack_filter_annotated {
 			~{gff} \
 		| svpack \
 			tagzygosity \
+			--samples "${affected}" \
 			- \
 		> ~{sv_vcf_basename}.svpack.vcf
 
@@ -452,7 +457,7 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack@sha256:a680421cb517e1fa4a3097838719a13a6bd655a5e6980ace1b03af9dd707dd75"
+		docker: "~{runtime_attributes.container_registry}/svpack@sha256:5966de1434bc5fc04cc97d666126be46ebacb4a27191770bf9debfc9a6ab08bb"
 		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
