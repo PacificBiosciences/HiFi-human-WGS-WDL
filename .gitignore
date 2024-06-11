@@ -1,7 +1,3 @@
 inputs.test_data*.json
 .wdltest*
 dependencies.zip
-tests
-_LAST
-202*
-miniwdl.cfg
