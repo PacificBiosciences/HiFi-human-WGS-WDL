@@ -708,8 +708,8 @@
       "description": "",
       "tasks": {
         "write_ped_phrank": {
-          "key": "write_yaml_ped_phrank",
-          "digest": "e4yxyjj6vw35pxz434pgfalxpa4xh72n",
+          "key": "write_ped_phrank",
+          "digest": "mfl4vqvo35cws3vgxcf4kmmkiw3e5set",
           "tests": [
             {
               "inputs": {
