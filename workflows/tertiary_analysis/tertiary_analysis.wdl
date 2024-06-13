@@ -18,14 +18,11 @@ workflow tertiary_analysis {
 		RuntimeAttributes default_runtime_attributes
 	}
 
-	call write_yaml_ped_phrank {
+	call write_ped_phrank {
 		input:
 			cohort_id = cohort.cohort_id,
 			cohort_json = write_json(cohort),
-			hpo_terms = slivar_data.hpo_terms,
-			hpo_dag = slivar_data.hpo_dag,
-			hpo_annotations = slivar_data.hpo_annotations,
-			ensembl_to_hgnc = slivar_data.ensembl_to_hgnc,
+			phenotypes = cohort.phenotypes,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -33,7 +30,7 @@ workflow tertiary_analysis {
 		input:
 			vcf = small_variant_vcf.data,
 			vcf_index = small_variant_vcf.data_index,
-			pedigree = write_yaml_ped_phrank.pedigree,
+			pedigree = write_ped_phrank.pedigree,
 			reference = reference.fasta.data,
 			reference_index = reference.fasta.data_index,
 			slivar_js = slivar_data.slivar_js,
@@ -42,7 +39,7 @@ workflow tertiary_analysis {
 			gff = select_first([reference.gff]),
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
+			phrank_lookup = write_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -54,6 +51,7 @@ workflow tertiary_analysis {
 	call svpack_filter_annotated {
 		input:
 			sv_vcf = sv_vcf.data,
+			pedigree = write_ped_phrank.pedigree,
 			population_vcfs = population_vcf,
 			population_vcf_indices = population_vcf_index,
 			gff = select_first([reference.gff]),
@@ -63,10 +61,10 @@ workflow tertiary_analysis {
 	call slivar_svpack_tsv {
 		input:
 			filtered_vcf = svpack_filter_annotated.svpack_vcf,
-			pedigree = write_yaml_ped_phrank.pedigree,
+			pedigree = write_ped_phrank.pedigree,
 			lof_lookup = slivar_data.lof_lookup,
 			clinvar_lookup = slivar_data.clinvar_lookup,
-			phrank_lookup = write_yaml_ped_phrank.phrank_lookup,
+			phrank_lookup = write_ped_phrank.phrank_lookup,
 			runtime_attributes = default_runtime_attributes
 	}
 
@@ -89,51 +87,112 @@ workflow tertiary_analysis {
 	}
 }
 
-task write_yaml_ped_phrank {
+task write_ped_phrank {
 	input {
 		String cohort_id
 		File cohort_json
 
-		File hpo_terms
-		File hpo_dag
-		File hpo_annotations
-		File ensembl_to_hgnc
+		Array[String] phenotypes
 
 		RuntimeAttributes runtime_attributes
 	}
 
-	Int disk_size = ceil((size(hpo_terms, "GB") + size(hpo_dag, "GB") + size(hpo_annotations, "GB") + size(ensembl_to_hgnc, "GB")) * 2 + 20)
+	Int disk_size = 20
 
 	command <<<
 		set -euo pipefail
 
-		parse_cohort.py \
-			--cohort_json ~{cohort_json} \
-			--write_cohort_yaml ~{cohort_id}.yml
+		cat << EOF > json2ped.py
+		#!/usr/bin/env python3
+		"""
+		Convert Family JSON structure to tab-delimited PLINK pedigree (PED) format.
 
-		yaml2ped.py \
-			~{cohort_id}.yml \
-			~{cohort_id} \
-			~{cohort_id}.ped
+		Output PED columns:
+		1. family_id
+		2. sample_id
+		3. father_id (. for unknown)
+		4. mother_id (. for unknown)
+		5. sex (1=male; 2=female; .=unknown)
+		6. phenotype (1=unaffected; 2=affected)
+		"""
+
+		__version__ = "0.1.0"
+
+		import json
+		import csv
+		import sys
+
+
+		SEX = {"MALE": "1", "M": "1", "FEMALE": "2", "F": "2"}
+		STATUS = {False: "1", True: "2"}
+
+
+		def parse_sample(family_id, sample):
+				"""For a sample struct, return a list of PED fields."""
+				return [
+						family_id,
+						sample["sample_id"],
+						sample.get("father_id", "."),
+						sample.get("mother_id", "."),
+						SEX.get(sample.get("sex", ".").upper(), "."),  # all cases accepted
+						STATUS.get(sample.get("affected"), "0"),
+				]
+
+
+		def parse_family(family):
+				"""For a family struct, return a list of lists of PED fields for each sample."""
+				family_id = family["cohort_id"]
+				samples = []
+				for sample in family["samples"]:
+						samples.append(parse_sample(family_id, sample))
+				return samples
+
+
+		def write_ped(samples):
+				"""Write PED format to stdout."""
+				tsv_writer = csv.writer(sys.stdout, delimiter="\\t")
+				for sample in samples:
+						tsv_writer.writerow(sample)
+
+
+		def main():
+				with open(sys.argv[1], "r") as family:
+						samples = parse_family(json.load(family))
+						write_ped(samples)
+
+
+		if __name__ == "__main__":
+				if sys.argv[1] in ["-v", "--version"]:
+						print(__version__)
+						sys.exit(0)
+				main()
+		EOF
+
+		python3 ./json2ped.py ~{cohort_json} > ~{cohort_id}.ped
+
+		cat ~{cohort_id}.ped
+
+		# ENV HPO_TERMS_TSV "/opt/data/hpo/hpoTerms.txt"
+		# ENV HPO_DAG_TSV "/opt/data/hpo/hpoDag.txt"
+		# ENV ENSEMBL_TO_HPO_TSV "/opt/data/hpo/ensembl.hpoPhenotype.tsv"
+		# ENV ENSEMBL_TO_HGNC "/opt/data/genes/ensembl.hgncSymbol.tsv"
 
 		calculate_phrank.py \
-			~{hpo_terms} \
-			~{hpo_dag} \
-			~{hpo_annotations} \
-			~{ensembl_to_hgnc} \
-			~{cohort_id}.yml \
-			~{cohort_id} \
+			"${HPO_TERMS_TSV}" \
+			"${HPO_DAG_TSV}" \
+			"${ENSEMBL_TO_HPO_TSV}" \
+			"${ENSEMBL_TO_HGNC}" \
+			~{sep="," phenotypes} \
 			~{cohort_id}_phrank.tsv
 	>>>
 
 	output {
-		File cohort_yaml = "~{cohort_id}.yml"
 		File pedigree = "~{cohort_id}.ped"
 		File phrank_lookup = "~{cohort_id}_phrank.tsv"
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/pyyaml@sha256:af6f0689a7412b1edf76bd4bf6434e7fa6a86192eebf19573e8618880d9c1dbb"
+		docker: "~{runtime_attributes.container_registry}/wgs_tertiary@sha256:46f14de75798b54a38055a364a23ca1c9497bf810fee860431b78abc553434f2"
 		cpu: 2
 		memory: "4 GB"
 		disk: disk_size + " GB"
@@ -346,6 +405,7 @@ task slivar_small_variant {
 task svpack_filter_annotated {
 	input {
 		File sv_vcf
+		File pedigree
 
 		Array[File] population_vcfs
 		Array[File] population_vcf_indices
@@ -364,6 +424,8 @@ task svpack_filter_annotated {
 		echo "svpack version:"
 		cat /opt/svpack/.git/HEAD
 
+		affected=$(awk -F'\t' '$6 ~ /2/ {{ print $2 }}' ~{pedigree} | paste -sd',')
+
 		svpack \
 			filter \
 			--pass-only \
@@ -376,6 +438,7 @@ task svpack_filter_annotated {
 			~{gff} \
 		| svpack \
 			tagzygosity \
+			--samples "${affected}" \
 			- \
 		> ~{sv_vcf_basename}.svpack.vcf
 
@@ -394,7 +457,7 @@ task svpack_filter_annotated {
 	}
 
 	runtime {
-		docker: "~{runtime_attributes.container_registry}/svpack@sha256:a680421cb517e1fa4a3097838719a13a6bd655a5e6980ace1b03af9dd707dd75"
+		docker: "~{runtime_attributes.container_registry}/svpack@sha256:5966de1434bc5fc04cc97d666126be46ebacb4a27191770bf9debfc9a6ab08bb"
 		cpu: 2
 		memory: "16 GB"
 		disk: disk_size + " GB"
