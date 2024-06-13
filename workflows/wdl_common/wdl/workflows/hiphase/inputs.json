@@ -1,0 +1,29 @@
+{
+  "hiphase.id": "String",
+  "hiphase.sample_ids": "Array[String]",
+  "hiphase.haplotag": "Boolean (optional, default = false)",
+  "hiphase.vcfs": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "hiphase.bams": [
+    {
+      "data": "File",
+      "data_index": "File"
+    }
+  ],
+  "hiphase.refname": "String",
+  "hiphase.reference_fasta": {
+    "data": "File",
+    "data_index": "File"
+  },
+  "hiphase.default_runtime_attributes": {
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "queue_arn": "String",
+    "container_registry": "String"
+  }
+}

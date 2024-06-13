@@ -3,10 +3,10 @@ version 1.0
 # Run joint genotyping for a cohort. This workflow will be run if there is more than one sample in the cohort.
 
 import "../humanwgs_structs.wdl"
-import "../wdl-common/wdl/tasks/pbsv_call.wdl" as PbsvCall
-import "../wdl-common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
-import "../wdl-common/wdl/tasks/glnexus.wdl" as Glnexus
-import "../wdl-common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
+import "../wdl_common/wdl/tasks/pbsv_call.wdl" as PbsvCall
+import "../wdl_common/wdl/tasks/concat_vcf.wdl" as ConcatVcf
+import "../wdl_common/wdl/tasks/glnexus.wdl" as Glnexus
+import "../wdl_common/wdl/workflows/hiphase/hiphase.wdl" as HiPhase
 
 workflow cohort_analysis {
 	input {

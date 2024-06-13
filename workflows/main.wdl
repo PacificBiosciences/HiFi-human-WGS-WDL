@@ -1,7 +1,7 @@
 version 1.0
 
 import "humanwgs_structs.wdl"
-import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
+import "wdl_common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 import "sample_analysis/sample_analysis.wdl" as SampleAnalysis
 import "cohort_analysis/cohort_analysis.wdl" as CohortAnalysis
 import "tertiary_analysis/tertiary_analysis.wdl" as TertiaryAnalysis
