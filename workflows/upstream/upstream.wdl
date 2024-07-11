@@ -121,14 +121,11 @@ workflow upstream {
   call DeepVariant.deepvariant {
     input:
       sample_id                    = sample_id,
-      sex                          = select_first([sex, mosdepth.inferred_sex]),
       aligned_bams                 = [aligned_bam_data],
       aligned_bam_indices          = [aligned_bam_index],
-      ref_fasta                    = ref_map["fasta"],                           # !FileCoercion
-      ref_index                    = ref_map["fasta_index"],                     # !FileCoercion
+      ref_fasta                    = ref_map["fasta"],             # !FileCoercion
+      ref_index                    = ref_map["fasta_index"],       # !FileCoercion
       ref_name                     = ref_map["name"],
-      ref_par_regions_bed          = ref_map["deepvariant_par_bed"],             # !FileCoercion
-      ref_allosomes                = ref_map["deepvariant_haploid_contigs"],     # !FileCoercion
       deepvariant_version          = deepvariant_version,
       custom_deepvariant_model_tar = custom_deepvariant_model_tar,
       gpu                          = gpu,
@@ -141,8 +138,17 @@ workflow upstream {
       sex                = select_first([sex, mosdepth.inferred_sex]),
       aligned_bam        = aligned_bam_data,
       aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
-      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      ref_fasta          = ref_map["fasta"],                           # !FileCoercion
+      ref_index          = ref_map["fasta_index"],                     # !FileCoercion
+      trgt_bed           = ref_map["trgt_tandem_repeat_bed"],          # !FileCoercion
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
+  call Trgt.coverage_dropouts {
+    input: 
+      aligned_bam        = aligned_bam_data,
+      aligned_bam_index  = aligned_bam_index,
       trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
       out_prefix         = "~{sample_id}.~{ref_map['name']}",
       runtime_attributes = default_runtime_attributes
@@ -166,13 +172,13 @@ workflow upstream {
       aligned_bam_index   = aligned_bam_index,
       vcf                 = deepvariant.vcf,
       vcf_index           = deepvariant.vcf_index,
-      ref_fasta           = ref_map["fasta"],                       # !FileCoercion
-      ref_index           = ref_map["fasta_index"],                 # !FileCoercion
+      ref_fasta           = ref_map["fasta"],                           # !FileCoercion
+      ref_index           = ref_map["fasta_index"],                     # !FileCoercion
       ref_name            = ref_map["name"],
-      exclude_bed         = ref_map["hificnv_exclude_bed"],         # !FileCoercion
-      exclude_bed_index   = ref_map["hificnv_exclude_bed_index"],   # !FileCoercion
-      expected_male_bed   = ref_map["hificnv_expected_bed_male"],   # !FileCoercion
-      expected_female_bed = ref_map["hificnv_expected_bed_female"], # !FileCoercion
+      exclude_bed         = ref_map["hificnv_exclude_bed"],             # !FileCoercion
+      exclude_bed_index   = ref_map["hificnv_exclude_bed_index"],       # !FileCoercion
+      expected_male_bed   = ref_map["hificnv_expected_bed_male"],       # !FileCoercion
+      expected_female_bed = ref_map["hificnv_expected_bed_female"],     # !FileCoercion
       runtime_attributes  = default_runtime_attributes
   }
 
@@ -205,24 +211,26 @@ workflow upstream {
 
   output {
     # bam stats
-    File  read_length_and_quality  = merge_bam_stats.read_length_and_quality
-    File  read_length_histogram    = merge_bam_stats.read_length_histogram
-    File  read_quality_histogram   = merge_bam_stats.read_quality_histogram
-    Int   stat_num_reads           = merge_bam_stats.stat_num_reads
-    Float stat_read_length_mean    = merge_bam_stats.stat_read_length_mean
-    Float stat_read_length_median  = merge_bam_stats.stat_read_length_median
-    Float stat_read_quality_mean   = merge_bam_stats.stat_read_quality_mean
-    Float stat_read_quality_median = merge_bam_stats.stat_read_quality_median
+    File   read_length_and_quality  = merge_bam_stats.read_length_and_quality
+    File   read_length_histogram    = merge_bam_stats.read_length_histogram
+    File   read_quality_histogram   = merge_bam_stats.read_quality_histogram
+    File   read_length_plot         = merge_bam_stats.read_length_plot
+    File   read_quality_plot        = merge_bam_stats.read_quality_plot
+    String stat_num_reads           = merge_bam_stats.stat_num_reads
+    String stat_read_length_mean    = merge_bam_stats.stat_read_length_mean
+    String stat_read_length_median  = merge_bam_stats.stat_read_length_median
+    String stat_read_quality_mean   = merge_bam_stats.stat_read_quality_mean
+    String stat_read_quality_median = merge_bam_stats.stat_read_quality_median
 
     # alignments
-    File  out_bam                  = aligned_bam_data
-    File  out_bam_index            = aligned_bam_index
+    File out_bam       = aligned_bam_data
+    File out_bam_index = aligned_bam_index
 
     # mosdepth outputs
     File   mosdepth_summary    = mosdepth.summary
     File   mosdepth_region_bed = mosdepth.region_bed
     String inferred_sex        = mosdepth.inferred_sex
-    Float  stat_mean_depth     = mosdepth.stat_mean_depth
+    String stat_mean_depth     = mosdepth.stat_mean_depth
 
     # per movie sv signatures
     # if we've already called variants, no need to keep these
@@ -239,12 +247,13 @@ workflow upstream {
     File small_variant_gvcf_index = deepvariant.gvcf_index
 
     # trgt outputs
-    File trgt_vcf                  = trgt.vcf
-    File trgt_vcf_index            = trgt.vcf_index
-    File trgt_spanning_reads       = trgt.bam
-    File trgt_spanning_reads_index = trgt.bam_index
-    Int stat_trgt_genotyped_count  = trgt.stat_genotyped_count
-    Int stat_trgt_uncalled_count   = trgt.stat_uncalled_count
+    File   trgt_vcf                  = trgt.vcf
+    File   trgt_vcf_index            = trgt.vcf_index
+    File   trgt_spanning_reads       = trgt.bam
+    File   trgt_spanning_reads_index = trgt.bam_index
+    File   trgt_coverage_dropouts    = coverage_dropouts.dropouts
+    String stat_trgt_genotyped_count = trgt.stat_genotyped_count
+    String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
 
     # paraphase outputs
     File  paraphase_output_json         = paraphase.out_json
@@ -253,14 +262,14 @@ workflow upstream {
     File? paraphase_vcfs                = paraphase.vcfs_tar
 
     # per sample hificnv outputs
-    File cnv_vcf              = hificnv.cnv_vcf
-    File cnv_vcf_index        = hificnv.cnv_vcf_index
-    File cnv_copynum_bedgraph = hificnv.copynum_bedgraph
-    File cnv_depth_bw         = hificnv.depth_bw
-    File cnv_maf_bw           = hificnv.maf_bw
-    Int  stat_cnv_DUP_count   = hificnv.stat_DUP_count
-    Int  stat_cnv_DEL_count   = hificnv.stat_DEL_count
-    Int  stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
-    Int  stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
+    File   cnv_vcf              = hificnv.cnv_vcf
+    File   cnv_vcf_index        = hificnv.cnv_vcf_index
+    File   cnv_copynum_bedgraph = hificnv.copynum_bedgraph
+    File   cnv_depth_bw         = hificnv.depth_bw
+    File   cnv_maf_bw           = hificnv.maf_bw
+    String stat_cnv_DUP_count   = hificnv.stat_DUP_count
+    String stat_cnv_DEL_count   = hificnv.stat_DEL_count
+    String stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
+    String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
   }
 }

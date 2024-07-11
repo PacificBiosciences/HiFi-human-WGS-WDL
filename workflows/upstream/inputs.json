@@ -9,7 +9,6 @@
   "upstream.gpu": "Boolean",
   "upstream.default_runtime_attributes": {
     "max_retries": "Int",
-    "queue_arn": "String",
     "container_registry": "String",
     "gpuType": "String",
     "backend": "String",

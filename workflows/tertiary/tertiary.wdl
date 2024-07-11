@@ -435,7 +435,6 @@ task slivar_small_variant {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    queueArn: runtime_attributes.queue_arn
     zones: runtime_attributes.zones
   }
 }
@@ -527,7 +526,6 @@ task svpack_filter_annotated {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    queueArn: runtime_attributes.queue_arn
     zones: runtime_attributes.zones
   }
 }
@@ -618,7 +616,6 @@ task slivar_svpack_tsv {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    queueArn: runtime_attributes.queue_arn
     zones: runtime_attributes.zones
   }
 }

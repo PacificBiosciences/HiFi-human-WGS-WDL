@@ -1,7 +1,18 @@
 {
   "humanwgs_family.family": {
     "family_id": "String",
-    "samples": "Array[WomCompositeType {\n mother_id -> String?\nfather_id -> String?\nsample_id -> String\nsex -> String?\nhifi_reads -> Array[File]\naffected -> Boolean \n}]"
+    "samples": [
+      {
+        "sample_id": "String",
+        "hifi_reads": [
+          "File"
+        ],
+        "affected": "Boolean",
+        "sex": "String? (optional); ['MALE', 'FEMALE']",
+        "father_id": "String? (optional)",
+        "mother_id": "String? (optional)"
+      }
+    ]
   },
   "humanwgs_family.ref_map_file": "File",
   "humanwgs_family.deepvariant_version": "String (optional, default = \"1.6.1\")",
@@ -14,8 +25,6 @@
   "humanwgs_family.gpu": "Boolean (optional, default = false)",
   "humanwgs_family.backend": "String",
   "humanwgs_family.zones": "String? (optional)",
-  "humanwgs_family.aws_spot_queue_arn": "String? (optional)",
-  "humanwgs_family.aws_on_demand_queue_arn": "String? (optional)",
   "humanwgs_family.gpuType": "String? (optional)",
   "humanwgs_family.container_registry": "String? (optional)",
   "humanwgs_family.preemptible": "Boolean"

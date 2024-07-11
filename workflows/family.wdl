@@ -17,10 +17,7 @@ workflow humanwgs_family {
 
   parameter_meta {
     family: {
-      name: "Family struct describing samples, relationships, and unaligned BAMs"
-    }
-    hifi_reads: {
-      name: "HiFi reads (BAMs)"
+      name: "Family struct describing samples, relationships, and unaligned BAM paths"
     }
     ref_map_file: {
       name: "TSV containing reference genome file paths; must match backend"
@@ -35,10 +32,10 @@ workflow humanwgs_family {
       name: "Minimum coverage for PharmCAT"
     }
     phenotypes: {
-      name: "Phenotypes"
+      name: "Comma-delimited list of HPO codes for phenotypes"
     }
     tertiary_map_file: {
-      name: "TSV containing tertiary analysis file paths; must match backend"
+      name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
     }
     glnexus_mem_gb: {
       name: "Override GLnexus memory request (GB)"
@@ -47,23 +44,17 @@ workflow humanwgs_family {
       name: "Override PBSV call memory request (GB)"
     }
     gpu: {
-      name: "Use GPU for DeepVariant"
+      name: "Use GPU when possible"
     }
     backend: {
       name: "Backend where the workflow will be executed",
-      choices: ["GCP", "Azure", "AWS-AGC", "AWS-OMICS", "HPC"]
+      choices: ["GCP", "Azure", "AWS-HealthOmics", "HPC"]
     }
     zones: {
-      name: "Zones where compute will take place; required if backend is set to 'AWS-AGC' or 'GCP'"
-    }
-    aws_spot_queue_arn: {
-      name: "Queue ARN for the spot batch queue; required if backend is set to 'AWS-AGC'"
-    }
-    aws_on_demand_queue_arn: {
-      name: "Queue ARN for the on demand batch queue; required if backend is set to 'AWS-AGC'"
+      name: "Zones where compute will take place; required if backend is set to 'GCP'"
     }
     gpuType: {
-      name: "GPU type to use; required if gpu is `true`; must match backend"
+      name: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
     }
     container_registry: {
       name: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used. Must be set if backend is set to 'AWS-HealthOmics'"
@@ -97,20 +88,16 @@ workflow humanwgs_family {
     # Backend configuration
     String backend
     String? zones
-    String? aws_spot_queue_arn
-    String? aws_on_demand_queue_arn
     String? gpuType
     String? container_registry
 
-    Boolean preemptible
+    Boolean preemptible = true
   }
 
   call BackendConfiguration.backend_configuration {
     input:
       backend                 = backend,
       zones                   = zones,
-      aws_spot_queue_arn      = aws_spot_queue_arn,
-      aws_on_demand_queue_arn = aws_on_demand_queue_arn,
       gpuType                 = gpuType,
       container_registry      = container_registry
   }
@@ -209,54 +196,56 @@ workflow humanwgs_family {
     Array[String] sample_ids = sample_id
 
     # bam stats
-    Array[File]  bam_stats                = upstream.read_length_and_quality
-    Array[File]  read_length_histogram    = upstream.read_length_histogram
-    Array[File]  read_quality_histogram   = upstream.read_quality_histogram
-    Array[Int]   stat_num_reads           = upstream.stat_num_reads
-    Array[Float] stat_read_length_mean    = upstream.stat_read_length_mean
-    Array[Float] stat_read_length_median  = upstream.stat_read_length_median
-    Array[Float] stat_read_quality_mean   = upstream.stat_read_quality_mean
-    Array[Float] stat_read_quality_median = upstream.stat_read_quality_median
+    Array[File] bam_stats                  = upstream.read_length_and_quality
+    Array[File] read_length_histogram      = upstream.read_length_histogram
+    Array[File] read_quality_histogram     = upstream.read_quality_histogram
+    Array[File] read_length_plot           = upstream.read_length_plot
+    Array[File] read_quality_plot          = upstream.read_quality_plot
+    Array[String] stat_num_reads           = upstream.stat_num_reads
+    Array[String] stat_read_length_mean    = upstream.stat_read_length_mean
+    Array[String] stat_read_length_median  = upstream.stat_read_length_median
+    Array[String] stat_read_quality_mean   = upstream.stat_read_quality_mean
+    Array[String] stat_read_quality_median = upstream.stat_read_quality_median
 
     # merged, haplotagged alignments
-    Array[File]  merged_haplotagged_bam       = downstream.merged_haplotagged_bam
-    Array[File]  merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
-    Array[Float] stat_mapped_fraction         = downstream.stat_mapped_fraction
+    Array[File] merged_haplotagged_bam       = downstream.merged_haplotagged_bam
+    Array[File] merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
+    Array[String] stat_mapped_fraction       = downstream.stat_mapped_fraction
 
     # mosdepth outputs
     Array[File] mosdepth_summary    = upstream.mosdepth_summary
     Array[File] mosdepth_region_bed = upstream.mosdepth_region_bed
     Array[String] inferred_sex      = upstream.inferred_sex
-    Array[Float] stat_mean_depth    = upstream.stat_mean_depth
+    Array[String] stat_mean_depth   = upstream.stat_mean_depth
 
     # phasing stats
-    Array[File] phase_stats          = downstream.phase_stats
-    Array[File] phase_blocks         = downstream.phase_blocks
-    Array[File] phase_haplotags      = downstream.phase_haplotags
-    Array[Int] stat_phased_basepairs = downstream.stat_phased_basepairs
-    Array[Int] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
+    Array[File] phase_stats             = downstream.phase_stats
+    Array[File] phase_blocks            = downstream.phase_blocks
+    Array[File] phase_haplotags         = downstream.phase_haplotags
+    Array[String] stat_phased_basepairs = downstream.stat_phased_basepairs
+    Array[String] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # cpg_pileup outputs
-    Array[File] cpg_combined_bed       = downstream.cpg_combined_bed
-    Array[File] cpg_hap1_bed           = downstream.cpg_hap1_bed
-    Array[File] cpg_hap2_bed           = downstream.cpg_hap2_bed
-    Array[File] cpg_combined_bw        = downstream.cpg_combined_bw
-    Array[File] cpg_hap1_bw            = downstream.cpg_hap1_bw
-    Array[File] cpg_hap2_bw            = downstream.cpg_hap2_bw
-    Array[Int] stat_hap1_cpg_count     = downstream.stat_hap1_cpg_count
-    Array[Int] stat_hap2_cpg_count     = downstream.stat_hap2_cpg_count
-    Array[Int] stat_combined_cpg_count = downstream.stat_combined_cpg_count
+    Array[File] cpg_combined_bed          = downstream.cpg_combined_bed
+    Array[File] cpg_hap1_bed              = downstream.cpg_hap1_bed
+    Array[File] cpg_hap2_bed              = downstream.cpg_hap2_bed
+    Array[File] cpg_combined_bw           = downstream.cpg_combined_bw
+    Array[File] cpg_hap1_bw               = downstream.cpg_hap1_bw
+    Array[File] cpg_hap2_bw               = downstream.cpg_hap2_bw
+    Array[String] stat_hap1_cpg_count     = downstream.stat_hap1_cpg_count
+    Array[String] stat_hap2_cpg_count     = downstream.stat_hap2_cpg_count
+    Array[String] stat_combined_cpg_count = downstream.stat_combined_cpg_count
 
     # sv outputs
     Array[File] phased_sv_vcf       = downstream.phased_sv_vcf
     Array[File] phased_sv_vcf_index = downstream.phased_sv_vcf_index
 
     # sv stats
-    Array[Int] stat_sv_DUP_count = downstream.stat_sv_DUP_count
-    Array[Int] stat_sv_DEL_count = downstream.stat_sv_DEL_count
-    Array[Int] stat_sv_INS_count = downstream.stat_sv_INS_count
-    Array[Int] stat_sv_INV_count = downstream.stat_sv_INV_count
-    Array[Int] stat_sv_BND_count = downstream.stat_sv_BND_count
+    Array[String] stat_sv_DUP_count = downstream.stat_sv_DUP_count
+    Array[String] stat_sv_DEL_count = downstream.stat_sv_DEL_count
+    Array[String] stat_sv_INS_count = downstream.stat_sv_INS_count
+    Array[String] stat_sv_INV_count = downstream.stat_sv_INV_count
+    Array[String] stat_sv_BND_count = downstream.stat_sv_BND_count
 
     # small variant outputs
     Array[File] phased_small_variant_vcf       = downstream.phased_small_variant_vcf
@@ -265,21 +254,22 @@ workflow humanwgs_family {
     Array[File] small_variant_gvcf_index       = upstream.small_variant_gvcf_index
 
     # small variant stats
-    Array[File]  small_variant_stats = downstream.small_variant_stats
-    Array[File]  bcftools_roh_out    = downstream.bcftools_roh_out
-    Array[File]  bcftools_roh_bed    = downstream.bcftools_roh_bed
-    Array[Int]   stat_SNV_count      = downstream.stat_SNV_count
-    Array[Int]   stat_INDEL_count    = downstream.stat_INDEL_count
-    Array[Float] stat_TSTV_ratio     = downstream.stat_TSTV_ratio
-    Array[Float] stat_HETHOM_ratio   = downstream.stat_HETHOM_ratio
+    Array[File] small_variant_stats = downstream.small_variant_stats
+    Array[File] bcftools_roh_out    = downstream.bcftools_roh_out
+    Array[File] bcftools_roh_bed    = downstream.bcftools_roh_bed
+    Array[String] stat_SNV_count    = downstream.stat_SNV_count
+    Array[String] stat_INDEL_count  = downstream.stat_INDEL_count
+    Array[String] stat_TSTV_ratio   = downstream.stat_TSTV_ratio
+    Array[String] stat_HETHOM_ratio = downstream.stat_HETHOM_ratio
 
     # trgt outputs
-    Array[File] phased_trgt_vcf           = downstream.phased_trgt_vcf
-    Array[File] phased_trgt_vcf_index     = downstream.phased_trgt_vcf_index
-    Array[File] trgt_spanning_reads       = upstream.trgt_spanning_reads
-    Array[File] trgt_spanning_reads_index = upstream.trgt_spanning_reads_index
-    Array[Int]  stat_trgt_genotyped_count = upstream.stat_trgt_genotyped_count
-    Array[Int]  stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
+    Array[File] phased_trgt_vcf             = downstream.phased_trgt_vcf
+    Array[File] phased_trgt_vcf_index       = downstream.phased_trgt_vcf_index
+    Array[File] trgt_spanning_reads         = upstream.trgt_spanning_reads
+    Array[File] trgt_spanning_reads_index   = upstream.trgt_spanning_reads_index
+    Array[File] trgt_coverage_dropouts      = upstream.trgt_coverage_dropouts
+    Array[String] stat_trgt_genotyped_count = upstream.stat_trgt_genotyped_count
+    Array[String] stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
 
     # paraphase outputs
     Array[File] paraphase_output_json         = upstream.paraphase_output_json
@@ -293,21 +283,19 @@ workflow humanwgs_family {
     Array[File] cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph
     Array[File] cnv_depth_bw         = upstream.cnv_depth_bw
     Array[File] cnv_maf_bw           = upstream.cnv_maf_bw
-    Array[Int] stat_cnv_DUP_count    = upstream.stat_cnv_DUP_count
-    Array[Int] stat_cnv_DEL_count    = upstream.stat_cnv_DEL_count
-    Array[Int] stat_cnv_DUP_sum      = upstream.stat_cnv_DUP_sum
-    Array[Int] stat_cnv_DEL_sum      = upstream.stat_cnv_DEL_sum
+    Array[String] stat_cnv_DUP_count = upstream.stat_cnv_DUP_count
+    Array[String] stat_cnv_DEL_count = upstream.stat_cnv_DEL_count
+    Array[String] stat_cnv_DUP_sum   = upstream.stat_cnv_DUP_sum
+    Array[String] stat_cnv_DEL_sum   = upstream.stat_cnv_DEL_sum
 
-    # pharmcat and pangu outputs
-    Array[File]   hifihla_summary                   = downstream.hifihla_summary
-    Array[File]   hifihla_report_json               = downstream.hifihla_report_json
-    Array[File]   pbstarphase_json                  = downstream.pbstarphase_json
-    Array[File?] pharmcat_missing_pgx_vcf           = downstream.pharmcat_missing_pgx_vcf
-    Array[File]  pharmcat_preprocessed_filtered_vcf = downstream.pharmcat_preprocessed_filtered_vcf
-    Array[File]  pharmcat_match_json                = downstream.pharmcat_match_json
-    Array[File]  pharmcat_phenotype_json            = downstream.pharmcat_phenotype_json
-    Array[File]  pharmcat_report_html               = downstream.pharmcat_report_html
-    Array[File]  pharmcat_report_json               = downstream.pharmcat_report_json
+    # PGx outputs
+    Array[File] pbstarphase_json                   = downstream.pbstarphase_json
+    Array[File?] pharmcat_missing_pgx_vcf          = downstream.pharmcat_missing_pgx_vcf
+    Array[File] pharmcat_preprocessed_filtered_vcf = downstream.pharmcat_preprocessed_filtered_vcf
+    Array[File] pharmcat_match_json                = downstream.pharmcat_match_json
+    Array[File] pharmcat_phenotype_json            = downstream.pharmcat_phenotype_json
+    Array[File] pharmcat_report_html               = downstream.pharmcat_report_html
+    Array[File] pharmcat_report_json               = downstream.pharmcat_report_json
 
     # joint call outputs
     File joint_small_variants_vcf            = merge_small_variant_vcfs.merged_vcf

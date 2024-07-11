@@ -9,7 +9,6 @@
   "joint.pbsv_call_mem_gb": "Int? (optional)",
   "joint.default_runtime_attributes": {
     "max_retries": "Int",
-    "queue_arn": "String",
     "container_registry": "String",
     "gpuType": "String",
     "backend": "String",

@@ -4,7 +4,6 @@ import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
-import "../wdl-common/wdl/tasks/hifihla.wdl" as Hifihla
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
 import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
 
@@ -90,8 +89,8 @@ workflow downstream {
       vcf_indices            = hiphase_input_vcf_indices,
       phased_vcf_names       = phased_vcf_name,
       phased_vcf_index_names = phased_vcf_index_name,
-      bam                    = aligned_bam,
-      bam_index              = aligned_bam_index,
+      aligned_bam            = aligned_bam,
+      aligned_bam_index      = aligned_bam_index,
       ref_name               = ref_map["name"],
       ref_fasta              = ref_map["fasta"],          # !FileCoercion
       ref_index              = ref_map["fasta_index"],    # !FileCoercion
@@ -127,16 +126,6 @@ workflow downstream {
       runtime_attributes    = default_runtime_attributes
   }
 
-  call Hifihla.hifihla_call_reads {
-    input: 
-      sample_id          = sample_id,
-      aligned_bam        = hiphase.haplotagged_bam,
-      aligned_bam_index  = hiphase.haplotagged_bam_index,
-      ref_fasta          = ref_map["fasta"],              # !FileCoercion
-      ref_index          = ref_map["fasta_index"],        # !FileCoercion
-      runtime_attributes = default_runtime_attributes
-  }
-
   call Pbstarphase.pbstarphase_diplotype {
     input:
       sample_id          = sample_id,
@@ -166,51 +155,47 @@ workflow downstream {
 
   output {
     # hiphase outputs
-    File  merged_haplotagged_bam         = hiphase.haplotagged_bam
-    File  merged_haplotagged_bam_index   = hiphase.haplotagged_bam_index
-    File  phased_small_variant_vcf       = hiphase.phased_vcfs[0]
-    File  phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0]
-    File  phased_sv_vcf                  = hiphase.phased_vcfs[1]
-    File  phased_sv_vcf_index            = hiphase.phased_vcf_indices[1]
-    File  phased_trgt_vcf                = hiphase.phased_vcfs[2]
-    File  phased_trgt_vcf_index          = hiphase.phased_vcf_indices[2]
-    File  phase_stats                    = hiphase.phase_stats
-    File  phase_blocks                   = hiphase.phase_blocks
-    File  phase_haplotags                = hiphase.phase_haplotags
-    Int   stat_phased_basepairs          = hiphase.stat_phased_basepairs
-    Int   stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
-    Float stat_mapped_fraction           = hiphase.stat_mapped_fraction
+    File   merged_haplotagged_bam         = hiphase.haplotagged_bam
+    File   merged_haplotagged_bam_index   = hiphase.haplotagged_bam_index
+    File   phased_small_variant_vcf       = hiphase.phased_vcfs[0]
+    File   phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0]
+    File   phased_sv_vcf                  = hiphase.phased_vcfs[1]
+    File   phased_sv_vcf_index            = hiphase.phased_vcf_indices[1]
+    File   phased_trgt_vcf                = hiphase.phased_vcfs[2]
+    File   phased_trgt_vcf_index          = hiphase.phased_vcf_indices[2]
+    File   phase_stats                    = hiphase.phase_stats
+    File   phase_blocks                   = hiphase.phase_blocks
+    File   phase_haplotags                = hiphase.phase_haplotags
+    String stat_phased_basepairs          = hiphase.stat_phased_basepairs
+    String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
+    String stat_mapped_fraction           = hiphase.stat_mapped_fraction
 
     # small variant stats
-    File  small_variant_stats = bcftools_stats_roh_small_variants.stats
-    File  bcftools_roh_out    = bcftools_stats_roh_small_variants.roh_out
-    File  bcftools_roh_bed    = bcftools_stats_roh_small_variants.roh_bed
-    Int   stat_SNV_count      = bcftools_stats_roh_small_variants.stat_SNV_count
-    Int   stat_INDEL_count    = bcftools_stats_roh_small_variants.stat_INDEL_count
-    Float stat_TSTV_ratio     = bcftools_stats_roh_small_variants.stat_TSTV_ratio
-    Float stat_HETHOM_ratio   = bcftools_stats_roh_small_variants.stat_HETHOM_ratio
+    File   small_variant_stats = bcftools_stats_roh_small_variants.stats
+    File   bcftools_roh_out    = bcftools_stats_roh_small_variants.roh_out
+    File   bcftools_roh_bed    = bcftools_stats_roh_small_variants.roh_bed
+    String stat_SNV_count      = bcftools_stats_roh_small_variants.stat_SNV_count
+    String stat_INDEL_count    = bcftools_stats_roh_small_variants.stat_INDEL_count
+    String stat_TSTV_ratio     = bcftools_stats_roh_small_variants.stat_TSTV_ratio
+    String stat_HETHOM_ratio   = bcftools_stats_roh_small_variants.stat_HETHOM_ratio
 
     # sv stats
-    Int stat_sv_DUP_count = sv_stats.stat_sv_DUP_count
-    Int stat_sv_DEL_count = sv_stats.stat_sv_DEL_count
-    Int stat_sv_INS_count = sv_stats.stat_sv_INS_count
-    Int stat_sv_INV_count = sv_stats.stat_sv_INV_count
-    Int stat_sv_BND_count = sv_stats.stat_sv_BND_count
+    String stat_sv_DUP_count = sv_stats.stat_sv_DUP_count
+    String stat_sv_DEL_count = sv_stats.stat_sv_DEL_count
+    String stat_sv_INS_count = sv_stats.stat_sv_INS_count
+    String stat_sv_INV_count = sv_stats.stat_sv_INV_count
+    String stat_sv_BND_count = sv_stats.stat_sv_BND_count
 
     # cpg_pileup outputs
-    File cpg_combined_bed        = cpg_pileup.combined_bed
-    File cpg_hap1_bed            = cpg_pileup.hap1_bed
-    File cpg_hap2_bed            = cpg_pileup.hap2_bed
-    File cpg_combined_bw         = cpg_pileup.combined_bw
-    File cpg_hap1_bw             = cpg_pileup.hap1_bw
-    File cpg_hap2_bw             = cpg_pileup.hap2_bw
-    Int  stat_hap1_cpg_count     = cpg_pileup.stat_hap1_cpg_count
-    Int  stat_hap2_cpg_count     = cpg_pileup.stat_hap2_cpg_count
-    Int  stat_combined_cpg_count = cpg_pileup.stat_combined_cpg_count
-
-    # hifihla outputs
-    File   hifihla_summary     = hifihla_call_reads.summary
-    File   hifihla_report_json = hifihla_call_reads.report_json
+    File   cpg_combined_bed        = cpg_pileup.combined_bed
+    File   cpg_hap1_bed            = cpg_pileup.hap1_bed
+    File   cpg_hap2_bed            = cpg_pileup.hap2_bed
+    File   cpg_combined_bw         = cpg_pileup.combined_bw
+    File   cpg_hap1_bw             = cpg_pileup.hap1_bw
+    File   cpg_hap2_bw             = cpg_pileup.hap2_bw
+    String stat_hap1_cpg_count     = cpg_pileup.stat_hap1_cpg_count
+    String stat_hap2_cpg_count     = cpg_pileup.stat_hap2_cpg_count
+    String stat_combined_cpg_count = cpg_pileup.stat_combined_cpg_count
 
     # pbstarphase outputs
     File pbstarphase_json = pbstarphase_diplotype.out_json

@@ -102,27 +102,27 @@ workflow joint {
 
   call Bcftools.split_vcf_by_sample as split_pbsv {
     input:
-      sample_ids = sample_ids,
-      vcf = concat_pbsv_vcf.concatenated_vcf,
-      vcf_index = concat_pbsv_vcf.concatenated_vcf_index,
+      sample_ids         = sample_ids,
+      vcf                = concat_pbsv_vcf.concatenated_vcf,
+      vcf_index          = concat_pbsv_vcf.concatenated_vcf_index,
       runtime_attributes = default_runtime_attributes
   }
 
   call Glnexus.glnexus {
     input:
-      cohort_id = family_id + ".joint",
-      gvcfs = gvcfs,
-      gvcf_indices = gvcf_indices,
-      ref_name = ref_map["name"],
-      mem_gb = glnexus_mem_gb,
+      cohort_id          = family_id + ".joint",
+      gvcfs              = gvcfs,
+      gvcf_indices       = gvcf_indices,
+      ref_name           = ref_map["name"],
+      mem_gb             = glnexus_mem_gb,
       runtime_attributes = default_runtime_attributes
   }
 
   call Bcftools.split_vcf_by_sample as split_glnexus {
     input:
-      sample_ids = sample_ids,
-      vcf = glnexus.vcf,
-      vcf_index = glnexus.vcf_index,
+      sample_ids         = sample_ids,
+      vcf                = glnexus.vcf,
+      vcf_index          = glnexus.vcf_index,
       runtime_attributes = default_runtime_attributes
   }
 
