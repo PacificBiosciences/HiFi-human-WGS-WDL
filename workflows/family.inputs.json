@@ -27,5 +27,6 @@
   "humanwgs_family.zones": "String? (optional)",
   "humanwgs_family.gpuType": "String? (optional)",
   "humanwgs_family.container_registry": "String? (optional)",
+  "humanwgs_family.container_namespace": "String? (optional)",
   "humanwgs_family.preemptible": "Boolean"
 }

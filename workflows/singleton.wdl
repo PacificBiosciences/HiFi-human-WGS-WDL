@@ -56,7 +56,11 @@ workflow humanwgs_singleton {
       name: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
     }
     container_registry: {
-      name: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used. Must be set if backend is set to 'AWS-HealthOmics'"
+      name: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used. Must be set if backend is set to 'AWS-HealthOmics'",
+      default: "quay.io/pacbio"
+    }
+    container_namespace: {
+      name: "AWS ECRs have the format REGISTRY/NAMESPACE/CONTAINER. Must be set if backend is set to 'AWS-HealthOmics'"
     }
     preemptible: {
       name: "Where possible, run tasks preemptibly"
@@ -88,6 +92,7 @@ workflow humanwgs_singleton {
     String? zones
     String? gpuType
     String? container_registry
+    String? container_namespace
 
     Boolean preemptible = true
   }
@@ -97,7 +102,7 @@ workflow humanwgs_singleton {
       backend                 = backend,
       zones                   = zones,
       gpuType                 = gpuType,
-      container_registry      = container_registry
+      container_registry      = if defined(container_namespace) then select_first([container_registry]) + "/" + select_first([container_namespace]) else container_registry
   }
 
   RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
