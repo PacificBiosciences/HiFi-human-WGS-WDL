@@ -2,15 +2,15 @@
 
 [Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used to set up the resources needed to run the workflow.
 
-# Configuring and running the workflow
+## Configuring and running the workflow
 
-## Filling out workflow inputs
+### Filling out workflow inputs
 
-Fill out any information missing in [the inputs file](inputs.gcp.json).
+Fill out any information missing in [the inputs file](singleton.gcp.inputs.json).
 
-See [the inputs section of the main README](../../README.md#workflow-inputs) for more information on the structure of the inputs.json file.
+See [the inputs section of the singleton README](../../singleton.md#inputs) for more information on the structure of the inputs.json file.
 
-### Determining available zones
+#### Determining available zones
 
 To determine available zones in GCP, run the following; available zones within a region can be found in the first column of the output:
 
@@ -18,16 +18,13 @@ To determine available zones in GCP, run the following; available zones within a
 gcloud compute zones list | grep <region>
 ```
 
-For example, the zones in region us-central1 are `"us-central1-a us-central1-b us-central1c us-central1f"`.
+For example, the zones in region `us-central1` are `"us-central1-a us-central1-b us-central1c us-central1f"`.
 
-## Running the workflow
-
-### Running via Google's genomics Pipelines API
+## Running the workflow via Google's genomics Pipelines API
 
 [Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used as an example for how to run the workflow.
 
-
-# Reference data hosted in GCP
+## Reference data hosted in GCP
 
 GCP reference data is hosted in the `us-west1` region in the bucket `gs://pacbio-wdl`. This bucket is requester-pays, meaning that users will need to [provide a billing project in their Cromwell configuration](https://cromwell.readthedocs.io/en/stable/filesystems/GoogleCloudStorage/) in order to use files located in this bucket.
 

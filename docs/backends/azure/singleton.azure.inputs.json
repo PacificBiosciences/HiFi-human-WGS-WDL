@@ -1,0 +1,12 @@
+{
+  "humanwgs_singleton.sample_id": "String",
+  "humanwgs_singleton.sex": "String? (optional, ['MALE', 'FEMALE', null])",
+  "humanwgs_singleton.hifi_reads": [
+    "File"
+  ],
+  "humanwgs_singleton.ref_map_file": "/datasetpbrarediseases/dataset/GRCh38.ref_map.v1.hpc.tsv",
+  "humanwgs_singleton.phenotypes": "String? (optional)",
+  "humanwgs_singleton.tertiary_map_file": "/datasetpbrarediseases/dataset/GRCh38.tertiary_map.v2.hpc.tsv",
+  "humanwgs_singleton.backend": "Azure",
+  "humanwgs_singleton.preemptible": "Boolean"
+}
