@@ -1,7 +1,7 @@
 version 1.0
 
 import "../humanwgs_structs.wdl"
-import "../wdl-common/wdl/tasks/split_string.wdl" as Split_string
+import "../wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
 workflow tertiary_analysis {
   meta {
@@ -80,34 +80,65 @@ workflow tertiary_analysis {
     RuntimeAttributes default_runtime_attributes
   }
 
-  Map[String, String] ref_map       = read_map(ref_map_file)
+  Map[String, String] ref_map      = read_map(ref_map_file)
   Map[String, String] tertiary_map = read_map(tertiary_map_file)
+
+  call Utilities.split_string as split_gnotate_files {
+    input:
+      concatenated_string = tertiary_map["slivar_gnotate_files"],
+      delimiter           = ",",
+      runtime_attributes  = default_runtime_attributes
+  }
+
+  call Utilities.split_string as split_gnotate_prefixes {
+    input:
+      concatenated_string = tertiary_map["slivar_gnotate_prefixes"],
+      delimiter           = ",",
+      runtime_attributes  = default_runtime_attributes
+  }
+
+  scatter (gnotate_prefix in split_gnotate_prefixes.array) {
+    # These would ideally be within slivar_small_variant, but
+    # cromwell doesn't yet support versions of WDL with the suffix function
+    # allele frequencies <= max_af in each of the frequency databases
+    String slivar_af_expr = "INFO.~{gnotate_prefix}_af <= ~{tertiary_map['slivar_max_af']}"
+    # nhomalt <= max_nhomalt in each of the frequency databases
+    String slivar_nhomalt_expr = "INFO.~{gnotate_prefix}_nhomalt <= ~{tertiary_map['slivar_max_nhomalt']}"
+    # allele counts <= max_ac in each of the frequency databases
+    String slivar_ac_expr = "INFO.~{gnotate_prefix}_ac <= ~{tertiary_map['slivar_max_ac']}"
+    # info fields for slivar tsv
+    Array[String] info_fields = ["~{gnotate_prefix}_af","~{gnotate_prefix}_nhomalt","~{gnotate_prefix}_ac"]
+	}
 
   call slivar_small_variant {
     input:
       vcf                = small_variant_vcf,
       vcf_index          = small_variant_vcf_index,
       pedigree           = pedigree,
-      reference          = ref_map["fasta"],                    # !FileCoercion
-      reference_index    = ref_map["fasta_index"],              # !FileCoercion
-      slivar_js          = tertiary_map["slivar_js"],           # !FileCoercion
-      gnomad_af          = tertiary_map["slivar_gnomad_af"],    # !FileCoercion
-      hprc_af            = tertiary_map["slivar_hprc_af"],      # !FileCoercion
-      gff                = tertiary_map["ensembl_gff"],         # !FileCoercion
-      lof_lookup         = tertiary_map["lof_lookup"],          # !FileCoercion
-      clinvar_lookup     = tertiary_map["clinvar_lookup"],      # !FileCoercion
       phrank_lookup      = phrank_lookup,
+      reference          = ref_map["fasta"],               # !FileCoercion
+      reference_index    = ref_map["fasta_index"],         # !FileCoercion
+      gff                = tertiary_map["ensembl_gff"],    # !FileCoercion
+      lof_lookup         = tertiary_map["lof_lookup"],     # !FileCoercion
+      clinvar_lookup     = tertiary_map["clinvar_lookup"], # !FileCoercion
+      slivar_js          = tertiary_map["slivar_js"],      # !FileCoercion
+      gnotate_files      = split_gnotate_files.array,      # !FileCoercion
+      af_expr            = slivar_af_expr,
+      nhomalt_expr       = slivar_nhomalt_expr,
+      ac_expr            = slivar_ac_expr,
+      info_fields        = flatten(info_fields),
+      min_gq             = tertiary_map["slivar_min_gq"],
       runtime_attributes = default_runtime_attributes
   }
 
-  call Split_string.split_string as split_sv_vcfs {
+  call Utilities.split_string as split_sv_vcfs {
     input:
       concatenated_string = tertiary_map["svpack_pop_vcfs"],
       delimiter           = ",",
       runtime_attributes  = default_runtime_attributes
   }
 
-  call Split_string.split_string as split_sv_vcf_indices {
+  call Utilities.split_string as split_sv_vcf_indices {
     input:
       concatenated_string = tertiary_map["svpack_pop_vcf_indices"],
       delimiter           = ",",
@@ -117,6 +148,7 @@ workflow tertiary_analysis {
   call svpack_filter_annotated {
     input:
       sv_vcf                 = sv_vcf,
+      pedigree               = pedigree,
       population_vcfs        = split_sv_vcfs.array,         # !FileCoercion
       population_vcf_indices = split_sv_vcf_indices.array,  # !FileCoercion
       gff                    = tertiary_map["ensembl_gff"], # !FileCoercion
@@ -183,29 +215,17 @@ task slivar_small_variant {
     slivar_js: {
       name: "Slivar functions JS file"
     }
-    gnomad_af: {
-      name: "gnomAD gnotate file"
+    gnotate_files: {
+      name: "Slivar gnotate files with Allele Frequency (AF), Allele Count (AC), and Number of Homozygotes (nhomalt)"
     }
-    hprc_af: {
-      name: "HPRC gnotate"
+    af_expr: {
+      name: "Allele frequency expressions for slivar"
     }
-    max_gnomad_af: {
-      name: "Max gnomAD allele frequency"
+    nhomalt_expr: {
+      name: "nhomalt expressions for slivar"
     }
-    max_hprc_af: {
-      name: "Max HPRC allele frequency"
-    }
-    max_gnomad_nhomalt: {
-      name: "Max gnomAD count of HOMALT alleles"
-    }
-    max_hprc_nhomalt: {
-      name: "Max HPRC count of HOMALT alleles"
-    }
-    max_gnomad_ac: {
-      name: "Max gnomAD allele count"
-    }
-    max_hprc_ac: {
-      name: "Max HPRC allele count"
+    ac_expr: {
+      name: "Allele count expressions for slivar"
     }
     min_gq: {
       name: "Min genotype quality"
@@ -248,46 +268,34 @@ task slivar_small_variant {
     File clinvar_lookup
 
     File slivar_js
-    File gnomad_af
-    File hprc_af
+    Array[File] gnotate_files
 
-    Float max_gnomad_af      = 0.03
-    Float max_hprc_af        = 0.03
-    Int   max_gnomad_nhomalt = 4
-    Int   max_hprc_nhomalt   = 4
-    Int   max_gnomad_ac      = 4
-    Int   max_hprc_ac        = 4
-    Int   min_gq             = 5
+    Array[String] af_expr
+    Array[String] nhomalt_expr
+    Array[String] ac_expr
+    Array[String] info_fields
+
+    Int min_gq
 
     RuntimeAttributes runtime_attributes
   }
 
   # First, select only passing variants with AF and nhomalt lower than the specified thresholds
-  Array[String] info_expr = [
-    'variant.FILTER=="PASS"',
-    'INFO.gnomad_af <= ~{max_gnomad_af}',
-    'INFO.hprc_af <= ~{max_hprc_af}',
-    'INFO.gnomad_nhomalt <= ~{max_gnomad_nhomalt}',
-    'INFO.hprc_nhomalt <= ~{max_hprc_nhomalt}'
-  ]
+  # The af_expr and nhomalt_expr arrays will be concatenated with this array
+  Array[Array[String]] info_expr = [['variant.FILTER=="PASS"'], af_expr, nhomalt_expr]
 
-  # Implicit "high quality" filters are also applied in steps below
+  # Implicit "high quality" filters from slivar_js are also applied in steps below
   # min_GQ: 20, min_AB: 0.20, min_DP: 6, min_male_X_GQ: 10, min_male_X_DP: 6
   # hom_ref AB < 0.02, hom_alt AB > 0.98, het AB between min_AB and (1-min_AB)
 
   # Label recessive if all affected samples are HOMALT and all unaffected samples are HETALT or HOMREF
   # Special case of x-linked recessive is also handled, see segregating_recessive_x in slivar docs
-  Array[String] family_recessive_expr = [
-    'recessive:fam.every(segregating_recessive)'
-  ]
+  Array[String] family_recessive_expr = ['recessive:fam.every(segregating_recessive)']
 
   # Label dominant if all affected samples are HETALT and all unaffected samples are HOMREF
   # Special case of x-linked dominant is also handled, see segregating_dominant_x in slivar docs
-  Array[String] family_dominant_expr = [
-    'dominant:fam.every(segregating_dominant)',
-    'INFO.gnomad_ac <= ~{max_gnomad_ac}',
-    'INFO.hprc_ac <= ~{max_hprc_ac}'
-  ]
+  # The ac_expr array will be concatenated with this array
+  Array[Array[String]] family_dominant_expr = [['dominant:fam.every(segregating_dominant)'], ac_expr]
 
   # Label comphet_side if the sample is HETALT and the GQ is above the specified threshold
   Array[String] sample_expr = [
@@ -308,19 +316,11 @@ task slivar_small_variant {
     '3_prime_UTR'
   ]
 
-  # Fields to include in the output TSV
-  Array[String] info_fields = [
-    'gnomad_af',
-    'hprc_af',
-    'gnomad_nhomalt',
-    'hprc_nhomalt',
-    'gnomad_ac',
-    'hprc_ac'
-  ]
-
   String vcf_basename = basename(vcf, ".vcf.gz")
-  Int    threads      = 8
-  Int    disk_size    = ceil((size(vcf, "GB") + size(reference, "GB") + size(gnomad_af, "GB") + size(hprc_af, "GB") + size(gff, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
+
+  Int threads   = 8
+  Int mem_gb    = 2 * threads
+  Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB") + size(gnotate_files, "GB") + size(gff, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -350,12 +350,11 @@ task slivar_small_variant {
       --fasta ~{reference} \
       --pass-only \
       --js ~{slivar_js} \
-      --info '~{sep=" && " info_expr}' \
+      --info '~{sep=" && " flatten(info_expr)}' \
       --family-expr '~{sep=" && " family_recessive_expr}' \
-      --family-expr '~{sep=" && " family_dominant_expr}' \
+      --family-expr '~{sep=" && " flatten(family_dominant_expr)}' \
       --sample-expr '~{sep=" && " sample_expr}' \
-      --gnotate ~{gnomad_af} \
-      --gnotate ~{hprc_af} \
+      ~{sep=" " prefix("--gnotate ", gnotate_files)} \
       --vcf ~{vcf_basename}.norm.bcf \
       --ped ~{pedigree} \
     | bcftools csq \
@@ -427,9 +426,9 @@ task slivar_small_variant {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/slivar@sha256:0a09289ccb760da310669906c675be02fd16b18bbedc971605a587275e34966c"
+    docker: "~{runtime_attributes.container_registry}/slivar@sha256:35be557730d3ac9e883f1c2010fb24ac02631922f9b4948b0608d3e643a46e8b"
     cpu: threads
-    memory: "16 GB"
+    memory: mem_gb + " GB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -445,6 +444,9 @@ task svpack_filter_annotated {
   }
 
   parameter_meta {
+    pedigree: {
+      name: "PLINK pedigree (PED) format"
+    }
     sv_vcf: {
       name: "Structural variant VCF"
     }
@@ -470,6 +472,7 @@ task svpack_filter_annotated {
 
   input {
     File sv_vcf
+    File pedigree
 
     Array[File] population_vcfs
     Array[File] population_vcf_indices
@@ -479,14 +482,19 @@ task svpack_filter_annotated {
     RuntimeAttributes runtime_attributes
   }
 
-  String sv_vcf_basename = basename(sv_vcf, ".vcf.gz")
-  Int    disk_size       = ceil(size(sv_vcf, "GB") * 2 + 20)
+  Int threads   = 2
+  Int mem_gb    = 16
+  Int disk_size = ceil(size(sv_vcf, "GB") * 2 + 20)
+
+  String out_prefix = basename(sv_vcf, ".vcf.gz")
 
   command <<<
     set -euo pipefail
 
     echo "svpack version:"
     cat /opt/svpack/.git/HEAD
+
+    affected=$(awk -F'\t' '$6 ~ /2/ {{ print $2 }}' ~{pedigree} | paste -sd',')  # TODO: test and potentially replace awk
 
     svpack \
       filter \
@@ -500,27 +508,28 @@ task svpack_filter_annotated {
       ~{gff} \
     | svpack \
       tagzygosity \
+      --samples "${affected}" \
       - \
-    > ~{sv_vcf_basename}.svpack.vcf
+    > ~{out_prefix}.svpack.vcf
 
     bgzip --version
 
-    bgzip ~{sv_vcf_basename}.svpack.vcf
+    bgzip ~{out_prefix}.svpack.vcf
 
     tabix --version
 
-    tabix -p vcf ~{sv_vcf_basename}.svpack.vcf.gz
+    tabix -p vcf ~{out_prefix}.svpack.vcf.gz
   >>>
 
   output {
-    File svpack_vcf       = "~{sv_vcf_basename}.svpack.vcf.gz"
-    File svpack_vcf_index = "~{sv_vcf_basename}.svpack.vcf.gz.tbi"
+    File svpack_vcf       = "~{out_prefix}.svpack.vcf.gz"
+    File svpack_vcf_index = "~{out_prefix}.svpack.vcf.gz.tbi"
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/svpack@sha256:a680421cb517e1fa4a3097838719a13a6bd655a5e6980ace1b03af9dd707dd75"
-    cpu: 2
-    memory: "16 GB"
+    docker: "~{runtime_attributes.container_registry}/svpack@sha256:628e9851e425ed8044a907d33de04043d1ef02d4d2b2667cf2e9a389bb011eba"
+    cpu: threads
+    memory: mem_gb + " GB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -580,7 +589,10 @@ task slivar_svpack_tsv {
   ]
 
   String filtered_vcf_basename = basename(filtered_vcf, ".vcf.gz")
-  Int    disk_size             = ceil((size(filtered_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
+
+  Int threads   = 2
+  Int mem_gb    = 4
+  Int disk_size = ceil((size(filtered_vcf, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -608,9 +620,9 @@ task slivar_svpack_tsv {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/slivar@sha256:0a09289ccb760da310669906c675be02fd16b18bbedc971605a587275e34966c"
-    cpu: 2
-    memory: "4 GB"
+    docker: "~{runtime_attributes.container_registry}/slivar@sha256:35be557730d3ac9e883f1c2010fb24ac02631922f9b4948b0608d3e643a46e8b"
+    cpu: threads
+    memory: mem_gb + " GB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
