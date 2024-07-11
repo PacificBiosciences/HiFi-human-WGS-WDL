@@ -2,9 +2,9 @@
 
 ```mermaid
 flowchart TD
-  a1[/"phased small variant VCF"/] --> b1["pharmcat preprocess"]
-  a2[/"haplotagged BAM"/] --> b3["filter preprocessed VCF"]
-  b1 --> b3
-  b3 --> b4["PharmCat"]
-  b4 --> b5[/"PharmCat outputs"/]
+  phased_vcf[/"phased small variant VCF"/] --> preprocess["pharmcat preprocess"]
+  aBAM[/"haplotagged BAM"/] --> filter["filter preprocessed VCF"]
+  preprocess --> filter
+  filter --> pharmcat["PharmCat"]
+  pharmcat --> outputs[/"PharmCat outputs"/]
 ```
