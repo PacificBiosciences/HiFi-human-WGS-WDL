@@ -114,7 +114,7 @@ If Cromwell is running in server mode, the workflow can be submitted using cURL.
 
 ## Workflow inputs
 
-This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially [run/backend-specific sections](#other-inputs) will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](backends).
+This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially run/backend-specific sections will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](./docs/backends).
 
 Workflow inputs for each entrypoint are described in [singleton](./docs/singleton.md) and [family](./docs/family.md) documentation.
 
