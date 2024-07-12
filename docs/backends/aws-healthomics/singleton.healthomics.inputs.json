@@ -9,5 +9,6 @@
   "humanwgs_singleton.tertiary_map_file": "s3://<bucket_path>/GRCh38.tertiary_map.v2.hpc.tsv",
   "humanwgs_singleton.backend": "AWS-HealthOmics",
   "humanwgs_singleton.container_registry": "String",
+  "humanwgs_singleton.container_namespace": "String",
   "humanwgs_singleton.preemptible": true
 }

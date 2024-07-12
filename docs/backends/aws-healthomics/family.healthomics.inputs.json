@@ -1,0 +1,24 @@
+{
+  "humanwgs_family.family": {
+    "family_id": "String",
+    "samples": [
+      {
+        "sample_id": "String",
+        "hifi_reads": [
+          "File"
+        ],
+        "affected": "Boolean",
+        "sex": "String? (optional, ['MALE', 'FEMALE', null])",
+        "father_id": "String? (optional)",
+        "mother_id": "String? (optional)"
+      }
+    ]
+  },
+  "humanwgs_family.ref_map_file": "s3://<bucket_path>/GRCh38.ref_map.v1.hpc.tsv",
+  "humanwgs_family.phenotypes": "String? (optional)",
+  "humanwgs_family.tertiary_map_file": "s3://<bucket_path>/GRCh38.tertiary_map.v2.hpc.tsv",
+  "humanwgs_family.backend": "AWS-HealthOmics",
+  "humanwgs_family.container_registry": "String",
+  "humanwgs_family.container_namespace": "String",
+  "humanwgs_family.preemptible": true
+}

@@ -1,7 +1,6 @@
 # DeepVariant subworkflow
 
 ```mermaid
-
 flowchart TD
   aBAM[/"HiFi aBAM"/] --> make_examples["DeepVariant make_examples"]
   make_examples --> gpu{"gpu?"}
