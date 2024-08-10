@@ -1,6 +1,6 @@
 # GPU support
 
-Starting in workflow version 2.0.0, we have added support for running workflows on GPU-enabled nodes. The first task to take advantage of this is the [`deepvariant_call_variants` task](../workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl) in the DeepVariant workflow, which can use 1 GPU. To run the DeepVariant workflow on a GPU-enabled node, you will need to provide some additional configuration in your inputs JSON file.
+Starting in workflow version 2.0.0, we have added support for running workflows on GPU-enabled nodes. The first task to take advantage of this is the [`deepvariant_call_variants` task](../blob/main/workflows/wdl-common/wdl/workflows/deepvariant/deepvariant.wdl) in the DeepVariant workflow, which can use 1 GPU. To run the DeepVariant workflow on a GPU-enabled node, you will need to provide some additional configuration in your inputs JSON file.
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |

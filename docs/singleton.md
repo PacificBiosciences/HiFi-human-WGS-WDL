@@ -34,8 +34,7 @@ flowchart TD
     samtools_merge --> hificnv["HiFiCNV"]
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
-    samtools_merge --> deepvariant[["DeepVariant"]]
-    click deepvariant "./deepvariant.md" "DeepVariant DAG"
+    samtools_merge --> deepvariant["DeepVariant"]
     pbsv_discover --> pbsv_call["PBSV call"]
   end
   subgraph "`**Phasing and Downstream**`"
@@ -47,8 +46,7 @@ flowchart TD
     hiphase --> sv_stats["SV stats"]
     hiphase --> cpg_pileup["5mCpG pileup"]
     hiphase --> starphase["StarPhase"]
-    hiphase --> pharmcat[["PharmCat"]]
-    click pharmcat "./pharmcat.md" "PharmCat DAG"
+    hiphase --> pharmcat["PharmCat"]
     starphase --> pharmcat
   end
   subgraph "`**Tertiary Analysis**`"
@@ -65,13 +63,13 @@ flowchart TD
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
 | String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
-| File | [ref_map_file](./ref_map.md) | TSV containing reference genome file paths; must match backend |  |
+| File | [ref_map_file](./ref_map) | TSV containing reference genome file paths; must match backend |  |
 | String? | phenotypes | Comma-delimited list of HPO terms. | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort.<br/><br/>If omitted, tertiary analysis will be skipped. |
-| File? | [tertiary_map_file](./tertiary_map.md) | TSV containing tertiary analysis file paths and thresholds; must match backend | `AF`/`AC`/`nhomalt` thresholds can be modified, but this will affect performance.<br/><br/>If omitted, tertiary analysis will be skipped. |
-| Boolean | gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
-| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-HealthOmics", "HPC"]` |  |
-| String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in GCP](./backends/gcp/README.md#determining-available-zones) |
-| String? | gpuType | GPU type to use; required if gpu is set to `true` for cloud backends; must match backend  | [Available GPU types](./gpu.md#gpu-types) |
+| File? | [tertiary_map_file](./tertiary_map) | TSV containing tertiary analysis file paths and thresholds; must match backend | `AF`/`AC`/`nhomalt` thresholds can be modified, but this will affect performance.<br/><br/>If omitted, tertiary analysis will be skipped. |
+| Boolean | gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu#gpu-support) |
+| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-AGC", "AWS-HealthOmics", "HPC"]` |  |
+| String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in GCP](./backends/gcp#determining-available-zones) |
+| String? | gpuType | GPU type to use; required if gpu is set to `true` for cloud backends; must match backend  | [Available GPU types](./gpu#gpu-types) |
 | String? | container_registry | Container registry where workflow images are hosted.<br/><br/>Default: `"quay.io/pacbio"` | If omitted, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used.<br/><br/>Custom container_registry must be set if backend is set to 'AWS-HealthOmics'. |
 | String? | container_namespace |  | AWS ECRs have the format REGISTRY/NAMESPACE/CONTAINER. Must be set if backend is set to 'AWS-HealthOmics' |
 | Boolean | preemptible | Where possible, run tasks preemptibly<br/><br/>`[true, false]`<br/><br/>Default: `true` | If set to `true`, run tasks preemptibly where possible. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. |
@@ -91,6 +89,7 @@ flowchart TD
 | File | merged_haplotagged_bam_index |  |  |
 | File | mosdepth_summary | Summary of aligned read depth. |  |
 | File | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
+| File | mosdepth_region_bed_index |  |  |
 | String | stat_num_reads | Number of reads |  |
 | String | stat_read_length_mean | Mean read length |  |
 | String | stat_read_length_median | Median read length |  |
