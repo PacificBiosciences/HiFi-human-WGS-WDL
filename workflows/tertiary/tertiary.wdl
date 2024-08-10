@@ -275,7 +275,7 @@ task slivar_small_variant {
     Array[String] ac_expr
     Array[String] info_fields
 
-    Int min_gq
+    String min_gq
 
     RuntimeAttributes runtime_attributes
   }
