@@ -217,10 +217,11 @@ workflow humanwgs_family {
     Array[String] stat_mapped_fraction       = downstream.stat_mapped_fraction
 
     # mosdepth outputs
-    Array[File] mosdepth_summary    = upstream.mosdepth_summary
-    Array[File] mosdepth_region_bed = upstream.mosdepth_region_bed
-    Array[String] inferred_sex      = upstream.inferred_sex
-    Array[String] stat_mean_depth   = upstream.stat_mean_depth
+    Array[File] mosdepth_summary          = upstream.mosdepth_summary
+    Array[File] mosdepth_region_bed       = upstream.mosdepth_region_bed
+    Array[File] mosdepth_region_bed_index = upstream.mosdepth_region_bed
+    Array[String] inferred_sex            = upstream.inferred_sex
+    Array[String] stat_mean_depth         = upstream.stat_mean_depth
 
     # phasing stats
     Array[File] phase_stats             = downstream.phase_stats

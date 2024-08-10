@@ -240,10 +240,11 @@ workflow upstream {
     File out_bam_index = aligned_bam_index
 
     # mosdepth outputs
-    File   mosdepth_summary    = mosdepth.summary
-    File   mosdepth_region_bed = mosdepth.region_bed
-    String inferred_sex        = mosdepth.inferred_sex
-    String stat_mean_depth     = mosdepth.stat_mean_depth
+    File   mosdepth_summary          = mosdepth.summary
+    File   mosdepth_region_bed       = mosdepth.region_bed
+    File   mosdepth_region_bed_index = mosdepth.region_bed_index
+    String inferred_sex              = mosdepth.inferred_sex
+    String stat_mean_depth           = mosdepth.stat_mean_depth
 
     # per movie sv signatures
     # if we've already called variants, no need to keep these

@@ -178,10 +178,11 @@ workflow humanwgs_singleton {
     String stat_mapped_fraction         = downstream.stat_mapped_fraction
 
     # mosdepth outputs
-    File   mosdepth_summary    = upstream.mosdepth_summary
-    File   mosdepth_region_bed = upstream.mosdepth_region_bed
-    String inferred_sex        = upstream.inferred_sex
-    String stat_mean_depth     = upstream.stat_mean_depth
+    File   mosdepth_summary          = upstream.mosdepth_summary
+    File   mosdepth_region_bed       = upstream.mosdepth_region_bed
+    File   mosdepth_region_bed_index = upstream.mosdepth_region_bed_index
+    String inferred_sex              = upstream.inferred_sex
+    String stat_mean_depth           = upstream.stat_mean_depth
 
     # phasing stats
     File   phase_stats           = downstream.phase_stats
