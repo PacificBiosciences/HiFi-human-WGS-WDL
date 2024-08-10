@@ -4,8 +4,8 @@
 
 Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Workflow Description Language (WDL)](https://openwdl.org/).
 
-- Docker images used by this workflow are defined in [the wdl-dockerfiles repo](https://github.com/PacificBiosciences/wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
-- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](https://github.com/PacificBiosciences/wdl-common).
+- Docker images used by this workflow are defined in [the wdl-dockerfiles repo](../../wdl-dockerfiles). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio).
+- Common tasks that may be reused within or between workflows are defined in [the wdl-common repo](../../wdl-common).
 
 ## Workflow
 
@@ -19,14 +19,14 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 **Workflow entrypoint**:
 
-- [workflows/singleton.wdl](./workflows/singleton.wdl)
-- [workflows/family.wdl](./workflows/family.wdl)
+- [workflows/singleton.wdl](../../blob/main/workflows/singleton.wdl)
+- [workflows/family.wdl](../../blob/main/workflows/family.wdl)
 
 ## Setup
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.0-rc1):
+1) Download the release zips directly from a [supported release](../releases/tag/v2.0.0-rc1):
 
   ```bash
   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.0-rc1/hifi-human-wgs-singleton.v2.0.0-rc1.zip
@@ -50,7 +50,7 @@ On some backends, you may be able to make use of a GPU to accelerate the DeepVar
 
 ## Reference datasets and associated workflow files
 
-Reference datasets are hosted publicly for use in the pipeline. For data locations, see the [backend-specific documentation](./docs/backends/) and template inputs files for each backend with paths to publicly hosted reference files filled out.
+Reference datasets are hosted publicly for use in the pipeline. For data locations, see the [backend-specific documentation](./backends) and template inputs files for each backend with paths to publicly hosted reference files filled out.
 
 ## Setting up and executing the workflow
 
@@ -65,10 +65,10 @@ The workflow can be run on Azure, AWS, GCP, or HPC. Your choice of backend will 
 
 For backend-specific configuration, see the relevant documentation:
 
-- [Azure](./docs/backends/azure)
-- [AWS](./docs/backends/aws-healthomics)
-- [GCP](./docs/backends/gcp)
-- [HPC](./docs/backends/hpc)
+- [Azure](../backend-azure)
+- [AWS](../backend-aws-healthomics)
+- [GCP](../backend-gcp)
+- [HPC](../backend-hpc)
 
 ### Configuring a workflow engine and container runtime
 
@@ -76,7 +76,7 @@ An execution engine is required to run workflows. Two popular engines for runnin
 
 Because workflow dependencies are containerized, a container runtime is required. This workflow has been tested with [Docker](https://docs.docker.com/get-docker/) and [Singularity](https://docs.sylabs.io/guides/3.10/user-guide/) container runtimes.
 
-See the [backend-specific documentation](backends) for details on setting up an engine.
+See the [backend-specific documentation](../backends) for details on setting up an engine.
 
 | Engine | Azure | AWS | GCP | HPC |
 | :- | :- | :- | :- | :- |
@@ -87,10 +87,10 @@ See the [backend-specific documentation](backends) for details on setting up an 
 
 The input to a workflow run is defined in JSON format. Template input files with reference dataset information filled out are available for each backend:
 
-- [Azure](./docs/backends/azure/singleton.azure.inputs.json)
-- [AWS](./docs/backends/aws-healthomics/singleton.healthomics.inputs.json)
-- [GCP](./docs/backends/gcp/singleton.gcp.inputs.json)
-- [HPC](./docs/backends/hpc/singleton.hpc.inputs.json)
+- [Azure](../../blob/main/backends/azure/singleton.azure.inputs.json)
+- [AWS](../../blob/main/backends/aws-healthomics/singleton.healthomics.inputs.json)
+- [GCP](../../blob/main/backends/gcp/singleton.gcp.inputs.json)
+- [HPC](../../blob/main/backends/hpc/singleton.hpc.inputs.json)
 
 Using the appropriate inputs template file, fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
 
@@ -114,9 +114,9 @@ If Cromwell is running in server mode, the workflow can be submitted using cURL.
 
 ## Workflow inputs
 
-This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially run/backend-specific sections will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](./docs/backends).
+This section describes the inputs required for a run of the workflow. Typically, only the `humanwgs.cohort` and potentially run/backend-specific sections will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](../../blob/main/backends).
 
-Workflow inputs for each entrypoint are described in [singleton](./docs/singleton.md) and [family](./docs/family.md) documentation.
+Workflow inputs for each entrypoint are described in [singleton](../singleton) and [family](../family) documentation.
 
 At a high level, we have two types of inputs files:
 
@@ -134,7 +134,7 @@ Docker images definitions used by this workflow can be found in [the wdl-dockerf
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb<...>b01f80fe
 
-Tool versions and Docker images used in these workflows can be found in the [tools_containers](./docs/tools_containers.md) documentation.
+Tool versions and Docker images used in these workflows can be found in the [tools_containers](../tools_containers) documentation.
 
 ---
 
