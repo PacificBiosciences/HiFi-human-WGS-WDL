@@ -80,7 +80,7 @@ workflow humanwgs_family {
 
     Int pharmcat_min_coverage = 10
 
-    String? phenotypes
+    String phenotypes = "HP:0000001"
     File? tertiary_map_file
 
     Int? glnexus_mem_gb
@@ -172,19 +172,28 @@ workflow humanwgs_family {
       runtime_attributes = default_runtime_attributes
   }
 
-  if (defined(phenotypes) && defined(tertiary_map_file)) {
+  call Trgt.trgt_merge {
+    input:
+      vcfs               = downstream.phased_trgt_vcf,
+      ref_fasta          = ref_map["fasta"],                              # !FileCoercion
+      ref_index          = ref_map["fasta_index"],                        # !FileCoercion
+      out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
+      runtime_attributes = default_runtime_attributes
+  }
+
+  if (defined(tertiary_map_file)) {
     call Write_ped_phrank.write_ped_phrank {
       input:
         id                 = family.family_id,
         family_json        = write_json(family),
-        phenotypes         = select_first([phenotypes]),
+        phenotypes         = phenotypes,
         runtime_attributes = default_runtime_attributes
     }
 
     call TertiaryAnalysis.tertiary_analysis {
       input:
         pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
+        phrank_lookup              = select_first([write_ped_phrank.phrank_lookup]),
         small_variant_vcf          = merge_small_variant_vcfs.merged_vcf,
         small_variant_vcf_index    = merge_small_variant_vcfs.merged_vcf_index,
         sv_vcf                     = merge_sv_vcfs.merged_vcf,
@@ -307,6 +316,8 @@ workflow humanwgs_family {
     File joint_small_variants_vcf_index      = merge_small_variant_vcfs.merged_vcf_index
     File joint_structural_variants_vcf       = merge_sv_vcfs.merged_vcf
     File joint_structural_variants_vcf_index = merge_sv_vcfs.merged_vcf_index
+    File joint_trgt_vcf                      = trgt_merge.merged_vcf
+    File joint_trgt_vcf_index                = trgt_merge.merged_vcf_index
 
     # tertiary analysis outputs
     File? filtered_small_variant_vcf           = tertiary_analysis.filtered_small_variant_vcf

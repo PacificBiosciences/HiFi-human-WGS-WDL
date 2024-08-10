@@ -82,7 +82,7 @@ workflow humanwgs_singleton {
 
     Int pharmcat_min_coverage = 10
 
-    String? phenotypes
+    String phenotypes = "HP:0000001"
     File? tertiary_map_file
 
     Boolean gpu = false
@@ -136,19 +136,19 @@ workflow humanwgs_singleton {
       default_runtime_attributes = default_runtime_attributes
   }
 
-  if (defined(phenotypes) && defined(tertiary_map_file)) {
+  if (defined(tertiary_map_file)) {
     call Write_ped_phrank.write_ped_phrank {
       input:
         id                 = sample_id,
         sex                = select_first([sex, upstream.inferred_sex]),
-        phenotypes         = select_first([phenotypes]),
+        phenotypes         = phenotypes,
         runtime_attributes = default_runtime_attributes
     }
 
     call TertiaryAnalysis.tertiary_analysis {
       input:
         pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
+        phrank_lookup              = select_first([write_ped_phrank.phrank_lookup]),
         small_variant_vcf          = downstream.phased_small_variant_vcf,
         small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
         sv_vcf                     = downstream.phased_sv_vcf,
