@@ -39,17 +39,17 @@ workflow joint {
     default_runtime_attributes: {
       name: "Default Runtime Attribute Struct"
     }
-    joint_split_pbsv_vcfs: {
-      name: "Joint-call PBSV VCF, split by sample"
+    split_joint_structural_variant_vcfs: {
+      name: "Joint-call structural variant VCF, split by sample"
     }
-    joint_split_pbsv_vcf_indices: {
-      name: "Joint-call PBSV VCF indices, split by sample"
+    split_joint_structural_variant_vcf_indices: {
+      name: "Joint-call structural variant VCF indices, split by sample"
     }
-    joint_split_glenxus_vcfs: {
-      name: "Joint-call GLnexus VCF, split by sample"
+    split_joint_small_variant_vcfs: {
+      name: "Joint-call small variant VCF, split by sample"
     }
-    joint_split_glenxus_vcf_indices: {
-      name: "Joint-call GLnexus VCF indices, split by sample"
+    split_joint_small_variant_vcf_indices: {
+      name: "Joint-call small variant VCF indices, split by sample"
     }
   }
 

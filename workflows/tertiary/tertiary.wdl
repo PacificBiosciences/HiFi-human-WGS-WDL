@@ -57,7 +57,7 @@ workflow tertiary_analysis {
     filtered_svpack_vcf: {
       name: "Filtered and annotated structural variant VCF"
     }
-    filtered_svpack_vcfdv: {
+    filtered_svpack_vcf_index: {
       name: "Filtered and annotated structural variant VCF index"
     }
     filtered_svpack_tsv: {
