@@ -99,10 +99,10 @@ workflow humanwgs_singleton {
 
   call BackendConfiguration.backend_configuration {
     input:
-      backend                 = backend,
-      zones                   = zones,
-      gpuType                 = gpuType,
-      container_registry      = if defined(container_namespace) then select_first([container_registry]) + "/" + select_first([container_namespace]) else container_registry
+      backend            = backend,
+      zones              = zones,
+      gpuType            = gpuType,
+      container_registry = if defined(container_namespace) then select_first([container_registry]) + "/" + select_first([container_namespace]) else container_registry
   }
 
   RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes

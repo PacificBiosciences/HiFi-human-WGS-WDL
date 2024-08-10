@@ -6,6 +6,7 @@ import "upstream/upstream.wdl" as Upstream
 import "joint/joint.wdl" as Joint
 import "downstream/downstream.wdl" as Downstream
 import "wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
+import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 
@@ -100,10 +101,10 @@ workflow humanwgs_family {
 
   call BackendConfiguration.backend_configuration {
     input:
-      backend                 = backend,
-      zones                   = zones,
-      gpuType                 = gpuType,
-      container_registry      = if defined(container_namespace) then select_first([container_registry]) + "/" + select_first([container_namespace]) else container_registry
+      backend            = backend,
+      zones              = zones,
+      gpuType            = gpuType,
+      container_registry = if defined(container_namespace) then select_first([container_registry]) + "/" + select_first([container_namespace]) else container_registry
   }
 
   RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
