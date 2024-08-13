@@ -181,6 +181,7 @@ workflow humanwgs_family {
   call Trgt.trgt_merge {
     input:
       vcfs               = downstream.phased_trgt_vcf,
+      vcf_indices        = downstream.phased_trgt_vcf_index,
       ref_fasta          = ref_map["fasta"],                              # !FileCoercion
       ref_index          = ref_map["fasta_index"],                        # !FileCoercion
       out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
