@@ -1,3 +1,6 @@
 inputs.test_data*.json
 .wdltest*
 dependencies.zip
+tests
+Makefile
+miniwdl_*
