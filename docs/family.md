@@ -59,6 +59,7 @@ flowchart TD
   subgraph " "
     hiphase --> merge_small_variants["bcftools merge small variants"]
     hiphase --> merge_svs["bcftools merge SV"]
+    hiphase --> trgt_merge["trgt merge"]
   end
   subgraph "`**Tertiary Analysis**`"
     merge_small_variants --> slivar_small_variants["slivar small variants"]
