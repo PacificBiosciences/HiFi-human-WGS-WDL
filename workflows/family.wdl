@@ -189,10 +189,20 @@ workflow humanwgs_family {
   }
 
   if (defined(tertiary_map_file)) {
+    scatter (sample_index in range(length(family.samples))) {
+      Map[String, String] sample_metadata = {
+        "sample_id": family.samples[sample_index].sample_id,
+        "sex": select_first([family.samples[sample_index].sex, upstream.inferred_sex[sample_index]]),
+        "affected": family.samples[sample_index].affected,
+        "father_id": select_first([family.samples[sample_index].father_id, "."]),
+        "mother_id": select_first([family.samples[sample_index].mother_id, "."])
+      }
+    }
+
     call Write_ped_phrank.write_ped_phrank {
       input:
         id                 = family.family_id,
-        family_json        = write_json(family),
+        family_json        = sample_metadata,
         phenotypes         = phenotypes,
         runtime_attributes = default_runtime_attributes
     }
@@ -200,7 +210,7 @@ workflow humanwgs_family {
     call TertiaryAnalysis.tertiary_analysis {
       input:
         pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = select_first([write_ped_phrank.phrank_lookup]),
+        phrank_lookup              = write_ped_phrank.phrank_lookup,
         small_variant_vcf          = merge_small_variant_vcfs.merged_vcf,
         small_variant_vcf_index    = merge_small_variant_vcfs.merged_vcf_index,
         sv_vcf                     = merge_sv_vcfs.merged_vcf,

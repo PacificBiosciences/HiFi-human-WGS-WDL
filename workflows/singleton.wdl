@@ -142,10 +142,18 @@ workflow humanwgs_singleton {
   }
 
   if (defined(tertiary_map_file)) {
+    Map[String, String] sample_metadata = {
+      "sample_id": sample_id,
+      "sex": select_first([sex, upstream.inferred_sex]),
+      "affected": "true",
+      "father_id": ".",
+      "mother_id": "."
+    }
+
     call Write_ped_phrank.write_ped_phrank {
       input:
         id                 = sample_id,
-        sex                = select_first([sex, upstream.inferred_sex]),
+        family_json        = [sample_metadata],
         phenotypes         = phenotypes,
         runtime_attributes = default_runtime_attributes
     }
@@ -153,7 +161,7 @@ workflow humanwgs_singleton {
     call TertiaryAnalysis.tertiary_analysis {
       input:
         pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = select_first([write_ped_phrank.phrank_lookup]),
+        phrank_lookup              = write_ped_phrank.phrank_lookup,
         small_variant_vcf          = downstream.phased_small_variant_vcf,
         small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
         sv_vcf                     = downstream.phased_sv_vcf,
