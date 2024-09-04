@@ -11,7 +11,7 @@ import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
 import "../wdl-common/wdl/tasks/hificnv.wdl" as Hificnv
-import "../wdl-common/wdl/tasks/utilities.wdl" as Utilities
+import "../wdl-common/wdl/workflows/get_pbsv_splits/get_pbsv_splits.wdl" as Pbsv_splits
 
 workflow upstream {
   meta {
@@ -183,21 +183,14 @@ workflow upstream {
   }
 
   if (single_sample) {
-    if (default_runtime_attributes.backend == "AWS-HealthOmics") {
-      call Utilities.read_pbsv_splits {
-        input:
-          pbsv_splits_file   = ref_map["pbsv_splits"], # !FileCoercion
-          runtime_attributes = default_runtime_attributes
-      }
-    }
-    if (default_runtime_attributes.backend != "AWS-HealthOmics") {
-      Array[Array[String]] pbsv_splits = read_json(ref_map["pbsv_splits"]) # !FileCoercion
+    call Pbsv_splits.get_pbsv_splits {
+      input:
+        pbsv_splits_file           = ref_map["pbsv_splits"], # !FileCoercion
+        default_runtime_attributes = default_runtime_attributes
     }
 
-    Array[Array[String]] splits = select_first([read_pbsv_splits.splits, pbsv_splits])
-
-    scatter (shard_index in range(length(splits))) {
-      Array[String] region_set = splits[shard_index]
+    scatter (shard_index in range(length(get_pbsv_splits.pbsv_splits))) {
+      Array[String] region_set = get_pbsv_splits.pbsv_splits[shard_index]
 
       call Pbsv.pbsv_call {
         input:
