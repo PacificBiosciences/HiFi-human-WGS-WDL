@@ -105,12 +105,21 @@ workflow joint {
       runtime_attributes = default_runtime_attributes
   }
 
+  String sv_vcf_basename = basename(concat_pbsv_vcf.concatenated_vcf, ".vcf.gz")
+
+  scatter (sample_id in sample_ids) {
+    String split_sv_vcf_name = "~{sample_id}.~{sv_vcf_basename}.vcf.gz"
+    String split_sv_vcf_index_name = "~{sample_id}.~{sv_vcf_basename}.vcf.gz.tbi"
+  }
+
   call Bcftools.split_vcf_by_sample as split_pbsv {
     input:
-      sample_ids         = sample_ids,
-      vcf                = concat_pbsv_vcf.concatenated_vcf,
-      vcf_index          = concat_pbsv_vcf.concatenated_vcf_index,
-      runtime_attributes = default_runtime_attributes
+      sample_ids            = sample_ids,
+      vcf                   = concat_pbsv_vcf.concatenated_vcf,
+      vcf_index             = concat_pbsv_vcf.concatenated_vcf_index,
+      split_vcf_names       = split_sv_vcf_name,
+      split_vcf_index_names = split_sv_vcf_index_name,
+      runtime_attributes    = default_runtime_attributes
   }
 
   call Glnexus.glnexus {
@@ -123,12 +132,21 @@ workflow joint {
       runtime_attributes = default_runtime_attributes
   }
 
+  String glnexus_vcf_basename = basename(glnexus.vcf, ".vcf.gz")
+
+  scatter (sample_id in sample_ids) {
+    String split_glnexus_vcf_name = "~{sample_id}.~{glnexus_vcf_basename}.vcf.gz"
+    String split_glnexus_vcf_index_name = "~{sample_id}.~{glnexus_vcf_basename}.vcf.gz.tbi"
+  }
+
   call Bcftools.split_vcf_by_sample as split_glnexus {
     input:
-      sample_ids         = sample_ids,
-      vcf                = glnexus.vcf,
-      vcf_index          = glnexus.vcf_index,
-      runtime_attributes = default_runtime_attributes
+      sample_ids            = sample_ids,
+      vcf                   = glnexus.vcf,
+      vcf_index             = glnexus.vcf_index,
+      split_vcf_names       = split_glnexus_vcf_name,
+      split_vcf_index_names = split_glnexus_vcf_index_name,
+      runtime_attributes    = default_runtime_attributes
   }
 
   output {
