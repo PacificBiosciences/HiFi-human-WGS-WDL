@@ -1,0 +1,20 @@
+{
+  "deepvariant.sample_id": "String",
+  "deepvariant.aligned_bams": "Array[File]",
+  "deepvariant.aligned_bams_index": "Array[File]",
+  "deepvariant.regions_bed": "File? (optional)",
+  "deepvariant.ref_fasta": "File",
+  "deepvariant.ref_index": "File",
+  "deepvariant.ref_name": "String",
+  "deepvariant.deepvariant_version": "String",
+  "deepvariant.custom_deepvariant_model_tar": "File? (optional)",
+  "deepvariant.gpu": "Boolean",
+  "deepvariant.default_runtime_attributes": {
+    "max_retries": "Int",
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String"
+  }
+}
