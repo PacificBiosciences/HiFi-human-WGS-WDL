@@ -426,7 +426,7 @@ task slivar_small_variant {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/slivar@sha256:35be557730d3ac9e883f1c2010fb24ac02631922f9b4948b0608d3e643a46e8b"
+    docker: "~{runtime_attributes.container_registry}/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa"
     cpu: threads
     memory: mem_gb + " GB"
     disk: disk_size + " GB"
@@ -494,7 +494,7 @@ task svpack_filter_annotated {
     echo "svpack version:"
     cat /opt/svpack/.git/HEAD
 
-    affected=$(awk -F'\t' '$6 ~ /2/ {{ print $2 }}' ~{pedigree} | paste -sd',')  # TODO: test and potentially replace awk
+    affected=$(awk -F'\t' '$6 ~ /2/ {{ print $2 }}' ~{pedigree} | paste -sd',')  # TODO: potentially replace awk
 
     svpack \
       filter \
@@ -620,7 +620,7 @@ task slivar_svpack_tsv {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/slivar@sha256:35be557730d3ac9e883f1c2010fb24ac02631922f9b4948b0608d3e643a46e8b"
+    docker: "~{runtime_attributes.container_registry}/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa"
     cpu: threads
     memory: mem_gb + " GB"
     disk: disk_size + " GB"
