@@ -272,9 +272,9 @@ workflow humanwgs_family {
     Array[File] cpg_combined_bw           = downstream.cpg_combined_bw
     Array[File] cpg_hap1_bw               = downstream.cpg_hap1_bw
     Array[File] cpg_hap2_bw               = downstream.cpg_hap2_bw
-    Array[String] stat_hap1_cpg_count     = downstream.stat_hap1_cpg_count
-    Array[String] stat_hap2_cpg_count     = downstream.stat_hap2_cpg_count
-    Array[String] stat_combined_cpg_count = downstream.stat_combined_cpg_count
+    Array[String] stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
+    Array[String] stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
+    Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
 
     # sv outputs
     Array[File] phased_sv_vcf       = downstream.phased_sv_vcf
@@ -294,13 +294,13 @@ workflow humanwgs_family {
     Array[File] small_variant_gvcf_index       = upstream.small_variant_gvcf_index
 
     # small variant stats
-    Array[File] small_variant_stats = downstream.small_variant_stats
-    Array[File] bcftools_roh_out    = downstream.bcftools_roh_out
-    Array[File] bcftools_roh_bed    = downstream.bcftools_roh_bed
-    Array[String] stat_SNV_count    = downstream.stat_SNV_count
-    Array[String] stat_INDEL_count  = downstream.stat_INDEL_count
-    Array[String] stat_TSTV_ratio   = downstream.stat_TSTV_ratio
-    Array[String] stat_HETHOM_ratio = downstream.stat_HETHOM_ratio
+    Array[File] small_variant_stats               = downstream.small_variant_stats
+    Array[File] bcftools_roh_out                  = downstream.bcftools_roh_out
+    Array[File] bcftools_roh_bed                  = downstream.bcftools_roh_bed
+    Array[String] stat_small_variant_SNV_count    = downstream.stat_SNV_count
+    Array[String] stat_small_variant_INDEL_count  = downstream.stat_INDEL_count
+    Array[String] stat_small_variant_TSTV_ratio   = downstream.stat_TSTV_ratio
+    Array[String] stat_small_variant_HETHOM_ratio = downstream.stat_HETHOM_ratio
 
     # trgt outputs
     Array[File] phased_trgt_vcf             = downstream.phased_trgt_vcf
@@ -317,7 +317,7 @@ workflow humanwgs_family {
     Array[File] paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
     Array[File?] paraphase_vcfs               = upstream.paraphase_vcfs
 
-    # per sample ficnv outputs
+    # per sample cnv outputs
     Array[File] cnv_vcf              = upstream.cnv_vcf
     Array[File] cnv_vcf_index        = upstream.cnv_vcf_index
     Array[File] cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph

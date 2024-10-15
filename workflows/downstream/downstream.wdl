@@ -143,7 +143,8 @@ workflow downstream {
   }
 
   call Pharmcat.pharmcat {
-    input: 
+    input:
+      sample_id                  = sample_id,
       haplotagged_bam            = hiphase.haplotagged_bam,
       haplotagged_bam_index      = hiphase.haplotagged_bam_index,
       phased_vcf                 = hiphase.phased_vcfs[0],

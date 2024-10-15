@@ -213,9 +213,9 @@ workflow humanwgs_singleton {
     File   cpg_combined_bw         = downstream.cpg_combined_bw
     File   cpg_hap1_bw             = downstream.cpg_hap1_bw
     File   cpg_hap2_bw             = downstream.cpg_hap2_bw
-    String stat_hap1_cpg_count     = downstream.stat_hap1_cpg_count
-    String stat_hap2_cpg_count     = downstream.stat_hap2_cpg_count
-    String stat_combined_cpg_count = downstream.stat_combined_cpg_count
+    String stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
+    String stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
+    String stat_cpg_combined_count = downstream.stat_combined_cpg_count
 
     # sv outputs
     File phased_sv_vcf       = downstream.phased_sv_vcf
@@ -235,13 +235,13 @@ workflow humanwgs_singleton {
     File small_variant_gvcf_index       = upstream.small_variant_gvcf_index
 
     # small variant stats
-    File   small_variant_stats = downstream.small_variant_stats
-    File   bcftools_roh_out    = downstream.bcftools_roh_out
-    File   bcftools_roh_bed    = downstream.bcftools_roh_bed
-    String stat_SNV_count      = downstream.stat_SNV_count
-    String stat_INDEL_count    = downstream.stat_INDEL_count
-    String stat_TSTV_ratio     = downstream.stat_TSTV_ratio
-    String stat_HETHOM_ratio   = downstream.stat_HETHOM_ratio
+    File   small_variant_stats             = downstream.small_variant_stats
+    File   bcftools_roh_out                = downstream.bcftools_roh_out
+    File   bcftools_roh_bed                = downstream.bcftools_roh_bed
+    String stat_small_variant_SNV_count    = downstream.stat_SNV_count
+    String stat_small_variant_INDEL_count  = downstream.stat_INDEL_count
+    String stat_small_variant_TSTV_ratio   = downstream.stat_TSTV_ratio
+    String stat_small_variant_HETHOM_ratio = downstream.stat_HETHOM_ratio
 
     # trgt outputs
     File   phased_trgt_vcf           = downstream.phased_trgt_vcf
@@ -259,15 +259,15 @@ workflow humanwgs_singleton {
     File? paraphase_vcfs                = upstream.paraphase_vcfs
 
     # per sample cnv outputs
-    File cnv_vcf              = upstream.cnv_vcf
-    File cnv_vcf_index        = upstream.cnv_vcf_index
-    File cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph
-    File cnv_depth_bw         = upstream.cnv_depth_bw
-    File cnv_maf_bw           = upstream.cnv_maf_bw
-    String stat_cnv_DUP_count = upstream.stat_cnv_DUP_count
-    String stat_cnv_DEL_count = upstream.stat_cnv_DEL_count
-    String stat_cnv_DUP_sum   = upstream.stat_cnv_DUP_sum
-    String stat_cnv_DEL_sum   = upstream.stat_cnv_DEL_sum
+    File   cnv_vcf              = upstream.cnv_vcf
+    File   cnv_vcf_index        = upstream.cnv_vcf_index
+    File   cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph
+    File   cnv_depth_bw         = upstream.cnv_depth_bw
+    File   cnv_maf_bw           = upstream.cnv_maf_bw
+    String stat_cnv_DUP_count   = upstream.stat_cnv_DUP_count
+    String stat_cnv_DEL_count   = upstream.stat_cnv_DEL_count
+    String stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
+    String stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
 
     # PGx outputs
     File pbstarphase_json        = downstream.pbstarphase_json

@@ -36,31 +36,31 @@ workflow tertiary_analysis {
     default_runtime_attributes: {
       name: "Runtime attribute structure"
     }
-    filtered_small_variant_vcf: {
+    small_variant_filtered_vcf: {
       name: "Filtered and annotated small variant VCF"
     }
-    filtered_small_variant_vcf_index: {
+    small_variant_filtered_vcf_index: {
       name: "Filtered and annotated small variant VCF index"
     }
-    filtered_small_variant_tsv: {
+    small_variant_filtered_tsv: {
       name: "Filtered and annotated small variant TSV"
     }
-    compound_het_small_variant_vcf: {
+    small_variant_compound_het_vcf: {
       name: "Filtered and annotated compound heterozygous small variant VCF"
     }
-    compound_het_small_variant_vcf_index: {
+    small_variant_compound_het_vcf_index: {
       name: "Filtered and annotated compound heterozygous small variant VCF index"
     }
-    compound_het_small_variant_tsv: {
+    small_variant_compound_het_tsv: {
       name: "Filtered and annotated compound heterozygous small variant TSV"
     }
-    filtered_svpack_vcf: {
+    sv_filtered_vcf: {
       name: "Filtered and annotated structural variant VCF"
     }
-    filtered_svpack_vcf_index: {
+    sv_filtered_vcf_index: {
       name: "Filtered and annotated structural variant VCF index"
     }
-    filtered_svpack_tsv: {
+    sv_filtered_tsv: {
       name: "Filtered and annotated structural variant TSV"
     }
   }
@@ -166,17 +166,17 @@ workflow tertiary_analysis {
   }
 
   output {
-    File filtered_small_variant_vcf       = slivar_small_variant.filtered_vcf
-    File filtered_small_variant_vcf_index = slivar_small_variant.filtered_vcf_index
-    File filtered_small_variant_tsv       = slivar_small_variant.filtered_tsv
+    File small_variant_filtered_vcf       = slivar_small_variant.filtered_vcf
+    File small_variant_filtered_vcf_index = slivar_small_variant.filtered_vcf_index
+    File small_variant_filtered_tsv       = slivar_small_variant.filtered_tsv
 
-    File compound_het_small_variant_vcf       = slivar_small_variant.compound_het_vcf
-    File compound_het_small_variant_vcf_index = slivar_small_variant.compound_het_vcf_index
-    File compound_het_small_variant_tsv       = slivar_small_variant.compound_het_tsv
+    File small_variant_compound_het_vcf       = slivar_small_variant.compound_het_vcf
+    File small_variant_compound_het_vcf_index = slivar_small_variant.compound_het_vcf_index
+    File small_variant_compound_het_tsv       = slivar_small_variant.compound_het_tsv
 
-    File filtered_svpack_vcf       = svpack_filter_annotated.svpack_vcf
-    File filtered_svpack_vcf_index = svpack_filter_annotated.svpack_vcf_index
-    File filtered_svpack_tsv       = slivar_svpack_tsv.svpack_tsv
+    File sv_filtered_vcf       = svpack_filter_annotated.svpack_vcf
+    File sv_filtered_vcf_index = svpack_filter_annotated.svpack_vcf_index
+    File sv_filtered_tsv       = slivar_svpack_tsv.svpack_tsv
   }
 }
 
