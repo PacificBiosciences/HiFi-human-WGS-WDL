@@ -279,14 +279,15 @@ workflow humanwgs_singleton {
     File  pharmcat_report_json               = downstream.pharmcat_report_json
 
     # tertiary analysis outputs
-    File? filtered_small_variant_vcf           = tertiary_analysis.filtered_small_variant_vcf
-    File? filtered_small_variant_vcf_index     = tertiary_analysis.filtered_small_variant_vcf_index
-    File? filtered_small_variant_tsv           = tertiary_analysis.filtered_small_variant_tsv
-    File? compound_het_small_variant_vcf       = tertiary_analysis.compound_het_small_variant_vcf
-    File? compound_het_small_variant_vcf_index = tertiary_analysis.compound_het_small_variant_vcf_index
-    File? compound_het_small_variant_tsv       = tertiary_analysis.compound_het_small_variant_tsv
-    File? filtered_svpack_vcf                  = tertiary_analysis.filtered_svpack_vcf
-    File? filtered_svpack_vcf_index            = tertiary_analysis.filtered_svpack_vcf_index
-    File? filtered_svpack_tsv                  = tertiary_analysis.filtered_svpack_tsv
+    File? pedigree                                      = write_ped_phrank.pedigree
+    File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
+    File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
+    File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
+    File? tertiary_small_variant_compound_het_vcf       = tertiary_analysis.small_variant_compound_het_vcf
+    File? tertiary_small_variant_compound_het_vcf_index = tertiary_analysis.small_variant_compound_het_vcf_index
+    File? tertiary_small_variant_compound_het_tsv       = tertiary_analysis.small_variant_compound_het_tsv
+    File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
+    File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
+    File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
   }
 }

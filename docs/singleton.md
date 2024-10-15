@@ -203,12 +203,13 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File? | filtered_small_variant_vcf | Filtered, annotated small variant VCF |  |
-| File? | filtered_small_variant_vcf_index |  |  |
-| File? | filtered_small_variant_tsv | Filtered, annotated small variant calls |  |
-| File? | compound_het_small_variant_vcf | Filtered, annotated compound heterozygous small variant VCF |  |
-| File? | compound_het_small_variant_vcf_index |  |  |
-| File? | compound_het_small_variant_tsv | Filtered, annotated compound heterozygous small variant calls |  |
-| File? | filtered_svpack_vcf | Filtered, annotated structural variant VCF |  |
-| File? | filtered_svpack_vcf_index |  |  |
-| File? | filtered_svpack_tsv | Filtered, annotated structural variant TSV |  |
+| File? | pedigree | Pedigree file in PLINK PED [format](https://zzz.bwh.harvard.edu/plink/data.shtml#ped) |  |
+| File? | small_variant_filtered_vcf | Filtered, annotated small variant VCF |  |
+| File? | small_variant_filtered_vcf_index |  |  |
+| File? | small_variant_filtered_tsv | Filtered, annotated small variant calls |  |
+| File? | small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF |  |
+| File? | small_variant_compound_het_vcf_index |  |  |
+| File? | small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant calls |  |
+| File? | sv_filtered_vcf | Filtered, annotated structural variant VCF |  |
+| File? | sv_filtered_vcf_index |  |  |
+| File? | sv_filtered_tsv | Filtered, annotated structural variant TSV |  |
