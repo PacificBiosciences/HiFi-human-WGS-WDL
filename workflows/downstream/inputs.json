@@ -1,0 +1,22 @@
+{
+  "downstream.sample_id": "String",
+  "downstream.small_variant_vcf": "File",
+  "downstream.small_variant_vcf_index": "File",
+  "downstream.sv_vcf": "File",
+  "downstream.sv_vcf_index": "File",
+  "downstream.trgt_vcf": "File",
+  "downstream.trgt_vcf_index": "File",
+  "downstream.aligned_bam": "File",
+  "downstream.aligned_bam_index": "File",
+  "downstream.pharmcat_version": "String",
+  "downstream.pharmcat_min_coverage": "Int",
+  "downstream.ref_map_file": "File",
+  "downstream.default_runtime_attributes": {
+    "max_retries": "Int",
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String"
+  }
+}
