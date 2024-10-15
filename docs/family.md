@@ -149,8 +149,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_INDEL_count | INDEL count | (PASS variants) |
 | Array\[String\] | stat_TSTV_ratio | Ts/Tv ratio | (PASS variants) |
 | Array\[String\] | stat_HETHOM_ratio | Het/Hom ratio | (PASS variants) |
-| File | joint_small_variants_vcf | Joint-called small variant VCF |  |
-| File | joint_small_variants_vcf_index |  |  |
+| File? | joint_small_variants_vcf | Joint-called small variant VCF |  |
+| File? | joint_small_variants_vcf_index |  |  |
 
 ### Structural Variants (≥50 bp)
 
@@ -165,8 +165,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_sv_BND_count | Structural variant BND count | (PASS variants) |
 | Array\[File\] | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | Array\[File\] | bcftools_roh_bed | Generated from above, without filtering |  |
-| File | joint_structural_variants_vcf | Joint-called structural variant VCF |  |
-| File | joint_structural_variants_vcf_index |  |  |
+| File? | joint_sv_vcf | Joint-called structural variant VCF |  |
+| File? | joint_sv_vcf_index |  |  |
 
 ### Copy Number Variants (≥100 kb)
 

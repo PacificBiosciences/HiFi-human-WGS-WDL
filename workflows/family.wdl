@@ -115,6 +115,8 @@ workflow humanwgs_family {
 
   Map [String, String] ref_map = read_map(ref_map_file)
 
+  Boolean single_sample = length(family.samples) == 1
+
   scatter (sample in family.samples) {
     String sample_id = sample.sample_id
     call Upstream.upstream {
@@ -125,32 +127,35 @@ workflow humanwgs_family {
         ref_map_file                 = ref_map_file,
         deepvariant_version          = deepvariant_version,
         custom_deepvariant_model_tar = custom_deepvariant_model_tar,
+        single_sample                = single_sample,
         gpu                          = gpu,
         default_runtime_attributes   = default_runtime_attributes
     }
   }
 
-  call Joint.joint {
-    input:
-      family_id                  = family.family_id,
-      sample_ids                 = sample_id,
-      gvcfs                      = upstream.small_variant_vcf,
-      gvcf_indices               = upstream.small_variant_vcf_index,
-      svsigs                     = flatten(upstream.svsigs),
-      ref_map_file               = ref_map_file,
-      glnexus_mem_gb             = glnexus_mem_gb,
-      pbsv_call_mem_gb           = pbsv_call_mem_gb,
-      default_runtime_attributes = default_runtime_attributes
+  if (!single_sample) {
+    call Joint.joint {
+      input:
+        family_id                  = family.family_id,
+        sample_ids                 = sample_id,
+        gvcfs                      = upstream.small_variant_gvcf,
+        gvcf_indices               = upstream.small_variant_gvcf_index,
+        svsigs                     = flatten(upstream.svsigs),
+        ref_map_file               = ref_map_file,
+        glnexus_mem_gb             = glnexus_mem_gb,
+        pbsv_call_mem_gb           = pbsv_call_mem_gb,
+        default_runtime_attributes = default_runtime_attributes
+    }
   }
 
   scatter (sample_index in range(length(family.samples))) {
     call Downstream.downstream {
       input:
         sample_id                  = sample_id[sample_index],
-        small_variant_vcf          = joint.split_joint_small_variant_vcfs[sample_index],
-        small_variant_vcf_index    = joint.split_joint_small_variant_vcf_indices[sample_index],
-        sv_vcf                     = joint.split_joint_structural_variant_vcfs[sample_index],
-        sv_vcf_index               = joint.split_joint_structural_variant_vcf_indices[sample_index],
+        small_variant_vcf          = select_first([joint.split_joint_small_variant_vcfs, upstream.small_variant_vcf])[sample_index],
+        small_variant_vcf_index    = select_first([joint.split_joint_small_variant_vcf_indices, upstream.small_variant_vcf_index])[sample_index],
+        sv_vcf                     = select_first([joint.split_joint_structural_variant_vcfs, select_all(upstream.sv_vcf)])[sample_index],
+        sv_vcf_index               = select_first([joint.split_joint_structural_variant_vcf_indices, select_all(upstream.sv_vcf_index)])[sample_index],
         trgt_vcf                   = upstream.trgt_vcf[sample_index],
         trgt_vcf_index             = upstream.trgt_vcf_index[sample_index],
         aligned_bam                = upstream.out_bam[sample_index],
@@ -162,30 +167,32 @@ workflow humanwgs_family {
     }
   }
 
-  call Bcftools.bcftools_merge as merge_small_variant_vcfs {
-    input:
-      vcfs               = downstream.phased_small_variant_vcf,
-      vcf_indices        = downstream.phased_small_variant_vcf_index,
-      out_prefix         = "~{family.family_id}.joint.~{ref_map['name']}.small_variants.phased",
-      runtime_attributes = default_runtime_attributes
-  }
+  if (!single_sample) {
+    call Bcftools.bcftools_merge as merge_small_variant_vcfs {
+      input:
+        vcfs               = downstream.phased_small_variant_vcf,
+        vcf_indices        = downstream.phased_small_variant_vcf_index,
+        out_prefix         = "~{family.family_id}.joint.~{ref_map['name']}.small_variants.phased",
+        runtime_attributes = default_runtime_attributes
+    }
 
-  call Bcftools.bcftools_merge as merge_sv_vcfs {
-    input:
-      vcfs               = downstream.phased_sv_vcf,
-      vcf_indices        = downstream.phased_sv_vcf_index,
-      out_prefix         = "~{family.family_id}.joint.~{ref_map['name']}.structural_variants.phased",
-      runtime_attributes = default_runtime_attributes
-  }
+    call Bcftools.bcftools_merge as merge_sv_vcfs {
+      input:
+        vcfs               = downstream.phased_sv_vcf,
+        vcf_indices        = downstream.phased_sv_vcf_index,
+        out_prefix         = "~{family.family_id}.joint.~{ref_map['name']}.structural_variants.phased",
+        runtime_attributes = default_runtime_attributes
+    }
 
-  call Trgt.trgt_merge {
-    input:
-      vcfs               = downstream.phased_trgt_vcf,
-      vcf_indices        = downstream.phased_trgt_vcf_index,
-      ref_fasta          = ref_map["fasta"],                              # !FileCoercion
-      ref_index          = ref_map["fasta_index"],                        # !FileCoercion
-      out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
-      runtime_attributes = default_runtime_attributes
+    call Trgt.trgt_merge {
+      input:
+        vcfs               = downstream.phased_trgt_vcf,
+        vcf_indices        = downstream.phased_trgt_vcf_index,
+        ref_fasta          = ref_map["fasta"],                              # !FileCoercion
+        ref_index          = ref_map["fasta_index"],                        # !FileCoercion
+        out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
+        runtime_attributes = default_runtime_attributes
+    }
   }
 
   if (defined(tertiary_map_file)) {
@@ -211,10 +218,10 @@ workflow humanwgs_family {
       input:
         pedigree                   = write_ped_phrank.pedigree,
         phrank_lookup              = write_ped_phrank.phrank_lookup,
-        small_variant_vcf          = merge_small_variant_vcfs.merged_vcf,
-        small_variant_vcf_index    = merge_small_variant_vcfs.merged_vcf_index,
-        sv_vcf                     = merge_sv_vcfs.merged_vcf,
-        sv_vcf_index               = merge_sv_vcfs.merged_vcf_index,
+        small_variant_vcf          = select_first([merge_small_variant_vcfs.merged_vcf, downstream.phased_small_variant_vcf[0]]),
+        small_variant_vcf_index    = select_first([merge_small_variant_vcfs.merged_vcf_index, downstream.phased_small_variant_vcf_index[0]]),
+        sv_vcf                     = select_first([merge_sv_vcfs.merged_vcf, downstream.phased_sv_vcf[0]]),
+        sv_vcf_index               = select_first([merge_sv_vcfs.merged_vcf_index, downstream.phased_sv_vcf_index[0]]),
         ref_map_file               = ref_map_file,
         tertiary_map_file          = select_first([tertiary_map_file]),
         default_runtime_attributes = default_runtime_attributes
@@ -329,12 +336,12 @@ workflow humanwgs_family {
     Array[File] pharmcat_report_json    = downstream.pharmcat_report_json
 
     # joint call outputs
-    File joint_small_variants_vcf            = merge_small_variant_vcfs.merged_vcf
-    File joint_small_variants_vcf_index      = merge_small_variant_vcfs.merged_vcf_index
-    File joint_structural_variants_vcf       = merge_sv_vcfs.merged_vcf
-    File joint_structural_variants_vcf_index = merge_sv_vcfs.merged_vcf_index
-    File joint_trgt_vcf                      = trgt_merge.merged_vcf
-    File joint_trgt_vcf_index                = trgt_merge.merged_vcf_index
+    File? joint_small_variants_vcf       = merge_small_variant_vcfs.merged_vcf
+    File? joint_small_variants_vcf_index = merge_small_variant_vcfs.merged_vcf_index
+    File? joint_sv_vcf                   = merge_sv_vcfs.merged_vcf
+    File? joint_sv_vcf_index             = merge_sv_vcfs.merged_vcf_index
+    File? joint_trgt_vcf                 = trgt_merge.merged_vcf
+    File? joint_trgt_vcf_index           = trgt_merge.merged_vcf_index
 
     # tertiary analysis outputs
     File? pedigree                                      = write_ped_phrank.pedigree
