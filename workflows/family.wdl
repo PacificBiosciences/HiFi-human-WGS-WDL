@@ -322,13 +322,11 @@ workflow humanwgs_family {
     Array[String] stat_cnv_DEL_sum   = upstream.stat_cnv_DEL_sum
 
     # PGx outputs
-    Array[File] pbstarphase_json                   = downstream.pbstarphase_json
-    Array[File?] pharmcat_missing_pgx_vcf          = downstream.pharmcat_missing_pgx_vcf
-    Array[File] pharmcat_preprocessed_filtered_vcf = downstream.pharmcat_preprocessed_filtered_vcf
-    Array[File] pharmcat_match_json                = downstream.pharmcat_match_json
-    Array[File] pharmcat_phenotype_json            = downstream.pharmcat_phenotype_json
-    Array[File] pharmcat_report_html               = downstream.pharmcat_report_html
-    Array[File] pharmcat_report_json               = downstream.pharmcat_report_json
+    Array[File] pbstarphase_json        = downstream.pbstarphase_json
+    Array[File] pharmcat_match_json     = downstream.pharmcat_match_json
+    Array[File] pharmcat_phenotype_json = downstream.pharmcat_phenotype_json
+    Array[File] pharmcat_report_html    = downstream.pharmcat_report_html
+    Array[File] pharmcat_report_json    = downstream.pharmcat_report_json
 
     # joint call outputs
     File joint_small_variants_vcf            = merge_small_variant_vcfs.merged_vcf

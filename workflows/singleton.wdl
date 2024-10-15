@@ -270,13 +270,11 @@ workflow humanwgs_singleton {
     String stat_cnv_DEL_sum   = upstream.stat_cnv_DEL_sum
 
     # PGx outputs
-    File  pbstarphase_json                   = downstream.pbstarphase_json
-    File? pharmcat_missing_pgx_vcf           = downstream.pharmcat_missing_pgx_vcf
-    File  pharmcat_preprocessed_filtered_vcf = downstream.pharmcat_preprocessed_filtered_vcf
-    File  pharmcat_match_json                = downstream.pharmcat_match_json
-    File  pharmcat_phenotype_json            = downstream.pharmcat_phenotype_json
-    File  pharmcat_report_html               = downstream.pharmcat_report_html
-    File  pharmcat_report_json               = downstream.pharmcat_report_json
+    File pbstarphase_json        = downstream.pbstarphase_json
+    File pharmcat_match_json     = downstream.pharmcat_match_json
+    File pharmcat_phenotype_json = downstream.pharmcat_phenotype_json
+    File pharmcat_report_html    = downstream.pharmcat_report_html
+    File pharmcat_report_json    = downstream.pharmcat_report_json
 
     # tertiary analysis outputs
     File? pedigree                                      = write_ped_phrank.pedigree

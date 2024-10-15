@@ -192,8 +192,6 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | File | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| File? | pharmcat_missing_pgx_vcf | PharmCAT missing PGx VCF |  |
-| File | pharmcat_preprocessed_filtered_vcf | PharmCAT preprocessed filtered VCF |  |
 | File | pharmcat_match_json | PharmCAT match JSON |  |
 | File | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
 | File | pharmcat_report_html | PharmCAT report HTML |  |

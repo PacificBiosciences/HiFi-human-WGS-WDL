@@ -231,8 +231,6 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | Array\[File\] | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| Array\[File?\] | pharmcat_missing_pgx_vcf | PharmCAT missing PGx VCF |  |
-| Array\[File\] | pharmcat_preprocessed_filtered_vcf | PharmCAT preprocessed filtered VCF |  |
 | Array\[File\] | pharmcat_match_json | PharmCAT match JSON |  |
 | Array\[File\] | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
 | Array\[File\] | pharmcat_report_html | PharmCAT report HTML |  |

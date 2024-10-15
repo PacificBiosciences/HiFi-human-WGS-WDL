@@ -207,8 +207,6 @@ workflow downstream {
     File pbstarphase_json = pbstarphase_diplotype.out_json
 
     # pharmcat and pangu outputs
-    File? pharmcat_missing_pgx_vcf           = pharmcat.pharmcat_missing_pgx_vcf
-    File  pharmcat_preprocessed_filtered_vcf = pharmcat.pharmcat_preprocessed_filtered_vcf
     File  pharmcat_match_json                = pharmcat.pharmcat_match_json
     File  pharmcat_phenotype_json            = pharmcat.pharmcat_phenotype_json
     File  pharmcat_report_html               = pharmcat.pharmcat_report_html
