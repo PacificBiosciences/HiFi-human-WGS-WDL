@@ -238,16 +238,18 @@ workflow humanwgs_family {
     Array[String] stat_read_quality_median = upstream.stat_read_quality_median
 
     # merged, haplotagged alignments
-    Array[File] merged_haplotagged_bam       = downstream.merged_haplotagged_bam
-    Array[File] merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
-    Array[String] stat_mapped_fraction       = downstream.stat_mapped_fraction
+    Array[File] merged_haplotagged_bam        = downstream.merged_haplotagged_bam
+    Array[File] merged_haplotagged_bam_index  = downstream.merged_haplotagged_bam_index
+    Array[String] stat_mapped_read_count      = downstream.stat_mapped_read_count
+    Array[String] stat_mapped_percent         = downstream.stat_mapped_percent
 
     # mosdepth outputs
-    Array[File] mosdepth_summary          = upstream.mosdepth_summary
-    Array[File] mosdepth_region_bed       = upstream.mosdepth_region_bed
-    Array[File] mosdepth_region_bed_index = upstream.mosdepth_region_bed
-    Array[String] inferred_sex            = upstream.inferred_sex
-    Array[String] stat_mean_depth         = upstream.stat_mean_depth
+    Array[File] mosdepth_summary                 = upstream.mosdepth_summary
+    Array[File] mosdepth_region_bed              = upstream.mosdepth_region_bed
+    Array[File] mosdepth_region_bed_index        = upstream.mosdepth_region_bed_index
+    Array[File] mosdepth_depth_distribution_plot = upstream.mosdepth_depth_distribution_plot
+    Array[String] stat_mean_depth                = upstream.stat_mean_depth
+    Array[String] inferred_sex                   = upstream.inferred_sex
 
     # phasing stats
     Array[File] phase_stats             = downstream.phase_stats

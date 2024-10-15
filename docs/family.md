@@ -125,14 +125,16 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[File\] | mosdepth_summary | Summary of aligned read depth. |  |
 | Array\[File\] | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
 | Array\[File\] | mosdepth_region_bed_index |  |  |
+| Array\[File\] | mosdepth_depth_distribution_plot |  |  |
 | Array\[String\] | stat_num_reads | Number of reads |  |
 | Array\[String\] | stat_read_length_mean | Mean read length |  |
 | Array\[String\] | stat_read_length_median | Median read length |  |
 | Array\[String\] | stat_read_quality_mean | Mean read quality |  |
 | Array\[String\] | stat_read_quality_median | Median read quality |  |
-| Array\[String\] | stat_mapped_fraction | Fraction of reads mapped to reference |  |
-| Array\[String\] | stat_mean_depth | Mean depth | |
+| Array\[String\] | stat_mapped_read_count | Count of reads mapped to reference |  |
+| Array\[String\] | stat_mapped_percent | Percent of reads mapped to reference |  |
 | Array\[String\] | inferred_sex | Inferred sex | Sex is inferred based on relative depth of chrY alignments. |
+| Array\[String\] | stat_mean_depth | Mean depth | |
 
 ### Small Variants (<50 bp)
 

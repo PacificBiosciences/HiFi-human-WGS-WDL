@@ -188,14 +188,16 @@ workflow humanwgs_singleton {
     # merged, haplotagged alignments
     File   merged_haplotagged_bam       = downstream.merged_haplotagged_bam
     File   merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
-    String stat_mapped_fraction         = downstream.stat_mapped_fraction
+    String stat_mapped_read_count       = downstream.stat_mapped_read_count
+    String stat_mapped_percent          = downstream.stat_mapped_percent
 
     # mosdepth outputs
-    File   mosdepth_summary          = upstream.mosdepth_summary
-    File   mosdepth_region_bed       = upstream.mosdepth_region_bed
-    File   mosdepth_region_bed_index = upstream.mosdepth_region_bed_index
-    String inferred_sex              = upstream.inferred_sex
-    String stat_mean_depth           = upstream.stat_mean_depth
+    File   mosdepth_summary                 = upstream.mosdepth_summary
+    File   mosdepth_region_bed              = upstream.mosdepth_region_bed
+    File   mosdepth_region_bed_index        = upstream.mosdepth_region_bed_index
+    File   mosdepth_depth_distribution_plot = upstream.mosdepth_depth_distribution_plot
+    String stat_mean_depth                  = upstream.stat_mean_depth
+    String inferred_sex                     = upstream.inferred_sex
 
     # phasing stats
     File   phase_stats           = downstream.phase_stats

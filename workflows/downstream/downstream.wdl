@@ -173,7 +173,8 @@ workflow downstream {
     File   phase_haplotags                = hiphase.phase_haplotags
     String stat_phased_basepairs          = hiphase.stat_phased_basepairs
     String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
-    String stat_mapped_fraction           = hiphase.stat_mapped_fraction
+    String stat_mapped_read_count         = hiphase.stat_mapped_read_count
+    String stat_mapped_percent            = hiphase.stat_mapped_percent
 
     # small variant stats
     File   small_variant_stats = bcftools_stats_roh_small_variants.stats

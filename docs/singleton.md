@@ -90,14 +90,16 @@ flowchart TD
 | File | mosdepth_summary | Summary of aligned read depth. |  |
 | File | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
 | File | mosdepth_region_bed_index |  |  |
+| File | mosdepth_depth_distribution_plot |  |  |
 | String | stat_num_reads | Number of reads |  |
 | String | stat_read_length_mean | Mean read length |  |
 | String | stat_read_length_median | Median read length |  |
 | String | stat_read_quality_mean | Mean read quality |  |
 | String | stat_read_quality_median | Median read quality |  |
-| String | stat_mapped_fraction | Fraction of reads mapped to reference |  |
-| String | stat_mean_depth | Mean depth | |
+| String | stat_mapped_read_count | Count of reads mapped to reference |  |
+| String | stat_mapped_percent | Percent of reads mapped to reference |  |
 | String | inferred_sex | Inferred sex | Sex is inferred based on relative depth of chrY alignments. |
+| String | stat_mean_depth | Mean depth | |
 
 ### Small Variants (<50 bp)
 
