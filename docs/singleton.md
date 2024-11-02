@@ -183,8 +183,11 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | File | cpg_hap1_bed | CpG hap1 BED |  |
+| File | cpg_hap1_bed_index |  |  |
 | File | cpg_hap2_bed | CpG hap2 BED |  |
+| File | cpg_hap2_bed_index |  |  |
 | File | cpg_combined_bed | CpG combined BED |  |
+| File | cpg_combined_bed_index |  |  |
 | File | cpg_hap1_bw | CpG hap1 BigWig |  |
 | File | cpg_hap2_bw | CpG hap2 BigWig |  |
 | File | cpg_combined_bw | CpG combined BigWig |  |

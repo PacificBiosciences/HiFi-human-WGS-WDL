@@ -314,8 +314,11 @@ workflow humanwgs_family {
 
     # cpg_pileup outputs
     Array[File] cpg_combined_bed          = downstream.cpg_combined_bed
+    Array[File] cpg_combined_bed_index    = downstream.cpg_combined_bed_index
     Array[File] cpg_hap1_bed              = downstream.cpg_hap1_bed
+    Array[File] cpg_hap1_bed_index        = downstream.cpg_hap1_bed_index
     Array[File] cpg_hap2_bed              = downstream.cpg_hap2_bed
+    Array[File] cpg_hap2_bed_index        = downstream.cpg_hap2_bed_index
     Array[File] cpg_combined_bw           = downstream.cpg_combined_bw
     Array[File] cpg_hap1_bw               = downstream.cpg_hap1_bw
     Array[File] cpg_hap2_bw               = downstream.cpg_hap2_bw

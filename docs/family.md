@@ -222,8 +222,11 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | Array\[File\] | cpg_hap1_bed | CpG hap1 BED |  |
+| Array\[File\] | cpg_hap1_bed_index |  |  |
 | Array\[File\] | cpg_hap2_bed | CpG hap2 BED |  |
+| Array\[File\] | cpg_hap2_bed_index |  |  |
 | Array\[File\] | cpg_combined_bed | CpG combined BED |  |
+| Array\[File\] | cpg_combined_bed_index |  |  |
 | Array\[File\] | cpg_hap1_bw | CpG hap1 BigWig |  |
 | Array\[File\] | cpg_hap2_bw | CpG hap2 BigWig |  |
 | Array\[File\] | cpg_combined_bw | CpG combined BigWig |  |

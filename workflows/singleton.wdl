@@ -6,6 +6,7 @@ import "upstream/upstream.wdl" as Upstream
 import "downstream/downstream.wdl" as Downstream
 import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
+import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
 
 workflow humanwgs_singleton {
@@ -19,7 +20,7 @@ workflow humanwgs_singleton {
     }
     sex: {
       name: "Sample sex",
-      choices: ["MALE", "FEMALE", ""]
+      choices: ["MALE", "FEMALE"]
     }
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
@@ -67,6 +68,9 @@ workflow humanwgs_singleton {
     }
     preemptible: {
       name: "Where possible, run tasks preemptibly"
+    }
+    debug_version: {
+      name: "Debug version for testing purposes"
     }
   }
 
@@ -253,8 +257,11 @@ workflow humanwgs_singleton {
 
     # cpg_pileup outputs
     File   cpg_combined_bed        = downstream.cpg_combined_bed
+    File   cpg_combined_bed_index  = downstream.cpg_combined_bed_index
     File   cpg_hap1_bed            = downstream.cpg_hap1_bed
+    File   cpg_hap1_bed_index      = downstream.cpg_hap1_bed_index
     File   cpg_hap2_bed            = downstream.cpg_hap2_bed
+    File   cpg_hap2_bed_index      = downstream.cpg_hap2_bed_index
     File   cpg_combined_bw         = downstream.cpg_combined_bw
     File   cpg_hap1_bw             = downstream.cpg_hap1_bw
     File   cpg_hap2_bw             = downstream.cpg_hap2_bw
