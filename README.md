@@ -26,18 +26,18 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](../releases/tag/v2.0.0-rc4):
+1) Download the release zips directly from a [supported release](../releases/tag/v2.0.0-rc6):
 
   ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.0-rc4/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.0-rc4/hifi-human-wgs-family.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.0-rc6/hifi-human-wgs-singleton.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.0-rc6/hifi-human-wgs-family.zip
   ```
 
 2) Clone the repository and initialize the submodules:
 
   ```bash
   git clone \
-    --depth 1 --branch v2.0.0-rc4 \
+    --depth 1 --branch v2.0.0-rc6 \
     --recursive \
     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
   ```
@@ -125,11 +125,11 @@ At a high level, we have two types of inputs files:
 
 The resource bundle containing the GRCh38 reference and other files used in this workflow can be downloaded from Zenodo:
 
-![https://doi.org/10.5281/zenodo.13315674](https://zenodo.org/badge/DOI/10.5281/zenodo.13315674.svg)
+![https://doi.org/10.5281/zenodo.14027047](https://zenodo.org/badge/DOI/10.5281/zenodo.14027047.svg)
 
 # Tool versions and Docker images
 
-Docker images definitions used by this workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/tree/987efde4d614a292fbfe9f3cf146b63005ad6a8a). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
+Docker images definitions used by this workflow can be found in [the wdl-dockerfiles repository](https://github.com/PacificBiosciences/wdl-dockerfiles/). Images are hosted in PacBio's [quay.io](https://quay.io/organization/pacbio). Docker images used in the workflow are pegged to specific versions by referring to their digests rather than tags.
 
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/**align_hifiasm**@sha256:3968cb<...>b01f80fe

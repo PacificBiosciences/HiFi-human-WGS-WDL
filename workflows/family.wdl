@@ -83,7 +83,7 @@ workflow humanwgs_family {
     String deepvariant_version = "1.6.1"
     File? custom_deepvariant_model_tar
 
-    String pharmcat_version = "2.15.0"
+    String pharmcat_version = "2.15.4"
     Int pharmcat_min_coverage = 10
 
     String phenotypes = "HP:0000001"
