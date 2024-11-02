@@ -489,8 +489,6 @@ task svpack_filter_annotated {
   String out_prefix = basename(sv_vcf, ".vcf.gz")
 
   command <<<
-    set -euo pipefail
-
     echo "svpack version:"
     cat /opt/svpack/.git/HEAD
 
@@ -505,7 +503,7 @@ task svpack_filter_annotated {
     | svpack \
       consequence \
       - \
-      ~{gff} \
+      <(zcat ~{gff} || cat ~{gff}) \
     | svpack \
       tagzygosity \
       --samples "${affected}" \
@@ -518,7 +516,7 @@ task svpack_filter_annotated {
 
     tabix --version
 
-    tabix -p vcf ~{out_prefix}.svpack.vcf.gz
+    tabix --preset vcf ~{out_prefix}.svpack.vcf.gz
   >>>
 
   output {
