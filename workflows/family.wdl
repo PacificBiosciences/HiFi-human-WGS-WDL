@@ -238,21 +238,16 @@ workflow humanwgs_family {
   }
 
   if (defined(tertiary_map_file)) {
-    scatter (sample_index in range(length(family.samples))) {
-      Map[String, String] sample_metadata = {
-        "sample_id": family.samples[sample_index].sample_id,
-        "sex": select_first([family.samples[sample_index].sex, upstream.inferred_sex[sample_index]]),
-        "affected": family.samples[sample_index].affected,
-        "father_id": select_first([family.samples[sample_index].father_id, "."]),
-        "mother_id": select_first([family.samples[sample_index].mother_id, "."])
-      }
+    scatter (sample in family.samples) {
+      Array[File] hifi_reads = sample.hifi_reads
     }
 
     call Write_ped_phrank.write_ped_phrank {
       input:
         id                 = family.family_id,
-        family_json        = sample_metadata,
+        family             = family,
         phenotypes         = phenotypes,
+        disk_size          = size(flatten(hifi_reads), "GB") + 10,
         runtime_attributes = default_runtime_attributes
     }
 
