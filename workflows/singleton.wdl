@@ -99,6 +99,8 @@ workflow humanwgs_singleton {
     String? container_namespace
 
     Boolean preemptible = true
+
+    String? debug_version
   }
 
   call BackendConfiguration.backend_configuration {
@@ -141,6 +143,46 @@ workflow humanwgs_singleton {
       default_runtime_attributes = default_runtime_attributes
   }
 
+  Map[String, Array[String]] stats = {
+    'sample_id': [sample_id],
+    'num_reads': [upstream.stat_num_reads],
+    'read_length_min': [upstream.stat_read_length_mean],
+    'read_length_median': [upstream.stat_read_length_median],
+    'read_quality_mean': [upstream.stat_read_quality_mean],
+    'read_quality_median': [upstream.stat_read_quality_median],
+    'mapped_read_count': [downstream.stat_mapped_read_count],
+    'mapped_percent': [downstream.stat_mapped_percent],
+    'mean_depth': [upstream.stat_mean_depth],
+    'inferred_sex': [upstream.inferred_sex],
+    'stat_phased_basepairs': [downstream.stat_phased_basepairs],
+    'phase_block_ng50': [downstream.stat_phase_block_ng50],
+    'cpg_combined_count': [downstream.stat_combined_cpg_count],
+    'cpg_hap1_count': [downstream.stat_hap1_cpg_count],
+    'cpg_hap2_count': [downstream.stat_hap2_cpg_count],
+    'SNV_count': [downstream.stat_SNV_count],
+    'TSTV_ratio': [downstream.stat_TSTV_ratio],
+    'HETHOM_ratio': [downstream.stat_HETHOM_ratio],
+    'INDEL_count': [downstream.stat_INDEL_count],
+    'sv_DUP_count': [downstream.stat_sv_DUP_count],
+    'sv_DEL_count': [downstream.stat_sv_DEL_count],
+    'sv_INS_count': [downstream.stat_sv_INS_count],
+    'sv_INV_count': [downstream.stat_sv_INV_count],
+    'sv_BND_count': [downstream.stat_sv_BND_count],
+    'cnv_DUP_count': [upstream.stat_cnv_DUP_count],
+    'cnv_DEL_count': [upstream.stat_cnv_DEL_count],
+    'cnv_DUP_sum': [upstream.stat_cnv_DUP_sum],
+    'cnv_DEL_sum': [upstream.stat_cnv_DEL_sum],
+    'trgt_genotyped_count': [upstream.stat_trgt_genotyped_count],
+    'trgt_uncalled_count': [upstream.stat_trgt_uncalled_count]
+  }
+
+  call Utilities.consolidate_stats {
+    input:
+      id                 = sample_id,
+      stats              = stats,
+      runtime_attributes = default_runtime_attributes
+  }
+
   if (defined(tertiary_map_file)) {
     Map[String, String] sample_metadata = {
       "sample_id": sample_id,
@@ -173,10 +215,11 @@ workflow humanwgs_singleton {
   }
 
   output {
+    # consolidated stats
+    File stats_file = consolidate_stats.output_tsv
+
     # bam stats
     File   bam_stats                = upstream.read_length_and_quality
-    File   read_length_histogram    = upstream.read_length_histogram
-    File   read_quality_histogram   = upstream.read_quality_histogram
     File   read_length_plot         = upstream.read_length_plot
     File   read_quality_plot        = upstream.read_quality_plot
     String stat_num_reads           = upstream.stat_num_reads
@@ -190,6 +233,8 @@ workflow humanwgs_singleton {
     File   merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
     String stat_mapped_read_count       = downstream.stat_mapped_read_count
     String stat_mapped_percent          = downstream.stat_mapped_percent
+    File   mapq_distribution_plot       = downstream.mapq_distribution_plot
+    File   mg_distribution_plot         = downstream.mg_distribution_plot
 
     # mosdepth outputs
     File   mosdepth_summary                 = upstream.mosdepth_summary
@@ -242,6 +287,8 @@ workflow humanwgs_singleton {
     String stat_small_variant_INDEL_count  = downstream.stat_INDEL_count
     String stat_small_variant_TSTV_ratio   = downstream.stat_TSTV_ratio
     String stat_small_variant_HETHOM_ratio = downstream.stat_HETHOM_ratio
+    File   snv_distribution_plot           = downstream.snv_distribution_plot
+    File   indel_distribution_plot         = downstream.indel_distribution_plot
 
     # trgt outputs
     File   phased_trgt_vcf           = downstream.phased_trgt_vcf
@@ -287,5 +334,9 @@ workflow humanwgs_singleton {
     File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
     File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
+
+    # workflow metadata
+    String workflow_name    = "humanwgs_family"
+    String workflow_version = "v2.0.0-rc6~{"-" + debug_version}"
   }
 }

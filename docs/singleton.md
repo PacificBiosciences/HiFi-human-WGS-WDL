@@ -61,7 +61,7 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
-| String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
+| String? | sex | Sample sex<br/>`["MALE", "FEMALE"]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
 | File | [ref_map_file](./ref_map) | TSV containing reference genome file paths; must match backend |  |
 | String? | phenotypes | Comma-delimited list of HPO terms. | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort.<br/><br/>If omitted, tertiary analysis will be skipped. |
@@ -80,9 +80,10 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
+| String | workflow_name | Workflow name |  |
+| String | workflow_version | Workflow version |  |
+| File | stats_file | Table of summary statistics |  |
 | File | bam_stats | BAM stats | Per-read length and read-quality |
-| File | read_length_histogram | Read length histogram |  |
-| File | read_quality_histogram | Read quality histogram |  |
 | File | read_length_plot | Read length plot |  |
 | File | read_quality_plot | Read quality plot |  |
 | File | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
@@ -91,6 +92,8 @@ flowchart TD
 | File | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
 | File | mosdepth_region_bed_index |  |  |
 | File | mosdepth_depth_distribution_plot |  |  |
+| File | mapq_distribution_plot | Distribution of mapping quality per alignment | |
+| File | mg_distribution_plot | Distribution of gap-compressed identity score per alignment | |
 | String | stat_num_reads | Number of reads |  |
 | String | stat_read_length_mean | Mean read length |  |
 | String | stat_read_length_median | Median read length |  |
@@ -114,6 +117,8 @@ flowchart TD
 | String | stat_small_variant_INDEL_count | INDEL count | (PASS variants) |
 | String | stat_small_variant_TSTV_ratio | Ts/Tv ratio | (PASS variants) |
 | String | stat_small_variant_HETHOM_ratio | Het/Hom ratio | (PASS variants) |
+| File | snv_distribution_plot | Distribution of SNVs by REF, ALT | |
+| File | indel_distribution_plot | Distribution of indels by size | |
 
 ### Structural Variants (≥50 bp)
 

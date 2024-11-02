@@ -9,6 +9,7 @@ import "wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
+import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
 
 workflow humanwgs_family {
@@ -69,6 +70,9 @@ workflow humanwgs_family {
     preemptible: {
       name: "Where possible, run tasks preemptibly"
     }
+    debug_version: {
+      name: "Debug version for testing purposes"
+    }
   }
 
   input {
@@ -101,6 +105,8 @@ workflow humanwgs_family {
     String? container_namespace
 
     Boolean preemptible = true
+
+    String? debug_version
   }
 
   call BackendConfiguration.backend_configuration {
@@ -167,6 +173,46 @@ workflow humanwgs_family {
     }
   }
 
+  Map[String, Array[String]] stats = {
+    'sample_id': sample_id,
+    'num_reads': upstream.stat_num_reads,
+    'read_length_min': upstream.stat_read_length_mean,
+    'read_length_median': upstream.stat_read_length_median,
+    'read_quality_mean': upstream.stat_read_quality_mean,
+    'read_quality_median': upstream.stat_read_quality_median,
+    'mapped_read_count': downstream.stat_mapped_read_count,
+    'mapped_percent': downstream.stat_mapped_percent,
+    'mean_depth': upstream.stat_mean_depth,
+    'inferred_sex': upstream.inferred_sex,
+    'stat_phased_basepairs': downstream.stat_phased_basepairs,
+    'phase_block_ng50': downstream.stat_phase_block_ng50,
+    'cpg_combined_count': downstream.stat_combined_cpg_count,
+    'cpg_hap1_count': downstream.stat_hap1_cpg_count,
+    'cpg_hap2_count': downstream.stat_hap2_cpg_count,
+    'SNV_count': downstream.stat_SNV_count,
+    'TSTV_ratio': downstream.stat_TSTV_ratio,
+    'HETHOM_ratio': downstream.stat_HETHOM_ratio,
+    'INDEL_count': downstream.stat_INDEL_count,
+    'sv_DUP_count': downstream.stat_sv_DUP_count,
+    'sv_DEL_count': downstream.stat_sv_DEL_count,
+    'sv_INS_count': downstream.stat_sv_INS_count,
+    'sv_INV_count': downstream.stat_sv_INV_count,
+    'sv_BND_count': downstream.stat_sv_BND_count,
+    'cnv_DUP_count': upstream.stat_cnv_DUP_count,
+    'cnv_DEL_count': upstream.stat_cnv_DEL_count,
+    'cnv_DUP_sum': upstream.stat_cnv_DUP_sum,
+    'cnv_DEL_sum': upstream.stat_cnv_DEL_sum,
+    'trgt_genotyped_count': upstream.stat_trgt_genotyped_count,
+    'trgt_uncalled_count': upstream.stat_trgt_uncalled_count
+  }
+
+  call Utilities.consolidate_stats {
+    input:
+      id                 = family.family_id,
+      stats              = stats,
+      runtime_attributes = default_runtime_attributes
+  }
+
   if (!single_sample) {
     call Bcftools.bcftools_merge as merge_small_variant_vcfs {
       input:
@@ -231,11 +277,10 @@ workflow humanwgs_family {
   output {
     # to maintain order of samples
     Array[String] sample_ids = sample_id
+    File stats_file          = consolidate_stats.output_tsv
 
     # bam stats
     Array[File] bam_stats                  = upstream.read_length_and_quality
-    Array[File] read_length_histogram      = upstream.read_length_histogram
-    Array[File] read_quality_histogram     = upstream.read_quality_histogram
     Array[File] read_length_plot           = upstream.read_length_plot
     Array[File] read_quality_plot          = upstream.read_quality_plot
     Array[String] stat_num_reads           = upstream.stat_num_reads
@@ -249,6 +294,8 @@ workflow humanwgs_family {
     Array[File] merged_haplotagged_bam_index  = downstream.merged_haplotagged_bam_index
     Array[String] stat_mapped_read_count      = downstream.stat_mapped_read_count
     Array[String] stat_mapped_percent         = downstream.stat_mapped_percent
+    Array[File] mapq_distribution_plot        = downstream.mapq_distribution_plot
+    Array[File] mg_distribution_plot          = downstream.mg_distribution_plot
 
     # mosdepth outputs
     Array[File] mosdepth_summary                 = upstream.mosdepth_summary
@@ -301,6 +348,8 @@ workflow humanwgs_family {
     Array[String] stat_small_variant_INDEL_count  = downstream.stat_INDEL_count
     Array[String] stat_small_variant_TSTV_ratio   = downstream.stat_TSTV_ratio
     Array[String] stat_small_variant_HETHOM_ratio = downstream.stat_HETHOM_ratio
+    Array[File] snv_distribution_plot             = downstream.snv_distribution_plot
+    Array[File] indel_distribution_plot           = downstream.indel_distribution_plot
 
     # trgt outputs
     Array[File] phased_trgt_vcf             = downstream.phased_trgt_vcf
@@ -354,5 +403,9 @@ workflow humanwgs_family {
     File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
     File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
+
+    # workflow metadata
+    String workflow_name    = "humanwgs_family"
+    String workflow_version = "v2.0.0-rc6~{"-" + debug_version}"
   }
 }

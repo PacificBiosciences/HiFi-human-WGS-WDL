@@ -176,15 +176,19 @@ workflow downstream {
     String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
     String stat_mapped_read_count         = hiphase.stat_mapped_read_count
     String stat_mapped_percent            = hiphase.stat_mapped_percent
+    File   mapq_distribution_plot         = hiphase.mapq_distribution_plot
+    File   mg_distribution_plot           = hiphase.mg_distribution_plot
 
     # small variant stats
-    File   small_variant_stats = bcftools_stats_roh_small_variants.stats
-    File   bcftools_roh_out    = bcftools_stats_roh_small_variants.roh_out
-    File   bcftools_roh_bed    = bcftools_stats_roh_small_variants.roh_bed
-    String stat_SNV_count      = bcftools_stats_roh_small_variants.stat_SNV_count
-    String stat_INDEL_count    = bcftools_stats_roh_small_variants.stat_INDEL_count
-    String stat_TSTV_ratio     = bcftools_stats_roh_small_variants.stat_TSTV_ratio
-    String stat_HETHOM_ratio   = bcftools_stats_roh_small_variants.stat_HETHOM_ratio
+    File   small_variant_stats     = bcftools_stats_roh_small_variants.stats
+    File   bcftools_roh_out        = bcftools_stats_roh_small_variants.roh_out
+    File   bcftools_roh_bed        = bcftools_stats_roh_small_variants.roh_bed
+    String stat_SNV_count          = bcftools_stats_roh_small_variants.stat_SNV_count
+    String stat_INDEL_count        = bcftools_stats_roh_small_variants.stat_INDEL_count
+    String stat_TSTV_ratio         = bcftools_stats_roh_small_variants.stat_TSTV_ratio
+    String stat_HETHOM_ratio       = bcftools_stats_roh_small_variants.stat_HETHOM_ratio
+    File   snv_distribution_plot   = bcftools_stats_roh_small_variants.snv_distribution_plot
+    File   indel_distribution_plot = bcftools_stats_roh_small_variants.indel_distribution_plot
 
     # sv stats
     String stat_sv_DUP_count = sv_stats.stat_sv_DUP_count

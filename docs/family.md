@@ -102,7 +102,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
-| String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
+| String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`.  Used for tertiary analysis X-linked inheritance filtering. |
 | Boolean | affected | Affected status | If set to `true`, sample is described as being affected by all HPO terms in `phenotypes`.<br/>If set to `false`, sample is described as not being affected by all HPO terms in `phenotypes`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
 | String? | father_id | sample_id of father (optional) |  |
@@ -114,10 +114,11 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
+| String | workflow_name | Workflow name |  |
+| String | workflow_version | Workflow version |  |
 | Array\[String\] | sample_ids | Sample IDs |  |
+| File | stats_file | Table of summary statistics |  |
 | Array\[File\] | bam_stats | BAM stats | Per-read length and read-quality |
-| Array\[File\] | read_length_histogram | Read length histogram |  |
-| Array\[File\] | read_quality_histogram | Read quality histogram |  |
 | Array\[File\] | read_length_plot | Read length plot |  |
 | Array\[File\] | read_quality_plot | Read quality plot |  |
 | Array\[File\] | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
@@ -126,6 +127,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[File\] | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
 | Array\[File\] | mosdepth_region_bed_index |  |  |
 | Array\[File\] | mosdepth_depth_distribution_plot |  |  |
+| Array\[File\] | mapq_distribution_plot | Distribution of mapping quality per alignment | |
+| Array\[File\] | mg_distribution_plot | Distribution of gap-compressed identity score per alignment | |
 | Array\[String\] | stat_num_reads | Number of reads |  |
 | Array\[String\] | stat_read_length_mean | Mean read length |  |
 | Array\[String\] | stat_read_length_median | Median read length |  |
@@ -149,6 +152,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_small_variant_INDEL_count | INDEL count | (PASS variants) |
 | Array\[String\] | stat_small_variant_TSTV_ratio | Ts/Tv ratio | (PASS variants) |
 | Array\[String\] | stat_small_variant_HETHOM_ratio | Het/Hom ratio | (PASS variants) |
+| Array\[File\] | snv_distribution_plot | Distribution of SNVs by REF, ALT | |
+| Array\[File\] | indel_distribution_plot | Distribution of indels by size | |
 | File? | joint_small_variants_vcf | Joint-called small variant VCF |  |
 | File? | joint_small_variants_vcf_index |  |  |
 
