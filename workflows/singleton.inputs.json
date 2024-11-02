@@ -17,5 +17,6 @@
   "humanwgs_singleton.gpuType": "String? (optional)",
   "humanwgs_singleton.container_registry": "String? (optional)",
   "humanwgs_singleton.container_namespace": "String? (optional)",
-  "humanwgs_singleton.preemptible": "Boolean"
+  "humanwgs_singleton.preemptible": "Boolean",
+  "humanwgs_singleton.debug_version": "String? (optional)"
 }
