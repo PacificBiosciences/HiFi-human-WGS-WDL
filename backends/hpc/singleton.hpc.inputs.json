@@ -1,0 +1,12 @@
+{
+  "humanwgs_singleton.sample_id": "String",
+  "humanwgs_singleton.sex": "String? (optional, ['MALE', 'FEMALE', null])",
+  "humanwgs_singleton.hifi_reads": [
+    "File"
+  ],
+  "humanwgs_singleton.phenotypes": "String? (optional)",
+  "humanwgs_singleton.ref_map_file": "<local_path_prefix>/dataset/GRCh38.ref_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_singleton.tertiary_map_file": "<local_path_prefix>/dataset/GRCh38.tertiary_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_singleton.backend": "HPC",
+  "humanwgs_singleton.preemptible": true
+}

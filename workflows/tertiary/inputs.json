@@ -1,0 +1,18 @@
+{
+  "tertiary_analysis.pedigree": "File",
+  "tertiary_analysis.phrank_lookup": "File",
+  "tertiary_analysis.small_variant_vcf": "File",
+  "tertiary_analysis.small_variant_vcf_index": "File",
+  "tertiary_analysis.sv_vcf": "File",
+  "tertiary_analysis.sv_vcf_index": "File",
+  "tertiary_analysis.ref_map_file": "File",
+  "tertiary_analysis.tertiary_map_file": "File",
+  "tertiary_analysis.default_runtime_attributes": {
+    "max_retries": "Int",
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String"
+  }
+}

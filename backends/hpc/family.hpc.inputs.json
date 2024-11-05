@@ -1,0 +1,22 @@
+{
+  "humanwgs_family.family": {
+    "family_id": "String",
+    "samples": [
+      {
+        "sample_id": "String",
+        "hifi_reads": [
+          "File"
+        ],
+        "affected": "Boolean",
+        "sex": "String? (optional, ['MALE', 'FEMALE', null])",
+        "father_id": "String? (optional)",
+        "mother_id": "String? (optional)"
+      }
+    ]
+  },
+  "humanwgs_family.phenotypes": "String? (optional)",
+  "humanwgs_family.ref_map_file": "<local_path_prefix>/dataset/GRCh38.ref_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_family.tertiary_map_file": "<local_path_prefix>/dataset/GRCh38.tertiary_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_family.backend": "HPC",
+  "humanwgs_family.preemptible": true
+}

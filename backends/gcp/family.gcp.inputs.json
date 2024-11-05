@@ -1,0 +1,23 @@
+{
+  "humanwgs_family.family": {
+    "family_id": "String",
+    "samples": [
+      {
+        "sample_id": "String",
+        "hifi_reads": [
+          "File"
+        ],
+        "affected": "Boolean",
+        "sex": "String? (optional, ['MALE', 'FEMALE', null])",
+        "father_id": "String? (optional)",
+        "mother_id": "String? (optional)"
+      }
+    ]
+  },
+  "humanwgs_family.phenotypes": "String? (optional)",
+  "humanwgs_family.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2p0p0-rc6/GRCh38.ref_map.v2p0p0-rc6.gcp.tsv",
+  "humanwgs_family.tertiary_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2p0p0-rc6/GRCh38.tertiary_map.v2p0p0-rc6.gcp.tsv",
+  "humanwgs_family.backend": "GCP",
+  "humanwgs_family.zones": "String",
+  "humanwgs_family.preemptible": "Boolean"
+}
