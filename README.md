@@ -1,4 +1,4 @@
-<h1 align="center"><img width="300px" src="./images/logo_wdl_workflows.svg" alt="PacBio WGS Variant Pipeline"/></h1>
+<h1 align="center"><img width="300px" src="https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/images/logo_wdl_workflows.svg" alt="PacBio WGS Variant Pipeline"/></h1>
 
 <h1 align="center">PacBio WGS Variant Pipeline</h1>
 
