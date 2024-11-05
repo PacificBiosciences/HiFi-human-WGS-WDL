@@ -1,0 +1,22 @@
+{
+  "humanwgs_singleton.sample_id": "String",
+  "humanwgs_singleton.sex": "String? (optional)",
+  "humanwgs_singleton.hifi_reads": [
+    "File"
+  ],
+  "humanwgs_singleton.phenotypes": "String? (optional)",
+  "humanwgs_singleton.ref_map_file": "File",
+  "humanwgs_singleton.deepvariant_version": "String (optional, default = \"1.6.1\")",
+  "humanwgs_singleton.custom_deepvariant_model_tar": "File? (optional)",
+  "humanwgs_singleton.pharmcat_version": "String (optional, default = \"2.15.0\")",
+  "humanwgs_singleton.pharmcat_min_coverage": "Int (optional, default = 10)",
+  "humanwgs_singleton.tertiary_map_file": "File? (optional)",
+  "humanwgs_singleton.gpu": "Boolean (optional, default = false)",
+  "humanwgs_singleton.backend": "String",
+  "humanwgs_singleton.zones": "String? (optional)",
+  "humanwgs_singleton.gpuType": "String? (optional)",
+  "humanwgs_singleton.container_registry": "String? (optional)",
+  "humanwgs_singleton.container_namespace": "String? (optional)",
+  "humanwgs_singleton.preemptible": "Boolean",
+  "humanwgs_singleton.debug_version": "String? (optional)"
+}
