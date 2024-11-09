@@ -1,3 +1,15 @@
 inputs.test_data*.json
 .wdltest*
+
 dependencies.zip
+hifi-human-wgs-wdl-singleton.zip
+hifi-human-wgs-wdl-family.zip
+
+Makefile
+.env
+
+tests
+miniwdl_singularity_cache
+miniwdl_download_cache
+miniwdl_call_cache
+miniwdl_test_output
