@@ -1,9 +1,7 @@
 inputs.test_data*.json
 .wdltest*
 
-dependencies.zip
-hifi-human-wgs-wdl-singleton.zip
-hifi-human-wgs-wdl-family.zip
+*.zip
 
 Makefile
 .env
