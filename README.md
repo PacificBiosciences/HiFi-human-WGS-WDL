@@ -17,7 +17,16 @@ PacBio WGS Variant Pipeline performs read alignment, variant calling, and phasin
 
 ## Setup
 
-We recommend cloning the repo rather than downloading the release package.  Some tasks and workflows are pulled in from other repositories. Ensure you have initialized submodules following cloning by running `git submodule update --init --recursive`.
+We recommend cloning the repo rather than downloading the release package.  Some tasks and workflows are pulled in from other repositories.
+
+Clone the repo using the command below.
+
+```bash
+git clone \
+  --depth 1 --branch v1.2.1 \
+  --recursive \
+  https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
+```
 
 ## Resource requirements
 
