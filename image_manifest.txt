@@ -11,7 +11,7 @@ quay.io/pacbio/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de7
 quay.io/pacbio/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa
 quay.io/pacbio/svpack@sha256:628e9851e425ed8044a907d33de04043d1ef02d4d2b2667cf2e9a389bb011eba
 quay.io/pacbio/trgt@sha256:0284ff5756f8d47d9d81b515b8b1a6c81fac862ae5a7b4fe89f65235c3e5e0c9
-quay.io/pacbio/wgs_tertiary@sha256:abc0f04b2cf73aaa920f7b5a898972f04cce1b901acb980f7fb6a453e7e8e7c8
+quay.io/pacbio/wgs_tertiary@sha256:410597030e0c85cf16eb27a877d260e7e2824747f5e8b05566a1aaa729d71136
 google/deepvariant:1.6.1
 google/deepvariant:1.6.1-gpu
 pgkb/pharmcat:2.15.4
