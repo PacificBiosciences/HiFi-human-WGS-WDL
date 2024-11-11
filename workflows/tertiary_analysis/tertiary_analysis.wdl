@@ -116,15 +116,24 @@ task write_ped_phrank {
 		6. phenotype (1=unaffected; 2=affected)
 		"""
 
-		__version__ = "0.1.0"
+		__version__ = "0.5.0"
+		# equivalent to __version__ = "0.5.0", except `cohort_id` vs `family_id`
 
 		import json
 		import csv
 		import sys
 
 
-		SEX = {"MALE": "1", "M": "1", "FEMALE": "2", "F": "2"}
+		SEX = {"MALE": "1", "M": "1", "FEMALE": "2", "F": "2", ".": "."}
 		STATUS = {False: "1", True: "2"}
+
+
+		def get_value(d, key):
+				"""Return value from dict or '.' if key is None or absent."""
+				if key in d and d[key] is not None:
+						return d[key]
+				else:
+						return "."
 
 
 		def parse_sample(family_id, sample):
@@ -132,9 +141,9 @@ task write_ped_phrank {
 				return [
 						family_id,
 						sample["sample_id"],
-						sample.get("father_id", "."),
-						sample.get("mother_id", "."),
-						SEX.get(sample.get("sex", ".").upper(), "."),  # all cases accepted
+						get_value(sample, "father_id"),
+						get_value(sample, "mother_id"),
+						SEX.get(get_value(sample, "sex").upper()),
 						STATUS.get(sample.get("affected"), "0"),
 				]
 
@@ -150,7 +159,7 @@ task write_ped_phrank {
 
 		def write_ped(samples):
 				"""Write PED format to stdout."""
-				tsv_writer = csv.writer(sys.stdout, delimiter="\\t")
+				tsv_writer = csv.writer(sys.stdout, delimiter="\t")
 				for sample in samples:
 						tsv_writer.writerow(sample)
 
