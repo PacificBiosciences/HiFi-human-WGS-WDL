@@ -24,18 +24,18 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.2):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.3):
 
   ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.2/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.2/hifi-human-wgs-family.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.3/hifi-human-wgs-singleton.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.3/hifi-human-wgs-family.zip
   ```
 
 2) Clone the repository and initialize the submodules:
 
   ```bash
   git clone \
-    --depth 1 --branch v2.0.2 \
+    --depth 1 --branch v2.0.3 \
     --recursive \
     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
   ```
@@ -63,10 +63,10 @@ The workflow can be run on Azure, AWS, GCP, or HPC. Your choice of backend will 
 
 For backend-specific configuration, see the relevant documentation:
 
-- [Azure](./wiki/backend-azure)
-- [AWS](./wiki/backend-aws-healthomics)
-- [GCP](./wiki/backend-gcp)
-- [HPC](./wiki/backend-hpc)
+- [Azure](./docs/backend-azure)
+- [AWS](./docs/backend-aws-healthomics)
+- [GCP](./docs/backend-gcp)
+- [HPC](./docs/backend-hpc)
 
 ### Configuring a workflow engine and container runtime
 
@@ -76,7 +76,7 @@ Because workflow dependencies are containerized, a container runtime is required
 
 See the backend-specific documentation for details on setting up an engine.
 
-| Engine | [Azure](./wiki/backend-azure) | [AWS](./wiki/backend-aws-healthomics) | [GCP](./wiki/backend-gcp) | [HPC](./wiki/backend-hpc) |
+| Engine | [Azure](./docs/backend-azure) | [AWS](./docs/backend-aws-healthomics) | [GCP](./docs/backend-gcp) | [HPC](./docs/backend-hpc) |
 | :- | :- | :- | :- | :- |
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via [AWS HealthOmics](https://aws.amazon.com/healthomics/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | _Unsupported_ | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
@@ -118,7 +118,7 @@ If Cromwell is running in server mode, the workflow can be submitted using cURL.
 
 This section describes the inputs required for a run of the workflow. Typically, only the sample-specific sections will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends).
 
-Workflow inputs for each entrypoint are described in [singleton](./wiki/singleton) and [family](./wiki/family) documentation.
+Workflow inputs for each entrypoint are described in [singleton](./docs/singleton) and [family](./docs/family) documentation.
 
 At a high level, we have two types of inputs files:
 
@@ -136,7 +136,7 @@ Docker images definitions used by this workflow can be found in [the wdl-dockerf
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f ... b70a8e87
 
-Tool versions and Docker images used in these workflows can be found in the [tools and containers](./wiki/tools_containers) documentation.
+Tool versions and Docker images used in these workflows can be found in the [tools and containers](./docs/tools_containers) documentation.
 
 ---
 
