@@ -63,10 +63,10 @@ The workflow can be run on Azure, AWS, GCP, or HPC. Your choice of backend will 
 
 For backend-specific configuration, see the relevant documentation:
 
-- [Azure](./docs/backend-azure)
-- [AWS](./docs/backend-aws-healthomics)
-- [GCP](./docs/backend-gcp)
-- [HPC](./docs/backend-hpc)
+- [Azure](./docs/backend-azure.md)
+- [AWS](./docs/backend-aws-healthomics.md)
+- [GCP](./docs/backend-gcp.md)
+- [HPC](./docs/backend-hpc.md)
 
 ### Configuring a workflow engine and container runtime
 
@@ -76,7 +76,7 @@ Because workflow dependencies are containerized, a container runtime is required
 
 See the backend-specific documentation for details on setting up an engine.
 
-| Engine | [Azure](./docs/backend-azure) | [AWS](./docs/backend-aws-healthomics) | [GCP](./docs/backend-gcp) | [HPC](./docs/backend-hpc) |
+| Engine | [Azure](./docs/backend-azure.md) | [AWS](./docs/backend-aws-healthomics.md) | [GCP](./docs/backend-gcp.md) | [HPC](./docs/backend-hpc.md) |
 | :- | :- | :- | :- | :- |
 | [**miniwdl**](https://github.com/chanzuckerberg/miniwdl#scaling-up) | _Unsupported_ | Supported via [AWS HealthOmics](https://aws.amazon.com/healthomics/) | _Unsupported_ | (SLURM only) Supported via the [`miniwdl-slurm`](https://github.com/miniwdl-ext/miniwdl-slurm) plugin |
 | [**Cromwell**](https://cromwell.readthedocs.io/en/stable/backends/Backends/) | Supported via [Cromwell on Azure](https://github.com/microsoft/CromwellOnAzure) | _Unsupported_ | Supported via Google's [Pipelines API](https://cromwell.readthedocs.io/en/stable/backends/Google/) | Supported - [Configuration varies depending on HPC infrastructure](https://cromwell.readthedocs.io/en/stable/tutorials/HPCIntro/) |
@@ -118,7 +118,7 @@ If Cromwell is running in server mode, the workflow can be submitted using cURL.
 
 This section describes the inputs required for a run of the workflow. Typically, only the sample-specific sections will be filled out by the user for each run of the workflow. Input templates with reference file locations filled out are provided [for each backend](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends).
 
-Workflow inputs for each entrypoint are described in [singleton](./docs/singleton) and [family](./docs/family) documentation.
+Workflow inputs for each entrypoint are described in [singleton](./docs/singleton.md) and [family](./docs/family.md) documentation.
 
 At a high level, we have two types of inputs files:
 
@@ -136,7 +136,7 @@ Docker images definitions used by this workflow can be found in [the wdl-dockerf
 The Docker image used by a particular step of the workflow can be identified by looking at the `docker` key in the `runtime` block for the given task. Images can be referenced in the following table by looking for the name after the final `/` character and before the `@sha256:...`. For example, the image referred to here is "align_hifiasm":
 > ~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f ... b70a8e87
 
-Tool versions and Docker images used in these workflows can be found in the [tools and containers](./docs/tools_containers) documentation.
+Tool versions and Docker images used in these workflows can be found in the [tools and containers](./docs/tools_containers.md) documentation.
 
 ---
 
