@@ -1,0 +1,20 @@
+{
+  "pharmcat.haplotagged_bam": "File",
+  "pharmcat.haplotagged_bam_index": "File",
+  "pharmcat.phased_vcf": "File",
+  "pharmcat.phased_vcf_index": "File",
+  "pharmcat.ref_fasta": "File",
+  "pharmcat.ref_index": "File",
+  "pharmcat.pharmcat_version": "String",
+  "pharmcat.pharmcat_positions": "File",
+  "pharmcat.pharmcat_positions_index": "File",
+  "pharmcat.pharmcat_min_coverage": "Int",
+  "pharmcat.default_runtime_attributes": {
+    "max_retries": "Int",
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String"
+  }
+}

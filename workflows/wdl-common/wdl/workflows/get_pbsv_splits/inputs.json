@@ -1,0 +1,13 @@
+{
+  "get_pbsv_splits.default_runtime_attributes": {
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String",
+    "container_namespace": "String? (optional)",
+    "max_retries": "Int"
+  },
+  "get_pbsv_splits.pbsv_splits_file": "File"
+}
+
