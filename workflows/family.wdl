@@ -400,6 +400,6 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.0.3~{"-" + debug_version}"
+    String workflow_version = "v2.0.4" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
