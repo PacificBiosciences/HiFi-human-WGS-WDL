@@ -18,7 +18,7 @@ workflows:
   - name: HiFi-human-WGS-WDL-singleton
     subclass: WDL
     primaryDescriptorPath: /workflows/singleton.wdl
-    readMePath: /wiki/singleton.md
+    readMePath: /docs/singleton.md
     authors:
       - orcid: 0000-0001-5921-2022 # Juniper Lake
       - orcid: 0000-0001-7628-5645 # Gregory Concepcion
@@ -33,7 +33,7 @@ workflows:
   - name: HiFi-human-WGS-WDL-family
     subclass: WDL
     primaryDescriptorPath: /workflows/family.wdl
-    readMePath: /wiki/family.md
+    readMePath: /docs/family.md
     authors:
       - orcid: 0000-0001-5921-2022 # Juniper Lake
       - orcid: 0000-0001-7628-5645 # Gregory Concepcion
