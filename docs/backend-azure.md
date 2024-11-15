@@ -12,7 +12,7 @@ Workflows can be run in Azure by setting up [Cromwell on Azure (CoA)](https://gi
 
 Fill out any information missing in [the inputs file](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/azure/singleton.azure.inputs.json).
 
-See [the inputs section of the main README](./singleton#inputs) for more information on the structure of the inputs.json file.
+See [the inputs section of the main README](./singleton.md#inputs) for more information on the structure of the inputs.json file.
 
 ### Running via Cromwell on Azure
 

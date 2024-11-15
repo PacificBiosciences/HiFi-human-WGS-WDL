@@ -1,3 +1,3 @@
-- [hpc](./backend-hpc)
-- [azure](./backend-azure)
-- [gcp](./backend-gcp)
+- [hpc](./backend-hpc.md)
+- [azure](./backend-azure.md)
+- [gcp](./backend-gcp.md)

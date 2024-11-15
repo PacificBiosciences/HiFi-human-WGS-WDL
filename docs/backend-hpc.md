@@ -23,7 +23,7 @@ Cromwell supports a number of different HPC backends; see [Cromwell's documentat
 
 Fill out any information missing in [the inputs file](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/hpc/singleton.hpc.inputs.json). Once you have downloaded the reference data bundle, ensure that you have replaced the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.
 
-See [the inputs section of the singleton README](./singleton#inputs) for more information on the structure of the inputs.json file.
+See [the inputs section of the singleton README](./singleton.md#inputs) for more information on the structure of the inputs.json file.
 
 #### Running via miniwdl
 

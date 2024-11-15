@@ -8,7 +8,7 @@
 
 Fill out any information missing in [the inputs file](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/gcp/singleton.gcp.inputs.json).
 
-See [the inputs section of the singleton README](./singleton#inputs) for more information on the structure of the inputs.json file.
+See [the inputs section of the singleton README](./singleton.md#inputs) for more information on the structure of the inputs.json file.
 
 #### Determining available zones
 
