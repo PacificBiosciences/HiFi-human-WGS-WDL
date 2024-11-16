@@ -15,8 +15,8 @@
     ]
   },
   "humanwgs_family.phenotypes": "String? (optional)",
-  "humanwgs_family.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2p0p0-rc6/GRCh38.ref_map.v2p0p0-rc6.gcp.tsv",
-  "humanwgs_family.tertiary_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2p0p0-rc6/GRCh38.tertiary_map.v2p0p0-rc6.gcp.tsv",
+  "humanwgs_family.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2.0.0/GRCh38.ref_map.v2p0p0.gcp.tsv",
+  "humanwgs_family.tertiary_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v2.0.0/GRCh38.tertiary_map.v2p0p0.gcp.tsv",
   "humanwgs_family.backend": "GCP",
   "humanwgs_family.zones": "String",
   "humanwgs_family.preemptible": "Boolean"

@@ -15,8 +15,8 @@
     ]
   },
   "humanwgs_family.phenotypes": "String? (optional)",
-  "humanwgs_family.ref_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2p0p0-rc6/GRCh38.ref_map.v2p0p0-rc6.hpc.tsv",
-  "humanwgs_family.tertiary_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2p0p0-rc6/GRCh38.tertiary_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_family.ref_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2.0.0/GRCh38.ref_map.v2p0p0.azure.tsv",
+  "humanwgs_family.tertiary_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2.0.0/GRCh38.tertiary_map.v2p0p0.azure.tsv",
   "humanwgs_family.backend": "Azure",
   "humanwgs_family.preemptible": "Boolean"
 }

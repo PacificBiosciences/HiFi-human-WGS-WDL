@@ -15,8 +15,8 @@
     ]
   },
   "humanwgs_family.phenotypes": "String? (optional)",
-  "humanwgs_family.ref_map_file": "<local_path_prefix>/dataset/GRCh38.ref_map.v2p0p0-rc6.hpc.tsv",
-  "humanwgs_family.tertiary_map_file": "<local_path_prefix>/dataset/GRCh38.tertiary_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_family.ref_map_file": "<local_path_prefix>/dataset/GRCh38.ref_map.v2p0p0.hpc.tsv",
+  "humanwgs_family.tertiary_map_file": "<local_path_prefix>/dataset/GRCh38.tertiary_map.v2p0p0.hpc.tsv",
   "humanwgs_family.backend": "HPC",
   "humanwgs_family.preemptible": true
 }

@@ -5,8 +5,8 @@
     "File"
   ],
   "humanwgs_singleton.phenotypes": "String? (optional)",
-  "humanwgs_singleton.ref_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2p0p0-rc6/GRCh38.ref_map.v2p0p0-rc6.hpc.tsv",
-  "humanwgs_singleton.tertiary_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2p0p0-rc6/GRCh38.tertiary_map.v2p0p0-rc6.hpc.tsv",
+  "humanwgs_singleton.ref_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2.0.0/GRCh38.ref_map.v2p0p0.azure.tsv",
+  "humanwgs_singleton.tertiary_map_file": "/datasetpbrarediseases/dataset/hifi-wdl-resources-v2.0.0/GRCh38.tertiary_map.v2p0p0.azure.tsv",
   "humanwgs_singleton.backend": "Azure",
   "humanwgs_singleton.preemptible": "Boolean"
 }
