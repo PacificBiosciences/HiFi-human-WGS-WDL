@@ -194,8 +194,11 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[File\] | phased_trgt_vcf_index |  |  |
 | Array\[File\] | trgt_spanning_reads | TRGT spanning reads |  |
 | Array\[File\] | trgt_spanning_reads_index |  |  |
+| Array\[File\] | trgt_coverage_dropouts | TRGT coverage dropouts |  |
 | Array\[String\] | stat_trgt_genotyped_count | Count of genotyped sites |  |
 | Array\[String\] | stat_trgt_uncalled_count | Count of ungenotyped sites |  |
+| File? | joint_trgt_vcf | Joint-called TRGT VCF |  |
+| File? | joint_trgt_vcf_index |  |  |
 
 ### Variant Phasing
 
@@ -248,12 +251,12 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | File? | pedigree | Pedigree file in PLINK PED [format](https://zzz.bwh.harvard.edu/plink/data.shtml#ped) |  |
-| File? | small_variant_filtered_vcf | Filtered, annotated small variant VCF |  |
-| File? | small_variant_filtered_vcf_index |  |  |
-| File? | small_variant_filtered_tsv | Filtered, annotated small variant calls |  |
-| File? | small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF |  |
-| File? | small_variant_compound_het_vcf_index |  |  |
-| File? | small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant calls |  |
-| File? | sv_filtered_vcf | Filtered, annotated structural variant VCF |  |
-| File? | sv_filtered_vcf_index |  |  |
-| File? | sv_filtered_tsv | Filtered, annotated structural variant TSV |  |
+| File? | tertiary_small_variant_filtered_vcf | Filtered, annotated small variant VCF |  |
+| File? | tertiary_small_variant_filtered_vcf_index |  |  |
+| File? | tertiary_small_variant_filtered_tsv | Filtered, annotated small variant calls |  |
+| File? | tertiary_small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF |  |
+| File? | tertiary_small_variant_compound_het_vcf_index |  |  |
+| File? | tertiary_small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant calls |  |
+| File? | tertiary_sv_filtered_vcf | Filtered, annotated structural variant VCF |  |
+| File? | tertiary_sv_filtered_vcf_index |  |  |
+| File? | tertiary_sv_filtered_tsv | Filtered, annotated structural variant TSV |  |
