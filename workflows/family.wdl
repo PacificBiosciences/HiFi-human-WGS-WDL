@@ -247,7 +247,7 @@ workflow humanwgs_family {
         id                 = family.family_id,
         family             = family,
         phenotypes         = phenotypes,
-        disk_size          = size(flatten(hifi_reads), "GB") + 10,
+        disk_size          = ceil(size(flatten(hifi_reads), "GB")) + 10,
         runtime_attributes = default_runtime_attributes
     }
 
