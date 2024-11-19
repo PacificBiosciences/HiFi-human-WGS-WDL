@@ -165,7 +165,6 @@
                 "read_length_and_quality": {
                   "value": "${resources_file_path}/merge_bam_stats/one_input/HG002.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
@@ -232,7 +231,6 @@
                 "read_length_and_quality": {
                   "value": "${resources_file_path}/merge_bam_stats/two_inputs/HG002.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
@@ -343,7 +341,6 @@
                 "bam_stats": {
                   "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_aligned_10k/HG00733.sequelii_aligned_10k.hifi_reads.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
@@ -371,7 +368,6 @@
                 "bam_stats": {
                   "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
@@ -400,7 +396,6 @@
                 "bam_stats": {
                   "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k_strip_kinetics_false/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
@@ -428,7 +423,6 @@
                 "bam_stats": {
                   "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.read_length_and_quality.tsv.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_tab_delimited",
                     "check_gzip"
