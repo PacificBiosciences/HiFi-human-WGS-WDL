@@ -24,18 +24,18 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.5):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.6):
 
   ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.5/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.5/hifi-human-wgs-family.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.6/hifi-human-wgs-singleton.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.6/hifi-human-wgs-family.zip
   ```
 
 2) Clone the repository and initialize the submodules:
 
   ```bash
   git clone \
-    --depth 1 --branch v2.0.5 \
+    --depth 1 --branch v2.0.6 \
     --recursive \
     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
   ```
