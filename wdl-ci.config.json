@@ -104,7 +104,86 @@
         "cpg_pileup": {
           "key": "cpg_pileup",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "haplotagged_bam": "${resources_file_path}/inputs/HG002.GRCh38.haplotagged.bam",
+                "haplotagged_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.haplotagged.bam.bai",
+                "out_prefix": "HG002.GRCh38",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "combined_bed": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bed.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "check_gzip"
+                  ]
+                },
+                "hap1_bed": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap1.bed.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "check_gzip"
+                  ]
+                },
+                "hap2_bed": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap2.bed.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "check_gzip"
+                  ]
+                },
+                "combined_bw": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "hap1_bw": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap1.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "hap2_bw": {
+                  "value": "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap2.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "stat_hap1_cpg_count": {
+                  "value": "104635",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_hap2_cpg_count": {
+                  "value": "104728",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_combined_cpg_count": {
+                  "value": "106430",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
