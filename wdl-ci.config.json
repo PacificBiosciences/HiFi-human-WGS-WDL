@@ -235,7 +235,82 @@
         "hificnv": {
           "key": "hificnv",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "sex": "MALE",
+                "aligned_bam": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
+                "vcf": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",
+                "vcf_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "exclude_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
+                "exclude_bed_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
+                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "cnv_vcf": {
+                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "copynum_bedgraph": {
+                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.copynum.bedgraph",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "depth_bw": {
+                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.depth.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "maf_bw": {
+                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.maf.bw",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "stat_DUP_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_DUP_sum": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_DEL_count": {
+                  "value": "89",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_DEL_sum": {
+                  "value": "2885534000",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
