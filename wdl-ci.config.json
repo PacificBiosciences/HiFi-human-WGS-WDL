@@ -151,7 +151,7 @@
       "tasks": {
         "merge_bam_stats": {
           "key": "merge_bam_stats",
-          "digest": "",
+          "digest": "k2zoxoqmson4rr7meogbb675w3bnj2gt",
           "tests": [
             {
               "inputs": {
@@ -321,7 +321,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "",
+          "digest": "r2mrlrcc34hmpeetxabc7ujwfb2zzykq",
           "tests": [
             {
               "inputs": {
