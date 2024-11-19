@@ -167,6 +167,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 },
@@ -233,6 +234,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 },
@@ -343,6 +345,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 }
@@ -370,6 +373,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 }
@@ -398,6 +402,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 }
@@ -425,6 +430,7 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
+                    "count_columns",
                     "check_gzip"
                   ]
                 }
