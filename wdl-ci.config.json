@@ -459,7 +459,7 @@
       "tasks": {
         "pbsv_discover": {
           "key": "pbsv_discover",
-          "digest": "",
+          "digest": "mcdiubcggjbwaweaciocgrnypvqn5tnb",
           "tests": [
             {
               "inputs": {
@@ -483,7 +483,7 @@
         },
         "pbsv_call": {
           "key": "pbsv_call",
-          "digest": "",
+          "digest": "2rhytrhz52jofq7lv42akixzl55wa3lk",
           "tests": [
             {
               "inputs": {
