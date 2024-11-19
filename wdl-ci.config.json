@@ -195,7 +195,35 @@
         "glnexus": {
           "key": "glnexus",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "cohort_id": "HG002-trio",
+                "gvcfs": [
+                  "${resources_file_path}/inputs/HG002-trio/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
+                  "${resources_file_path}/inputs/HG002-trio/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
+                  "${resources_file_path}/inputs/HG002-trio/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz"
+                ],
+                "gvcf_indices": [
+                  "${resources_file_path}/inputs/HG002-trio/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
+                  "${resources_file_path}/inputs/HG002-trio/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
+                  "${resources_file_path}/inputs/HG002-trio/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi"
+                ],
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/glnexus/HG002-trio.GRCh38.small_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
