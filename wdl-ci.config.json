@@ -920,7 +920,27 @@
         "samtools_merge": {
           "key": "samtools_merge",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "bams": [
+                  "${resources_file_path}/samtools_merge/input/HG00133.sequelii_kinetics_10k.hifi_reads.GRCh38.aligned.bam",
+                  "${resources_file_path}/samtools_merge/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam"
+                ],
+                "out_prefix": "HG002HG00133.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_bam": {
+                  "value": "${resources_file_path}/samtools_merge/output/two_inputs/HG002HG00133.GRCh38.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "samtools_fasta": {
           "key": "samtools_fasta",
