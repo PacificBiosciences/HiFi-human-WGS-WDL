@@ -1661,7 +1661,274 @@
         "write_ped_phrank": {
           "key": "write_ped_phrank",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "id": "HG002",
+                "sex": "MALE",
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/singleton/HG002.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/singleton/HG002_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "id": "HG002",
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/singleton_no_sex/HG002.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/singleton_no_sex/HG002_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "id": "HG002-trio",
+                "family": {
+                  "family_id": "HG002-trio",
+                  "samples": [
+                    {
+                      "sample_id": "HG002",
+                      "sex": "MALE",
+                      "affected": true,
+                      "father_id": "HG003",
+                      "mother_id": "HG004",
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG003",
+                      "sex": "MALE",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG004",
+                      "sex": "FEMALE",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    }
+                  ]
+                },
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio/HG002-trio.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio/HG002-trio_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "id": "HG002-trio",
+                "family": {
+                  "family_id": "HG002-trio",
+                  "samples": [
+                    {
+                      "sample_id": "HG002",
+                      "sex": "MALE",
+                      "affected": true,
+                      "mother_id": "HG004",
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG004",
+                      "sex": "FEMALE",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    }
+                  ]
+                },
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_father/HG002-trio.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_father/HG002-trio_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "id": "HG002-trio",
+                "family": {
+                  "family_id": "HG002-trio",
+                  "samples": [
+                    {
+                      "sample_id": "HG002",
+                      "sex": "MALE",
+                      "affected": true,
+                      "father_id": "HG003",
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG003",
+                      "sex": "MALE",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    }
+                  ]
+                },
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_mother/HG002-trio.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_mother/HG002-trio_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "id": "HG002-trio",
+                "family": {
+                  "family_id": "HG002-trio",
+                  "samples": [
+                    {
+                      "sample_id": "HG002",
+                      "affected": true,
+                      "father_id": "HG003",
+                      "mother_id": "HG004",
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG003",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    },
+                    {
+                      "sample_id": "HG004",
+                      "affected": false,
+                      "hifi_reads": [
+                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
+                      ]
+                    }
+                  ]
+                },
+                "phenotypes": "HP:0000001",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pedigree": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_sex/HG002-trio.ped",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "phrank_lookup": {
+                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_sex/HG002-trio_phrank.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
