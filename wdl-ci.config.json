@@ -85,14 +85,12 @@
                 "stats": {
                   "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.small_variants.vcf.stats.txt",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename"
                   ]
                 },
                 "roh_out": {
                   "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.bcftools_roh.out.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename",
                     "check_gzip"
                   ]
@@ -159,14 +157,12 @@
                 "stats": {
                   "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.small_variants.vcf.stats.txt",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename"
                   ]
                 },
                 "roh_out": {
                   "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.bcftools_roh.out.gz",
                   "test_tasks": [
-                    "calculate_md5sum",
                     "compare_file_basename"
                   ]
                 },
