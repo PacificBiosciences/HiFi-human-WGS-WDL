@@ -72,22 +72,7 @@
         "bcftools_stats_roh_small_variants": {
           "key": "bcftools_stats_roh_small_variants",
           "digest": "",
-          "tests": [
-            {
-              "inputs": {
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "output_key": {
-                  "value": "${resources_file_path}/",
-                  "test_tasks": []
-                }
-              }
-            }
-          ]
+          "tests": []
         },
         "concat_pbsv_vcf": {
           "key": "concat_pbsv_vcf",
@@ -286,15 +271,39 @@
           "tests": [
             {
               "inputs": {
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
+                "vcf": "${resources_file_path}/sv_stats/HG002.GRCh38.pbsv.phased.vcf.gz",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "output_key": {
-                  "value": "${resources_file_path}/",
-                  "test_tasks": []
+                "stat_sv_DUP_count": {
+                  "value": "2",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_DEL_count": {
+                  "value": "19",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_INS_count": {
+                  "value": "37",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_INV_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_BND_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 }
               }
             }
