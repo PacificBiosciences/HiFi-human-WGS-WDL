@@ -72,7 +72,155 @@
         "bcftools_stats_roh_small_variants": {
           "key": "bcftools_stats_roh_small_variants",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_deepvariant/HG002.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "stats": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.small_variants.vcf.stats.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename"
+                  ]
+                },
+                "roh_out": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.bcftools_roh.out.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "check_gzip"
+                  ]
+                },
+                "roh_bed": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.bcftools_roh.bed",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "stat_SNV_count": {
+                  "value": "13706",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_INDEL_count": {
+                  "value": "3283",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_TSTV_ratio": {
+                  "value": "2.23",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_HETHOM_ratio": {
+                  "value": "1.53",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "snv_distribution_plot": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.small_variants.snv_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "indel_distribution_plot": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_deepvariant/HG002.GRCh38.small_variants.indel_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_glnexus/HG002.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "stats": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.small_variants.vcf.stats.txt",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename"
+                  ]
+                },
+                "roh_out": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.bcftools_roh.out.gz",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename"
+                  ]
+                },
+                "roh_bed": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.bcftools_roh.bed",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "stat_SNV_count": {
+                  "value": "13699",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_INDEL_count": {
+                  "value": "3244",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_TSTV_ratio": {
+                  "value": "2.23",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_HETHOM_ratio": {
+                  "value": "1.53",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "snv_distribution_plot": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.small_variants.snv_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "indel_distribution_plot": {
+                  "value": "${resources_file_path}/bcftools_stats_roh_small_variants/output/from_glnexus/HG002.GRCh38.small_variants.indel_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "concat_pbsv_vcf": {
           "key": "concat_pbsv_vcf",
