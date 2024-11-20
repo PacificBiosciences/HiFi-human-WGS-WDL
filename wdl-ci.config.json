@@ -1443,17 +1443,148 @@
         "trgt": {
           "key": "trgt",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "out_prefix": "HG002.GRCh38",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "bam": {
+                  "value": "${resources_file_path}/trgt/output/no_sex/HG002.GRCh38.trgt.spanning.sorted.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "vcf": {
+                  "value": "${resources_file_path}/trgt/output/no_sex/HG002.GRCh38.trgt.sorted.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "stat_genotyped_count": {
+                  "value": "9163",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_uncalled_count": {
+                  "value": "162039",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "sex": "MALE",
+                "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "bam": {
+                  "value": "${resources_file_path}/trgt/output/with_sex/HG002.GRCh38.trgt.spanning.sorted.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "vcf": {
+                  "value": "${resources_file_path}/trgt/output/with_sex/HG002.GRCh38.trgt.sorted.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "stat_genotyped_count": {
+                  "value": "9163",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_uncalled_count": {
+                  "value": "162039",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "trgt_merge": {
           "key": "trgt_merge",
           "digest": "",
-          "tests": []
+          "tests": [{
+            "inputs": {
+              "vcfs": [
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz"
+              ],
+              "vcf_indices": [
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
+                "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi"
+              ],
+              "ref_fasta": "${ref_fasta}",
+              "ref_index": "${ref_index}",
+              "out_prefix": "HG002-trio.GRCh38.trgt",
+              "runtime_attributes": "${default_runtime_attributes}"
+            },
+            "output_tests": {
+              "merged_vcf": {
+                "value": "${resources_file_path}/trgt_merge/output/HG002-trio/HG002-trio.GRCh38.trgt.vcf.gz",
+                "test_tasks": [
+                  "compare_file_basename",
+                  "vcftools_validator",
+                  "check_gzip"
+                ]
+              }
+            }
+          }]
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
+                "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "out_prefix": "HG002.GRCh38",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "dropouts": {
+                  "value": "${resources_file_path}/coverage_dropouts/HG002.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
