@@ -38,17 +38,141 @@
         "slivar_small_variant": {
           "key": "slivar_small_variant",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz",
+                "vcf_index": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz.tbi",
+                "pedigree": "${resources_file_path}/slivar_small_variant/input/HG002-trio.ped",
+                "phrank_lookup": "${resources_file_path}/slivar_small_variant/input/HG002-trio_phrank.tsv",              
+                "reference": "${ref_fasta}",
+                "reference_index": "${ref_index}",
+                "gff": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+                "lof_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/clinvar_gene_desc.20240624T165443.txt",
+                "slivar_js": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/slivar-functions.v0.2.8.js",
+                "gnotate_files": [
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/slivar_gnotate/gnomad.hg38.v4.1.custom.v1.zip",
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/slivar_gnotate/CoLoRSdb.GRCh38.v1.1.0.deepvariant.glnexus.zip"
+                ],
+                "af_expr": [
+                  "INFO.gnomad_af <= 0.03",
+                  "INFO.colors_af <= 0.03"
+                ],
+                "nhomalt_expr": [
+                  "INFO.gnomad_nhomalt <= 4",
+                  "INFO.colors_nhomalt <= 4"
+                ],
+                "ac_expr": [
+                  "INFO.gnomad_ac <= 4",
+                  "INFO.colors_ac <= 4"
+                ],
+                "info_fields": [
+                  "gnomad_af",
+                  "gnomad_nhomalt",
+                  "gnomad_ac",
+                  "colors_af",
+                  "colors_nhomalt",
+                  "colors_ac"
+                ],
+                "min_gq": "5",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_vcf": {
+                  "value": "${resources_file_path}/slivar_small_variant/output/HG002-trio.GRCh38.small_variants.norm.slivar.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "compound_het_vcf": {
+                  "value": "${resources_file_path}/slivar_small_variant/output/HG002-trio.GRCh38.small_variants.norm.slivar.compound_hets.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "filtered_tsv": {
+                  "value": "${resources_file_path}/slivar_small_variant/output/HG002-trio.GRCh38.small_variants.norm.slivar.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "compound_het_tsv": {
+                  "value": "${resources_file_path}/slivar_small_variant/output/HG002-trio.GRCh38.small_variants.norm.slivar.compound_hets.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sv_vcf": "${resources_file_path}/svpack_filter_annotated/input/HG002-trio.GRCh38.structural_variants.vcf.gz",
+                "pedigree": "${resources_file_path}/svpack_filter_annotated/input/HG002-trio.ped",
+                "population_vcfs": [
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/gnomad.v4.1.sv.sites.pass.vcf.gz",
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/CoLoRSdb.GRCh38.v1.1.0.pbsv.jasmine.vcf.gz"
+                ],
+                "population_vcf_indices": [
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/gnomad.v4.1.sv.sites.pass.vcf.gz.tbi",
+                  "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/CoLoRSdb.GRCh38.v1.1.0.pbsv.jasmine.vcf.gz.tbi"
+                ],
+                "gff": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
+              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_vcf": {
+                  "value": "${resources_file_path}/svpack_filter_annotated/output/HG002-trio.GRCh38.structural_variants.svpack.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "filtered_vcf": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.GRCh38.structural_variants.svpack.vcf.gz",
+                "pedigree": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.ped",
+                "lof_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/lof_lookup.v2.1.1.txt",
+                "clinvar_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/clinvar_gene_desc.20240624T165443.txt",
+                "phrank_lookup": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio_phrank.tsv",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "svpack_tsv": {
+                  "value": "${resources_file_path}/slivar_svpack_tsv/output/HG002-trio.GRCh38.structural_variants.svpack.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -2131,14 +2255,14 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "preprocessed_vcf": {
+                "missing_pgx_vcf": {
                   "value": "${resources_file_path}/pharmcat_preprocess/output/HG002.GRCh38.subset.small_variants.missing_pgx_var.vcf",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator"
                   ]
                 },
-                "missing_pgx_vcf": {
+                "preprocessed_vcf": {
                   "value": "${resources_file_path}/pharmcat_preprocess/output/HG002.GRCh38.subset.small_variants.preprocessed.vcf.bgz",
                   "test_tasks": [
                     "compare_file_basename",
