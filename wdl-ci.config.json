@@ -480,7 +480,107 @@
         "mosdepth": {
           "key": "mosdepth",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "ref_name": "${ref_name}",
+                "aligned_bam": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
+                "infer_sex": true,              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "summary": {
+                  "value": "${resources_file_path}/mosdepth/infer_sex/HG002.GRCh38.mosdepth.summary.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "region_bed": {
+                  "value": "${resources_file_path}/mosdepth/infer_sex/HG002.GRCh38.regions.bed.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "check_gzip"
+                  ]
+                },
+                "depth_distribution_plot": {
+                  "value": "${resources_file_path}/mosdepth/infer_sex/HG002.GRCh38.depth_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "stat_mean_depth": {
+                  "value": "0.07",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "inferred_sex": {
+                  "value": "MALE",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "ref_name": "${ref_name}",
+                "aligned_bam": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "summary": {
+                  "value": "${resources_file_path}/mosdepth/no_infer_sex/HG002.GRCh38.mosdepth.summary.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "region_bed": {
+                  "value": "${resources_file_path}/mosdepth/no_infer_sex/HG002.GRCh38.regions.bed.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "check_gzip"
+                  ]
+                },
+                "depth_distribution_plot": {
+                  "value": "${resources_file_path}/mosdepth/no_infer_sex/HG002.GRCh38.depth_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "stat_mean_depth": {
+                  "value": "0.07",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "inferred_sex": {
+                  "value": "",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
