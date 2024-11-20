@@ -592,7 +592,41 @@
         "paraphase": {
           "key": "paraphase",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.paraphase_regions.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.paraphase_regions.bam.bai",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "out_json": {
+                  "value": "${resources_file_path}/paraphase/HG002.paraphase.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "bam": {
+                  "value": "${resources_file_path}/paraphase/HG002.paraphase.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "vcfs_tar": {
+                  "value": "${resources_file_path}/paraphase/HG002.paraphase_vcfs.tar.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -730,7 +764,37 @@
         "pbstarphase_diplotype": {
           "key": "pbstarphase_diplotype",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "phased_vcf": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.small_variants.vcf.gz",
+                "phased_vcf_index": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.small_variants.vcf.gz.tbi",
+                "aligned_bam": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.bam",
+                "aligned_bam_index": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.bam.bai",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "out_json": {
+                  "value": "${resources_file_path}/pbstarphase_diplotype/output/HG002.pbstarphase.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "pharmcat_tsv": {
+                  "value": "${resources_file_path}/pbstarphase_diplotype/output/HG002.pharmcat.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
