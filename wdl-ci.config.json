@@ -200,14 +200,14 @@
               "inputs": {
                 "cohort_id": "HG002-trio",
                 "gvcfs": [
-                  "${resources_file_path}/inputs/HG002-trio/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
-                  "${resources_file_path}/inputs/HG002-trio/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
-                  "${resources_file_path}/inputs/HG002-trio/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz"
+                  "${resources_file_path}/inputs/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
+                  "${resources_file_path}/inputs/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz",
+                  "${resources_file_path}/inputs/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz"
                 ],
                 "gvcf_indices": [
-                  "${resources_file_path}/inputs/HG002-trio/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
-                  "${resources_file_path}/inputs/HG002-trio/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
-                  "${resources_file_path}/inputs/HG002-trio/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi"
+                  "${resources_file_path}/inputs/HG002.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
+                  "${resources_file_path}/inputs/HG003.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi",
+                  "${resources_file_path}/inputs/HG004.GRCh38.small_variants.chr6_10000000_20000000.g.vcf.gz.tbi"
                 ],
                 "ref_name": "${ref_name}",
                 "runtime_attributes": "${default_runtime_attributes}"
@@ -240,10 +240,10 @@
               "inputs": {
                 "sample_id": "HG002",
                 "sex": "MALE",
-                "aligned_bam": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
-                "vcf": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",
-                "vcf_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",
+                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
+                "vcf": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",
+                "vcf_index": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",              
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
