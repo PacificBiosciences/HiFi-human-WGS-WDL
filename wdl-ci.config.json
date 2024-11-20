@@ -76,7 +76,7 @@
             {
               "inputs": {
                 "sample_id": "HG002",
-                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_deepvariant/HG002.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",              
+                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_deepvariant/HG002.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
                 "ref_fasta": "${ref_fasta}",
                 "ref_name": "${ref_name}",
                 "runtime_attributes": "${default_runtime_attributes}"
@@ -150,7 +150,7 @@
             {
               "inputs": {
                 "sample_id": "HG002",
-                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_glnexus/HG002.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",              
+                "vcf": "${resources_file_path}/bcftools_stats_roh_small_variants/input/from_glnexus/HG002.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
                 "ref_fasta": "${ref_fasta}",
                 "ref_name": "${ref_name}",
                 "runtime_attributes": "${default_runtime_attributes}"
@@ -685,7 +685,7 @@
       "tasks": {
         "hiphase": {
           "key": "hiphase",
-          "digest": "",
+          "digest": "evdi2klxze7sag3fs4p6g4h4ffqmiqzy",
           "tests": [
             {
               "inputs": {
@@ -711,7 +711,7 @@
                   "HG002.GRCh38.trgt.sorted.phased.vcf.gz.tbi"
                 ],
                 "aligned_bam": "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.chr6_10000000_20000000.bam.bai",              
+                "aligned_bam_index": "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
@@ -722,7 +722,8 @@
                   "value": [
                     "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.small_variants.phased.vcf.gz",
                     "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.pbsv.phased.vcf.gz",
-                    "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.trgt.sorted.phased.vcf.gz"],
+                    "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.trgt.sorted.phased.vcf.gz"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -1442,17 +1443,17 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "",
+          "digest": "rpcfzfr5reqxv7jbtfncu6etivzxvgs2",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG002",
                 "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",              
+                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "out_prefix": "HG002.GRCh38",              
+                "out_prefix": "HG002.GRCh38",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1490,7 +1491,7 @@
                 "sample_id": "HG002",
                 "sex": "MALE",
                 "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",              
+                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
@@ -1531,46 +1532,48 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "",
-          "tests": [{
-            "inputs": {
-              "vcfs": [
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz"
-              ],
-              "vcf_indices": [
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
-                "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi"
-              ],
-              "ref_fasta": "${ref_fasta}",
-              "ref_index": "${ref_index}",
-              "out_prefix": "HG002-trio.GRCh38.trgt",
-              "runtime_attributes": "${default_runtime_attributes}"
-            },
-            "output_tests": {
-              "merged_vcf": {
-                "value": "${resources_file_path}/trgt_merge/output/HG002-trio/HG002-trio.GRCh38.trgt.vcf.gz",
-                "test_tasks": [
-                  "compare_file_basename",
-                  "vcftools_validator",
-                  "check_gzip"
-                ]
+          "digest": "cmdcqkqrcfpn2eoczxfwhs6zqhalzdtt",
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz",
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi",
+                  "${resources_file_path}/trgt_merge/input/HG002-trio/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.vcf.gz.tbi"
+                ],
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "out_prefix": "HG002-trio.GRCh38.trgt",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_vcf": {
+                  "value": "${resources_file_path}/trgt_merge/output/HG002-trio/HG002-trio.GRCh38.trgt.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
               }
             }
-          }]
+          ]
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "",
+          "digest": "k6fkzuz3gk4yqc555nov2io3qbeqe25h",
           "tests": [
             {
               "inputs": {
                 "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
                 "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
                 "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "out_prefix": "HG002.GRCh38",              
+                "out_prefix": "HG002.GRCh38",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1595,7 +1598,7 @@
       "tasks": {
         "split_string": {
           "key": "split_string",
-          "digest": "",
+          "digest": "q7byrkraoxoid54g6rnw32zejprmobk6",
           "tests": [
             {
               "inputs": {
