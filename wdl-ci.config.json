@@ -992,7 +992,7 @@
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "output_key": {
+                "array": {
                   "value": "hello",
                   "test_tasks": [
                     "compare_string"
