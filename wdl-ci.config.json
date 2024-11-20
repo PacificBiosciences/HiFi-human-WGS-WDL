@@ -984,12 +984,49 @@
         "split_string": {
           "key": "split_string",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "concatenated_string": "hello,hello",
+                "delimiter": ",",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_key": {
+                  "value": "hello",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "consolidate_stats": {
           "key": "consolidate_stats",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "id": "String",
+                "stats": {
+                  "letters": ["a", "b", "c"],
+                  "numbers": ["1", "2", "3"]
+                },
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_tsv": {
+                  "value": "${resources_file_path}/consolidate_stats/String.stats.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
