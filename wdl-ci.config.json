@@ -416,7 +416,7 @@
         },
         "sv_stats": {
           "key": "sv_stats",
-          "digest": "",
+          "digest": "35gn2cqouobao6vacrqbi67zhkh6nmyn",
           "tests": [
             {
               "inputs": {
@@ -1663,7 +1663,7 @@
       "tasks": {
         "write_ped_phrank": {
           "key": "write_ped_phrank",
-          "digest": "",
+          "digest": "d3b7uvydynagkxs2w546ozi7q6oa7cim",
           "tests": [
             {
               "inputs": {
