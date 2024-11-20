@@ -103,7 +103,7 @@
       "tasks": {
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "",
+          "digest": "noq7e5yf5h6s2sf7lzolbgigqec4izmg",
           "tests": [
             {
               "inputs": {
@@ -243,14 +243,14 @@
                 "aligned_bam": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam",
                 "aligned_bam_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
                 "vcf": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",
-                "vcf_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",              
+                "vcf_index": "${resources_file_path}/inputs/HG002_10Mbp/HG002.GRCh38.small_variants.vcf.gz",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
                 "exclude_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
                 "exclude_bed_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
                 "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
-                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",              
+                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -479,7 +479,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "",
+          "digest": "57rmcwxx2lmhgupdu4unxkldevrr3n3u",
           "tests": [
             {
               "inputs": {
@@ -487,7 +487,7 @@
                 "ref_name": "${ref_name}",
                 "aligned_bam": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
                 "aligned_bam_index": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
-                "infer_sex": true,              
+                "infer_sex": true,
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
