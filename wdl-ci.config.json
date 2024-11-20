@@ -71,7 +71,7 @@
       "tasks": {
         "bcftools_stats_roh_small_variants": {
           "key": "bcftools_stats_roh_small_variants",
-          "digest": "",
+          "digest": "abrbvw7exjpg4zshsttwosmgoo75f722",
           "tests": [
             {
               "inputs": {
