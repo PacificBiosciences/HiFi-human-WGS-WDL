@@ -125,15 +125,72 @@
           "tests": [
             {
               "inputs": {
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
+                "sample_ids": [
+                  "HG002",
+                  "HG003",
+                  "HG004"
+                ],
+                "vcf": "${resources_file_path}/split_vcf_by_sample/input/glnexus/HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz",
+                "vcf_index": "${resources_file_path}/split_vcf_by_sample/input/glnexus/HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                "split_vcf_names": [
+                  "HG002.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz",
+                  "HG003.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz",
+                  "HG004.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz"
+                ],
+                "split_vcf_index_names": [
+                  "HG002.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                  "HG003.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                  "HG004.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz.tbi"
+                ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "output_key": {
-                  "value": "${resources_file_path}/",
-                  "test_tasks": []
+                "split_vcfs": {
+                  "value": [
+                    "${resources_file_path}/split_vcf_by_sample/output/glnexus/HG002.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz",
+                    "${resources_file_path}/split_vcf_by_sample/output/glnexus/HG003.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz",
+                    "${resources_file_path}/split_vcf_by_sample/output/glnexus/HG004.HG002-trio.GRCh38.small_variants.chr6_10000000_20000000.vcf.gz"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_ids": [
+                  "HG002",
+                  "HG003",
+                  "HG004"
+                ],
+                "vcf": "/pbi/dept/appslab/datasets/wr_test_data/wdl-ci/HiFi-human-WGS-WDL/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                "vcf_index": "/pbi/dept/appslab/datasets/wr_test_data/wdl-ci/HiFi-human-WGS-WDL/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                "split_vcf_names": [
+                  "HG002.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                  "HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                  "HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz"
+                ],
+                "split_vcf_index_names": [
+                  "HG002.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                  "HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                  "HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi"
+                ],
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "split_vcfs": {
+                  "value": [
+                    "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG002.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                    "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                    "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz"],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
               }
             }
