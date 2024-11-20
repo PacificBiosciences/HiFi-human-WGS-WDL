@@ -76,7 +76,7 @@
         },
         "concat_pbsv_vcf": {
           "key": "concat_pbsv_vcf",
-          "digest": "",
+          "digest": "xnv22objo4npixd7xx7rbiri7afensy6",
           "tests": [
             {
               "inputs": {
@@ -106,7 +106,7 @@
         },
         "split_vcf_by_sample": {
           "key": "split_vcf_by_sample",
-          "digest": "",
+          "digest": "2hvcuqdk75vxcbe3svrz2je54o7x5umn",
           "tests": [
             {
               "inputs": {
@@ -170,7 +170,8 @@
                   "value": [
                     "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG002.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
                     "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
-                    "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz"],
+                    "${resources_file_path}/split_vcf_by_sample/output/pbsv/HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -183,7 +184,7 @@
         },
         "bcftools_merge": {
           "key": "bcftools_merge",
-          "digest": "",
+          "digest": "7b7uqtr435y7abbnap6u5oo3jqlkyzpi",
           "tests": [
             {
               "inputs": {
