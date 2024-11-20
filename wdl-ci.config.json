@@ -733,7 +733,7 @@
                   "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.haplotagged.bam",
                   "test_tasks": [
                     "compare_file_basename",
-                    "bam_validator"
+                    "samtools_quickcheck"
                   ]
                 },
                 "phase_stats": {
