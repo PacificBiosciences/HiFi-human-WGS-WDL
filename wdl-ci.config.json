@@ -686,7 +686,124 @@
         "hiphase": {
           "key": "hiphase",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "vcfs": [
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.small_variants.vcf.gz",
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.pbsv.vcf.gz",
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.trgt.sorted.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.small_variants.vcf.gz.tbi",
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.pbsv.vcf.gz.tbi",
+                  "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.trgt.sorted.vcf.gz.tbi"
+                ],
+                "phased_vcf_names": [
+                  "HG002.GRCh38.small_variants.phased.vcf.gz",
+                  "HG002.GRCh38.pbsv.phased.vcf.gz",
+                  "HG002.GRCh38.trgt.sorted.phased.vcf.gz"
+                ],
+                "phased_vcf_index_names": [
+                  "HG002.GRCh38.small_variants.phased.vcf.gz.tbi",
+                  "HG002.GRCh38.pbsv.phased.vcf.gz.tbi",
+                  "HG002.GRCh38.trgt.sorted.phased.vcf.gz.tbi"
+                ],
+                "aligned_bam": "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/hiphase/input/HG002/HG002.GRCh38.chr6_10000000_20000000.bam.bai",              
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "phased_vcfs": {
+                  "value": [
+                    "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.small_variants.phased.vcf.gz",
+                    "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.pbsv.phased.vcf.gz",
+                    "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.trgt.sorted.phased.vcf.gz"],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "haplotagged_bam": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.haplotagged.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bam_validator"
+                  ]
+                },
+                "phase_stats": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.hiphase.stats.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "phase_blocks": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.hiphase.blocks.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "phase_haplotags": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.hiphase.haplotags.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                },
+                "stat_phased_basepairs": {
+                  "value": "8972304",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_phase_block_ng50": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_mapped_read_count": {
+                  "value": "27398",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_mapped_percent": {
+                  "value": "100",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "mapq_distribution_plot": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.mapq_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "mg_distribution_plot": {
+                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.mg_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
