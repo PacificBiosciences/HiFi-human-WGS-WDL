@@ -166,8 +166,8 @@
                   "HG003",
                   "HG004"
                 ],
-                "vcf": "/pbi/dept/appslab/datasets/wr_test_data/wdl-ci/HiFi-human-WGS-WDL/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
-                "vcf_index": "/pbi/dept/appslab/datasets/wr_test_data/wdl-ci/HiFi-human-WGS-WDL/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
+                "vcf": "${resources_file_path}/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
+                "vcf_index": "${resources_file_path}/split_vcf_by_sample/input/pbsv/HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
                 "split_vcf_names": [
                   "HG002.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
                   "HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz",
@@ -1129,13 +1129,16 @@
           "tests": [
             {
               "inputs": {
-                "concatenated_string": "hello,hello",
+                "concatenated_string": "hello,world",
                 "delimiter": ",",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "array": {
-                  "value": "hello",
+                  "value": [
+                    "hello",
+                    "world"
+                  ],
                   "test_tasks": [
                     "compare_string"
                   ]
