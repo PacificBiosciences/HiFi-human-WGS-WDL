@@ -81,12 +81,12 @@
             {
               "inputs": {
                 "vcfs": [
-                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz",
-                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz"
+                  "${resources_file_path}/concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz",
+                  "${resources_file_path}/concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz"
                 ],
                 "vcf_indices": [
-                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz.tbi",
-                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz.tbi"
+                  "${resources_file_path}/concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz.tbi",
+                  "${resources_file_path}/concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz.tbi"
                 ],
                 "out_prefix": "HG005.GRCh38.structural_variants",
                 "runtime_attributes": "${default_runtime_attributes}"
