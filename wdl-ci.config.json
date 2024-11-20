@@ -202,15 +202,79 @@
           "tests": [
             {
               "inputs": {
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
+                "vcfs": [
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG002.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG003.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG004.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG002.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG003.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/small_variants/HG004.HG002-trio.joint.GRCh38.small_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi"
+                ],
+                "out_prefix": "HG002-trio.GRCh38.small_variants",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "output_key": {
-                  "value": "${resources_file_path}/",
-                  "test_tasks": []
+                "merged_vcf": {
+                  "value": "${resources_file_path}/bcftools_merge/output/small_variants/HG002-trio.GRCh38.small_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG003.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG004.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG003.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/structural_variants/HG004.HG002-trio.joint.GRCh38.structural_variants.phased.chr6_10000000_20000000.phased.vcf.gz.tbi"
+                ],
+                "out_prefix": "HG002-trio.GRCh38.structural_variants",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_vcf": {
+                  "value": "${resources_file_path}/bcftools_merge/output/structural_variants/HG002-trio.GRCh38.structural_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz",
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG002.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG003.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz.tbi",
+                  "${resources_file_path}/bcftools_merge/input/trgt/HG004.GRCh38.trgt.sorted.phased.chr6_10000000_20000000.phased.vcf.gz.tbi"
+                ],
+                "out_prefix": "HG002-trio.GRCh38.trgt",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "merged_vcf": {
+                  "value": "${resources_file_path}/bcftools_merge/output/trgt/HG002-trio.GRCh38.trgt.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
                 }
               }
             }
