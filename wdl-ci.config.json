@@ -194,7 +194,7 @@
       "tasks": {
         "glnexus": {
           "key": "glnexus",
-          "digest": "",
+          "digest": "3qe7sprlc7n62p6ozbxkva2xkkn4snlq",
           "tests": [
             {
               "inputs": {
@@ -234,7 +234,7 @@
       "tasks": {
         "hificnv": {
           "key": "hificnv",
-          "digest": "",
+          "digest": "kswxkn6zzlkuucuumxqbiaq5cx2sdiki",
           "tests": [
             {
               "inputs": {
@@ -243,7 +243,7 @@
                 "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
                 "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
                 "vcf": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",
-                "vcf_index": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",              
+                "vcf_index": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
