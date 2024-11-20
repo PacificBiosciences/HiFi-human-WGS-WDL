@@ -591,13 +591,13 @@
       "tasks": {
         "paraphase": {
           "key": "paraphase",
-          "digest": "",
+          "digest": "bxbomtn5ohxnrus7l4rxkbda5xpgrgag",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG002",
                 "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.paraphase_regions.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.paraphase_regions.bam.bai",              
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.paraphase_regions.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "runtime_attributes": "${default_runtime_attributes}"
@@ -763,7 +763,7 @@
       "tasks": {
         "pbstarphase_diplotype": {
           "key": "pbstarphase_diplotype",
-          "digest": "",
+          "digest": "q4p6pxx4sxdrghgrb2eirppmxayc5tuf",
           "tests": [
             {
               "inputs": {
@@ -919,7 +919,7 @@
       "tasks": {
         "samtools_merge": {
           "key": "samtools_merge",
-          "digest": "",
+          "digest": "lmc2sfyir2g2cile2vwmaatp46vzddbs",
           "tests": [
             {
               "inputs": {
@@ -1004,14 +1004,22 @@
         },
         "consolidate_stats": {
           "key": "consolidate_stats",
-          "digest": "",
+          "digest": "3w2ttlxevhy2vkao2q2tj7c6n5qilxni",
           "tests": [
             {
               "inputs": {
                 "id": "String",
                 "stats": {
-                  "letters": ["a", "b", "c"],
-                  "numbers": ["1", "2", "3"]
+                  "letters": [
+                    "a",
+                    "b",
+                    "c"
+                  ],
+                  "numbers": [
+                    "1",
+                    "2",
+                    "3"
+                  ]
                 },
                 "runtime_attributes": "${default_runtime_attributes}"
               },
