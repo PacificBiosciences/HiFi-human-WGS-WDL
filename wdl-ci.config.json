@@ -2118,17 +2118,109 @@
         "pharmcat_preprocess": {
           "key": "pharmcat_preprocess",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcf": "${resources_file_path}/pharmcat_preprocess/input/HG002.GRCh38.subset.small_variants.vcf.gz",
+                "vcf_index": "${resources_file_path}/pharmcat_preprocess/input/HG002.GRCh38.subset.small_variants.vcf.gz.tbi",
+                "ref_fasta": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+                "ref_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+                "pharmcat_positions": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz",
+                "pharmcat_positions_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz.csi",
+                "pharmcat_docker": "pgkb/pharmcat:2.15.4",              
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "preprocessed_vcf": {
+                  "value": "${resources_file_path}/pharmcat_preprocess/output/HG002.GRCh38.subset.small_variants.missing_pgx_var.vcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                },
+                "missing_pgx_vcf": {
+                  "value": "${resources_file_path}/pharmcat_preprocess/output/HG002.GRCh38.subset.small_variants.preprocessed.vcf.bgz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "filter_preprocessed_vcf": {
           "key": "filter_preprocessed_vcf",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "preprocessed_vcf": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.small_variants.preprocessed.vcf.bgz",
+                "haplotagged_bam": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.bam",
+                "haplotagged_bam_index": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.bam.bai",              
+                "ref_index": "${ref_index}",
+                "min_coverage": 10,
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "filtered_vcf": {
+                  "value": "${resources_file_path}/filter_preprocessed_vcf/output/HG002.GRCh38.subset.small_variants.preprocessed.filtered.vcf",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "run_pharmcat": {
           "key": "run_pharmcat",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "preprocessed_filtered_vcf": "${resources_file_path}/run_pharmcat/input/HG002.GRCh38.subset.small_variants.preprocessed.filtered.vcf",
+                "input_tsvs": [
+                  "${resources_file_path}/run_pharmcat/input/HG002.pharmcat.tsv"
+                ],
+                "pharmcat_docker": "pgkb/pharmcat:2.15.4",
+                "out_prefix": "HG002.pharmcat",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pharmcat_match_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/HG002.pharmcat.match.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "pharmcat_phenotype_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/HG002.pharmcat.phenotype.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "pharmcat_report_html": {
+                  "value": "${resources_file_path}/run_pharmcat/output/HG002.pharmcat.report.html",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_html"
+                  ]
+                },
+                "pharmcat_report_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/HG002.pharmcat.report.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     }
