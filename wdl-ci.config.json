@@ -72,27 +72,112 @@
         "bcftools_stats_roh_small_variants": {
           "key": "bcftools_stats_roh_small_variants",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_key": {
+                  "value": "${resources_file_path}/",
+                  "test_tasks": []
+                }
+              }
+            }
+          ]
         },
         "concat_pbsv_vcf": {
           "key": "concat_pbsv_vcf",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "vcfs": [
+                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz",
+                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz"
+                ],
+                "vcf_indices": [
+                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr5.pbsv.vcf.gz.tbi",
+                  "${resources_file_path}//concat_pbsv_vcf/input/HG005.GRCh38.chr6.pbsv.vcf.gz.tbi"
+                ],
+                "out_prefix": "HG005.GRCh38.structural_variants",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "concatenated_vcf": {
+                  "value": "${resources_file_path}/concat_pbsv_vcf/output/HG005.GRCh38.structural_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                }
+              }
+            }
+          ]
         },
         "split_vcf_by_sample": {
           "key": "split_vcf_by_sample",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_key": {
+                  "value": "${resources_file_path}/",
+                  "test_tasks": []
+                }
+              }
+            }
+          ]
         },
         "bcftools_merge": {
           "key": "bcftools_merge",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_key": {
+                  "value": "${resources_file_path}/",
+                  "test_tasks": []
+                }
+              }
+            }
+          ]
         },
         "sv_stats": {
           "key": "sv_stats",
           "digest": "",
-          "tests": []
+          "tests": [
+            {
+              "inputs": {
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "output_key": {
+                  "value": "${resources_file_path}/",
+                  "test_tasks": []
+                }
+              }
+            }
+          ]
         }
       }
     },
