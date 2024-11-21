@@ -37,14 +37,14 @@
       "tasks": {
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "",
+          "digest": "nz7zrdaatasxka5rziksdmc2oq4tr23z",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz",
                 "vcf_index": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz.tbi",
                 "pedigree": "${resources_file_path}/slivar_small_variant/input/HG002-trio.ped",
-                "phrank_lookup": "${resources_file_path}/slivar_small_variant/input/HG002-trio_phrank.tsv",              
+                "phrank_lookup": "${resources_file_path}/slivar_small_variant/input/HG002-trio_phrank.tsv",
                 "reference": "${ref_fasta}",
                 "reference_index": "${ref_index}",
                 "gff": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
@@ -75,7 +75,7 @@
                   "colors_nhomalt",
                   "colors_ac"
                 ],
-                "min_gq": "5",              
+                "min_gq": "5",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -117,7 +117,7 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "",
+          "digest": "lljobpfqb23lu2zablgfstcozrrny5xt",
           "tests": [
             {
               "inputs": {
@@ -132,7 +132,6 @@
                   "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/CoLoRSdb.GRCh38.v1.1.0.pbsv.jasmine.vcf.gz.tbi"
                 ],
                 "gff": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/ensembl.GRCh38.101.reformatted.gff3.gz",
-              
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -150,7 +149,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "",
+          "digest": "nyawjsg47zrbjodngljbicaww2mqsspc",
           "tests": [
             {
               "inputs": {
@@ -158,7 +157,7 @@
                 "pedigree": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.ped",
                 "lof_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/lof_lookup.v2.1.1.txt",
                 "clinvar_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/clinvar_gene_desc.20240624T165443.txt",
-                "phrank_lookup": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio_phrank.tsv",              
+                "phrank_lookup": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio_phrank.tsv",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -2068,7 +2067,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "",
+          "digest": "54kvpa3bz3cciywbjcwtjyb5k4ifpzhc",
           "tests": [
             {
               "inputs": {
@@ -2108,7 +2107,7 @@
         },
         "deepvariant_call_variants_cpu": {
           "key": "deepvariant_call_variants_cpu",
-          "digest": "",
+          "digest": "vapflxnbarkmdemttze7e6f4svrtkpmw",
           "tests": [
             {
               "inputs": {
@@ -2142,7 +2141,7 @@
         },
         "deepvariant_call_variants_gpu": {
           "key": "deepvariant_call_variants_gpu",
-          "digest": "",
+          "digest": "4tcavedqaa6xpqet6ip4f5jxvrucjdcg",
           "tests": [
             {
               "inputs": {
@@ -2176,7 +2175,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "",
+          "digest": "xrdc7ay2sjrniggltopieawihwkunoil",
           "tests": [
             {
               "inputs": {
@@ -2241,7 +2240,7 @@
       "tasks": {
         "pharmcat_preprocess": {
           "key": "pharmcat_preprocess",
-          "digest": "",
+          "digest": "2cfpsi2cznnpivx2ehkthn22rv7hkvdr",
           "tests": [
             {
               "inputs": {
@@ -2251,7 +2250,7 @@
                 "ref_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
                 "pharmcat_positions": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz",
                 "pharmcat_positions_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz.csi",
-                "pharmcat_docker": "pgkb/pharmcat:2.15.4",              
+                "pharmcat_docker": "pgkb/pharmcat:2.15.4",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -2275,13 +2274,13 @@
         },
         "filter_preprocessed_vcf": {
           "key": "filter_preprocessed_vcf",
-          "digest": "",
+          "digest": "63mmofid6b46ugrq6hhmlpdc6htd767o",
           "tests": [
             {
               "inputs": {
                 "preprocessed_vcf": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.small_variants.preprocessed.vcf.bgz",
                 "haplotagged_bam": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.bam",
-                "haplotagged_bam_index": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.bam.bai",              
+                "haplotagged_bam_index": "${resources_file_path}/filter_preprocessed_vcf/input/HG002.GRCh38.subset.bam.bai",
                 "ref_index": "${ref_index}",
                 "min_coverage": 10,
                 "runtime_attributes": "${default_runtime_attributes}"
@@ -2300,7 +2299,7 @@
         },
         "run_pharmcat": {
           "key": "run_pharmcat",
-          "digest": "",
+          "digest": "bpvbkvx6hsvzy7a3mymzjrwqvgxdrmj7",
           "tests": [
             {
               "inputs": {
