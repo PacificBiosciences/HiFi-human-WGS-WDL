@@ -244,15 +244,15 @@ workflow humanwgs_singleton {
     String stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # cpg_pileup outputs
-    File   cpg_combined_bed        = downstream.cpg_combined_bed
-    File   cpg_combined_bed_index  = downstream.cpg_combined_bed_index
-    File   cpg_hap1_bed            = downstream.cpg_hap1_bed
-    File   cpg_hap1_bed_index      = downstream.cpg_hap1_bed_index
-    File   cpg_hap2_bed            = downstream.cpg_hap2_bed
-    File   cpg_hap2_bed_index      = downstream.cpg_hap2_bed_index
-    File   cpg_combined_bw         = downstream.cpg_combined_bw
-    File   cpg_hap1_bw             = downstream.cpg_hap1_bw
-    File   cpg_hap2_bw             = downstream.cpg_hap2_bw
+    File?   cpg_combined_bed        = downstream.cpg_combined_bed
+    File?   cpg_combined_bed_index  = downstream.cpg_combined_bed_index
+    File?   cpg_hap1_bed            = downstream.cpg_hap1_bed
+    File?   cpg_hap1_bed_index      = downstream.cpg_hap1_bed_index
+    File?   cpg_hap2_bed            = downstream.cpg_hap2_bed
+    File?   cpg_hap2_bed_index      = downstream.cpg_hap2_bed_index
+    File?   cpg_combined_bw         = downstream.cpg_combined_bw
+    File?   cpg_hap1_bw             = downstream.cpg_hap1_bw
+    File?   cpg_hap2_bw             = downstream.cpg_hap2_bw
     String stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
     String stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
     String stat_cpg_combined_count = downstream.stat_combined_cpg_count
