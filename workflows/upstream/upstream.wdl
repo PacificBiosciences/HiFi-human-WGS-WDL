@@ -219,7 +219,7 @@ workflow upstream {
     # bam stats
     File   read_length_and_quality  = merge_bam_stats.read_length_and_quality
     File   read_length_plot         = merge_bam_stats.read_length_plot
-    File   read_quality_plot        = merge_bam_stats.read_quality_plot
+    File?  read_quality_plot        = merge_bam_stats.read_quality_plot
     String stat_num_reads           = merge_bam_stats.stat_num_reads
     String stat_read_length_mean    = merge_bam_stats.stat_read_length_mean
     String stat_read_length_median  = merge_bam_stats.stat_read_length_median

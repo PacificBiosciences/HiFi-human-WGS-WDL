@@ -273,7 +273,7 @@ workflow humanwgs_family {
     # bam stats
     Array[File] bam_stats                  = upstream.read_length_and_quality
     Array[File] read_length_plot           = upstream.read_length_plot
-    Array[File] read_quality_plot          = upstream.read_quality_plot
+    Array[File?] read_quality_plot         = upstream.read_quality_plot
     Array[String] stat_num_reads           = upstream.stat_num_reads
     Array[String] stat_read_length_mean    = upstream.stat_read_length_mean
     Array[String] stat_read_length_median  = upstream.stat_read_length_median

@@ -213,7 +213,7 @@ workflow humanwgs_singleton {
     # bam stats
     File   bam_stats                = upstream.read_length_and_quality
     File   read_length_plot         = upstream.read_length_plot
-    File   read_quality_plot        = upstream.read_quality_plot
+    File?  read_quality_plot        = upstream.read_quality_plot
     String stat_num_reads           = upstream.stat_num_reads
     String stat_read_length_mean    = upstream.stat_read_length_mean
     String stat_read_length_median  = upstream.stat_read_length_median

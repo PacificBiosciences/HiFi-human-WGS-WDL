@@ -84,7 +84,7 @@ flowchart TD
 | File | stats_file | Table of summary statistics |  |
 | File | bam_stats | BAM stats | Per-read length and read-quality |
 | File | read_length_plot | Read length plot |  |
-| File | read_quality_plot | Read quality plot |  |
+| File? | read_quality_plot | Read quality plot |  |
 | File | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
 | File | merged_haplotagged_bam_index |  |  |
 | File | mosdepth_summary | Summary of aligned read depth. |  |

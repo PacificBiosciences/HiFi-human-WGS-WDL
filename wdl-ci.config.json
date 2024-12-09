@@ -1382,6 +1382,34 @@
                   ]
                 }
               }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "bam": "${resources_file_path}/inputs/vega_10k.no_rq.hifi_reads.bam",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "bam_stats": {
+                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                }
+              }
             }
           ]
         }

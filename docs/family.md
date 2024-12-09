@@ -119,7 +119,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | File | stats_file | Table of summary statistics |  |
 | Array\[File\] | bam_stats | BAM stats | Per-read length and read-quality |
 | Array\[File\] | read_length_plot | Read length plot |  |
-| Array\[File\] | read_quality_plot | Read quality plot |  |
+| Array\[File?\] | read_quality_plot | Read quality plot |  |
 | Array\[File\] | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
 | Array\[File\] | merged_haplotagged_bam_index |  |  |
 | Array\[File\] | mosdepth_summary | Summary of aligned read depth. |  |
