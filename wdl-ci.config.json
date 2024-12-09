@@ -665,6 +665,36 @@
                   ]
                 }
               }
+            },
+            {
+              "inputs": {
+                "haplotagged_bam": "${resources_file_path}/inputs/NA19238.GRCh38.chr6_10000000_20000000.haplotagged.bam",
+                "haplotagged_bam_index": "${resources_file_path}/inputs/NA19238.GRCh38.chr6_10000000_20000000.haplotagged.bam.bai",
+                "out_prefix": "NA19238.GRCh38",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "stat_hap1_cpg_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_hap2_cpg_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_combined_cpg_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
             }
           ]
         }

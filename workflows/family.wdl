@@ -304,15 +304,15 @@ workflow humanwgs_family {
     Array[String] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # cpg_pileup outputs
-    Array[File] cpg_combined_bed          = downstream.cpg_combined_bed
-    Array[File] cpg_combined_bed_index    = downstream.cpg_combined_bed_index
-    Array[File] cpg_hap1_bed              = downstream.cpg_hap1_bed
-    Array[File] cpg_hap1_bed_index        = downstream.cpg_hap1_bed_index
-    Array[File] cpg_hap2_bed              = downstream.cpg_hap2_bed
-    Array[File] cpg_hap2_bed_index        = downstream.cpg_hap2_bed_index
-    Array[File] cpg_combined_bw           = downstream.cpg_combined_bw
-    Array[File] cpg_hap1_bw               = downstream.cpg_hap1_bw
-    Array[File] cpg_hap2_bw               = downstream.cpg_hap2_bw
+    Array[File?] cpg_combined_bed          = downstream.cpg_combined_bed
+    Array[File?] cpg_combined_bed_index    = downstream.cpg_combined_bed_index
+    Array[File?] cpg_hap1_bed              = downstream.cpg_hap1_bed
+    Array[File?] cpg_hap1_bed_index        = downstream.cpg_hap1_bed_index
+    Array[File?] cpg_hap2_bed              = downstream.cpg_hap2_bed
+    Array[File?] cpg_hap2_bed_index        = downstream.cpg_hap2_bed_index
+    Array[File?] cpg_combined_bw           = downstream.cpg_combined_bw
+    Array[File?] cpg_hap1_bw               = downstream.cpg_hap1_bw
+    Array[File?] cpg_hap2_bw               = downstream.cpg_hap2_bw
     Array[String] stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
     Array[String] stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
     Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
