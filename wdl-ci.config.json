@@ -586,7 +586,7 @@
       "tasks": {
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "noq7e5yf5h6s2sf7lzolbgigqec4izmg",
+          "digest": "km7kr546iovkhccy3yb2ovvvdmmnmet7",
           "tests": [
             {
               "inputs": {
