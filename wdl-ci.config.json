@@ -964,7 +964,7 @@
       "tasks": {
         "merge_bam_stats": {
           "key": "merge_bam_stats",
-          "digest": "k2zoxoqmson4rr7meogbb675w3bnj2gt",
+          "digest": "fgbffrsqd32kov6i43cidmt2u5lgvn7g",
           "tests": [
             {
               "inputs": {
@@ -1268,7 +1268,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "r2mrlrcc34hmpeetxabc7ujwfb2zzykq",
+          "digest": "jnyotwps3swl7ulnqunr5ktstoxdbvs3",
           "tests": [
             {
               "inputs": {
