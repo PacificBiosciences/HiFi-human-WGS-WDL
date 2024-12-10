@@ -202,11 +202,12 @@ workflow downstream {
     File   indel_distribution_plot = bcftools_stats_roh_small_variants.indel_distribution_plot
 
     # sv stats
-    String stat_sv_DUP_count = sv_stats.stat_sv_DUP_count
-    String stat_sv_DEL_count = sv_stats.stat_sv_DEL_count
-    String stat_sv_INS_count = sv_stats.stat_sv_INS_count
-    String stat_sv_INV_count = sv_stats.stat_sv_INV_count
-    String stat_sv_BND_count = sv_stats.stat_sv_BND_count
+    String stat_sv_DUP_count    = sv_stats.stat_sv_DUP_count
+    String stat_sv_DEL_count    = sv_stats.stat_sv_DEL_count
+    String stat_sv_INS_count    = sv_stats.stat_sv_INS_count
+    String stat_sv_INV_count    = sv_stats.stat_sv_INV_count
+    String stat_sv_INVBND_count = sv_stats.stat_sv_INVBND_count
+    String stat_sv_BND_count    = sv_stats.stat_sv_BND_count
 
     # cpg_pileup outputs
     File?  cpg_combined_bed        = cpg_pileup.combined_bed

@@ -535,11 +535,11 @@
         },
         "sv_stats": {
           "key": "sv_stats",
-          "digest": "sq4w257wawiwfuuquazhhuzlhdyiiwg3",
+          "digest": "foqixa2ryrx7e64ymqylurlfad7gpdpi",
           "tests": [
             {
               "inputs": {
-                "vcf": "${resources_file_path}/sv_stats/pbsv/HG002.GRCh38.pbsv.phased.vcf.gz",
+                "vcf": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.vcf.gz",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -550,13 +550,13 @@
                   ]
                 },
                 "stat_sv_DEL_count": {
-                  "value": "19",
+                  "value": "17",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
                 "stat_sv_INS_count": {
-                  "value": "37",
+                  "value": "46",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -568,7 +568,13 @@
                   ]
                 },
                 "stat_sv_BND_count": {
-                  "value": "0",
+                  "value": "2",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_INVBND_count": {
+                  "value": "4",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -1515,120 +1521,6 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/pbsv.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/pbsv.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pbsv_discover": {
-          "key": "pbsv_discover",
-          "digest": "whyivzym5tmmbwnlrne6l26w6rj3pyzj",
-          "tests": [
-            {
-              "inputs": {
-                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
-                "trf_bed": "${datasets_file_path}/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "svsig": {
-                  "value": "${resources_file_path}/pbsv_discover/HG002.GRCh38.chr6_10000000_20000000.svsig.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_gzip",
-                    "check_empty_lines"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "pbsv_call": {
-          "key": "pbsv_call",
-          "digest": "whqgkxlukuxpojvpg6tz6rzqxmtw3lcd",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "svsigs": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.svsig.gz"
-                ],
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "shard_index": 5,
-                "regions": [
-                  "chr6"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "vcf": {
-                  "value": "${resources_file_path}/pbsv_call/singleton/HG002.GRCh38.5.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "svsigs": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.svsig.gz"
-                ],
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "vcf": {
-                  "value": "${resources_file_path}/pbsv_call/singleton_no_shard/HG002.GRCh38.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002-trio",
-                "svsigs": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.svsig.gz",
-                  "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.svsig.gz",
-                  "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.svsig.gz"
-                ],
-                "sample_count": 3,
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "shard_index": 5,
-                "regions": [
-                  "chr6"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "vcf": {
-                  "value": "${resources_file_path}/pbsv_call/trio/HG002-trio.GRCh38.5.pbsv.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/wdl-common/wdl/tasks/samtools.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/samtools.wdl",
       "name": "",
@@ -2495,6 +2387,163 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "check_json"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "workflows/wdl-common/wdl/tasks/sawfish.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/sawfish.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "sawfish_discover": {
+          "key": "sawfish_discover",
+          "digest": "eh67skuq3swjgkbrinqhzfxf2wfea2hp",
+          "tests": [
+            {
+              "inputs": {
+                "sex": "MALE",
+                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "discover_tar": {
+                  "value": "${resources_file_path}/sawfish_discover/output/HG002/HG002.GRCh38.tar",
+                  "test_tasks": [
+                    "compare_file_basename"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sex": "MALE",
+                "aligned_bam": "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam.bai",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
+                "out_prefix": "HG003.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "discover_tar": {
+                  "value": "${resources_file_path}/sawfish_discover/output/HG003/HG003.GRCh38.tar",
+                  "test_tasks": [
+                    "compare_file_basename"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam.bai",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
+                "out_prefix": "HG004.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "discover_tar": {
+                  "value": "${resources_file_path}/sawfish_discover/output/HG004/HG004.GRCh38.tar",
+                  "test_tasks": [
+                    "compare_file_basename"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "sawfish_call": {
+          "key": "sawfish_call",
+          "digest": "gcc2gfurgryq2ziqgyfgxc5a2k3dtkyo",
+          "tests": [
+            {
+              "inputs": {
+                "discover_tars": [
+                  "${resources_file_path}/sawfish_call/input/HG002.GRCh38.tar"
+                ],
+                "aligned_bams": [
+                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam"
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai"
+                ],
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "out_prefix": "HG002.GRCh38.structural_variants",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
+                },
+                "supporting_reads": {
+                  "value": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.supporting_reads.json.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "discover_tars": [
+                  "${resources_file_path}/sawfish_call/input/HG002.GRCh38.tar",
+                  "${resources_file_path}/sawfish_call/input/HG003.GRCh38.tar",
+                  "${resources_file_path}/sawfish_call/input/HG004.GRCh38.tar"
+                ],
+                "aligned_bams": [
+                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
+                  "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam",
+                  "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam"
+                ],
+                "aligned_bam_indices": [
+                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
+                  "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam.bai",
+                  "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam.bai"
+                ],
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "out_prefix": "HG002-trio.joint.GRCh38.structural_variants",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip",
+                    "vcftools_validator"
+                  ]
+                },
+                "supporting_reads": {
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio/HG002-trio.joint.GRCh38.structural_variants.supporting_reads.json.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_gzip"
                   ]
                 }
               }

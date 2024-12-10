@@ -45,9 +45,6 @@ workflow humanwgs_family {
     glnexus_mem_gb: {
       name: "Override GLnexus memory request (GB)"
     }
-    pbsv_call_mem_gb: {
-      name: "Override PBSV call memory request (GB)"
-    }
     gpu: {
       name: "Use GPU when possible"
     }
@@ -90,7 +87,6 @@ workflow humanwgs_family {
     File? tertiary_map_file
 
     Int? glnexus_mem_gb
-    Int? pbsv_call_mem_gb
 
     Boolean gpu = false
 
@@ -140,12 +136,13 @@ workflow humanwgs_family {
       input:
         family_id                  = family.family_id,
         sample_ids                 = sample_id,
-        gvcfs                      = upstream.small_variant_gvcf,
-        gvcf_indices               = upstream.small_variant_gvcf_index,
-        svsigs                     = flatten(upstream.svsigs),
+        gvcfs                      = upstream.small_variant_vcf,
+        gvcf_indices               = upstream.small_variant_vcf_index,
+        discover_tars              = upstream.discover_tar,
+        aligned_bams               = upstream.out_bam,
+        aligned_bam_indices        = upstream.out_bam_index,
         ref_map_file               = ref_map_file,
         glnexus_mem_gb             = glnexus_mem_gb,
-        pbsv_call_mem_gb           = pbsv_call_mem_gb,
         default_runtime_attributes = default_runtime_attributes
     }
   }
@@ -193,6 +190,7 @@ workflow humanwgs_family {
     'sv_DEL_count': downstream.stat_sv_DEL_count,
     'sv_INS_count': downstream.stat_sv_INS_count,
     'sv_INV_count': downstream.stat_sv_INV_count,
+    'sv_INVBND_count': downstream.stat_sv_INVBND_count,
     'sv_BND_count': downstream.stat_sv_BND_count,
     'cnv_DUP_count': upstream.stat_cnv_DUP_count,
     'cnv_DEL_count': upstream.stat_cnv_DEL_count,
@@ -322,11 +320,12 @@ workflow humanwgs_family {
     Array[File] phased_sv_vcf_index = downstream.phased_sv_vcf_index
 
     # sv stats
-    Array[String] stat_sv_DUP_count = downstream.stat_sv_DUP_count
-    Array[String] stat_sv_DEL_count = downstream.stat_sv_DEL_count
-    Array[String] stat_sv_INS_count = downstream.stat_sv_INS_count
-    Array[String] stat_sv_INV_count = downstream.stat_sv_INV_count
-    Array[String] stat_sv_BND_count = downstream.stat_sv_BND_count
+    Array[String] stat_sv_DUP_count    = downstream.stat_sv_DUP_count
+    Array[String] stat_sv_DEL_count    = downstream.stat_sv_DEL_count
+    Array[String] stat_sv_INS_count    = downstream.stat_sv_INS_count
+    Array[String] stat_sv_INV_count    = downstream.stat_sv_INV_count
+    Array[String] stat_sv_INVBND_count = downstream.stat_sv_INVBND_count
+    Array[String] stat_sv_BND_count    = downstream.stat_sv_BND_count
 
     # small variant outputs
     Array[File] phased_small_variant_vcf       = downstream.phased_small_variant_vcf
@@ -400,6 +399,6 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.0.0-alpha1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }

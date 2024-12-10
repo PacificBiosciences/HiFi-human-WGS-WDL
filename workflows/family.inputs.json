@@ -22,7 +22,6 @@
   "humanwgs_family.pharmcat_min_coverage": "Int (optional, default = 10)",
   "humanwgs_family.tertiary_map_file": "File? (optional)",
   "humanwgs_family.glnexus_mem_gb": "Int? (optional)",
-  "humanwgs_family.pbsv_call_mem_gb": "Int? (optional)",
   "humanwgs_family.gpu": "Boolean (optional, default = false)",
   "humanwgs_family.backend": "String",
   "humanwgs_family.zones": "String? (optional)",
