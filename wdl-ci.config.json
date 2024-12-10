@@ -1098,6 +1098,64 @@
                   ]
                 }
               }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "bam_stats": [
+                  "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz"
+                ],
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "read_length_and_quality": {
+                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_and_quality.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                },
+                "read_length_plot": {
+                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_histogram.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "stat_num_reads": {
+                  "value": "10000",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_length_mean": {
+                  "value": "21837.4",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_length_median": {
+                  "value": "21385.0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_quality_mean": {
+                  "value": "nan",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_quality_median": {
+                  "value": "nan",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
             }
           ]
         }
