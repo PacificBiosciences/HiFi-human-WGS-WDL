@@ -586,7 +586,7 @@
       "tasks": {
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "noq7e5yf5h6s2sf7lzolbgigqec4izmg",
+          "digest": "km7kr546iovkhccy3yb2ovvvdmmnmet7",
           "tests": [
             {
               "inputs": {
@@ -660,6 +660,36 @@
                 },
                 "stat_combined_cpg_count": {
                   "value": "106430",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "haplotagged_bam": "${resources_file_path}/inputs/NA19238.GRCh38.chr6_10000000_20000000.haplotagged.bam",
+                "haplotagged_bam_index": "${resources_file_path}/inputs/NA19238.GRCh38.chr6_10000000_20000000.haplotagged.bam.bai",
+                "out_prefix": "NA19238.GRCh38",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "stat_hap1_cpg_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_hap2_cpg_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_combined_cpg_count": {
+                  "value": "0",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -934,7 +964,7 @@
       "tasks": {
         "merge_bam_stats": {
           "key": "merge_bam_stats",
-          "digest": "k2zoxoqmson4rr7meogbb675w3bnj2gt",
+          "digest": "mjd6zpbxtabbulmq3kwhcx4cnubxaf74",
           "tests": [
             {
               "inputs": {
@@ -1063,6 +1093,64 @@
                 },
                 "stat_read_quality_median": {
                   "value": "29.0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "bam_stats": [
+                  "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz"
+                ],
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "read_length_and_quality": {
+                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_and_quality.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                },
+                "read_length_plot": {
+                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_histogram.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "stat_num_reads": {
+                  "value": "10000",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_length_mean": {
+                  "value": "21837.4",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_length_median": {
+                  "value": "21385.0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_quality_mean": {
+                  "value": "nan",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_quality_median": {
+                  "value": "nan",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -1238,7 +1326,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "r2mrlrcc34hmpeetxabc7ujwfb2zzykq",
+          "digest": "jnyotwps3swl7ulnqunr5ktstoxdbvs3",
           "tests": [
             {
               "inputs": {
@@ -1344,6 +1432,34 @@
                 },
                 "bam_stats": {
                   "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.read_length_and_quality.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "bam": "${resources_file_path}/inputs/vega_10k.no_rq.hifi_reads.bam",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                },
+                "bam_stats": {
+                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",

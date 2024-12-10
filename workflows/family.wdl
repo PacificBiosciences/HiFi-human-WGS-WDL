@@ -273,7 +273,7 @@ workflow humanwgs_family {
     # bam stats
     Array[File] bam_stats                  = upstream.read_length_and_quality
     Array[File] read_length_plot           = upstream.read_length_plot
-    Array[File] read_quality_plot          = upstream.read_quality_plot
+    Array[File?] read_quality_plot         = upstream.read_quality_plot
     Array[String] stat_num_reads           = upstream.stat_num_reads
     Array[String] stat_read_length_mean    = upstream.stat_read_length_mean
     Array[String] stat_read_length_median  = upstream.stat_read_length_median
@@ -304,15 +304,15 @@ workflow humanwgs_family {
     Array[String] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # cpg_pileup outputs
-    Array[File] cpg_combined_bed          = downstream.cpg_combined_bed
-    Array[File] cpg_combined_bed_index    = downstream.cpg_combined_bed_index
-    Array[File] cpg_hap1_bed              = downstream.cpg_hap1_bed
-    Array[File] cpg_hap1_bed_index        = downstream.cpg_hap1_bed_index
-    Array[File] cpg_hap2_bed              = downstream.cpg_hap2_bed
-    Array[File] cpg_hap2_bed_index        = downstream.cpg_hap2_bed_index
-    Array[File] cpg_combined_bw           = downstream.cpg_combined_bw
-    Array[File] cpg_hap1_bw               = downstream.cpg_hap1_bw
-    Array[File] cpg_hap2_bw               = downstream.cpg_hap2_bw
+    Array[File?] cpg_combined_bed          = downstream.cpg_combined_bed
+    Array[File?] cpg_combined_bed_index    = downstream.cpg_combined_bed_index
+    Array[File?] cpg_hap1_bed              = downstream.cpg_hap1_bed
+    Array[File?] cpg_hap1_bed_index        = downstream.cpg_hap1_bed_index
+    Array[File?] cpg_hap2_bed              = downstream.cpg_hap2_bed
+    Array[File?] cpg_hap2_bed_index        = downstream.cpg_hap2_bed_index
+    Array[File?] cpg_combined_bw           = downstream.cpg_combined_bw
+    Array[File?] cpg_hap1_bw               = downstream.cpg_hap1_bw
+    Array[File?] cpg_hap2_bw               = downstream.cpg_hap2_bw
     Array[String] stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
     Array[String] stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
     Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
