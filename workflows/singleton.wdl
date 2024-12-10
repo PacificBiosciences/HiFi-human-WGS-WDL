@@ -167,6 +167,7 @@ workflow humanwgs_singleton {
     'sv_DEL_count': [downstream.stat_sv_DEL_count],
     'sv_INS_count': [downstream.stat_sv_INS_count],
     'sv_INV_count': [downstream.stat_sv_INV_count],
+    'sv_INVBND_count': [downstream.stat_sv_INVBND_count],
     'sv_BND_count': [downstream.stat_sv_BND_count],
     'cnv_DUP_count': [upstream.stat_cnv_DUP_count],
     'cnv_DEL_count': [upstream.stat_cnv_DEL_count],
@@ -262,11 +263,12 @@ workflow humanwgs_singleton {
     File phased_sv_vcf_index = downstream.phased_sv_vcf_index
 
     # sv stats
-    String stat_sv_DUP_count = downstream.stat_sv_DUP_count
-    String stat_sv_DEL_count = downstream.stat_sv_DEL_count
-    String stat_sv_INS_count = downstream.stat_sv_INS_count
-    String stat_sv_INV_count = downstream.stat_sv_INV_count
-    String stat_sv_BND_count = downstream.stat_sv_BND_count
+    String stat_sv_DUP_count    = downstream.stat_sv_DUP_count
+    String stat_sv_DEL_count    = downstream.stat_sv_DEL_count
+    String stat_sv_INS_count    = downstream.stat_sv_INS_count
+    String stat_sv_INV_count    = downstream.stat_sv_INV_count
+    String stat_sv_INVBND_count = downstream.stat_sv_INVBND_count
+    String stat_sv_BND_count    = downstream.stat_sv_BND_count
 
     # small variant outputs
     File phased_small_variant_vcf       = downstream.phased_small_variant_vcf
@@ -332,6 +334,6 @@ workflow humanwgs_singleton {
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.0.0-alpha1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
