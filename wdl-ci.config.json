@@ -535,7 +535,7 @@
         },
         "sv_stats": {
           "key": "sv_stats",
-          "digest": "35gn2cqouobao6vacrqbi67zhkh6nmyn",
+          "digest": "foqixa2ryrx7e64ymqylurlfad7gpdpi",
           "tests": [
             {
               "inputs": {
@@ -964,7 +964,7 @@
       "tasks": {
         "merge_bam_stats": {
           "key": "merge_bam_stats",
-          "digest": "fgbffrsqd32kov6i43cidmt2u5lgvn7g",
+          "digest": "mjd6zpbxtabbulmq3kwhcx4cnubxaf74",
           "tests": [
             {
               "inputs": {
@@ -1564,7 +1564,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "rpcfzfr5reqxv7jbtfncu6etivzxvgs2",
+          "digest": "6i7troewkutvnmy6oft2vkgeltp2jh3z",
           "tests": [
             {
               "inputs": {
@@ -1653,7 +1653,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "cmdcqkqrcfpn2eoczxfwhs6zqhalzdtt",
+          "digest": "ljvpgmkt7sfdwpm64dqllrphd23ols56",
           "tests": [
             {
               "inputs": {
@@ -2355,7 +2355,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "",
+          "digest": "hk7nzhhrn24zsg2m6s4ja3uwqcr7sgpa",
           "tests": [
             {
               "inputs": {
