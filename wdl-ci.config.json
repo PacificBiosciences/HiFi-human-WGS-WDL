@@ -2423,7 +2423,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "",
+          "digest": "gcc2gfurgryq2ziqgyfgxc5a2k3dtkyo",
           "tests": [
             {
               "inputs": {
