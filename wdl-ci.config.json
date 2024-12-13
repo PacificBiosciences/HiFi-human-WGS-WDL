@@ -2485,7 +2485,7 @@
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip",
