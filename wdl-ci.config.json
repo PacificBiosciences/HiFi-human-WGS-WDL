@@ -539,7 +539,7 @@
           "tests": [
             {
               "inputs": {
-                "vcf": "${resources_file_path}/sv_stats/HG002.GRCh38.pbsv.phased.vcf.gz",
+                "vcf": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.vcf.gz",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -550,13 +550,13 @@
                   ]
                 },
                 "stat_sv_DEL_count": {
-                  "value": "19",
+                  "value": "17",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
                 "stat_sv_INS_count": {
-                  "value": "37",
+                  "value": "46",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -568,7 +568,13 @@
                   ]
                 },
                 "stat_sv_BND_count": {
-                  "value": "0",
+                  "value": "2",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_sv_INVBND_count": {
+                  "value": "4",
                   "test_tasks": [
                     "compare_string"
                   ]
