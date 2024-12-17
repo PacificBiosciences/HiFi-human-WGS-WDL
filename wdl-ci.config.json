@@ -1678,7 +1678,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "rpcfzfr5reqxv7jbtfncu6etivzxvgs2",
+          "digest": "37d5grkookrgta6rwpmlrce3zkjavpmy",
           "tests": [
             {
               "inputs": {
@@ -1767,7 +1767,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "cmdcqkqrcfpn2eoczxfwhs6zqhalzdtt",
+          "digest": "ljvpgmkt7sfdwpm64dqllrphd23ols56",
           "tests": [
             {
               "inputs": {
