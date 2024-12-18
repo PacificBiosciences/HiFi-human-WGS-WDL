@@ -2415,7 +2415,7 @@
         },
         "run_pharmcat": {
           "key": "run_pharmcat",
-          "digest": "uknkltw6uwppbf5ttzrsifayz4pqplvi",
+          "digest": "",
           "tests": [
             {
               "inputs": {
@@ -2451,6 +2451,47 @@
                 },
                 "pharmcat_report_json": {
                   "value": "${resources_file_path}/run_pharmcat/output/HG002.pharmcat.report.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "preprocessed_filtered_vcf": "${resources_file_path}/run_pharmcat/input/HG002.GRCh38.subset.small_variants.preprocessed.filtered.vcf",
+                "input_tsvs": [
+                  "${resources_file_path}/run_pharmcat/input/HG002.NO_READS.pharmcat.tsv"
+                ],
+                "pharmcat_docker": "pgkb/pharmcat:2.15.4",
+                "out_prefix": "HG002.pharmcat",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "pharmcat_match_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/NO_READS/HG002.pharmcat.match.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "pharmcat_phenotype_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/NO_READS/HG002.pharmcat.phenotype.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                },
+                "pharmcat_report_html": {
+                  "value": "${resources_file_path}/run_pharmcat/output/NO_READS/HG002.pharmcat.report.html",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_html"
+                  ]
+                },
+                "pharmcat_report_json": {
+                  "value": "${resources_file_path}/run_pharmcat/output/NO_READS/HG002.pharmcat.report.json",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_json"
