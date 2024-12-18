@@ -2390,7 +2390,7 @@
         },
         "filter_preprocessed_vcf": {
           "key": "filter_preprocessed_vcf",
-          "digest": "63mmofid6b46ugrq6hhmlpdc6htd767o",
+          "digest": "4jjtxpixe6gq6p3v7lnuyxhlzottg2ib",
           "tests": [
             {
               "inputs": {
