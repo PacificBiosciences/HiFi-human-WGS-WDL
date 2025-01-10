@@ -24,25 +24,25 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.0.7):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v2.1.0):
 
   ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.7/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.0.7/hifi-human-wgs-family.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.1.0/hifi-human-wgs-singleton.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v2.1.0/hifi-human-wgs-family.zip
   ```
 
 2) Clone the repository and initialize the submodules:
 
   ```bash
   git clone \
-    --depth 1 --branch v2.0.7 \
+    --depth 1 --branch v2.1.0 \
     --recursive \
     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
   ```
 
 ## Resource requirements
 
-The most resource-heavy step in the workflow requires 64 cores and 256 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
+The most resource-heavy step in the workflow requires 64 cpu cores and 256 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
 
 On some backends, you may be able to make use of a GPU to accelerate the DeepVariant step.  The GPU is not required, but it can significantly speed up the workflow.  If you have access to a GPU, you can set the `gpu` parameter to `true` in the inputs JSON file.
 
