@@ -1801,7 +1801,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "k6fkzuz3gk4yqc555nov2io3qbeqe25h",
+          "digest": "766oizl5v2zadfp5bhmkds52ww6z75ov",
           "tests": [
             {
               "inputs": {
