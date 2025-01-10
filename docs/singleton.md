@@ -200,10 +200,10 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | File | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| File | pharmcat_match_json | PharmCAT match JSON |  |
-| File | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
-| File | pharmcat_report_html | PharmCAT report HTML |  |
-| File | pharmcat_report_json | PharmCAT report JSON |  |
+| File? | pharmcat_match_json | PharmCAT match JSON |  |
+| File? | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
+| File? | pharmcat_report_html | PharmCAT report HTML |  |
+| File? | pharmcat_report_json | PharmCAT report JSON |  |
 
 ### Tertiary Analysis
 
