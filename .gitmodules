@@ -1,6 +1,6 @@
 [submodule "workflows/wdl-common"]
 	path = workflows/wdl-common
-	url = ../wdl-common.git
+	url = https://github.com/PacificBiosciences/wdl-common.git
 [submodule "wiki"]
 	path = wiki
-	url = ../HiFi-human-WGS-WDL.wiki
+	url = https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.wiki
