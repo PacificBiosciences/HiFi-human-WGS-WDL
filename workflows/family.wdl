@@ -7,7 +7,6 @@ import "joint/joint.wdl" as Joint
 import "downstream/downstream.wdl" as Downstream
 import "wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
-import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
@@ -99,8 +98,17 @@ workflow humanwgs_family {
 
   Boolean single_sample = length(family.samples) == 1
 
+  Map[String, String] pedigree_sex = {
+    "MALE": "1",
+    "FEMALE": "2",
+    "": "."
+  }
+
   scatter (sample in family.samples) {
     String sample_id = sample.sample_id
+    Boolean is_trio_kid = defined(sample.father_id) && defined(sample.mother_id)  # !UnusedDeclaration
+    Boolean is_duo_kid = defined(sample.father_id) != defined(sample.mother_id)   # !UnusedDeclaration
+
     call Upstream.upstream {
       input:
         sample_id                    = sample.sample_id,
@@ -111,6 +119,17 @@ workflow humanwgs_family {
         gpu                          = gpu,
         default_runtime_attributes   = default_runtime_attributes
     }
+
+    # write sample metadata similar to pedigree format
+    # family_id, sample_id, father_id, mother_id, sex, affected
+    Array[String] sample_metadata = [
+      family.family_id,
+      sample.sample_id,
+      select_first([sample.father_id, "."]),
+      select_first([sample.mother_id, "."]),
+      pedigree_sex[upstream.inferred_sex],
+      if sample.affected then "2" else "1"
+    ]
   }
 
   if (!single_sample) {
@@ -217,23 +236,12 @@ workflow humanwgs_family {
   }
 
   if (defined(tertiary_map_file)) {
-    scatter (sample in family.samples) {
-      Array[File] hifi_reads = sample.hifi_reads
-    }
-
-    call Write_ped_phrank.write_ped_phrank {
-      input:
-        id                 = family.family_id,
-        family             = family,
-        phenotypes         = phenotypes,
-        disk_size          = ceil(size(flatten(hifi_reads), "GB")) + 10,
-        runtime_attributes = default_runtime_attributes
-    }
-
     call TertiaryAnalysis.tertiary_analysis {
       input:
-        pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
+        sample_metadata            = sample_metadata,
+        phenotypes                 = phenotypes,
+        is_trio_kid                = is_trio_kid,
+        is_duo_kid                 = is_duo_kid,
         small_variant_vcf          = select_first([merge_small_variant_vcfs.merged_vcf, downstream.phased_small_variant_vcf[0]]),
         small_variant_vcf_index    = select_first([merge_small_variant_vcfs.merged_vcf_index, downstream.phased_small_variant_vcf_index[0]]),
         sv_vcf                     = select_first([merge_sv_vcfs.merged_vcf, downstream.phased_sv_vcf[0]]),
@@ -367,7 +375,6 @@ workflow humanwgs_family {
     File? joint_trgt_vcf_index           = trgt_merge.merged_vcf_index
 
     # tertiary analysis outputs
-    File? pedigree                                      = write_ped_phrank.pedigree
     File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
     File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
     File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
