@@ -232,7 +232,7 @@ workflow humanwgs_family {
         vcf_indices        = downstream.phased_trgt_vcf_index,
         ref_fasta          = ref_map["fasta"],                              # !FileCoercion
         ref_index          = ref_map["fasta_index"],                        # !FileCoercion
-        out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
+        out_prefix         = "~{family.family_id}.merged.~{ref_map['name']}.trgt",
         runtime_attributes = default_runtime_attributes
     }
   }
