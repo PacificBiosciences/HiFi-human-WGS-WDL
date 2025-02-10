@@ -1280,7 +1280,7 @@
       "tasks": {
         "paraphase": {
           "key": "paraphase",
-          "digest": "bxbomtn5ohxnrus7l4rxkbda5xpgrgag",
+          "digest": "iz5imdibf3z2jszierngsa43lubsthss",
           "tests": [
             {
               "inputs": {
@@ -1678,7 +1678,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "37d5grkookrgta6rwpmlrce3zkjavpmy",
+          "digest": "h4unpn2yf3cc23yiieabdgov7bm7pyip",
           "tests": [
             {
               "inputs": {
@@ -1767,7 +1767,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "ljvpgmkt7sfdwpm64dqllrphd23ols56",
+          "digest": "yvjau74pm7ylqj2p47l2lyqyn35kozv7",
           "tests": [
             {
               "inputs": {
