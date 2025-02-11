@@ -586,7 +586,7 @@
       "tasks": {
         "cpg_pileup": {
           "key": "cpg_pileup",
-          "digest": "km7kr546iovkhccy3yb2ovvvdmmnmet7",
+          "digest": "3gzayuvi7ky5t3kaup3f4sgsoqsxnafq",
           "tests": [
             {
               "inputs": {
@@ -1280,7 +1280,7 @@
       "tasks": {
         "paraphase": {
           "key": "paraphase",
-          "digest": "bxbomtn5ohxnrus7l4rxkbda5xpgrgag",
+          "digest": "iz5imdibf3z2jszierngsa43lubsthss",
           "tests": [
             {
               "inputs": {
@@ -1480,7 +1480,7 @@
       "tasks": {
         "pbstarphase_diplotype": {
           "key": "pbstarphase_diplotype",
-          "digest": "q4p6pxx4sxdrghgrb2eirppmxayc5tuf",
+          "digest": "u5goqyzkczomtamorb2oniq6altzayha",
           "tests": [
             {
               "inputs": {
@@ -1678,7 +1678,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "37d5grkookrgta6rwpmlrce3zkjavpmy",
+          "digest": "h4unpn2yf3cc23yiieabdgov7bm7pyip",
           "tests": [
             {
               "inputs": {
@@ -1767,7 +1767,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "ljvpgmkt7sfdwpm64dqllrphd23ols56",
+          "digest": "yvjau74pm7ylqj2p47l2lyqyn35kozv7",
           "tests": [
             {
               "inputs": {
@@ -1801,7 +1801,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "766oizl5v2zadfp5bhmkds52ww6z75ov",
+          "digest": "wkgohijal32smgigy7olmcrdxpmibpwt",
           "tests": [
             {
               "inputs": {

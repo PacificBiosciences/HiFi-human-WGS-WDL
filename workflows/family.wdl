@@ -232,7 +232,7 @@ workflow humanwgs_family {
         vcf_indices        = downstream.phased_trgt_vcf_index,
         ref_fasta          = ref_map["fasta"],                              # !FileCoercion
         ref_index          = ref_map["fasta_index"],                        # !FileCoercion
-        out_prefix         = "~{family.family_id}.~{ref_map['name']}.trgt",
+        out_prefix         = "~{family.family_id}.merged.~{ref_map['name']}.trgt",
         runtime_attributes = default_runtime_attributes
     }
   }
@@ -400,6 +400,6 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.0.7" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v2.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
