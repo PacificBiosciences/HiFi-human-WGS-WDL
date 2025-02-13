@@ -2075,7 +2075,7 @@
       "tasks": {
         "deepvariant_make_examples": {
           "key": "deepvariant_make_examples",
-          "digest": "",
+          "digest": "kenkd6hpkprqjxzrr67ws7jsyflofniu",
           "tests": [
             {
               "inputs": {
@@ -2115,7 +2115,7 @@
         },
         "deepvariant_call_variants_cpu": {
           "key": "deepvariant_call_variants_cpu",
-          "digest": "",
+          "digest": "7atkl2o6dbmjxf7uxae2bjnfnt4lwan4",
           "tests": [
             {
               "inputs": {
@@ -2149,7 +2149,7 @@
         },
         "deepvariant_call_variants_gpu": {
           "key": "deepvariant_call_variants_gpu",
-          "digest": "",
+          "digest": "nsrzbzbmry52xlmgtq3nokymfcynkesh",
           "tests": [
             {
               "inputs": {
@@ -2183,7 +2183,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "",
+          "digest": "nx7xlzdxdgso2oviegbruwywwd7cjdgl",
           "tests": [
             {
               "inputs": {
