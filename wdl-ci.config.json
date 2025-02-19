@@ -121,7 +121,7 @@
           "tests": [
             {
               "inputs": {
-                "sv_vcf": "${resources_file_path}/svpack_filter_annotated/input/HG002-trio.GRCh38.structural_variants.vcf.gz",
+                "sv_vcf": "${resources_file_path}/svpack_filter_annotated/input/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.vcf.gz",
                 "pedigree": "${resources_file_path}/svpack_filter_annotated/input/HG002-trio.ped",
                 "population_vcfs": [
                   "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/gnomad.v4.1.sv.sites.pass.vcf.gz",
@@ -136,7 +136,7 @@
               },
               "output_tests": {
                 "svpack_vcf": {
-                  "value": "${resources_file_path}/svpack_filter_annotated/output/HG002-trio.GRCh38.structural_variants.svpack.vcf.gz",
+                  "value": "${resources_file_path}/svpack_filter_annotated/output/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.svpack.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -153,7 +153,7 @@
           "tests": [
             {
               "inputs": {
-                "filtered_vcf": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.GRCh38.structural_variants.svpack.vcf.gz",
+                "filtered_vcf": "${resources_file_path}/slivar_svpack_tsv/input/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.svpack.vcf.gz",
                 "pedigree": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.ped",
                 "lof_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/lof_lookup.v2.1.1.txt",
                 "clinvar_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/clinvar_gene_desc.20240624T165443.txt",
@@ -162,7 +162,7 @@
               },
               "output_tests": {
                 "svpack_tsv": {
-                  "value": "${resources_file_path}/slivar_svpack_tsv/output/HG002-trio.GRCh38.structural_variants.svpack.tsv",
+                  "value": "${resources_file_path}/slivar_svpack_tsv/output/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.svpack.tsv",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
