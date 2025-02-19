@@ -580,8 +580,6 @@ task slivar_svpack_tsv {
   Array[String] info_fields = [
     'SVTYPE',
     'SVLEN',
-    'SVANN',
-    'CIPOS',
     'MATEID',
     'END'
   ]
