@@ -30,12 +30,6 @@ workflow upstream {
     ref_map_file: {
       name: "TSV containing reference genome information"
     }
-    deepvariant_version: {
-      name: "DeepVariant version"
-    }
-    custom_deepvariant_model_tar: {
-      name: "Custom DeepVariant model tarball"
-    }
     single_sample: {
       name: "Single sample workflow"
     }
@@ -53,9 +47,6 @@ workflow upstream {
     Array[File] hifi_reads
 
     File ref_map_file
-
-    String deepvariant_version
-    File? custom_deepvariant_model_tar
 
     Boolean single_sample = false
 
@@ -117,8 +108,6 @@ workflow upstream {
       ref_fasta                    = ref_map["fasta"],             # !FileCoercion
       ref_index                    = ref_map["fasta_index"],       # !FileCoercion
       ref_name                     = ref_map["name"],
-      deepvariant_version          = deepvariant_version,
-      custom_deepvariant_model_tar = custom_deepvariant_model_tar,
       gpu                          = gpu,
       default_runtime_attributes   = default_runtime_attributes
   }

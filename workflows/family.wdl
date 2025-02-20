@@ -24,15 +24,6 @@ workflow humanwgs_family {
     ref_map_file: {
       name: "TSV containing reference genome file paths; must match backend"
     }
-    deepvariant_version: {
-      name: "DeepVariant version"
-    }
-    custom_deepvariant_model_tar: {
-      name: "Custom DeepVariant model tarball"
-    }
-    pharmcat_version: {
-      name: "PharmCAT version"
-    }
     pharmcat_min_coverage: {
       name: "Minimum coverage for PharmCAT"
     }
@@ -74,13 +65,6 @@ workflow humanwgs_family {
 
     File ref_map_file
 
-    # These options are only intended for testing purposes.
-    # There is no guarantee that the pipeline will work with
-    # other version of DeepVariant or with custom models.
-    String deepvariant_version = "1.6.1"
-    File? custom_deepvariant_model_tar
-
-    String pharmcat_version = "2.15.4"
     Int pharmcat_min_coverage = 10
 
     String phenotypes = "HP:0000001"
@@ -123,8 +107,6 @@ workflow humanwgs_family {
         sex                          = sample.sex,
         hifi_reads                   = sample.hifi_reads,
         ref_map_file                 = ref_map_file,
-        deepvariant_version          = deepvariant_version,
-        custom_deepvariant_model_tar = custom_deepvariant_model_tar,
         single_sample                = single_sample,
         gpu                          = gpu,
         default_runtime_attributes   = default_runtime_attributes
@@ -159,7 +141,6 @@ workflow humanwgs_family {
         trgt_vcf_index             = upstream.trgt_vcf_index[sample_index],
         aligned_bam                = upstream.out_bam[sample_index],
         aligned_bam_index          = upstream.out_bam_index[sample_index],
-        pharmcat_version           = pharmcat_version,
         pharmcat_min_coverage      = pharmcat_min_coverage,
         ref_map_file               = ref_map_file,
         default_runtime_attributes = default_runtime_attributes
