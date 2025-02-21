@@ -127,7 +127,7 @@ At a high level, we have two types of inputs files:
 
 The resource bundle containing the GRCh38 reference and other files used in this workflow can be downloaded from Zenodo:
 
-[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.14027047.svg" alt="10.5281/zenodo.14027047">](https://zenodo.org/records/14027047)
+[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.14908106.svg" alt="10.5281/zenodo.14908106">](https://zenodo.org/records/14908106)
 
 # Tool versions and Docker images
 
