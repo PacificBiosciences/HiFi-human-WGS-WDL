@@ -4,7 +4,6 @@ import "humanwgs_structs.wdl"
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 import "upstream/upstream.wdl" as Upstream
 import "downstream/downstream.wdl" as Downstream
-import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
@@ -165,19 +164,27 @@ workflow humanwgs_singleton {
       runtime_attributes = default_runtime_attributes
   }
 
-  if (defined(tertiary_map_file)) {
-    call Write_ped_phrank.write_ped_phrank {
-      input:
-        id                 = sample_id,
-        sex                = select_first([sex, upstream.inferred_sex]),
-        phenotypes         = phenotypes,
-        runtime_attributes = default_runtime_attributes
-    }
+  Map[String, String] pedigree_sex = {
+    "MALE": "1",
+    "FEMALE": "2",
+    "": "."
+  }
 
+  # write sample metadata similar to pedigree format
+  # family_id, sample_id, father_id, mother_id, sex, affected
+  Array[String] sample_metadata = [
+    sample_id, sample_id,
+    ".", ".",
+    pedigree_sex[upstream.inferred_sex], "2"
+  ]
+
+  if (defined(tertiary_map_file)) {
     call TertiaryAnalysis.tertiary_analysis {
       input:
-        pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
+        sample_metadata            = [sample_metadata],
+        phenotypes                 = phenotypes,
+        is_trio_kid                = [false],
+        is_duo_kid                 = [false],
         small_variant_vcf          = downstream.phased_small_variant_vcf,
         small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
         sv_vcf                     = downstream.phased_sv_vcf,
@@ -302,7 +309,6 @@ workflow humanwgs_singleton {
     File? pharmcat_report_json    = downstream.pharmcat_report_json
 
     # tertiary analysis outputs
-    File? pedigree                                      = write_ped_phrank.pedigree
     File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
     File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
     File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv

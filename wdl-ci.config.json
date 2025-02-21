@@ -37,13 +37,38 @@
       "tasks": {
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "nz7zrdaatasxka5rziksdmc2oq4tr23z",
+          "digest": "pssprgcwn5b4liynj6ujl4poz6xx6tay",
           "tests": [
             {
               "inputs": {
                 "vcf": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz",
                 "vcf_index": "${resources_file_path}/slivar_small_variant/input/HG002-trio.GRCh38.small_variants.vcf.gz.tbi",
-                "pedigree": "${resources_file_path}/slivar_small_variant/input/HG002-trio.ped",
+                "sample_metadata": [
+                  [
+                    "HG002-trio",
+                    "HG002",
+                    "HG003",
+                    "HG004",
+                    "1",
+                    "2"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG003",
+                    ".",
+                    ".",
+                    "1",
+                    "1"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG004",
+                    ".",
+                    ".",
+                    "2",
+                    "1"
+                  ]
+                ],
                 "phrank_lookup": "${resources_file_path}/slivar_small_variant/input/HG002-trio_phrank.tsv",
                 "reference": "${ref_fasta}",
                 "reference_index": "${ref_index}",
@@ -117,12 +142,37 @@
         },
         "svpack_filter_annotated": {
           "key": "svpack_filter_annotated",
-          "digest": "lljobpfqb23lu2zablgfstcozrrny5xt",
+          "digest": "62s5ilqjjfenj2earblxjez57cca6xrp",
           "tests": [
             {
               "inputs": {
                 "sv_vcf": "${resources_file_path}/svpack_filter_annotated/input/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.vcf.gz",
-                "pedigree": "${resources_file_path}/svpack_filter_annotated/input/HG002-trio.ped",
+                "sample_metadata": [
+                  [
+                    "HG002-trio",
+                    "HG002",
+                    "HG003",
+                    "HG004",
+                    "1",
+                    "2"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG003",
+                    ".",
+                    ".",
+                    "1",
+                    "1"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG004",
+                    ".",
+                    ".",
+                    "2",
+                    "1"
+                  ]
+                ],
                 "population_vcfs": [
                   "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/gnomad.v4.1.sv.sites.pass.vcf.gz",
                   "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/sv_pop_vcfs/CoLoRSdb.GRCh38.v1.2.0.pbsv.jasmine.vcf.gz"
@@ -149,12 +199,37 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "mdnthjkki3cj62rev5nl7le3nv4cgzbt",
+          "digest": "zr3mfwgv2xkjpnrlpdo4odn25ojbiyoj",
           "tests": [
             {
               "inputs": {
                 "filtered_vcf": "${resources_file_path}/slivar_svpack_tsv/input/sawfish/HG002.HG002-trio.joint.GRCh38.structural_variants.phased.svpack.vcf.gz",
-                "pedigree": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio.ped",
+                "sample_metadata": [
+                  [
+                    "HG002-trio",
+                    "HG002",
+                    "HG003",
+                    "HG004",
+                    "1",
+                    "2"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG003",
+                    ".",
+                    ".",
+                    "1",
+                    "1"
+                  ],
+                  [
+                    "HG002-trio",
+                    "HG004",
+                    ".",
+                    ".",
+                    "2",
+                    "1"
+                  ]
+                ],
                 "lof_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/lof_lookup.v2.1.1.txt",
                 "clinvar_lookup": "${resources_file_path}/hifi-wdl-resources-v2.0.0/slivar/clinvar_gene_desc.20240624T165443.txt",
                 "phrank_lookup": "${resources_file_path}/slivar_svpack_tsv/input/HG002-trio_phrank.tsv",
@@ -1783,272 +1858,23 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/write_ped_phrank.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/write_ped_phrank.wdl",
+    "workflows/wdl-common/wdl/tasks/write_phrank.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/write_phrank.wdl",
       "name": "",
       "description": "",
       "tasks": {
-        "write_ped_phrank": {
-          "key": "write_ped_phrank",
-          "digest": "d3b7uvydynagkxs2w546ozi7q6oa7cim",
+        "write_phrank": {
+          "key": "write_phrank",
+          "digest": "hfknzcdeg3y5whspi5ndsoo2eut7wpd7",
           "tests": [
             {
               "inputs": {
-                "id": "HG002",
-                "sex": "MALE",
                 "phenotypes": "HP:0000001",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/singleton/HG002.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
                 "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/singleton/HG002_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "id": "HG002",
-                "phenotypes": "HP:0000001",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/singleton_no_sex/HG002.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/singleton_no_sex/HG002_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "id": "HG002-trio",
-                "family": {
-                  "family_id": "HG002-trio",
-                  "samples": [
-                    {
-                      "sample_id": "HG002",
-                      "sex": "MALE",
-                      "affected": true,
-                      "father_id": "HG003",
-                      "mother_id": "HG004",
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG003",
-                      "sex": "MALE",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG004",
-                      "sex": "FEMALE",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    }
-                  ]
-                },
-                "phenotypes": "HP:0000001",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio/HG002-trio.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio/HG002-trio_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "id": "HG002-trio",
-                "family": {
-                  "family_id": "HG002-trio",
-                  "samples": [
-                    {
-                      "sample_id": "HG002",
-                      "sex": "MALE",
-                      "affected": true,
-                      "mother_id": "HG004",
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG004",
-                      "sex": "FEMALE",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    }
-                  ]
-                },
-                "phenotypes": "HP:0000001",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_father/HG002-trio.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_father/HG002-trio_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "id": "HG002-trio",
-                "family": {
-                  "family_id": "HG002-trio",
-                  "samples": [
-                    {
-                      "sample_id": "HG002",
-                      "sex": "MALE",
-                      "affected": true,
-                      "father_id": "HG003",
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG003",
-                      "sex": "MALE",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    }
-                  ]
-                },
-                "phenotypes": "HP:0000001",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_mother/HG002-trio.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_mother/HG002-trio_phrank.tsv",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "id": "HG002-trio",
-                "family": {
-                  "family_id": "HG002-trio",
-                  "samples": [
-                    {
-                      "sample_id": "HG002",
-                      "affected": true,
-                      "father_id": "HG003",
-                      "mother_id": "HG004",
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG003",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    },
-                    {
-                      "sample_id": "HG004",
-                      "affected": false,
-                      "hifi_reads": [
-                        "${resources_file_path}/write_ped_phrank/input/dummy.bam"
-                      ]
-                    }
-                  ]
-                },
-                "phenotypes": "HP:0000001",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "pedigree": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_sex/HG002-trio.ped",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "calculate_md5sum"
-                  ]
-                },
-                "phrank_lookup": {
-                  "value": "${resources_file_path}/write_ped_phrank/output/trio_no_sex/HG002-trio_phrank.tsv",
+                  "value": "${resources_file_path}/write_ped_phrank/output/singleton/phrank.tsv",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
