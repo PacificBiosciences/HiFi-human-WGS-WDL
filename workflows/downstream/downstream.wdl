@@ -40,9 +40,6 @@ workflow downstream {
     aligned_bam_index: {
       name: "Aligned BAI"
     }
-    pharmcat_version: {
-      name: "PharmCAT version"
-    }
     pharmcat_min_coverage: {
       name: "Minimum coverage for PharmCAT"
     }
@@ -67,7 +64,6 @@ workflow downstream {
     File aligned_bam
     File aligned_bam_index
 
-    String pharmcat_version
     Int pharmcat_min_coverage
 
     File ref_map_file
@@ -152,7 +148,6 @@ workflow downstream {
       input_tsvs                 = [pbstarphase_diplotype.pharmcat_tsv],
       ref_fasta                  = ref_map["fasta"],                        # !FileCoercion
       ref_index                  = ref_map["fasta_index"],                  # !FileCoercion
-      pharmcat_version           = pharmcat_version,
       pharmcat_positions         = ref_map["pharmcat_positions_vcf"],       # !FileCoercion
       pharmcat_positions_index   = ref_map["pharmcat_positions_vcf_index"], # !FileCoercion
       pharmcat_min_coverage      = pharmcat_min_coverage,
@@ -191,11 +186,12 @@ workflow downstream {
     File   indel_distribution_plot = bcftools_stats_roh_small_variants.indel_distribution_plot
 
     # sv stats
-    String stat_sv_DUP_count = sv_stats.stat_sv_DUP_count
-    String stat_sv_DEL_count = sv_stats.stat_sv_DEL_count
-    String stat_sv_INS_count = sv_stats.stat_sv_INS_count
-    String stat_sv_INV_count = sv_stats.stat_sv_INV_count
-    String stat_sv_BND_count = sv_stats.stat_sv_BND_count
+    String stat_sv_DUP_count    = sv_stats.stat_sv_DUP_count
+    String stat_sv_DEL_count    = sv_stats.stat_sv_DEL_count
+    String stat_sv_INS_count    = sv_stats.stat_sv_INS_count
+    String stat_sv_INV_count    = sv_stats.stat_sv_INV_count
+    String stat_sv_INVBND_count = sv_stats.stat_sv_INVBND_count
+    String stat_sv_BND_count    = sv_stats.stat_sv_BND_count
 
     # cpg_pileup outputs
     File?  cpg_combined_bed        = cpg_pileup.combined_bed
