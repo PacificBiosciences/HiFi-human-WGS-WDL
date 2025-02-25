@@ -128,14 +128,16 @@ workflow downstream {
 
   call Pbstarphase.pbstarphase_diplotype {
     input:
-      sample_id          = sample_id,
-      phased_vcf         = hiphase.phased_vcfs[0],
-      phased_vcf_index   = hiphase.phased_vcf_indices[0],
-      aligned_bam        = hiphase.haplotagged_bam,
-      aligned_bam_index  = hiphase.haplotagged_bam_index,
-      ref_fasta          = ref_map["fasta"],              # !FileCoercion
-      ref_index          = ref_map["fasta_index"],        # !FileCoercion
-      runtime_attributes = default_runtime_attributes
+      sample_id                           = sample_id,
+      phased_small_variant_vcf            = hiphase.phased_vcfs[0],
+      phased_small_variant_vcf_index      = hiphase.phased_vcf_indices[0],
+      phased_structural_variant_vcf       = hiphase.phased_vcfs[1],
+      phased_structural_variant_vcf_index = hiphase.phased_vcf_indices[1],
+      aligned_bam                         = hiphase.haplotagged_bam,
+      aligned_bam_index                   = hiphase.haplotagged_bam_index,
+      ref_fasta                           = ref_map["fasta"],              # !FileCoercion
+      ref_index                           = ref_map["fasta_index"],        # !FileCoercion
+      runtime_attributes                  = default_runtime_attributes
   }
 
   call Pharmcat.pharmcat {
