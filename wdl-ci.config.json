@@ -1566,24 +1566,26 @@
             {
               "inputs": {
                 "sample_id": "HG002",
-                "phased_vcf": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.small_variants.vcf.gz",
-                "phased_vcf_index": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.small_variants.vcf.gz.tbi",
-                "aligned_bam": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.bam",
-                "aligned_bam_index": "${resources_file_path}/pbstarphase_diplotype/input/HG002.GRCh38.subset.bam.bai",
+                "phased_small_variant_vcf": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.small_variants.vcf.gz",
+                "phased_small_variant_vcf_index": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.small_variants.vcf.gz.tbi",
+                "phased_structural_variant_vcf": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.structural_variants.vcf.gz",
+                "phased_structural_variant_vcf_index": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.structural_variants.vcf.gz.tbi",
+                "aligned_bam": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.bam",
+                "aligned_bam_index": "${resources_file_path}/pbstarphase_diplotype/input/pbstarphase_1.3/HG002.GRCh38.subset.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "out_json": {
-                  "value": "${resources_file_path}/pbstarphase_diplotype/output/HG002.pbstarphase.json",
+                  "value": "${resources_file_path}/pbstarphase_diplotype/output/pbstarphase_1.3/HG002.pbstarphase.json",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_json"
                   ]
                 },
                 "pharmcat_tsv": {
-                  "value": "${resources_file_path}/pbstarphase_diplotype/output/HG002.pharmcat.tsv",
+                  "value": "${resources_file_path}/pbstarphase_diplotype/output/pbstarphase_1.3/HG002.pharmcat.tsv",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
