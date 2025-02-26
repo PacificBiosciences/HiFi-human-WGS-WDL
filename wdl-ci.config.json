@@ -1407,7 +1407,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "lfkj5u6d6hakjxcmp3q6nzpwuz3jz5l3",
+          "digest": "4pbv52jhlacjaylj5tgqzp43a77it5xh",
           "tests": [
             {
               "inputs": {
