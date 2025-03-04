@@ -119,7 +119,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | File | stats_file | Table of summary statistics |  |
 | Array\[File\] | bam_stats | BAM stats | Per-read length and read-quality |
 | Array\[File\] | read_length_plot | Read length plot |  |
-| Array\[File\] | read_quality_plot | Read quality plot |  |
+| Array\[File?\] | read_quality_plot | Read quality plot |  |
 | Array\[File\] | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
 | Array\[File\] | merged_haplotagged_bam_index |  |  |
 | Array\[File\] | mosdepth_summary | Summary of aligned read depth. |  |
@@ -223,15 +223,15 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| Array\[File\] | cpg_hap1_bed | CpG hap1 BED |  |
-| Array\[File\] | cpg_hap1_bed_index |  |  |
-| Array\[File\] | cpg_hap2_bed | CpG hap2 BED |  |
-| Array\[File\] | cpg_hap2_bed_index |  |  |
-| Array\[File\] | cpg_combined_bed | CpG combined BED |  |
-| Array\[File\] | cpg_combined_bed_index |  |  |
-| Array\[File\] | cpg_hap1_bw | CpG hap1 BigWig |  |
-| Array\[File\] | cpg_hap2_bw | CpG hap2 BigWig |  |
-| Array\[File\] | cpg_combined_bw | CpG combined BigWig |  |
+| Array\[File?\] | cpg_hap1_bed | CpG hap1 BED |  |
+| Array\[File?\] | cpg_hap1_bed_index |  |  |
+| Array\[File?\] | cpg_hap2_bed | CpG hap2 BED |  |
+| Array\[File?\] | cpg_hap2_bed_index |  |  |
+| Array\[File?\] | cpg_combined_bed | CpG combined BED |  |
+| Array\[File?\] | cpg_combined_bed_index |  |  |
+| Array\[File?\] | cpg_hap1_bw | CpG hap1 BigWig |  |
+| Array\[File?\] | cpg_hap2_bw | CpG hap2 BigWig |  |
+| Array\[File?\] | cpg_combined_bw | CpG combined BigWig |  |
 | Array\[String\] | stat_cpg_hap1_count | Hap1 CpG count |  |
 | Array\[String\] | stat_cpg_hap2_count | Hap2 CpG count |  |
 | Array\[String\] | stat_cpg_combined_count | Combined CpG count |  |
@@ -241,10 +241,10 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | Array\[File\] | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| Array\[File\] | pharmcat_match_json | PharmCAT match JSON |  |
-| Array\[File\] | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
-| Array\[File\] | pharmcat_report_html | PharmCAT report HTML |  |
-| Array\[File\] | pharmcat_report_json | PharmCAT report JSON |  |
+| Array\[File?\] | pharmcat_match_json | PharmCAT match JSON |  |
+| Array\[File?\] | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
+| Array\[File?\] | pharmcat_report_html | PharmCAT report HTML |  |
+| Array\[File?\] | pharmcat_report_json | PharmCAT report JSON |  |
 
 ### Tertiary Analysis
 

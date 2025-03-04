@@ -84,7 +84,7 @@ flowchart TD
 | File | stats_file | Table of summary statistics |  |
 | File | bam_stats | BAM stats | Per-read length and read-quality |
 | File | read_length_plot | Read length plot |  |
-| File | read_quality_plot | Read quality plot |  |
+| File? | read_quality_plot | Read quality plot |  |
 | File | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
 | File | merged_haplotagged_bam_index |  |  |
 | File | mosdepth_summary | Summary of aligned read depth. |  |
@@ -182,15 +182,15 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | cpg_hap1_bed | CpG hap1 BED |  |
-| File | cpg_hap1_bed_index |  |  |
-| File | cpg_hap2_bed | CpG hap2 BED |  |
-| File | cpg_hap2_bed_index |  |  |
-| File | cpg_combined_bed | CpG combined BED |  |
-| File | cpg_combined_bed_index |  |  |
-| File | cpg_hap1_bw | CpG hap1 BigWig |  |
-| File | cpg_hap2_bw | CpG hap2 BigWig |  |
-| File | cpg_combined_bw | CpG combined BigWig |  |
+| File? | cpg_hap1_bed | CpG hap1 BED |  |
+| File? | cpg_hap1_bed_index |  |  |
+| File? | cpg_hap2_bed | CpG hap2 BED |  |
+| File? | cpg_hap2_bed_index |  |  |
+| File? | cpg_combined_bed | CpG combined BED |  |
+| File? | cpg_combined_bed_index |  |  |
+| File? | cpg_hap1_bw | CpG hap1 BigWig |  |
+| File? | cpg_hap2_bw | CpG hap2 BigWig |  |
+| File? | cpg_combined_bw | CpG combined BigWig |  |
 | String | stat_cpg_hap1_count | Hap1 CpG count |  |
 | String | stat_cpg_hap2_count | Hap2 CpG count |  |
 | String | stat_cpg_combined_count | Combined CpG count |  |
@@ -200,10 +200,10 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | File | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| File | pharmcat_match_json | PharmCAT match JSON |  |
-| File | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
-| File | pharmcat_report_html | PharmCAT report HTML |  |
-| File | pharmcat_report_json | PharmCAT report JSON |  |
+| File? | pharmcat_match_json | PharmCAT match JSON |  |
+| File? | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
+| File? | pharmcat_report_html | PharmCAT report HTML |  |
+| File? | pharmcat_report_json | PharmCAT report JSON |  |
 
 ### Tertiary Analysis
 
