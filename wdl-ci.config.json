@@ -262,6 +262,99 @@
       "description": "",
       "tasks": {}
     },
+    "workflows/wdl-common/wdl/tasks/bam_stats.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/bam_stats.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "bam_stats": {
+          "key": "bam_stats",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "ref_name": "${ref_name}",
+                "bam": "${resources_file_path}/inputs/HG002.GRCh38.haplotagged.bam",
+                "bam_index": "${resources_file_path}/inputs/HG002.GRCh38.haplotagged.bam.bai",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "bam_statistics": {
+                  "value": "${resources_file_path}/bam_stats/output/HG002.GRCh38.bam_statistics.tsv.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns",
+                    "check_gzip"
+                  ]
+                },
+                "read_length_plot": {
+                  "value": "${resources_file_path}/bam_stats/output/HG002.read_length_histogram.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "read_quality_plot": {
+                  "value": "${resources_file_path}/bam_stats/output/HG002.read_quality_histogram.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "mapq_distribution_plot": {
+                  "value": "${resources_file_path}/bam_stats/output/HG002.GRCh38.mapq_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "mg_distribution_plot": {
+                  "value": "${resources_file_path}/bam_stats/output/HG002.GRCh38.mg_distribution.png",
+                  "test_tasks": [
+                    "calculate_md5sum",
+                    "compare_file_basename",
+                    "png_validator"
+                  ]
+                },
+                "stat_num_reads": {
+                  "value": "27398",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_read_length_mean": {
+                  "value": "14149.12",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_read_length_median": {
+                  "value": "14666.5",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_read_quality_mean": {
+                  "value": "35.91",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_read_quality_median": {
+                  "value": "34.0",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_mapped_read_count": {
+                  "value": "27398",
+                  "test_tasks": ["compare_string"]
+                },
+                "stat_mapped_percent": {
+                  "value": "100.0",
+                  "test_tasks": ["compare_string"]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "workflows/wdl-common/wdl/tasks/bcftools.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/bcftools.wdl",
       "name": "",
@@ -991,250 +1084,6 @@
                     "count_columns",
                     "check_gzip"
                   ]
-                },
-                "stat_phased_basepairs": {
-                  "value": "8972304",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_phase_block_ng50": {
-                  "value": "0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_mapped_read_count": {
-                  "value": "27398",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_mapped_percent": {
-                  "value": "100",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "mapq_distribution_plot": {
-                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.mapq_distribution.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "mg_distribution_plot": {
-                  "value": "${resources_file_path}/hiphase/output/HG002/HG002.GRCh38.mg_distribution.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "workflows/wdl-common/wdl/tasks/merge_bam_stats.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/merge_bam_stats.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "merge_bam_stats": {
-          "key": "merge_bam_stats",
-          "digest": "mjd6zpbxtabbulmq3kwhcx4cnubxaf74",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "bam_stats": [
-                  "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "read_length_and_quality": {
-                  "value": "${resources_file_path}/merge_bam_stats/one_input/HG002.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
-                },
-                "read_length_plot": {
-                  "value": "${resources_file_path}/merge_bam_stats/one_input/HG002.read_length_histogram.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "read_quality_plot": {
-                  "value": "${resources_file_path}/merge_bam_stats/one_input/HG002.read_quality_histogram.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "stat_num_reads": {
-                  "value": "10000",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_mean": {
-                  "value": "23508.73",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_median": {
-                  "value": "22855.5",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_mean": {
-                  "value": "26.97",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_median": {
-                  "value": "27.0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "bam_stats": [
-                  "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz",
-                  "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.read_length_and_quality.tsv.gz"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "read_length_and_quality": {
-                  "value": "${resources_file_path}/merge_bam_stats/two_inputs/HG002.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
-                },
-                "read_length_plot": {
-                  "value": "${resources_file_path}/merge_bam_stats/two_inputs/HG002.read_length_histogram.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "read_quality_plot": {
-                  "value": "${resources_file_path}/merge_bam_stats/two_inputs/HG002.read_quality_histogram.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "stat_num_reads": {
-                  "value": "20000",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_mean": {
-                  "value": "22673.07",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_median": {
-                  "value": "22281.5",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_mean": {
-                  "value": "29.32",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_median": {
-                  "value": "29.0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "bam_stats": [
-                  "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz"
-                ],
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "read_length_and_quality": {
-                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
-                },
-                "read_length_plot": {
-                  "value": "${resources_file_path}/merge_bam_stats/no_rq/HG002.read_length_histogram.png",
-                  "test_tasks": [
-                    "calculate_md5sum",
-                    "compare_file_basename",
-                    "png_validator"
-                  ]
-                },
-                "stat_num_reads": {
-                  "value": "10000",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_mean": {
-                  "value": "21837.4",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_length_median": {
-                  "value": "21385.0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_mean": {
-                  "value": "nan",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_read_quality_median": {
-                  "value": "nan",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
                 }
               }
             }
@@ -1425,15 +1274,6 @@
                     "compare_file_basename",
                     "samtools_quickcheck"
                   ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_aligned_10k/HG00733.sequelii_aligned_10k.hifi_reads.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
                 }
               }
             },
@@ -1452,15 +1292,6 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
-                  ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
                   ]
                 }
               }
@@ -1482,15 +1313,6 @@
                     "compare_file_basename",
                     "samtools_quickcheck"
                   ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k_strip_kinetics_false/HG00133.sequelii_kinetics_10k.hifi_reads.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
                 }
               }
             },
@@ -1510,15 +1332,6 @@
                     "compare_file_basename",
                     "samtools_quickcheck"
                   ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
-                  ]
                 }
               }
             },
@@ -1537,15 +1350,6 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
-                  ]
-                },
-                "bam_stats": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.read_length_and_quality.tsv.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns",
-                    "check_gzip"
                   ]
                 }
               }

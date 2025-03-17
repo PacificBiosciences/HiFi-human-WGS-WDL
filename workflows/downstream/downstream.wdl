@@ -2,6 +2,7 @@ version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
+import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
@@ -101,6 +102,15 @@ workflow downstream {
   # hiphase.phased_vcfs[1] -> phased SV VCF
   # hiphase.phased_vcfs[2] -> phased TRGT VCF
 
+  call Bamstats.bam_stats {
+    input:
+      sample_id          = sample_id,
+      ref_name           = ref_map["name"],
+      bam                = hiphase.haplotagged_bam,
+      bam_index          = hiphase.haplotagged_bam_index,
+      runtime_attributes = default_runtime_attributes
+  }
+
   call Bcftools.bcftools_stats_roh_small_variants {
     input:
       sample_id          = sample_id,
@@ -171,10 +181,20 @@ workflow downstream {
     File   phase_haplotags                = hiphase.phase_haplotags
     String stat_phased_basepairs          = hiphase.stat_phased_basepairs
     String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
-    String stat_mapped_read_count         = hiphase.stat_mapped_read_count
-    String stat_mapped_percent            = hiphase.stat_mapped_percent
-    File   mapq_distribution_plot         = hiphase.mapq_distribution_plot
-    File   mg_distribution_plot           = hiphase.mg_distribution_plot
+
+    # bam stats
+    File   bam_statistics           = bam_stats.bam_statistics
+    File   read_length_plot         = bam_stats.read_length_plot
+    File?  read_quality_plot        = bam_stats.read_quality_plot
+    File   mapq_distribution_plot   = bam_stats.mapq_distribution_plot
+    File   mg_distribution_plot     = bam_stats.mg_distribution_plot
+    String stat_num_reads           = bam_stats.stat_num_reads
+    String stat_read_length_mean    = bam_stats.stat_read_length_mean
+    String stat_read_length_median  = bam_stats.stat_read_length_median
+    String stat_read_quality_mean   = bam_stats.stat_read_quality_mean
+    String stat_read_quality_median = bam_stats.stat_read_quality_median
+    String stat_mapped_read_count   = bam_stats.stat_mapped_read_count
+    String stat_mapped_percent      = bam_stats.stat_mapped_percent
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats
