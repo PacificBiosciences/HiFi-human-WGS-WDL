@@ -37,6 +37,7 @@ flowchart TD
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
     samtools_merge --> deepvariant["DeepVariant"]
+    samtools_merge --> hiphase["HiPhase"]
   end
   subgraph "`**Joint Calling**`"
     deepvariant --> glnexus["GLnexus (joint-call small variants)"]
@@ -45,7 +46,7 @@ flowchart TD
     sawfish_call --> split_sawfish["split SV vcf by sample"]
   end
   subgraph "`**Phasing and Downstream (per-sample)**`"
-    split_glnexus --> hiphase["HiPhase"]
+    split_glnexus --> hiphase
     trgt --> hiphase
     split_sawfish --> hiphase
     hiphase --> bcftools_roh["bcftools roh"]
