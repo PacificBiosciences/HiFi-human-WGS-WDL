@@ -35,6 +35,7 @@ flowchart TD
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
     samtools_merge --> deepvariant["DeepVariant"]
+    samtools_merge --> hiphase["HiPhase"]
     sawfish_discover --> sawfish_call["Sawfish call"]
   end
   subgraph "`**Phasing and Downstream**`"
