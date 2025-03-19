@@ -269,7 +269,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "",
+          "digest": "uep66lgfvrh34igqnllxgz5buvwrajha",
           "tests": [
             {
               "inputs": {
@@ -323,31 +323,45 @@
                 },
                 "stat_num_reads": {
                   "value": "27398",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_read_length_mean": {
                   "value": "14149.12",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_read_length_median": {
                   "value": "14666.5",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_read_quality_mean": {
                   "value": "35.91",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_read_quality_median": {
                   "value": "34.0",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_mapped_read_count": {
                   "value": "27398",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 },
                 "stat_mapped_percent": {
                   "value": "100.0",
-                  "test_tasks": ["compare_string"]
+                  "test_tasks": [
+                    "compare_string"
+                  ]
                 }
               }
             }
@@ -1008,7 +1022,7 @@
       "tasks": {
         "hiphase": {
           "key": "hiphase",
-          "digest": "evdi2klxze7sag3fs4p6g4h4ffqmiqzy",
+          "digest": "gmsoetfaqun5ppmdxwkrpu5z2jgnyoiq",
           "tests": [
             {
               "inputs": {
@@ -1256,7 +1270,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "4pbv52jhlacjaylj5tgqzp43a77it5xh",
+          "digest": "tr6fdqrq5p33b6zynfqgpqlua3lodnos",
           "tests": [
             {
               "inputs": {
