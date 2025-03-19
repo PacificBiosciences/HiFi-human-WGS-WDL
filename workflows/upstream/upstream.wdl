@@ -100,6 +100,10 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
+  if (defined(sex) && (mosdepth.inferred_sex != sex)) {
+    String qc_sex = "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
+  }
+
   call DeepVariant.deepvariant {
     input:
       sample_id                    = sample_id,
@@ -114,7 +118,7 @@ workflow upstream {
 
   call Sawfish.sawfish_discover {
     input:
-      sex                 = select_first([sex, mosdepth.inferred_sex]),
+      sex                 = mosdepth.inferred_sex,
       aligned_bam         = aligned_bam_data,
       aligned_bam_index   = aligned_bam_index,
       ref_fasta           = ref_map["fasta"],                           # !FileCoercion
@@ -128,7 +132,7 @@ workflow upstream {
   call Trgt.trgt {
     input:
       sample_id          = sample_id,
-      sex                = select_first([sex, mosdepth.inferred_sex]),
+      sex                = mosdepth.inferred_sex,
       aligned_bam        = aligned_bam_data,
       aligned_bam_index  = aligned_bam_index,
       ref_fasta          = ref_map["fasta"],                           # !FileCoercion
@@ -151,7 +155,7 @@ workflow upstream {
   call Hificnv.hificnv {
     input:
       sample_id           = sample_id,
-      sex                 = select_first([sex, mosdepth.inferred_sex]),
+      sex                 = mosdepth.inferred_sex,
       aligned_bam         = aligned_bam_data,
       aligned_bam_index   = aligned_bam_index,
       vcf                 = deepvariant.vcf,
@@ -239,5 +243,8 @@ workflow upstream {
     String stat_cnv_DEL_count   = hificnv.stat_DEL_count
     String stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
     String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
+
+    # qc messages
+    String? msg_qc_sex = qc_sex
   }
 }
