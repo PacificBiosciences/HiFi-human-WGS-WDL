@@ -341,6 +341,11 @@ task slivar_small_variant {
   command <<<
     set -euo pipefail
 
+    cut -f1,2 ~{lof_lookup} > pli.lookup
+    cut -f1,3 ~{lof_lookup} > oe.lookup
+    cut -f1,4 ~{lof_lookup} > loeuf.lookup
+    cut -f1,5 ~{lof_lookup} > loeuf_decile.lookup
+
     bcftools --version
 
     bcftools norm \
@@ -408,13 +413,16 @@ task slivar_small_variant {
       --sample-field dominant \
       --sample-field recessive \
       --csq-field BCSQ \
-      --gene-description ~{lof_lookup} \
+      --gene-description pli.lookup \
+      --gene-description oe.lookup \
+      --gene-description loeuf.lookup \
+      --gene-description loeuf_decile.lookup \
       --gene-description ~{clinvar_lookup} \
       --gene-description ~{phrank_lookup} \
       --ped ~{write_tsv(sample_metadata)} \
       --out /dev/stdout \
       ~{vcf_basename}.norm.slivar.vcf.gz \
-    | sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
+    | sed '1 s/gene_description_1/pLI/;s/gene_description_2/oe.lof/;s/gene_description_3/LOEUF/;s/gene_description_4/LOEUF_decile/;s/gene_description_5/clinvar/;s/gene_description_6/phrank/;' \
     > ~{vcf_basename}.norm.slivar.tsv
 
     slivar tsv \
@@ -422,13 +430,16 @@ task slivar_small_variant {
       --sample-field slivar_comphet \
       --info-field slivar_comphet \
       --csq-field BCSQ \
-      --gene-description ~{lof_lookup} \
+      --gene-description pli.lookup \
+      --gene-description oe.lookup \
+      --gene-description loeuf.lookup \
+      --gene-description loeuf_decile.lookup \
       --gene-description ~{clinvar_lookup} \
       --gene-description ~{phrank_lookup} \
       --ped ~{write_tsv(sample_metadata)} \
       --out /dev/stdout \
       ~{vcf_basename}.norm.slivar.compound_hets.vcf.gz \
-    | sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
+    | sed '1 s/gene_description_1/pLI/;s/gene_description_2/oe.lof/;s/gene_description_3/LOEUF/;s/gene_description_4/LOEUF_decile/;s/gene_description_5/clinvar/;s/gene_description_6/phrank/;' \
     > ~{vcf_basename}.norm.slivar.compound_hets.tsv
   >>>
 
@@ -611,6 +622,11 @@ task slivar_svpack_tsv {
   command <<<
     set -euo pipefail
 
+    cut -f1,2 ~{lof_lookup} > pli.lookup
+    cut -f1,3 ~{lof_lookup} > oe.lookup
+    cut -f1,4 ~{lof_lookup} > loeuf.lookup
+    cut -f1,5 ~{lof_lookup} > loeuf_decile.lookup
+
     # slivar has no version option
     slivar expr 2>&1 | grep -Eo 'slivar version: [0-9.]+ [0-9a-f]+'
 
@@ -619,13 +635,16 @@ task slivar_svpack_tsv {
       --sample-field hetalt \
       --sample-field homalt \
       --csq-field BCSQ \
-      --gene-description ~{lof_lookup} \
+      --gene-description pli.lookup \
+      --gene-description oe.lookup \
+      --gene-description loeuf.lookup \
+      --gene-description loeuf_decile.lookup \
       --gene-description ~{clinvar_lookup} \
       --gene-description ~{phrank_lookup} \
       --ped ~{write_tsv(sample_metadata)} \
       --out /dev/stdout \
       ~{filtered_vcf} \
-    | sed '1 s/gene_description_1/lof/;s/gene_description_2/clinvar/;s/gene_description_3/phrank/;' \
+    | sed '1 s/gene_description_1/pLI/;s/gene_description_2/oe.lof/;s/gene_description_3/LOEUF/;s/gene_description_4/LOEUF_decile/;s/gene_description_5/clinvar/;s/gene_description_6/phrank/;' \
     > ~{filtered_vcf_basename}.tsv
   >>>
 
