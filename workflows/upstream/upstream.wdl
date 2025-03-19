@@ -138,15 +138,6 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
-  call Trgt.coverage_dropouts {
-    input: 
-      aligned_bam        = aligned_bam_data,
-      aligned_bam_index  = aligned_bam_index,
-      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes = default_runtime_attributes
-  }
-
   call Paraphase.paraphase {
     input:
       aligned_bam        = aligned_bam_data,
@@ -229,7 +220,6 @@ workflow upstream {
     File   trgt_vcf_index            = trgt.vcf_index
     File   trgt_spanning_reads       = trgt.bam
     File   trgt_spanning_reads_index = trgt.bam_index
-    File   trgt_coverage_dropouts    = coverage_dropouts.dropouts
     String stat_trgt_genotyped_count = trgt.stat_genotyped_count
     String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
 

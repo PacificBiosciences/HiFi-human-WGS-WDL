@@ -280,7 +280,7 @@ workflow humanwgs_singleton {
     File   phased_trgt_vcf_index     = downstream.phased_trgt_vcf_index
     File   trgt_spanning_reads       = upstream.trgt_spanning_reads
     File   trgt_spanning_reads_index = upstream.trgt_spanning_reads_index
-    File   trgt_coverage_dropouts    = upstream.trgt_coverage_dropouts
+    File   trgt_coverage_dropouts    = downstream.trgt_coverage_dropouts
     String stat_trgt_genotyped_count = upstream.stat_trgt_genotyped_count
     String stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
 

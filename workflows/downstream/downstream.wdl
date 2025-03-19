@@ -2,6 +2,7 @@ version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
+import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
@@ -101,6 +102,15 @@ workflow downstream {
   # hiphase.phased_vcfs[1] -> phased SV VCF
   # hiphase.phased_vcfs[2] -> phased TRGT VCF
 
+  call Trgt.coverage_dropouts {
+    input: 
+      aligned_bam        = hiphase.haplotagged_bam,
+      aligned_bam_index  = hiphase.haplotagged_bam_index,
+      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
   call Bcftools.bcftools_stats_roh_small_variants {
     input:
       sample_id          = sample_id,
@@ -175,6 +185,7 @@ workflow downstream {
     String stat_mapped_percent            = hiphase.stat_mapped_percent
     File   mapq_distribution_plot         = hiphase.mapq_distribution_plot
     File   mg_distribution_plot           = hiphase.mg_distribution_plot
+    File   trgt_coverage_dropouts         = coverage_dropouts.dropouts
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats
