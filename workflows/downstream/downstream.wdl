@@ -3,6 +3,7 @@ version 1.0
 import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
 import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
+import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
@@ -111,6 +112,15 @@ workflow downstream {
       runtime_attributes = default_runtime_attributes
   }
 
+  call Trgt.coverage_dropouts {
+    input: 
+      aligned_bam        = hiphase.haplotagged_bam,
+      aligned_bam_index  = hiphase.haplotagged_bam_index,
+      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
   call Bcftools.bcftools_stats_roh_small_variants {
     input:
       sample_id          = sample_id,
@@ -195,6 +205,7 @@ workflow downstream {
     String stat_read_quality_median = bam_stats.stat_read_quality_median
     String stat_mapped_read_count   = bam_stats.stat_mapped_read_count
     String stat_mapped_percent      = bam_stats.stat_mapped_percent
+    File   trgt_coverage_dropouts   = coverage_dropouts.dropouts
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats

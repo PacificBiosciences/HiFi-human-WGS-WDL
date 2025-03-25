@@ -92,6 +92,10 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
+  if (defined(sex) && (mosdepth.inferred_sex != sex)) {
+    String qc_sex = "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
+  }
+
   call DeepVariant.deepvariant {
     input:
       sample_id                    = sample_id,
@@ -106,7 +110,7 @@ workflow upstream {
 
   call Sawfish.sawfish_discover {
     input:
-      sex                 = select_first([sex, mosdepth.inferred_sex]),
+      sex                 = mosdepth.inferred_sex,
       aligned_bam         = aligned_bam_data,
       aligned_bam_index   = aligned_bam_index,
       ref_fasta           = ref_map["fasta"],                           # !FileCoercion
@@ -120,21 +124,12 @@ workflow upstream {
   call Trgt.trgt {
     input:
       sample_id          = sample_id,
-      sex                = select_first([sex, mosdepth.inferred_sex]),
+      sex                = mosdepth.inferred_sex,
       aligned_bam        = aligned_bam_data,
       aligned_bam_index  = aligned_bam_index,
       ref_fasta          = ref_map["fasta"],                           # !FileCoercion
       ref_index          = ref_map["fasta_index"],                     # !FileCoercion
       trgt_bed           = ref_map["trgt_tandem_repeat_bed"],          # !FileCoercion
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes = default_runtime_attributes
-  }
-
-  call Trgt.coverage_dropouts {
-    input: 
-      aligned_bam        = aligned_bam_data,
-      aligned_bam_index  = aligned_bam_index,
-      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
       out_prefix         = "~{sample_id}.~{ref_map['name']}",
       runtime_attributes = default_runtime_attributes
   }
@@ -152,7 +147,7 @@ workflow upstream {
   call Hificnv.hificnv {
     input:
       sample_id           = sample_id,
-      sex                 = select_first([sex, mosdepth.inferred_sex]),
+      sex                 = mosdepth.inferred_sex,
       aligned_bam         = aligned_bam_data,
       aligned_bam_index   = aligned_bam_index,
       vcf                 = deepvariant.vcf,
@@ -211,7 +206,6 @@ workflow upstream {
     File   trgt_vcf_index            = trgt.vcf_index
     File   trgt_spanning_reads       = trgt.bam
     File   trgt_spanning_reads_index = trgt.bam_index
-    File   trgt_coverage_dropouts    = coverage_dropouts.dropouts
     String stat_trgt_genotyped_count = trgt.stat_genotyped_count
     String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
 
@@ -231,5 +225,8 @@ workflow upstream {
     String stat_cnv_DEL_count   = hificnv.stat_DEL_count
     String stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
     String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
+
+    # qc messages
+    String? msg_qc_sex = qc_sex
   }
 }
