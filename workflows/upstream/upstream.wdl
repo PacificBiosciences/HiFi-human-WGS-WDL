@@ -2,7 +2,6 @@ version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/pbmm2.wdl" as Pbmm2
-import "../wdl-common/wdl/tasks/merge_bam_stats.wdl" as MergeBamStats
 import "../wdl-common/wdl/tasks/sawfish.wdl" as Sawfish
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
@@ -67,13 +66,6 @@ workflow upstream {
         ref_name           = ref_map["name"],
         runtime_attributes = default_runtime_attributes
     }
-  }
-
-  call MergeBamStats.merge_bam_stats {
-    input:
-      sample_id            = sample_id,
-      bam_stats            = pbmm2_align.bam_stats,
-      runtime_attributes   = default_runtime_attributes
   }
 
   # merge aligned bams if there are multiple
@@ -184,16 +176,6 @@ workflow upstream {
   }
 
   output {
-    # bam stats
-    File   read_length_and_quality  = merge_bam_stats.read_length_and_quality
-    File   read_length_plot         = merge_bam_stats.read_length_plot
-    File?  read_quality_plot        = merge_bam_stats.read_quality_plot
-    String stat_num_reads           = merge_bam_stats.stat_num_reads
-    String stat_read_length_mean    = merge_bam_stats.stat_read_length_mean
-    String stat_read_length_median  = merge_bam_stats.stat_read_length_median
-    String stat_read_quality_mean   = merge_bam_stats.stat_read_quality_mean
-    String stat_read_quality_median = merge_bam_stats.stat_read_quality_median
-
     # alignments
     File out_bam       = aligned_bam_data
     File out_bam_index = aligned_bam_index
