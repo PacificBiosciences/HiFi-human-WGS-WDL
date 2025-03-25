@@ -385,6 +385,9 @@ workflow humanwgs_family {
     File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
 
+    # qc messages
+    Array[String?] qc_messages = flatten([upstream.msg_qc_sex])
+
     # workflow metadata
     String workflow_name    = "humanwgs_family"
     String workflow_version = "v3.0.0-alpha1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
