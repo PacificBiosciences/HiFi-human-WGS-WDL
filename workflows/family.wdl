@@ -350,7 +350,7 @@ workflow humanwgs_family {
     Array[File]   phased_trgt_vcf_index     = downstream.phased_trgt_vcf_index
     Array[File]   trgt_spanning_reads       = upstream.trgt_spanning_reads
     Array[File]   trgt_spanning_reads_index = upstream.trgt_spanning_reads_index
-    Array[File]   trgt_coverage_dropouts    = upstream.trgt_coverage_dropouts
+    Array[File]   trgt_coverage_dropouts    = downstream.trgt_coverage_dropouts
     Array[String] stat_trgt_genotyped_count = upstream.stat_trgt_genotyped_count
     Array[String] stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
 
