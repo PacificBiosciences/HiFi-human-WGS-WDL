@@ -92,9 +92,10 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
-  if (defined(sex) && (mosdepth.inferred_sex != sex)) {
-    String qc_sex = "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
-  }
+  String qc_sex = 
+    if (defined(sex) && (mosdepth.inferred_sex != sex)) 
+    then "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
+    else ""
 
   call DeepVariant.deepvariant {
     input:
@@ -227,6 +228,13 @@ workflow upstream {
     String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
 
     # qc messages
-    String? msg_qc_sex = qc_sex
+    Array[String] msg = flatten(
+      [
+        flatten(pbmm2.msg),
+        [qc_sex],
+        trgt.msg,
+        hificnv.msg
+      ]
+    )
   }
 }
