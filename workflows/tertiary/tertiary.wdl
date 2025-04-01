@@ -335,7 +335,7 @@ task slivar_small_variant {
   String vcf_basename = basename(vcf, ".vcf.gz")
 
   Int threads   = 8
-  Int mem_gb    = 2 * threads
+  Int mem_gb    = 16
   Int disk_size = ceil((size(vcf, "GB") + size(reference, "GB") + size(gnotate_files, "GB") + size(gff, "GB") + size(lof_lookup, "GB") + size(clinvar_lookup, "GB") + size(phrank_lookup, "GB")) * 2 + 20)
 
   command <<<
@@ -444,7 +444,7 @@ task slivar_small_variant {
   runtime {
     docker: "~{runtime_attributes.container_registry}/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -543,7 +543,7 @@ task svpack_filter_annotated {
   runtime {
     docker: "~{runtime_attributes.container_registry}/svpack@sha256:628e9851e425ed8044a907d33de04043d1ef02d4d2b2667cf2e9a389bb011eba"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
@@ -634,7 +634,7 @@ task slivar_svpack_tsv {
   runtime {
     docker: "~{runtime_attributes.container_registry}/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa"
     cpu: threads
-    memory: mem_gb + " GB"
+    memory: mem_gb + " GiB"
     disk: disk_size + " GB"
     disks: "local-disk " + disk_size + " HDD"
     preemptible: runtime_attributes.preemptible_tries
