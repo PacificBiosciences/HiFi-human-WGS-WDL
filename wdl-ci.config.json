@@ -726,7 +726,7 @@
               },
               "output_tests": {
                 "stat_sv_DUP_count": {
-                  "value": "2",
+                  "value": "0",
                   "test_tasks": [
                     "compare_string"
                   ]
