@@ -45,6 +45,9 @@ workflow humanwgs_family {
     zones: {
       name: "Zones where compute will take place; required if backend is set to 'GCP'"
     }
+    cpuPlatform: {
+      help: "Optional minimum CPU platform to use for tasks on GCP"
+    }
     gpuType: {
       name: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
     }
@@ -76,6 +79,7 @@ workflow humanwgs_family {
     # Backend configuration
     String backend
     String? zones
+    String? cpuPlatform
     String? gpuType
     String? container_registry
 
@@ -88,6 +92,7 @@ workflow humanwgs_family {
     input:
       backend            = backend,
       zones              = zones,
+      cpuPlatform        = cpuPlatform,
       gpuType            = gpuType,
       container_registry = container_registry
   }

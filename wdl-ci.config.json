@@ -2231,6 +2231,7 @@
           "preemptible_tries": 0,
           "max_retries": 0,
           "zones": "",
+          "cpuPlatform": "",
           "gpuType": "ampere",
           "container_registry": "quay.io/pacbio"
         },
@@ -2239,6 +2240,7 @@
           "preemptible_tries": 0,
           "max_retries": 0,
           "zones": "",
+          "cpuPlatform": "",
           "gpuType": "ampere",
           "container_registry": "quay.io/pacbio"
         }
