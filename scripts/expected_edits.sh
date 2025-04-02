@@ -112,7 +112,7 @@ def read_vcf(file_path):
         return df
     
     except Exception as e:
-        print(f"Error reading VCF file {file_path}: {e}")
+        print(f"Error reading VCF file {file_path}: {e}", file=sys.stderr)
         return pd.DataFrame()
 
 def check_allele_presence(gt_field):
@@ -145,7 +145,7 @@ def process_intersection_results(output_dir, variant_type):
     }
     for desc, file_path in required_files.items():
         if not os.path.exists(file_path):
-            print(f"Error: Required file '{desc}' does not exist: {file_path}. Aborting processing.")
+            print(f"Error: Required file '{desc}' does not exist: {file_path}. Aborting processing.", file=sys.stderr)
             sys.exit(1)
 
     report = []
@@ -165,7 +165,7 @@ def process_intersection_results(output_dir, variant_type):
                         "Allele_Presence": "N/A"
                     })
     except Exception as e:
-         print(f"Error processing expected-only variants for {variant_type}: {e}")
+         print(f"Error processing expected-only variants for {variant_type}: {e}", file=sys.stderr)
 
     # Process shared variants
     try:
@@ -203,7 +203,7 @@ def process_intersection_results(output_dir, variant_type):
             })
             print(report)
     except Exception as e:
-        print(f"Error processing shared variants for {variant_type}: {e}")
+        print(f"Error processing shared variants for {variant_type}: {e}", file=sys.stderr)
 
     return report
 
@@ -231,8 +231,8 @@ if combined_report:
         "Total edit confirmations": len(small_variants_report) + len(structural_variants_report),
         "Edits confirmed by small variants": len([v for v in small_variants_report if v["Status"] == "CONFIRMED in sample"]),
         "Edits NOT confirmed by small variants": len([v for v in small_variants_report if v["Status"] == "NOT CONFIRMED in sample"]),
-        "Edits confirmed by DeepVariant": len([v for v in structural_variants_report if v["Status"] == "CONFIRMED in sample - MATCH"]),
-        "Edits NOT confirmed by Deepvariant": len([v for v in structural_variants_report if v["Status"] == "NOT CONFIRMED in sample"])
+        "Edits confirmed by structural variants": len([v for v in structural_variants_report if v["Status"] == "CONFIRMED in sample - MATCH"]),
+        "Edits NOT confirmed by structural variants": len([v for v in structural_variants_report if v["Status"] == "NOT CONFIRMED in sample"])
     }
 
     # Print summary
@@ -240,7 +240,7 @@ if combined_report:
     for key, value in summary.items():
         print(f"{key}: {value}")
 else:
-    print('No variants found for comparison')
+    print('No variants found for comparison', file=sys.stderr)
 EOF
 
 
