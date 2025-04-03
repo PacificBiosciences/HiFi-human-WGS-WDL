@@ -450,7 +450,7 @@ task slivar_small_variant {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    zones:runtime_attributes.zones
+    zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
@@ -550,7 +550,7 @@ task svpack_filter_annotated {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    zones:runtime_attributes.zones
+    zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
@@ -642,7 +642,7 @@ task slivar_svpack_tsv {
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     awsBatchRetryAttempts: runtime_attributes.max_retries
-    zones:runtime_attributes.zones
+    zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }

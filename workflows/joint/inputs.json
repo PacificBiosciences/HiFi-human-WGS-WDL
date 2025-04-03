@@ -14,6 +14,7 @@
     "gpuType": "String",
     "backend": "String",
     "preemptible_tries": "Int",
-    "zones": "String"
+    "zones": "String",
+    "cpuPlatform": "String"
   }
 }
