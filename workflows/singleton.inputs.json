@@ -11,6 +11,7 @@
   "humanwgs_singleton.gpu": "Boolean (optional, default = false)",
   "humanwgs_singleton.backend": "String",
   "humanwgs_singleton.zones": "String? (optional)",
+  "humanwgs_singleton.cpuPlatform": "String? (optional)",
   "humanwgs_singleton.gpuType": "String? (optional)",
   "humanwgs_singleton.container_registry": "String? (optional)",
   "humanwgs_singleton.container_namespace": "String? (optional)",

@@ -20,6 +20,10 @@ gcloud compute zones list | grep <region>
 
 For example, the zones in region `us-central1` are `"us-central1-a us-central1-b us-central1c us-central1f"`.
 
+#### Setting the optional cpuPlatform parameter
+
+Some GCP zones, for example `me-central1`, lack the n1 nodes used by many tasks in the workflow.  As a workaround, you can specify the minimum cpu platform to be used by the workflow to `"Intel Cascade Lake"`.  There is no need to specify the `cpuPlatform` input unless you encounter this issue.
+
 ## Running the workflow via Google's genomics Pipelines API
 
 [Cromwell's documentation](https://cromwell.readthedocs.io/en/stable/tutorials/PipelinesApi101/) on getting started with Google's genomics Pipelines API can be used as an example for how to run the workflow.
