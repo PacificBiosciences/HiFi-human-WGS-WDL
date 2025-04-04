@@ -20,17 +20,20 @@ workflow humanwgs_family {
     family: {
       name: "Family struct describing samples, relationships, and unaligned BAM paths"
     }
-    ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
-    }
-    pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
-    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
+    ref_map_file: {
+      name: "TSV containing reference genome file paths; must match backend"
+    }
     tertiary_map_file: {
       name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
+    pharmcat_min_coverage: {
+      name: "Minimum coverage for PharmCAT"
     }
     glnexus_mem_gb: {
       name: "Override GLnexus memory request (GB)"
@@ -65,13 +68,13 @@ workflow humanwgs_family {
   input {
     Family family
 
-    File ref_map_file
-
-    Int pharmcat_min_coverage = 10
-
     String phenotypes = "HP:0000001"
+
+    File ref_map_file
     File? tertiary_map_file
 
+    Int max_reads_per_alignment_chunk = 500000
+    Int pharmcat_min_coverage = 10
     Int? glnexus_mem_gb
 
     Boolean gpu = false
@@ -116,13 +119,14 @@ workflow humanwgs_family {
 
     call Upstream.upstream {
       input:
-        sample_id                    = sample.sample_id,
-        sex                          = sample.sex,
-        hifi_reads                   = sample.hifi_reads,
-        ref_map_file                 = ref_map_file,
-        single_sample                = single_sample,
-        gpu                          = gpu,
-        default_runtime_attributes   = default_runtime_attributes
+        sample_id                     = sample.sample_id,
+        sex                           = sample.sex,
+        hifi_reads                    = sample.hifi_reads,
+        ref_map_file                  = ref_map_file,
+        max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+        single_sample                 = single_sample,
+        gpu                           = gpu,
+        default_runtime_attributes    = default_runtime_attributes
     }
 
     # write sample metadata similar to pedigree format

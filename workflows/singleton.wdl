@@ -24,17 +24,20 @@ workflow humanwgs_singleton {
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
     }
-    ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
-    }
-    pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
-    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
+    ref_map_file: {
+      name: "TSV containing reference genome file paths; must match backend"
+    }
     tertiary_map_file: {
       name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
+    pharmcat_min_coverage: {
+      name: "Minimum coverage for PharmCAT"
     }
     gpu: {
       name: "Use GPU when possible"
@@ -69,12 +72,13 @@ workflow humanwgs_singleton {
     String? sex
     Array[File] hifi_reads
 
-    File ref_map_file
-
-    Int pharmcat_min_coverage = 10
-
     String phenotypes = "HP:0000001"
+
+    File ref_map_file
     File? tertiary_map_file
+
+    Int max_reads_per_alignment_chunk = 500000
+    Int pharmcat_min_coverage = 10
 
     Boolean gpu = false
 
@@ -103,13 +107,14 @@ workflow humanwgs_singleton {
 
   call Upstream.upstream {
     input:
-      sample_id                    = sample_id,
-      sex                          = sex,
-      hifi_reads                   = hifi_reads,
-      ref_map_file                 = ref_map_file,
-      single_sample                = true,
-      gpu                          = gpu,
-      default_runtime_attributes   = default_runtime_attributes
+      sample_id                     = sample_id,
+      sex                           = sex,
+      hifi_reads                    = hifi_reads,
+      ref_map_file                  = ref_map_file,
+      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+      single_sample                 = true,
+      gpu                           = gpu,
+      default_runtime_attributes    = default_runtime_attributes
   }
 
   call Downstream.downstream {

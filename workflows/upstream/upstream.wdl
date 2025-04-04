@@ -1,7 +1,7 @@
 version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
-import "../wdl-common/wdl/tasks/pbmm2.wdl" as Pbmm2
+import "../wdl-common/wdl/workflows/pbmm2/pbmm2.wdl" as Pbmm2
 import "../wdl-common/wdl/tasks/sawfish.wdl" as Sawfish
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
 import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
@@ -29,6 +29,9 @@ workflow upstream {
     ref_map_file: {
       name: "TSV containing reference genome information"
     }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
     single_sample: {
       name: "Single sample workflow"
     }
@@ -47,6 +50,8 @@ workflow upstream {
 
     File ref_map_file
 
+    Int max_reads_per_alignment_chunk
+
     Boolean single_sample = false
 
     Boolean gpu
@@ -57,30 +62,31 @@ workflow upstream {
   Map[String, String] ref_map = read_map(ref_map_file)
 
   scatter (hifi_read_bam in hifi_reads) {
-    call Pbmm2.pbmm2_align_wgs as pbmm2_align {
+    call Pbmm2.pbmm2 as pbmm2 {
       input:
-        sample_id          = sample_id,
-        bam                = hifi_read_bam,
-        ref_fasta          = ref_map["fasta"],       # !FileCoercion
-        ref_index          = ref_map["fasta_index"], # !FileCoercion
-        ref_name           = ref_map["name"],
-        runtime_attributes = default_runtime_attributes
+        sample_id                  = sample_id,
+        bam                        = hifi_read_bam,
+        max_reads_per_chunk        = max_reads_per_alignment_chunk,
+        ref_fasta                  = ref_map["fasta"],       # !FileCoercion
+        ref_index                  = ref_map["fasta_index"], # !FileCoercion
+        ref_name                   = ref_map["name"],
+        default_runtime_attributes = default_runtime_attributes
     }
   }
 
   # merge aligned bams if there are multiple
-  if (length(pbmm2_align.aligned_bam) > 1) {
+  if (length(flatten(pbmm2.aligned_bams)) > 1) {
     call Samtools.samtools_merge {
       input:
-        bams               = pbmm2_align.aligned_bam,
+        bams               = flatten(pbmm2.aligned_bams),
         out_prefix         = "~{sample_id}.~{ref_map['name']}",
         runtime_attributes = default_runtime_attributes
     }
   }
 
   # select the merged bam if it exists, otherwise select the first (only) aligned bam
-  File aligned_bam_data  = select_first([samtools_merge.merged_bam, pbmm2_align.aligned_bam[0]])
-  File aligned_bam_index = select_first([samtools_merge.merged_bam_index, pbmm2_align.aligned_bam_index[0]])
+  File aligned_bam_data  = select_first([samtools_merge.merged_bam, flatten(pbmm2.aligned_bams)[0]])
+  File aligned_bam_index = select_first([samtools_merge.merged_bam_index, flatten(pbmm2.aligned_bam_indices)[0]])
 
   call Mosdepth.mosdepth {
     input:
