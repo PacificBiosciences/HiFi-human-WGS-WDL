@@ -117,14 +117,11 @@ workflow upstream {
 
   call Sawfish.sawfish_discover {
     input:
-      sex                 = mosdepth.inferred_sex,
       aligned_bam         = aligned_bam_data,
       aligned_bam_index   = aligned_bam_index,
       ref_fasta           = ref_map["fasta"],                           # !FileCoercion
       ref_index           = ref_map["fasta_index"],                     # !FileCoercion
       out_prefix          = "~{sample_id}.~{ref_map['name']}",
-      expected_male_bed   = ref_map["hificnv_expected_bed_male"],       # !FileCoercion
-      expected_female_bed = ref_map["hificnv_expected_bed_female"],     # !FileCoercion
       runtime_attributes  = default_runtime_attributes
   }
 
@@ -199,8 +196,9 @@ workflow upstream {
     File discover_tar = sawfish_discover.discover_tar
 
     # sawfish outputs for single sample
-    File? sv_vcf       = sawfish_call.vcf
-    File? sv_vcf_index = sawfish_call.vcf_index
+    File? sv_vcf              = sawfish_call.vcf
+    File? sv_vcf_index        = sawfish_call.vcf_index
+    File? sv_supporting_reads = sawfish_call.supporting_reads
 
     # small variant outputs
     File small_variant_vcf        = deepvariant.vcf
