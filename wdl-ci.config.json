@@ -37,7 +37,7 @@
       "tasks": {
         "slivar_small_variant": {
           "key": "slivar_small_variant",
-          "digest": "hk7smb3fjdzicbvjwes6oist7iwnefwm",
+          "digest": "eq7doe46obnrz37la5oczwie53pzsaf6",
           "tests": [
             {
               "inputs": {
@@ -199,7 +199,7 @@
         },
         "slivar_svpack_tsv": {
           "key": "slivar_svpack_tsv",
-          "digest": "mo3z272srlp4old7xfa3cakvycayrfqg",
+          "digest": "tpp6xdwvkn22boyrs72t75y4fyrsjmv2",
           "tests": [
             {
               "inputs": {
