@@ -269,7 +269,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "wcruy2g5ce7fexnf7sctfshfcj3alw5m",
+          "digest": "orfdav6zki7q3pvp6vpikfns2fjdkzrx",
           "tests": [
             {
               "inputs": {
@@ -935,7 +935,7 @@
       "tasks": {
         "hificnv": {
           "key": "hificnv",
-          "digest": "tt3lk4sjqfnfpuukaghkmg6v33bnt3ic",
+          "digest": "45dcdjjpmnwhymg3vfjeo7yxbyczxart",
           "tests": [
             {
               "inputs": {
@@ -1263,115 +1263,6 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/pbmm2.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/pbmm2.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "pbmm2_align_wgs": {
-          "key": "pbmm2_align_wgs",
-          "digest": "h4ehzyo7xln5zovolppsz3sk5tz3yvro",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG00733",
-                "bam": "${resources_file_path}/inputs/sequelii_aligned_10k.hifi_reads.bam",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_aligned_10k/HG00733.sequelii_aligned_10k.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG00133",
-                "bam": "${resources_file_path}/inputs/sequelii_kinetics_10k.hifi_reads.bam",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k/HG00133.sequelii_kinetics_10k.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG00133",
-                "bam": "${resources_file_path}/inputs/sequelii_kinetics_10k.hifi_reads.bam",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "strip_kinetics": false,
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/sequelii_kinetics_10k_strip_kinetics_false/HG00133.sequelii_kinetics_10k.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "bam": "${resources_file_path}/inputs/vega_10k.hifi_reads.bam",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "bam": "${resources_file_path}/inputs/vega_10k.no_rq.hifi_reads.bam",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "aligned_bam": {
-                  "value": "${resources_file_path}/pbmm2_align_wgs/vega_10k_no_rq/HG002.vega_10k.no_rq.hifi_reads.GRCh38.aligned.bam",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "samtools_quickcheck"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/wdl-common/wdl/tasks/pbstarphase.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/pbstarphase.wdl",
       "name": "",
@@ -1423,7 +1314,7 @@
       "tasks": {
         "samtools_merge": {
           "key": "samtools_merge",
-          "digest": "xpto234x4hmpw3uvsk3tgyc7tb2ytcaa",
+          "digest": "uenrqqsd3frv7cc4rriwaljrh2kpdq2d",
           "tests": [
             {
               "inputs": {
@@ -1436,7 +1327,7 @@
               },
               "output_tests": {
                 "merged_bam": {
-                  "value": "${resources_file_path}/samtools_merge/output/two_inputs/HG002HG00133.GRCh38.bam",
+                  "value": "${resources_file_path}/samtools_merge/output/two_inputs_combine_rg_pg/HG002HG00133.GRCh38.bam",
                   "test_tasks": [
                     "compare_file_basename",
                     "samtools_quickcheck"
@@ -1465,7 +1356,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "tqgjvecbpne5cnz4ff4fhjztkpub4xtg",
+          "digest": "g6ywayioaobdtzqdajkngnqfqwmxjtyk",
           "tests": [
             {
               "inputs": {
@@ -1644,7 +1535,7 @@
         },
         "consolidate_stats": {
           "key": "consolidate_stats",
-          "digest": "zri2goulcgcaueaezcic3po2ijgb72k4",
+          "digest": "pot7gxel373bywwte62q3rc7qyb37jgb",
           "tests": [
             {
               "inputs": {
@@ -1661,6 +1552,11 @@
                     "3"
                   ]
                 },
+                "msg_array": [
+                  "hello",
+                  "",
+                  "world"
+                ],
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1670,6 +1566,13 @@
                     "compare_file_basename",
                     "check_tab_delimited",
                     "count_columns"
+                  ]
+                },
+                "messages": {
+                  "value": "${resources_file_path}/consolidate_stats/String.messages.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "calculate_md5sum"
                   ]
                 }
               }
@@ -1885,15 +1788,86 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/workflows/get_pbsv_splits/get_pbsv_splits.wdl": {
-      "key": "workflows/wdl-common/wdl/workflows/get_pbsv_splits/get_pbsv_splits.wdl",
+    "workflows/wdl-common/wdl/workflows/pbmm2/pbmm2.wdl": {
+      "key": "workflows/wdl-common/wdl/workflows/pbmm2/pbmm2.wdl",
       "name": "",
       "description": "",
       "tasks": {
-        "read_pbsv_splits": {
-          "key": "read_pbsv_splits",
-          "digest": "",
-          "tests": []
+        "pbmm2_align_wgs": {
+          "key": "pbmm2_align_wgs",
+          "digest": "kobmohrwnpy2pzlsd7l2qvoo7ulkxth2",
+          "tests": [
+            {
+              "inputs": {
+                "sample_id": "HG002",
+                "bam": "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_00.bam",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "ref_name": "${ref_name}",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "aligned_bam": {
+                  "value": "${resources_file_path}/pbmm2_align_wgs/split_vega_1k/HG002.vega_10k.hifi_reads.chunk_00.GRCh38.aligned.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "split_input_bam": {
+          "key": "split_input_bam",
+          "digest": "b7xnykjq4l2ecpvku2gxuswdnrnk3xka",
+          "tests": [
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/inputs/vega_10k.hifi_reads.bam",
+                "max_reads_per_chunk": 1000,
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "chunks": {
+                  "value": [
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_00.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_01.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_02.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_03.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_04.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_05.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_06.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_07.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_08.bam",
+                    "${resources_file_path}/split_input_bam/output/vega_10_chunks/vega_10k.hifi_reads.chunk_09.bam"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "bam": "${resources_file_path}/inputs/sequelii_aligned_10k.hifi_reads.bam",
+                "max_reads_per_chunk": 0,
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "chunks": {
+                  "value": [
+                    "${resources_file_path}/split_input_bam/output/aligned_input/sequelii_aligned_10k.hifi_reads.reset.bam"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
