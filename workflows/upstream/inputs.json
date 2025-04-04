@@ -3,6 +3,7 @@
   "upstream.sex": "String? (optional)",
   "upstream.hifi_reads": "Array[File]",
   "upstream.ref_map_file": "File",
+  "upstream.max_reads_per_alignment_chunk": "Int",
   "upstream.single_sample": "Boolean (optional, default = false)",
   "upstream.gpu": "Boolean",
   "upstream.default_runtime_attributes": {

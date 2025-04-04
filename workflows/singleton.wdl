@@ -24,17 +24,20 @@ workflow humanwgs_singleton {
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
     }
-    ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
-    }
-    pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
-    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
+    ref_map_file: {
+      name: "TSV containing reference genome file paths; must match backend"
+    }
     tertiary_map_file: {
       name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
+    pharmcat_min_coverage: {
+      name: "Minimum coverage for PharmCAT"
     }
     gpu: {
       name: "Use GPU when possible"
@@ -69,12 +72,13 @@ workflow humanwgs_singleton {
     String? sex
     Array[File] hifi_reads
 
-    File ref_map_file
-
-    Int pharmcat_min_coverage = 10
-
     String phenotypes = "HP:0000001"
+
+    File ref_map_file
     File? tertiary_map_file
+
+    Int max_reads_per_alignment_chunk = 500000
+    Int pharmcat_min_coverage = 10
 
     Boolean gpu = false
 
@@ -103,13 +107,14 @@ workflow humanwgs_singleton {
 
   call Upstream.upstream {
     input:
-      sample_id                    = sample_id,
-      sex                          = sex,
-      hifi_reads                   = hifi_reads,
-      ref_map_file                 = ref_map_file,
-      single_sample                = true,
-      gpu                          = gpu,
-      default_runtime_attributes   = default_runtime_attributes
+      sample_id                     = sample_id,
+      sex                           = sex,
+      hifi_reads                    = hifi_reads,
+      ref_map_file                  = ref_map_file,
+      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+      single_sample                 = true,
+      gpu                           = gpu,
+      default_runtime_attributes    = default_runtime_attributes
   }
 
   call Downstream.downstream {
@@ -126,6 +131,37 @@ workflow humanwgs_singleton {
       pharmcat_min_coverage      = pharmcat_min_coverage,
       ref_map_file               = ref_map_file,
       default_runtime_attributes = default_runtime_attributes
+  }
+
+  Map[String, String] pedigree_sex = {
+    "MALE": "1",
+    "FEMALE": "2",
+    "": "."
+  }
+
+  # write sample metadata similar to pedigree format
+  # family_id, sample_id, father_id, mother_id, sex, affected
+  Array[String] sample_metadata = [
+    sample_id, sample_id,
+    ".", ".",
+    pedigree_sex[upstream.inferred_sex], "2"
+  ]
+
+  if (defined(tertiary_map_file)) {
+    call TertiaryAnalysis.tertiary_analysis {
+      input:
+        sample_metadata            = [sample_metadata],
+        phenotypes                 = phenotypes,
+        is_trio_kid                = [false],
+        is_duo_kid                 = [false],
+        small_variant_vcf          = downstream.phased_small_variant_vcf,
+        small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
+        sv_vcf                     = downstream.phased_sv_vcf,
+        sv_vcf_index               = downstream.phased_sv_vcf_index,
+        ref_map_file               = ref_map_file,
+        tertiary_map_file          = select_first([tertiary_map_file]),
+        default_runtime_attributes = default_runtime_attributes
+    }
   }
 
   Map[String, Array[String]] stats = {
@@ -166,43 +202,14 @@ workflow humanwgs_singleton {
     input:
       id                 = sample_id,
       stats              = stats,
+      msg_array          = flatten([upstream.msg]),
       runtime_attributes = default_runtime_attributes
-  }
-
-  Map[String, String] pedigree_sex = {
-    "MALE": "1",
-    "FEMALE": "2",
-    "": "."
-  }
-
-  # write sample metadata similar to pedigree format
-  # family_id, sample_id, father_id, mother_id, sex, affected
-  Array[String] sample_metadata = [
-    sample_id, sample_id,
-    ".", ".",
-    pedigree_sex[upstream.inferred_sex], "2"
-  ]
-
-  if (defined(tertiary_map_file)) {
-    call TertiaryAnalysis.tertiary_analysis {
-      input:
-        sample_metadata            = [sample_metadata],
-        phenotypes                 = phenotypes,
-        is_trio_kid                = [false],
-        is_duo_kid                 = [false],
-        small_variant_vcf          = downstream.phased_small_variant_vcf,
-        small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
-        sv_vcf                     = downstream.phased_sv_vcf,
-        sv_vcf_index               = downstream.phased_sv_vcf_index,
-        ref_map_file               = ref_map_file,
-        tertiary_map_file          = select_first([tertiary_map_file]),
-        default_runtime_attributes = default_runtime_attributes
-    }
   }
 
   output {
     # consolidated stats
     File stats_file = consolidate_stats.output_tsv
+    File msg_file   = consolidate_stats.messages
 
     # bam stats
     File   bam_statistics           = downstream.bam_statistics
@@ -325,7 +332,11 @@ workflow humanwgs_singleton {
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
 
     # qc messages
-    Array[String?] qc_messages = [upstream.msg_qc_sex]
+    Array[String] msg = flatten(
+      [
+        upstream.msg
+      ]
+    )
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"

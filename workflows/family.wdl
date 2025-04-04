@@ -20,17 +20,20 @@ workflow humanwgs_family {
     family: {
       name: "Family struct describing samples, relationships, and unaligned BAM paths"
     }
-    ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
-    }
-    pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
-    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
+    ref_map_file: {
+      name: "TSV containing reference genome file paths; must match backend"
+    }
     tertiary_map_file: {
       name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
+    pharmcat_min_coverage: {
+      name: "Minimum coverage for PharmCAT"
     }
     glnexus_mem_gb: {
       name: "Override GLnexus memory request (GB)"
@@ -65,13 +68,13 @@ workflow humanwgs_family {
   input {
     Family family
 
-    File ref_map_file
-
-    Int pharmcat_min_coverage = 10
-
     String phenotypes = "HP:0000001"
+
+    File ref_map_file
     File? tertiary_map_file
 
+    Int max_reads_per_alignment_chunk = 500000
+    Int pharmcat_min_coverage = 10
     Int? glnexus_mem_gb
 
     Boolean gpu = false
@@ -116,13 +119,14 @@ workflow humanwgs_family {
 
     call Upstream.upstream {
       input:
-        sample_id                    = sample.sample_id,
-        sex                          = sample.sex,
-        hifi_reads                   = sample.hifi_reads,
-        ref_map_file                 = ref_map_file,
-        single_sample                = single_sample,
-        gpu                          = gpu,
-        default_runtime_attributes   = default_runtime_attributes
+        sample_id                     = sample.sample_id,
+        sex                           = sample.sex,
+        hifi_reads                    = sample.hifi_reads,
+        ref_map_file                  = ref_map_file,
+        max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+        single_sample                 = single_sample,
+        gpu                           = gpu,
+        default_runtime_attributes    = default_runtime_attributes
     }
 
     # write sample metadata similar to pedigree format
@@ -171,47 +175,6 @@ workflow humanwgs_family {
     }
   }
 
-  Map[String, Array[String]] stats = {
-    'sample_id': sample_id,
-    'num_reads': downstream.stat_num_reads,
-    'read_length_mean': downstream.stat_read_length_mean,
-    'read_length_median': downstream.stat_read_length_median,
-    'read_quality_mean': downstream.stat_read_quality_mean,
-    'read_quality_median': downstream.stat_read_quality_median,
-    'mapped_read_count': downstream.stat_mapped_read_count,
-    'mapped_percent': downstream.stat_mapped_percent,
-    'mean_depth': upstream.stat_mean_depth,
-    'inferred_sex': upstream.inferred_sex,
-    'stat_phased_basepairs': downstream.stat_phased_basepairs,
-    'phase_block_ng50': downstream.stat_phase_block_ng50,
-    'cpg_combined_count': downstream.stat_combined_cpg_count,
-    'cpg_hap1_count': downstream.stat_hap1_cpg_count,
-    'cpg_hap2_count': downstream.stat_hap2_cpg_count,
-    'SNV_count': downstream.stat_SNV_count,
-    'TSTV_ratio': downstream.stat_TSTV_ratio,
-    'HETHOM_ratio': downstream.stat_HETHOM_ratio,
-    'INDEL_count': downstream.stat_INDEL_count,
-    'sv_DUP_count': downstream.stat_sv_DUP_count,
-    'sv_DEL_count': downstream.stat_sv_DEL_count,
-    'sv_INS_count': downstream.stat_sv_INS_count,
-    'sv_INV_count': downstream.stat_sv_INV_count,
-    'sv_INVBND_count': downstream.stat_sv_INVBND_count,
-    'sv_BND_count': downstream.stat_sv_BND_count,
-    'cnv_DUP_count': upstream.stat_cnv_DUP_count,
-    'cnv_DEL_count': upstream.stat_cnv_DEL_count,
-    'cnv_DUP_sum': upstream.stat_cnv_DUP_sum,
-    'cnv_DEL_sum': upstream.stat_cnv_DEL_sum,
-    'trgt_genotyped_count': upstream.stat_trgt_genotyped_count,
-    'trgt_uncalled_count': upstream.stat_trgt_uncalled_count
-  }
-
-  call Utilities.consolidate_stats {
-    input:
-      id                 = family.family_id,
-      stats              = stats,
-      runtime_attributes = default_runtime_attributes
-  }
-
   if (!single_sample) {
     call Bcftools.bcftools_merge as merge_small_variant_vcfs {
       input:
@@ -257,10 +220,53 @@ workflow humanwgs_family {
     }
   }
 
+    Map[String, Array[String]] stats = {
+    'sample_id': sample_id,
+    'num_reads': downstream.stat_num_reads,
+    'read_length_mean': downstream.stat_read_length_mean,
+    'read_length_median': downstream.stat_read_length_median,
+    'read_quality_mean': downstream.stat_read_quality_mean,
+    'read_quality_median': downstream.stat_read_quality_median,
+    'mapped_read_count': downstream.stat_mapped_read_count,
+    'mapped_percent': downstream.stat_mapped_percent,
+    'mean_depth': upstream.stat_mean_depth,
+    'inferred_sex': upstream.inferred_sex,
+    'stat_phased_basepairs': downstream.stat_phased_basepairs,
+    'phase_block_ng50': downstream.stat_phase_block_ng50,
+    'cpg_combined_count': downstream.stat_combined_cpg_count,
+    'cpg_hap1_count': downstream.stat_hap1_cpg_count,
+    'cpg_hap2_count': downstream.stat_hap2_cpg_count,
+    'SNV_count': downstream.stat_SNV_count,
+    'TSTV_ratio': downstream.stat_TSTV_ratio,
+    'HETHOM_ratio': downstream.stat_HETHOM_ratio,
+    'INDEL_count': downstream.stat_INDEL_count,
+    'sv_DUP_count': downstream.stat_sv_DUP_count,
+    'sv_DEL_count': downstream.stat_sv_DEL_count,
+    'sv_INS_count': downstream.stat_sv_INS_count,
+    'sv_INV_count': downstream.stat_sv_INV_count,
+    'sv_INVBND_count': downstream.stat_sv_INVBND_count,
+    'sv_BND_count': downstream.stat_sv_BND_count,
+    'cnv_DUP_count': upstream.stat_cnv_DUP_count,
+    'cnv_DEL_count': upstream.stat_cnv_DEL_count,
+    'cnv_DUP_sum': upstream.stat_cnv_DUP_sum,
+    'cnv_DEL_sum': upstream.stat_cnv_DEL_sum,
+    'trgt_genotyped_count': upstream.stat_trgt_genotyped_count,
+    'trgt_uncalled_count': upstream.stat_trgt_uncalled_count
+  }
+
+  call Utilities.consolidate_stats {
+    input:
+      id                 = family.family_id,
+      stats              = stats,
+      msg_array          = flatten([flatten(upstream.msg)]),
+      runtime_attributes = default_runtime_attributes
+  }
+
   output {
     # to maintain order of samples
     Array[String] sample_ids = sample_id
-    File stats_file          = consolidate_stats.output_tsv
+    File  stats_file         = consolidate_stats.output_tsv
+    File  msg_file           = consolidate_stats.messages
 
     # bam stats
     Array[File]   bam_statistics           = downstream.bam_statistics
@@ -391,7 +397,11 @@ workflow humanwgs_family {
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
 
     # qc messages
-    Array[String?] qc_messages = flatten([upstream.msg_qc_sex])
+    Array[String] msg = flatten(
+      [
+        flatten(upstream.msg)
+      ]
+    )
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
