@@ -717,7 +717,7 @@
         },
         "sv_stats": {
           "key": "sv_stats",
-          "digest": "i5iptmzk472kcck6varsvun7ip6pd4tf",
+          "digest": "y36kt5y2lun65yutrgqtspgheaezbbgh",
           "tests": [
             {
               "inputs": {
@@ -755,8 +755,8 @@
                     "compare_string"
                   ]
                 },
-                "stat_sv_INVBND_count": {
-                  "value": "4",
+                "stat_sv_SWAP_count": {
+                  "value": "0",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -2032,7 +2032,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "wbvv3v5qtbdrgvqvtqgeeamqmhgzsw4p",
+          "digest": "fhepxt5mh25uz4eg267h6al6nclhl7vl",
           "tests": [
             {
               "inputs": {
@@ -2100,7 +2100,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "rfuh5khjsyiajhrxz4the5j4fv3kzzhb",
+          "digest": "kjha4llh7xjs55xbkowbvfikvfnwtct4",
           "tests": [
             {
               "inputs": {

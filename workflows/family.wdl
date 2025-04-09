@@ -244,7 +244,7 @@ workflow humanwgs_family {
     'sv_DEL_count': downstream.stat_sv_DEL_count,
     'sv_INS_count': downstream.stat_sv_INS_count,
     'sv_INV_count': downstream.stat_sv_INV_count,
-    'sv_INVBND_count': downstream.stat_sv_INVBND_count,
+    'sv_SWAP_count': downstream.stat_sv_SWAP_count,
     'sv_BND_count': downstream.stat_sv_BND_count,
     'cnv_DUP_count': upstream.stat_cnv_DUP_count,
     'cnv_DEL_count': upstream.stat_cnv_DEL_count,
@@ -318,14 +318,15 @@ workflow humanwgs_family {
     # sv outputs
     Array[File] phased_sv_vcf       = downstream.phased_sv_vcf
     Array[File] phased_sv_vcf_index = downstream.phased_sv_vcf_index
+    File sv_supporting_reads        = select_first([joint.sv_supporting_reads, upstream.sv_supporting_reads[0]])
 
     # sv stats
-    Array[String] stat_sv_DUP_count    = downstream.stat_sv_DUP_count
-    Array[String] stat_sv_DEL_count    = downstream.stat_sv_DEL_count
-    Array[String] stat_sv_INS_count    = downstream.stat_sv_INS_count
-    Array[String] stat_sv_INV_count    = downstream.stat_sv_INV_count
-    Array[String] stat_sv_INVBND_count = downstream.stat_sv_INVBND_count
-    Array[String] stat_sv_BND_count    = downstream.stat_sv_BND_count
+    Array[String] stat_sv_DUP_count  = downstream.stat_sv_DUP_count
+    Array[String] stat_sv_DEL_count  = downstream.stat_sv_DEL_count
+    Array[String] stat_sv_INS_count  = downstream.stat_sv_INS_count
+    Array[String] stat_sv_INV_count  = downstream.stat_sv_INV_count
+    Array[String] stat_sv_SWAP_count = downstream.stat_sv_SWAP_count
+    Array[String] stat_sv_BND_count  = downstream.stat_sv_BND_count
 
     # small variant outputs
     Array[File] phased_small_variant_vcf       = downstream.phased_small_variant_vcf

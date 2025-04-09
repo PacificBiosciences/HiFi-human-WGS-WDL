@@ -188,7 +188,7 @@ workflow humanwgs_singleton {
     'sv_DEL_count': [downstream.stat_sv_DEL_count],
     'sv_INS_count': [downstream.stat_sv_INS_count],
     'sv_INV_count': [downstream.stat_sv_INV_count],
-    'sv_INVBND_count': [downstream.stat_sv_INVBND_count],
+    'sv_SWAP_count': [downstream.stat_sv_SWAP_count],
     'sv_BND_count': [downstream.stat_sv_BND_count],
     'cnv_DUP_count': [upstream.stat_cnv_DUP_count],
     'cnv_DEL_count': [upstream.stat_cnv_DEL_count],
@@ -261,14 +261,15 @@ workflow humanwgs_singleton {
     # sv outputs
     File phased_sv_vcf       = downstream.phased_sv_vcf
     File phased_sv_vcf_index = downstream.phased_sv_vcf_index
+    File sv_supporting_reads = select_first([upstream.sv_supporting_reads])
 
     # sv stats
-    String stat_sv_DUP_count    = downstream.stat_sv_DUP_count
-    String stat_sv_DEL_count    = downstream.stat_sv_DEL_count
-    String stat_sv_INS_count    = downstream.stat_sv_INS_count
-    String stat_sv_INV_count    = downstream.stat_sv_INV_count
-    String stat_sv_INVBND_count = downstream.stat_sv_INVBND_count
-    String stat_sv_BND_count    = downstream.stat_sv_BND_count
+    String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
+    String stat_sv_DEL_count  = downstream.stat_sv_DEL_count
+    String stat_sv_INS_count  = downstream.stat_sv_INS_count
+    String stat_sv_INV_count  = downstream.stat_sv_INV_count
+    String stat_sv_SWAP_count = downstream.stat_sv_SWAP_count
+    String stat_sv_BND_count  = downstream.stat_sv_BND_count
 
     # small variant outputs
     File phased_small_variant_vcf       = downstream.phased_small_variant_vcf

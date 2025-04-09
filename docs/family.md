@@ -168,8 +168,9 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_sv_DEL_count | Structural variant DEL count | (PASS variants) |
 | Array\[String\] | stat_sv_INS_count | Structural variant INS count | (PASS variants) |
 | Array\[String\] | stat_sv_INV_count | Structural variant INV count | (PASS variants) |
-| Array\[String\] | stat_sv_INVBND_count | Structural variant INVBND count | (PASS variants) |
 | Array\[String\] | stat_sv_BND_count | Structural variant BND count | (PASS variants) |
+| Array\[String\] | stat_sv_SWAP_count | Structural variant sequence swap events | (PASS variants) |
+| File | sv_supporting_reads | Supporting reads for structural variants |  |
 | Array\[File\] | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | Array\[File\] | bcftools_roh_bed | Generated from above, without filtering |  |
 | File? | joint_sv_vcf | Joint-called structural variant VCF |  |
