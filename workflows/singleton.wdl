@@ -314,6 +314,11 @@ workflow humanwgs_singleton {
     String stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
     String stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
 
+    # per sample mitorsaw outputs
+    File mitorsaw_vcf       = upstream.mitorsaw_vcf
+    File mitorsaw_vcf_index = upstream.mitorsaw_vcf_index
+    File mitorsaw_hap_stats = upstream.mitorsaw_hap_stats
+
     # PGx outputs
     File  pbstarphase_json        = downstream.pbstarphase_json
     File? pharmcat_match_json     = downstream.pharmcat_match_json

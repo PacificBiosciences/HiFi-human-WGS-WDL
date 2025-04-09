@@ -10,7 +10,6 @@ import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
-
 workflow humanwgs_family {
   meta {
     description: "PacBio HiFi human whole genome sequencing pipeline, with joint calling for related samples."
@@ -370,6 +369,11 @@ workflow humanwgs_family {
     Array[String] stat_cnv_DEL_count   = upstream.stat_cnv_DEL_count
     Array[String] stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
     Array[String] stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
+
+    # per sample mitorsaw outputs
+    Array[File] mitorsaw_vcf       = upstream.mitorsaw_vcf
+    Array[File] mitorsaw_vcf_index = upstream.mitorsaw_vcf_index
+    Array[File] mitorsaw_hap_stats = upstream.mitorsaw_hap_stats
 
     # PGx outputs
     Array[File]  pbstarphase_json        = downstream.pbstarphase_json

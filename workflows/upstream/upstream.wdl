@@ -9,6 +9,7 @@ import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
 import "../wdl-common/wdl/tasks/hificnv.wdl" as Hificnv
+import "../wdl-common/wdl/tasks/mitorsaw.wdl" as Mitorsaw
 
 workflow upstream {
   meta {
@@ -166,6 +167,16 @@ workflow upstream {
       runtime_attributes  = default_runtime_attributes
   }
 
+  call Mitorsaw.mitorsaw {
+    input:
+      aligned_bam        = aligned_bam_data,
+      aligned_bam_index  = aligned_bam_index,
+      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
+      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
   if (single_sample) {
     call Sawfish.sawfish_call {
       input: 
@@ -230,6 +241,11 @@ workflow upstream {
     String stat_cnv_DEL_count   = hificnv.stat_DEL_count
     String stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
     String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
+
+    # per sample mitorsaw outputs
+    File mitorsaw_vcf       = mitorsaw.vcf
+    File mitorsaw_vcf_index = mitorsaw.vcf_index
+    File mitorsaw_hap_stats = mitorsaw.hap_stats
 
     # qc messages
     Array[String] msg = flatten(
