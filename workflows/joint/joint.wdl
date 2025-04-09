@@ -53,6 +53,9 @@ workflow joint {
     split_joint_small_variant_vcf_indices: {
       name: "Joint-call small variant VCF indices, split by sample"
     }
+    sv_supporting_reads: {
+      name: "Supporting reads JSON"
+    }
   }
 
   input {
@@ -135,5 +138,6 @@ workflow joint {
     Array[File] split_joint_structural_variant_vcf_indices = split_sawfish.split_vcf_indices
     Array[File] split_joint_small_variant_vcfs             = split_glnexus.split_vcfs
     Array[File] split_joint_small_variant_vcf_indices      = split_glnexus.split_vcf_indices
+    File sv_supporting_reads                               = select_first([sawfish_call.supporting_reads])
   }
 }
