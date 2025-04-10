@@ -535,11 +535,11 @@
         },
         "sv_stats": {
           "key": "sv_stats",
-          "digest": "35gn2cqouobao6vacrqbi67zhkh6nmyn",
+          "digest": "sq4w257wawiwfuuquazhhuzlhdyiiwg3",
           "tests": [
             {
               "inputs": {
-                "vcf": "${resources_file_path}/sv_stats/HG002.GRCh38.pbsv.phased.vcf.gz",
+                "vcf": "${resources_file_path}/sv_stats/pbsv/HG002.GRCh38.pbsv.phased.vcf.gz",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
