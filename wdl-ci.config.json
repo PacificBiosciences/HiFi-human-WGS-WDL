@@ -1217,6 +1217,46 @@
         }
       }
     },
+    "workflows/wdl-common/wdl/tasks/mitorsaw.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/mitorsaw.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "mitorsaw": {
+          "key": "mitorsaw",
+          "digest": "bfnbvu2pwnp734bxsb633n3phezm3j7a",
+          "tests": [
+            {
+              "inputs": {
+                "aligned_bam": "${resources_file_path}/inputs/HG002-sprq.GRCh38.haplotagged.bam",
+                "aligned_bam_index": "${resources_file_path}/inputs/HG002-sprq.GRCh38.haplotagged.bam.bai",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "vcf": {
+                  "value": "${resources_file_path}/mitorsaw/output/HG002.GRCh38.mitorsaw.vcf.gz",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "vcftools_validator",
+                    "check_gzip"
+                  ]
+                },
+                "hap_stats": {
+                  "value": "${resources_file_path}/mitorsaw/output/HG002.GRCh38.mitorsaw.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "workflows/wdl-common/wdl/tasks/paraphase.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/paraphase.wdl",
       "name": "",
@@ -1356,7 +1396,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "spklfnpuz2zbc4j4nucyklfi6evyinwx",
+          "digest": "g6ywayioaobdtzqdajkngnqfqwmxjtyk",
           "tests": [
             {
               "inputs": {
@@ -1445,7 +1485,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "yilkwgetphuphxypkjuipkiijphsndux",
+          "digest": "dmgbkalwvudhxs6lr3xkwopq6hkwjttv",
           "tests": [
             {
               "inputs": {
@@ -1479,7 +1519,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "mxmpecq675an3ikpdkgda7pyow6ssrkp",
+          "digest": "oc5xxjmuyfnoobc6zqe5sqtfsfgkgak7",
           "tests": [
             {
               "inputs": {
