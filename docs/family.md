@@ -34,6 +34,7 @@ flowchart TD
     samtools_merge --> mosdepth["mosdepth"]
     samtools_merge --> paraphase["Paraphase"]
     samtools_merge --> hificnv["HiFiCNV"]
+    samtools_merge --> mitorsaw["MitorSaw"]
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
     samtools_merge --> deepvariant["DeepVariant"]
@@ -189,6 +190,14 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_cnv_DEL_count | Count of DEL events | (PASS variants) |
 | Array\[String\] | stat_cnv_DUP_sum | Sum of DUP bp | (PASS variants) |
 | Array\[String\] | stat_cnv_DEL_sum | Sum of DEL bp | (PASS variants) |
+
+### Mitochondrial variants and haplotypes
+
+| Type | Name | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| Array\[File\] | mitorsaw_vcf | Mitochondrial variant VCF |  |
+| Array\[File\] | mitorsaw_vcf_index | Index for mitochondrial variant VCF |  |
+| Array\[File\] | mitorsaw_hap_stats | Mitochondrial haplotype stats |  |
 
 ### Tandem Repeat Genotyping
 

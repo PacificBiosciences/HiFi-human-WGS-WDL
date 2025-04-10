@@ -32,6 +32,7 @@ flowchart TD
     samtools_merge --> mosdepth["mosdepth"]
     samtools_merge --> paraphase["Paraphase"]
     samtools_merge --> hificnv["HiFiCNV"]
+    samtools_merge --> mitorsaw["MitorSaw"]
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
     samtools_merge --> deepvariant["DeepVariant"]
@@ -136,6 +137,14 @@ flowchart TD
 | File | sv_supporting_reads | Supporting reads for structural variants |  |
 | File | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | File | bcftools_roh_bed | Generated from above, without filtering |  |
+
+### Mitochondrial variants and haplotypes
+
+| Type | Name | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| File | mitorsaw_vcf | Mitochondrial variant VCF |  |
+| File | mitorsaw_vcf_index | Index for mitochondrial variant VCF |  |
+| File | mitorsaw_hap_stats | Mitochondrial haplotype stats |  |
 
 ### Copy Number Variants (≥100 kb)
 
