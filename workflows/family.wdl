@@ -10,7 +10,7 @@ import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
-
+import "wdl-common/wdl/tasks/somatic_annotation.wdl" as Somatic_annotation
 
 workflow humanwgs_family {
   meta {
@@ -103,6 +103,8 @@ workflow humanwgs_family {
     Boolean preemptible = true
 
     String? debug_version
+    File vep_cache = "/hpc/mydata/ram.ayyala/HiFi-human-WGS-editing-QC-WDL/homo_sapiens_refseq_vep_112_GRCh38.tar.gz"
+    File annotsv_cache = "/hpc/mydata/ram.ayyala/HiFi-human-WGS-editing-QC-WDL/annotsv_cache.tar.gz"
   }
 
   call BackendConfiguration.backend_configuration {
@@ -250,18 +252,37 @@ workflow humanwgs_family {
         disk_size          = ceil(size(flatten(hifi_reads), "GB")) + 10,
         runtime_attributes = default_runtime_attributes
     }
+    
+    call Somatic_annotation.vep_annotate as annotateGermline {
+        input:
+            input_vcf           = select_first([merge_small_variant_vcfs.merged_vcf, downstream.phased_small_variant_vcf[0]]),
+            vep_cache           = select_first([vep_cache]),
+            ref_fasta           = ref_map["fasta"],
+            ref_fasta_index     = ref_map["fasta_index"],
+            threads             = 32
+    }
+
+    call Somatic_annotation.annotsv as annotateSV {
+        input: 
+            sv_vcf              = select_first([merge_sv_vcfs.merged_vcf, downstream.phased_sv_vcf[0]]),
+            sv_vcf_index        = select_first([merge_sv_vcfs.merged_vcf_index, downstream.phased_sv_vcf_index[0]]),
+            annotsv_cache       = select_first([annotsv_cache]),  
+            threads             = 32
+    }
+
+   
 
     call TertiaryAnalysis.tertiary_analysis {
-      input:
-        pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
-        small_variant_vcf          = select_first([merge_small_variant_vcfs.merged_vcf, downstream.phased_small_variant_vcf[0]]),
-        small_variant_vcf_index    = select_first([merge_small_variant_vcfs.merged_vcf_index, downstream.phased_small_variant_vcf_index[0]]),
-        sv_vcf                     = select_first([merge_sv_vcfs.merged_vcf, downstream.phased_sv_vcf[0]]),
-        sv_vcf_index               = select_first([merge_sv_vcfs.merged_vcf_index, downstream.phased_sv_vcf_index[0]]),
-        ref_map_file               = ref_map_file,
-        tertiary_map_file          = select_first([tertiary_map_file]),
-        default_runtime_attributes = default_runtime_attributes
+        input:
+            pedigree                   = write_ped_phrank.pedigree,
+            phrank_lookup              = write_ped_phrank.phrank_lookup,
+            small_variant_vcf          = select_first([merge_small_variant_vcfs.merged_vcf, downstream.phased_small_variant_vcf[0]]),
+            small_variant_vcf_index    = select_first([merge_small_variant_vcfs.merged_vcf_index, downstream.phased_small_variant_vcf_index[0]]),
+            sv_vcf                     = select_first([merge_sv_vcfs.merged_vcf, downstream.phased_sv_vcf[0]]),
+            sv_vcf_index               = select_first([merge_sv_vcfs.merged_vcf_index, downstream.phased_sv_vcf_index[0]]),
+            ref_map_file               = ref_map_file,
+            tertiary_map_file          = select_first([tertiary_map_file]),
+            default_runtime_attributes = default_runtime_attributes
     }
   }
 
@@ -387,17 +408,20 @@ workflow humanwgs_family {
     File? joint_trgt_vcf_index           = trgt_merge.merged_vcf_index
 
     # tertiary analysis outputs
-    File? pedigree                                      = write_ped_phrank.pedigree
-    File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
-    File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
-    File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
-    File? tertiary_small_variant_compound_het_vcf       = tertiary_analysis.small_variant_compound_het_vcf
-    File? tertiary_small_variant_compound_het_vcf_index = tertiary_analysis.small_variant_compound_het_vcf_index
-    File? tertiary_small_variant_compound_het_tsv       = tertiary_analysis.small_variant_compound_het_tsv
-    File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
-    File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
-    File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
-
+     File? pedigree                                      = write_ped_phrank.pedigree
+     File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
+     File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
+     File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
+     File? tertiary_small_variant_compound_het_vcf       = tertiary_analysis.small_variant_compound_het_vcf
+     File? tertiary_small_variant_compound_het_vcf_index = tertiary_analysis.small_variant_compound_het_vcf_index
+     File? tertiary_small_variant_compound_het_tsv       = tertiary_analysis.small_variant_compound_het_tsv
+     File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
+     File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
+     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
+    
+    #annotation analysis outputs
+    File? vep_annotated_vcf                             = annotateGermline.vep_annotated_vcf
+    File? annotsv_annotated_tsv                         = annotateSV.annotsv_annotated_tsv
     # workflow metadata
     String workflow_name    = "humanwgs_family"
     String workflow_version = "v2.0.7" + if defined(debug_version) then "~{"-" + debug_version}" else ""
