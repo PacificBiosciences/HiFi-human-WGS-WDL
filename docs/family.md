@@ -29,7 +29,6 @@ flowchart TD
       ubam[/"HiFi uBAM"/] --> pbmm2_align["pbmm2 align"]
       pbmm2_align --> sawfish_discover["Sawfish discover"]
     end
-    pbmm2_align --> merge_read_stats["merge read statistics"]
     pbmm2_align --> samtools_merge["samtools merge"]
     samtools_merge --> mosdepth["mosdepth"]
     samtools_merge --> paraphase["Paraphase"]
@@ -50,6 +49,7 @@ flowchart TD
     split_glnexus --> hiphase
     trgt --> hiphase
     split_sawfish --> hiphase
+    hiphase --> bam_stats["BAM stats"]
     hiphase --> bcftools_roh["bcftools roh"]
     hiphase --> bcftools_stats["bcftools stats\n(small variants)"]
     hiphase --> sv_stats["SV stats"]

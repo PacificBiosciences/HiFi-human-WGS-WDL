@@ -28,7 +28,6 @@ flowchart TD
       pbmm2_align --> sawfish_discover["Sawfish discover"]
     end
     pbmm2_align --> merge_read_stats["merge read statistics"]
-    pbmm2_align --> samtools_merge["samtools merge"]
     samtools_merge --> mosdepth["mosdepth"]
     samtools_merge --> paraphase["Paraphase"]
     samtools_merge --> hificnv["HiFiCNV"]
@@ -43,6 +42,7 @@ flowchart TD
     deepvariant --> hiphase
     trgt --> hiphase
     pbsv_call --> hiphase
+    hiphase --> bam_stats["BAM stats"]
     hiphase --> bcftools_roh["bcftools roh"]
     hiphase --> bcftools_stats["bcftools stats\n(small variants)"]
     hiphase --> sv_stats["SV stats"]
