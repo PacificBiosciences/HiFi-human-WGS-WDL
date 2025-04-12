@@ -10,7 +10,7 @@ import "wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
-import "wdl-common/wdl/tasks/somatic_annotation.wdl" as Somatic_annotation
+import "somatic_ports/somatic_annotation.wdl" as Somatic_annotation
 
 workflow humanwgs_family {
   meta {
