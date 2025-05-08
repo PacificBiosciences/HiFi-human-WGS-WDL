@@ -3,8 +3,7 @@
   "upstream.sex": "String? (optional)",
   "upstream.hifi_reads": "Array[File]",
   "upstream.ref_map_file": "File",
-  "upstream.deepvariant_version": "String",
-  "upstream.custom_deepvariant_model_tar": "File? (optional)",
+  "upstream.max_reads_per_alignment_chunk": "Int",
   "upstream.single_sample": "Boolean (optional, default = false)",
   "upstream.gpu": "Boolean",
   "upstream.default_runtime_attributes": {
@@ -13,6 +12,7 @@
     "gpuType": "String",
     "backend": "String",
     "preemptible_tries": "Int",
-    "zones": "String"
+    "zones": "String",
+    "cpuPlatform": "String"
   }
 }
