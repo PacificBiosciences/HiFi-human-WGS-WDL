@@ -4,7 +4,6 @@ import "humanwgs_structs.wdl"
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 import "upstream/upstream.wdl" as Upstream
 import "downstream/downstream.wdl" as Downstream
-import "wdl-common/wdl/tasks/write_ped_phrank.wdl" as Write_ped_phrank
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
@@ -25,26 +24,20 @@ workflow humanwgs_singleton {
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
     }
-    ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
-    }
-    deepvariant_version: {
-      name: "DeepVariant version"
-    }
-    custom_deepvariant_model_tar: {
-      name: "Custom DeepVariant model tarball"
-    }
-    pharmcat_version: {
-      name: "PharmCAT version"
-    }
-    pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
-    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
+    ref_map_file: {
+      name: "TSV containing reference genome file paths; must match backend"
+    }
     tertiary_map_file: {
       name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    }
+    max_reads_per_alignment_chunk: {
+      name: "Maximum reads per alignment chunk"
+    }
+    pharmcat_min_coverage: {
+      name: "Minimum coverage for PharmCAT"
     }
     gpu: {
       name: "Use GPU when possible"
@@ -55,6 +48,9 @@ workflow humanwgs_singleton {
     }
     zones: {
       name: "Zones where compute will take place; required if backend is set to 'GCP'"
+    }
+    cpuPlatform: {
+      help: "Optional minimum CPU platform to use for tasks on GCP"
     }
     gpuType: {
       name: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
@@ -76,25 +72,20 @@ workflow humanwgs_singleton {
     String? sex
     Array[File] hifi_reads
 
-    File ref_map_file
-
-    # These options are only intended for testing purposes.
-    # There is no guarantee that the pipeline will work with
-    # other version of DeepVariant or with custom models.
-    String deepvariant_version = "1.6.1"
-    File? custom_deepvariant_model_tar
-
-    String pharmcat_version = "2.15.4"
-    Int pharmcat_min_coverage = 10
-
     String phenotypes = "HP:0000001"
+
+    File ref_map_file
     File? tertiary_map_file
+
+    Int max_reads_per_alignment_chunk = 500000
+    Int pharmcat_min_coverage = 10
 
     Boolean gpu = false
 
     # Backend configuration
     String backend
     String? zones
+    String? cpuPlatform
     String? gpuType
     String? container_registry
 
@@ -107,6 +98,7 @@ workflow humanwgs_singleton {
     input:
       backend            = backend,
       zones              = zones,
+      cpuPlatform        = cpuPlatform,
       gpuType            = gpuType,
       container_registry = container_registry
   }
@@ -115,15 +107,14 @@ workflow humanwgs_singleton {
 
   call Upstream.upstream {
     input:
-      sample_id                    = sample_id,
-      sex                          = sex,
-      hifi_reads                   = hifi_reads,
-      ref_map_file                 = ref_map_file,
-      deepvariant_version          = deepvariant_version,
-      custom_deepvariant_model_tar = custom_deepvariant_model_tar,
-      single_sample                = true,
-      gpu                          = gpu,
-      default_runtime_attributes   = default_runtime_attributes
+      sample_id                     = sample_id,
+      sex                           = sex,
+      hifi_reads                    = hifi_reads,
+      ref_map_file                  = ref_map_file,
+      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+      single_sample                 = true,
+      gpu                           = gpu,
+      default_runtime_attributes    = default_runtime_attributes
   }
 
   call Downstream.downstream {
@@ -137,19 +128,49 @@ workflow humanwgs_singleton {
       trgt_vcf_index             = upstream.trgt_vcf_index,
       aligned_bam                = upstream.out_bam,
       aligned_bam_index          = upstream.out_bam_index,
-      pharmcat_version           = pharmcat_version,
       pharmcat_min_coverage      = pharmcat_min_coverage,
       ref_map_file               = ref_map_file,
       default_runtime_attributes = default_runtime_attributes
   }
 
+  Map[String, String] pedigree_sex = {
+    "MALE": "1",
+    "FEMALE": "2",
+    "": "."
+  }
+
+  # write sample metadata similar to pedigree format
+  # family_id, sample_id, father_id, mother_id, sex, affected
+  Array[String] sample_metadata = [
+    sample_id, sample_id,
+    ".", ".",
+    pedigree_sex[upstream.inferred_sex], "2"
+  ]
+
+  if (defined(tertiary_map_file)) {
+    call TertiaryAnalysis.tertiary_analysis {
+      input:
+        sample_metadata            = [sample_metadata],
+        phenotypes                 = phenotypes,
+        is_trio_kid                = [false],
+        is_duo_kid                 = [false],
+        small_variant_vcf          = downstream.phased_small_variant_vcf,
+        small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
+        sv_vcf                     = downstream.phased_sv_vcf,
+        sv_vcf_index               = downstream.phased_sv_vcf_index,
+        ref_map_file               = ref_map_file,
+        tertiary_map_file          = select_first([tertiary_map_file]),
+        default_runtime_attributes = default_runtime_attributes
+    }
+  }
+
   Map[String, Array[String]] stats = {
     'sample_id': [sample_id],
-    'num_reads': [upstream.stat_num_reads],
-    'read_length_mean': [upstream.stat_read_length_mean],
-    'read_length_median': [upstream.stat_read_length_median],
-    'read_quality_mean': [upstream.stat_read_quality_mean],
-    'read_quality_median': [upstream.stat_read_quality_median],
+    'num_reads': [downstream.stat_num_reads],
+    'read_length_mean': [downstream.stat_read_length_mean],
+    'read_length_median': [downstream.stat_read_length_median],
+    'read_quality_mean': [downstream.stat_read_quality_mean],
+    'read_quality_median': [downstream.stat_read_quality_median],
     'mapped_read_count': [downstream.stat_mapped_read_count],
     'mapped_percent': [downstream.stat_mapped_percent],
     'mean_depth': [upstream.stat_mean_depth],
@@ -167,6 +188,7 @@ workflow humanwgs_singleton {
     'sv_DEL_count': [downstream.stat_sv_DEL_count],
     'sv_INS_count': [downstream.stat_sv_INS_count],
     'sv_INV_count': [downstream.stat_sv_INV_count],
+    'sv_SWAP_count': [downstream.stat_sv_SWAP_count],
     'sv_BND_count': [downstream.stat_sv_BND_count],
     'cnv_DUP_count': [upstream.stat_cnv_DUP_count],
     'cnv_DEL_count': [upstream.stat_cnv_DEL_count],
@@ -180,53 +202,32 @@ workflow humanwgs_singleton {
     input:
       id                 = sample_id,
       stats              = stats,
+      msg_array          = flatten([upstream.msg]),
       runtime_attributes = default_runtime_attributes
-  }
-
-  if (defined(tertiary_map_file)) {
-    call Write_ped_phrank.write_ped_phrank {
-      input:
-        id                 = sample_id,
-        sex                = select_first([sex, upstream.inferred_sex]),
-        phenotypes         = phenotypes,
-        runtime_attributes = default_runtime_attributes
-    }
-
-    call TertiaryAnalysis.tertiary_analysis {
-      input:
-        pedigree                   = write_ped_phrank.pedigree,
-        phrank_lookup              = write_ped_phrank.phrank_lookup,
-        small_variant_vcf          = downstream.phased_small_variant_vcf,
-        small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
-        sv_vcf                     = downstream.phased_sv_vcf,
-        sv_vcf_index               = downstream.phased_sv_vcf_index,
-        ref_map_file               = ref_map_file,
-        tertiary_map_file          = select_first([tertiary_map_file]),
-        default_runtime_attributes = default_runtime_attributes
-    }
   }
 
   output {
     # consolidated stats
     File stats_file = consolidate_stats.output_tsv
+    File msg_file   = consolidate_stats.messages
 
     # bam stats
-    File   bam_stats                = upstream.read_length_and_quality
-    File   read_length_plot         = upstream.read_length_plot
-    File?  read_quality_plot        = upstream.read_quality_plot
-    String stat_num_reads           = upstream.stat_num_reads
-    String stat_read_length_mean    = upstream.stat_read_length_mean
-    String stat_read_length_median  = upstream.stat_read_length_median
-    String stat_read_quality_mean   = upstream.stat_read_quality_mean
-    String stat_read_quality_median = upstream.stat_read_quality_median
+    File   bam_statistics           = downstream.bam_statistics
+    File   read_length_plot         = downstream.read_length_plot
+    File?  read_quality_plot        = downstream.read_quality_plot
+    File   mapq_distribution_plot   = downstream.mapq_distribution_plot
+    File   mg_distribution_plot     = downstream.mg_distribution_plot
+    String stat_num_reads           = downstream.stat_num_reads
+    String stat_read_length_mean    = downstream.stat_read_length_mean
+    String stat_read_length_median  = downstream.stat_read_length_median
+    String stat_read_quality_mean   = downstream.stat_read_quality_mean
+    String stat_read_quality_median = downstream.stat_read_quality_median
+    String stat_mapped_read_count   = downstream.stat_mapped_read_count
+    String stat_mapped_percent      = downstream.stat_mapped_percent
 
     # merged, haplotagged alignments
     File   merged_haplotagged_bam       = downstream.merged_haplotagged_bam
     File   merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
-    String stat_mapped_read_count       = downstream.stat_mapped_read_count
-    String stat_mapped_percent          = downstream.stat_mapped_percent
-    File   mapq_distribution_plot       = downstream.mapq_distribution_plot
-    File   mg_distribution_plot         = downstream.mg_distribution_plot
 
     # mosdepth outputs
     File   mosdepth_summary                 = upstream.mosdepth_summary
@@ -260,13 +261,15 @@ workflow humanwgs_singleton {
     # sv outputs
     File phased_sv_vcf       = downstream.phased_sv_vcf
     File phased_sv_vcf_index = downstream.phased_sv_vcf_index
+    File sv_supporting_reads = select_first([upstream.sv_supporting_reads])
 
     # sv stats
-    String stat_sv_DUP_count = downstream.stat_sv_DUP_count
-    String stat_sv_DEL_count = downstream.stat_sv_DEL_count
-    String stat_sv_INS_count = downstream.stat_sv_INS_count
-    String stat_sv_INV_count = downstream.stat_sv_INV_count
-    String stat_sv_BND_count = downstream.stat_sv_BND_count
+    String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
+    String stat_sv_DEL_count  = downstream.stat_sv_DEL_count
+    String stat_sv_INS_count  = downstream.stat_sv_INS_count
+    String stat_sv_INV_count  = downstream.stat_sv_INV_count
+    String stat_sv_SWAP_count = downstream.stat_sv_SWAP_count
+    String stat_sv_BND_count  = downstream.stat_sv_BND_count
 
     # small variant outputs
     File phased_small_variant_vcf       = downstream.phased_small_variant_vcf
@@ -311,6 +314,11 @@ workflow humanwgs_singleton {
     String stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
     String stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
 
+    # per sample mitorsaw outputs
+    File mitorsaw_vcf       = upstream.mitorsaw_vcf
+    File mitorsaw_vcf_index = upstream.mitorsaw_vcf_index
+    File mitorsaw_hap_stats = upstream.mitorsaw_hap_stats
+
     # PGx outputs
     File  pbstarphase_json        = downstream.pbstarphase_json
     File? pharmcat_match_json     = downstream.pharmcat_match_json
@@ -319,7 +327,6 @@ workflow humanwgs_singleton {
     File? pharmcat_report_json    = downstream.pharmcat_report_json
 
     # tertiary analysis outputs
-    File? pedigree                                      = write_ped_phrank.pedigree
     File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
     File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
     File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
@@ -330,8 +337,15 @@ workflow humanwgs_singleton {
     File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
 
+    # qc messages
+    Array[String] msg = flatten(
+      [
+        upstream.msg
+      ]
+    )
+
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.0.0-alpha1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }

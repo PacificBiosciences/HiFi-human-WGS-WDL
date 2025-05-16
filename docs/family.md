@@ -27,13 +27,13 @@ flowchart TD
   subgraph "`**Upstream of Phasing (per-sample)**`"
     subgraph "per-movie"
       ubam[/"HiFi uBAM"/] --> pbmm2_align["pbmm2 align"]
-      pbmm2_align --> pbsv_discover["PBSV discover"]
+      pbmm2_align --> sawfish_discover["Sawfish discover"]
     end
-    pbmm2_align --> merge_read_stats["merge read statistics"]
     pbmm2_align --> samtools_merge["samtools merge"]
     samtools_merge --> mosdepth["mosdepth"]
     samtools_merge --> paraphase["Paraphase"]
     samtools_merge --> hificnv["HiFiCNV"]
+    samtools_merge --> mitorsaw["MitorSaw"]
     samtools_merge --> trgt["TRGT"]
     samtools_merge --> trgt_dropouts["TR coverage dropouts"]
     samtools_merge --> deepvariant["DeepVariant"]
@@ -41,14 +41,15 @@ flowchart TD
   end
   subgraph "`**Joint Calling**`"
     deepvariant --> glnexus["GLnexus (joint-call small variants)"]
-    pbsv_discover --> pbsv_call["PBSV call"]
+    sawfish_discover --> sawfish_call["Sawfish call"]
     glnexus --> split_glnexus["split small variant vcf by sample"]
-    pbsv_call --> split_pbsv["split SV vcf by sample"]
+    sawfish_call --> split_sawfish["split SV vcf by sample"]
   end
   subgraph "`**Phasing and Downstream (per-sample)**`"
     split_glnexus --> hiphase
     trgt --> hiphase
-    split_pbsv --> hiphase
+    split_sawfish --> hiphase
+    hiphase --> bam_stats["BAM stats"]
     hiphase --> bcftools_roh["bcftools roh"]
     hiphase --> bcftools_stats["bcftools stats\n(small variants)"]
     hiphase --> sv_stats["SV stats"]
@@ -82,6 +83,7 @@ flowchart TD
 | Boolean | gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
 | String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-HealthOmics", "HPC"]` |  |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in GCP](./backends.md/gcp#determining-available-zones) |
+| String? | cpuPlatform | Minimum CPU platform to use for tasks on GCP | Optional, only necessary in certain zones lacking n1 nodes. |
 | String? | gpuType | GPU type to use; required if gpu is set to `true` for cloud backends; must match backend  | [Available GPU types](./gpu.md#gpu-types) |
 | String? | container_registry | Container registry where workflow images are hosted.<br/><br/>Default: `"quay.io/pacbio"` | If omitted, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used.<br/><br/>Custom container_registry must be set if backend is set to 'AWS-HealthOmics'. |
 | Boolean | preemptible | Where possible, run tasks preemptibly<br/><br/>`[true, false]`<br/><br/>Default: `true` | If set to `true`, run tasks preemptibly where possible. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. |
@@ -168,6 +170,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_sv_INS_count | Structural variant INS count | (PASS variants) |
 | Array\[String\] | stat_sv_INV_count | Structural variant INV count | (PASS variants) |
 | Array\[String\] | stat_sv_BND_count | Structural variant BND count | (PASS variants) |
+| Array\[String\] | stat_sv_SWAP_count | Structural variant sequence swap events | (PASS variants) |
+| File | sv_supporting_reads | Supporting reads for structural variants |  |
 | Array\[File\] | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | Array\[File\] | bcftools_roh_bed | Generated from above, without filtering |  |
 | File? | joint_sv_vcf | Joint-called structural variant VCF |  |
@@ -186,6 +190,14 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_cnv_DEL_count | Count of DEL events | (PASS variants) |
 | Array\[String\] | stat_cnv_DUP_sum | Sum of DUP bp | (PASS variants) |
 | Array\[String\] | stat_cnv_DEL_sum | Sum of DEL bp | (PASS variants) |
+
+### Mitochondrial variants and haplotypes
+
+| Type | Name | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| Array\[File\] | mitorsaw_vcf | Mitochondrial variant VCF |  |
+| Array\[File\] | mitorsaw_vcf_index | Index for mitochondrial variant VCF |  |
+| Array\[File\] | mitorsaw_hap_stats | Mitochondrial haplotype stats |  |
 
 ### Tandem Repeat Genotyping
 
