@@ -2,6 +2,7 @@ version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
+import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
@@ -41,9 +42,6 @@ workflow downstream {
     aligned_bam_index: {
       name: "Aligned BAI"
     }
-    pharmcat_version: {
-      name: "PharmCAT version"
-    }
     pharmcat_min_coverage: {
       name: "Minimum coverage for PharmCAT"
     }
@@ -68,7 +66,6 @@ workflow downstream {
     File aligned_bam
     File aligned_bam_index
 
-    String pharmcat_version
     Int pharmcat_min_coverage
 
     File ref_map_file
@@ -106,6 +103,15 @@ workflow downstream {
   # hiphase.phased_vcfs[1] -> phased SV VCF
   # hiphase.phased_vcfs[2] -> phased TRGT VCF
 
+  call Bamstats.bam_stats {
+    input:
+      sample_id          = sample_id,
+      ref_name           = ref_map["name"],
+      bam                = hiphase.haplotagged_bam,
+      bam_index          = hiphase.haplotagged_bam_index,
+      runtime_attributes = default_runtime_attributes
+  }
+
   call Trgt.coverage_dropouts {
     input: 
       aligned_bam        = hiphase.haplotagged_bam,
@@ -142,14 +148,16 @@ workflow downstream {
 
   call Pbstarphase.pbstarphase_diplotype {
     input:
-      sample_id          = sample_id,
-      phased_vcf         = hiphase.phased_vcfs[0],
-      phased_vcf_index   = hiphase.phased_vcf_indices[0],
-      aligned_bam        = hiphase.haplotagged_bam,
-      aligned_bam_index  = hiphase.haplotagged_bam_index,
-      ref_fasta          = ref_map["fasta"],              # !FileCoercion
-      ref_index          = ref_map["fasta_index"],        # !FileCoercion
-      runtime_attributes = default_runtime_attributes
+      sample_id                           = sample_id,
+      phased_small_variant_vcf            = hiphase.phased_vcfs[0],
+      phased_small_variant_vcf_index      = hiphase.phased_vcf_indices[0],
+      phased_structural_variant_vcf       = hiphase.phased_vcfs[1],
+      phased_structural_variant_vcf_index = hiphase.phased_vcf_indices[1],
+      aligned_bam                         = hiphase.haplotagged_bam,
+      aligned_bam_index                   = hiphase.haplotagged_bam_index,
+      ref_fasta                           = ref_map["fasta"],              # !FileCoercion
+      ref_index                           = ref_map["fasta_index"],        # !FileCoercion
+      runtime_attributes                  = default_runtime_attributes
   }
 
   call Pharmcat.pharmcat {
@@ -162,7 +170,6 @@ workflow downstream {
       input_tsvs                 = [pbstarphase_diplotype.pharmcat_tsv],
       ref_fasta                  = ref_map["fasta"],                        # !FileCoercion
       ref_index                  = ref_map["fasta_index"],                  # !FileCoercion
-      pharmcat_version           = pharmcat_version,
       pharmcat_positions         = ref_map["pharmcat_positions_vcf"],       # !FileCoercion
       pharmcat_positions_index   = ref_map["pharmcat_positions_vcf_index"], # !FileCoercion
       pharmcat_min_coverage      = pharmcat_min_coverage,
@@ -184,11 +191,21 @@ workflow downstream {
     File   phase_haplotags                = hiphase.phase_haplotags
     String stat_phased_basepairs          = hiphase.stat_phased_basepairs
     String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
-    String stat_mapped_read_count         = hiphase.stat_mapped_read_count
-    String stat_mapped_percent            = hiphase.stat_mapped_percent
-    File   mapq_distribution_plot         = hiphase.mapq_distribution_plot
-    File   mg_distribution_plot           = hiphase.mg_distribution_plot
-    File   trgt_coverage_dropouts         = coverage_dropouts.dropouts
+
+    # bam stats
+    File   bam_statistics           = bam_stats.bam_statistics
+    File   read_length_plot         = bam_stats.read_length_plot
+    File?  read_quality_plot        = bam_stats.read_quality_plot
+    File   mapq_distribution_plot   = bam_stats.mapq_distribution_plot
+    File   mg_distribution_plot     = bam_stats.mg_distribution_plot
+    String stat_num_reads           = bam_stats.stat_num_reads
+    String stat_read_length_mean    = bam_stats.stat_read_length_mean
+    String stat_read_length_median  = bam_stats.stat_read_length_median
+    String stat_read_quality_mean   = bam_stats.stat_read_quality_mean
+    String stat_read_quality_median = bam_stats.stat_read_quality_median
+    String stat_mapped_read_count   = bam_stats.stat_mapped_read_count
+    String stat_mapped_percent      = bam_stats.stat_mapped_percent
+    File   trgt_coverage_dropouts   = coverage_dropouts.dropouts
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats
@@ -202,11 +219,12 @@ workflow downstream {
     File   indel_distribution_plot = bcftools_stats_roh_small_variants.indel_distribution_plot
 
     # sv stats
-    String stat_sv_DUP_count = sv_stats.stat_sv_DUP_count
-    String stat_sv_DEL_count = sv_stats.stat_sv_DEL_count
-    String stat_sv_INS_count = sv_stats.stat_sv_INS_count
-    String stat_sv_INV_count = sv_stats.stat_sv_INV_count
-    String stat_sv_BND_count = sv_stats.stat_sv_BND_count
+    String stat_sv_DUP_count  = sv_stats.stat_sv_DUP_count
+    String stat_sv_DEL_count  = sv_stats.stat_sv_DEL_count
+    String stat_sv_INS_count  = sv_stats.stat_sv_INS_count
+    String stat_sv_INV_count  = sv_stats.stat_sv_INV_count
+    String stat_sv_BND_count  = sv_stats.stat_sv_BND_count
+    String stat_sv_SWAP_count = sv_stats.stat_sv_SWAP_count
 
     # cpg_pileup outputs
     File?  cpg_combined_bed        = cpg_pileup.combined_bed
