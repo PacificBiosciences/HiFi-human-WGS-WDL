@@ -7,7 +7,6 @@
     - [Alignments, Coverage, and QC](#alignments-coverage-and-qc)
     - [Small Variants (\<50 bp)](#small-variants-50-bp)
     - [Structural Variants (≥50 bp)](#structural-variants-50-bp)
-    - [Copy Number Variants (≥100 kb)](#copy-number-variants-100-kb)
     - [Tandem Repeat Genotyping](#tandem-repeat-genotyping)
     - [Variant Phasing](#variant-phasing)
     - [Variant Calling in Dark Regions](#variant-calling-in-dark-regions)
@@ -24,38 +23,61 @@ title: singleton.wdl
 flowchart TD
   subgraph "`**Upstream of Phasing**`"
     subgraph "per-movie"
-      ubam[/"HiFi uBAM"/] --> pbmm2_align["pbmm2 align"]
-      pbmm2_align --> sawfish_discover["Sawfish discover"]
+      ubam[/"HiFi uBAM"/]
+      pbmm2_align["pbmm2 align"]
     end
-    pbmm2_align --> merge_read_stats["merge read statistics"]
-    samtools_merge --> mosdepth["mosdepth"]
-    samtools_merge --> paraphase["Paraphase"]
-    samtools_merge --> hificnv["HiFiCNV"]
-    samtools_merge --> mitorsaw["MitorSaw"]
-    samtools_merge --> trgt["TRGT"]
-    samtools_merge --> trgt_dropouts["TR coverage dropouts"]
-    samtools_merge --> deepvariant["DeepVariant"]
-    samtools_merge --> hiphase["HiPhase"]
-    sawfish_discover --> sawfish_call["Sawfish call"]
+    samtools_merge["samtools merge"]
+    mosdepth["mosdepth"]
+    paraphase["Paraphase"]
+    mitorsaw["MitorSaw"]
+    trgt["TRGT"]
+    trgt_dropouts["TR coverage dropouts"]
+    deepvariant["DeepVariant"]
+    sawfish_discover["Sawfish discover"]
+    sawfish_call["Sawfish call"]
   end
   subgraph "`**Phasing and Downstream**`"
-    deepvariant --> hiphase
-    trgt --> hiphase
-    pbsv_call --> hiphase
-    hiphase --> bam_stats["BAM stats"]
-    hiphase --> bcftools_roh["bcftools roh"]
-    hiphase --> bcftools_stats["bcftools stats\n(small variants)"]
-    hiphase --> sv_stats["SV stats"]
-    hiphase --> cpg_pileup["5mCpG pileup"]
-    hiphase --> starphase["StarPhase"]
-    hiphase --> pharmcat["PharmCat"]
-    starphase --> pharmcat
+    hiphase["HiPhase"]
+    bam_stats["BAM stats"]
+    bcftools_roh["bcftools roh"]
+    bcftools_stats["bcftools stats\n(small variants)"]
+    sv_stats["SV stats"]
+    cpg_pileup["5mCpG pileup"]
+    starphase["StarPhase"]
+    pharmcat["PharmCat"]
   end
   subgraph "`**Tertiary Analysis**`"
-    hiphase --> slivar_small_variants["slivar small variants"]
-    hiphase --> svpack["svpack filter and annotate"]
-    svpack --> slivar_svpack["slivar svpack tsv"]
+    slivar_small_variants["slivar small variants"]
+    svpack["svpack filter and annotate"]
+    slivar_svpack["slivar svpack tsv"]
   end
+
+  ubam --> pbmm2_align --> samtools_merge
+  samtools_merge --> mosdepth
+  samtools_merge --> paraphase
+  samtools_merge --> mitorsaw
+  samtools_merge --> trgt
+  samtools_merge --> trgt_dropouts
+  samtools_merge --> deepvariant
+  samtools_merge --> sawfish_discover
+  samtools_merge --> hiphase
+  deepvariant --> sawfish_discover
+  deepvariant --> hiphase
+  sawfish_discover --> sawfish_call --> hiphase
+  trgt --> hiphase
+
+  hiphase --> bam_stats
+  hiphase --> bcftools_roh
+  hiphase --> bcftools_stats
+  hiphase --> sv_stats
+  hiphase --> cpg_pileup
+  hiphase --> starphase
+  hiphase --> pharmcat
+  starphase --> pharmcat
+
+  hiphase --> slivar_small_variants
+  hiphase --> svpack
+  svpack --> slivar_svpack
 ```
 
 ## Inputs
@@ -135,6 +157,9 @@ flowchart TD
 | String | stat_sv_BND_count | Structural variant BND count | (PASS variants) |
 | String | stat_sv_SWAP_count | Structural variant sequence swap events | (PASS variants) |
 | File | sv_supporting_reads | Supporting reads for structural variants |  |
+| File | sv_copynum_bedgraph | CNV copy number BEDGraph |  |
+| File | sv_depth_bw | CNV depth BigWig |  |
+| File | sv_maf_bw | CNV MAF BigWig |  |
 | File | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | File | bcftools_roh_bed | Generated from above, without filtering |  |
 
@@ -145,20 +170,6 @@ flowchart TD
 | File | mitorsaw_vcf | Mitochondrial variant VCF |  |
 | File | mitorsaw_vcf_index | Index for mitochondrial variant VCF |  |
 | File | mitorsaw_hap_stats | Mitochondrial haplotype stats |  |
-
-### Copy Number Variants (≥100 kb)
-
-| Type | Name | Description | Notes |
-| ---- | ---- | ----------- | ----- |
-| File | cnv_vcf | CNV VCF |  |
-| File | cnv_vcf_index | Index for CNV VCF |  |
-| File | cnv_copynum_bedgraph | CNV copy number BEDGraph |  |
-| File | cnv_depth_bw | CNV depth BigWig |  |
-| File | cnv_maf_bw | CNV MAF BigWig |  |
-| String | stat_cnv_DUP_count | Count of DUP events | (for PASS variants) |
-| String | stat_cnv_DEL_count | Count of DEL events | (PASS variants) |
-| String | stat_cnv_DUP_sum | Sum of DUP bp | (PASS variants) |
-| String | stat_cnv_DEL_sum | Sum of DEL bp | (PASS variants) |
 
 ### Tandem Repeat Genotyping
 

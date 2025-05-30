@@ -245,10 +245,6 @@ workflow humanwgs_family {
     'sv_INV_count': downstream.stat_sv_INV_count,
     'sv_SWAP_count': downstream.stat_sv_SWAP_count,
     'sv_BND_count': downstream.stat_sv_BND_count,
-    'cnv_DUP_count': upstream.stat_cnv_DUP_count,
-    'cnv_DEL_count': upstream.stat_cnv_DEL_count,
-    'cnv_DUP_sum': upstream.stat_cnv_DUP_sum,
-    'cnv_DEL_sum': upstream.stat_cnv_DEL_sum,
     'trgt_genotyped_count': upstream.stat_trgt_genotyped_count,
     'trgt_uncalled_count': upstream.stat_trgt_uncalled_count
   }
@@ -318,6 +314,9 @@ workflow humanwgs_family {
     Array[File] phased_sv_vcf       = downstream.phased_sv_vcf
     Array[File] phased_sv_vcf_index = downstream.phased_sv_vcf_index
     File sv_supporting_reads        = select_first([joint.sv_supporting_reads, upstream.sv_supporting_reads[0]])
+    Array[File] sv_copynum_bedgraph = select_first([joint.sv_copynum_bedgraph, select_all(upstream.sv_copynum_bedgraph)])
+    Array[File] sv_depth_bw         = select_first([joint.sv_depth_bw, select_all(upstream.sv_depth_bw)])
+    Array[File] sv_maf_bw           = select_first([joint.sv_maf_bw, select_all(upstream.sv_maf_bw)])
 
     # sv stats
     Array[String] stat_sv_DUP_count  = downstream.stat_sv_DUP_count
@@ -358,17 +357,6 @@ workflow humanwgs_family {
     Array[File?] paraphase_realigned_bam       = upstream.paraphase_realigned_bam
     Array[File?] paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
     Array[File?] paraphase_vcfs                = upstream.paraphase_vcfs
-
-    # per sample cnv outputs
-    Array[File]   cnv_vcf              = upstream.cnv_vcf
-    Array[File]   cnv_vcf_index        = upstream.cnv_vcf_index
-    Array[File]   cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph
-    Array[File]   cnv_depth_bw         = upstream.cnv_depth_bw
-    Array[File]   cnv_maf_bw           = upstream.cnv_maf_bw
-    Array[String] stat_cnv_DUP_count   = upstream.stat_cnv_DUP_count
-    Array[String] stat_cnv_DEL_count   = upstream.stat_cnv_DEL_count
-    Array[String] stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
-    Array[String] stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
 
     # per sample mitorsaw outputs
     Array[File] mitorsaw_vcf       = upstream.mitorsaw_vcf
