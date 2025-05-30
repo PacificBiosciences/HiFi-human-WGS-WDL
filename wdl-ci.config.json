@@ -1680,7 +1680,7 @@
                 "task_start_index": 0,
                 "tasks_per_shard": 8,
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1721,7 +1721,7 @@
                   "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1755,7 +1755,7 @@
                   "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0-gpu",
+                "docker_image": "google/deepvariant:1.9.0-gpu",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -1802,7 +1802,7 @@
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -2246,7 +2246,7 @@
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         },
         "on_demand_runtime_attributes": {
@@ -2255,7 +2255,7 @@
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         }
       }
