@@ -1636,7 +1636,7 @@
       "tasks": {
         "samtools_merge": {
           "key": "samtools_merge",
-          "digest": "lmc2sfyir2g2cile2vwmaatp46vzddbs",
+          "digest": "xg7wmqc4nblkaenwod33b4xxjsglssyh",
           "tests": [
             {
               "inputs": {
