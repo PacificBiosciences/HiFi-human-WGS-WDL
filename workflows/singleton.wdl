@@ -331,7 +331,7 @@ workflow humanwgs_singleton {
     File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
 
     # workflow metadata
-    String workflow_name    = "humanwgs_family"
-    String workflow_version = "v2.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_name    = "humanwgs_singleton"
+    String workflow_version = "v2.1.3" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
