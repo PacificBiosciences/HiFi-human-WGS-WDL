@@ -2002,7 +2002,7 @@
                 "expected_female_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XX.bed",
                 "small_variant_vcf": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.GRCh38.small_variants.vcf.gz",
                 "small_variant_vcf_index": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.GRCh38.small_variants.vcf.gz.tbi",
-                "out_prefix": "HG002-minimal.GRCh38",
+                "out_prefix": "HG002-minimal",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
