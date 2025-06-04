@@ -2007,7 +2007,7 @@
               },
               "output_tests": {
                 "discover_tar": {
-                  "value": "${resources_file_path}/sawfish_discover/output/sawfish-2/HG002-minimal.GRCh38.tar",
+                  "value": "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.tar",
                   "test_tasks": [
                     "compare_file_basename"
                   ]
@@ -2056,9 +2056,7 @@
                   ]
                 },
                 "copynum_bedgraph": {
-                  "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.HG002-minimal.GRCh38.structural_variants.copynum.bedgraph"
-                  ],
+                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.copynum.bedgraph"],
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
@@ -2066,18 +2064,14 @@
                   ]
                 },
                 "depth_bw": {
-                  "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.HG002-minimal.GRCh38.structural_variants.depth.bw"
-                  ],
+                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.depth.bw"],
                   "test_tasks": [
                     "compare_file_basename",
                     "bigwig_validator"
                   ]
                 },
                 "maf_bw": {
-                  "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.HG002-minimal.GRCh38.structural_variants.maf.bw"
-                  ],
+                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.maf.bw"],
                   "test_tasks": [
                     "compare_file_basename",
                     "bigwig_validator"
