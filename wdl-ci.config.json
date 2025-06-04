@@ -1986,7 +1986,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "bpppd3zrlqu4tpyls4fkrzq545ghyskz",
+          "digest": "diw5gdscfr6rifzhvb7vgy6lgawnvbud",
           "tests": [
             {
               "inputs": {
@@ -2056,7 +2056,9 @@
                   ]
                 },
                 "copynum_bedgraph": {
-                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.copynum.bedgraph"],
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.copynum.bedgraph"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "check_tab_delimited",
@@ -2064,14 +2066,18 @@
                   ]
                 },
                 "depth_bw": {
-                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.depth.bw"],
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.depth.bw"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "bigwig_validator"
                   ]
                 },
                 "maf_bw": {
-                  "value": ["${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.maf.bw"],
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.maf.bw"
+                  ],
                   "test_tasks": [
                     "compare_file_basename",
                     "bigwig_validator"
