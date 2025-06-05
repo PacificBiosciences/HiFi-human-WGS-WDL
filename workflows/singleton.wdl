@@ -298,9 +298,9 @@ workflow humanwgs_singleton {
     String stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
 
     # paraphase outputs
-    File  paraphase_output_json         = upstream.paraphase_output_json
-    File  paraphase_realigned_bam       = upstream.paraphase_realigned_bam
-    File  paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
+    File? paraphase_output_json         = upstream.paraphase_output_json
+    File? paraphase_realigned_bam       = upstream.paraphase_realigned_bam
+    File? paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
     File? paraphase_vcfs                = upstream.paraphase_vcfs
 
     # per sample cnv outputs

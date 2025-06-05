@@ -227,9 +227,9 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| Array\[File\] | paraphase_output_json | Paraphase output JSON |  |
-| Array\[File\] | paraphase_realigned_bam | Paraphase realigned BAM |  |
-| Array\[File\] | paraphase_realigned_bam_index |  |  |
+| Array\[File?\] | paraphase_output_json | Paraphase output JSON |  |
+| Array\[File?\] | paraphase_realigned_bam | Paraphase realigned BAM |  |
+| Array\[File?\] | paraphase_realigned_bam_index |  |  |
 | Array\[File?\] | paraphase_vcfs | Paraphase VCFs | Compressed as `.tar.gz` |
 
 ### 5mCpG Methylation Calling

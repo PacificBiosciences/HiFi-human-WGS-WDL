@@ -186,9 +186,9 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | paraphase_output_json | Paraphase output JSON |  |
-| File | paraphase_realigned_bam | Paraphase realigned BAM |  |
-| File | paraphase_realigned_bam_index |  |  |
+| File? | paraphase_output_json | Paraphase output JSON |  |
+| File? | paraphase_realigned_bam | Paraphase realigned BAM |  |
+| File? | paraphase_realigned_bam_index |  |  |
 | File? | paraphase_vcfs | Paraphase VCFs | Compressed as `.tar.gz` |
 
 ### 5mCpG Methylation Calling
