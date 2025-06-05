@@ -226,9 +226,9 @@ workflow upstream {
     String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
 
     # paraphase outputs
-    File  paraphase_output_json         = paraphase.out_json
-    File  paraphase_realigned_bam       = paraphase.bam
-    File  paraphase_realigned_bam_index = paraphase.bam_index
+    File? paraphase_output_json         = paraphase.out_json
+    File? paraphase_realigned_bam       = paraphase.bam
+    File? paraphase_realigned_bam_index = paraphase.bam_index
     File? paraphase_vcfs                = paraphase.vcfs_tar
 
     # per sample hificnv outputs

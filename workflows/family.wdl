@@ -354,9 +354,9 @@ workflow humanwgs_family {
     Array[String] stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
 
     # paraphase outputs
-    Array[File]  paraphase_output_json         = upstream.paraphase_output_json
-    Array[File]  paraphase_realigned_bam       = upstream.paraphase_realigned_bam
-    Array[File]  paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
+    Array[File?] paraphase_output_json         = upstream.paraphase_output_json
+    Array[File?] paraphase_realigned_bam       = upstream.paraphase_realigned_bam
+    Array[File?] paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
     Array[File?] paraphase_vcfs                = upstream.paraphase_vcfs
 
     # per sample cnv outputs
