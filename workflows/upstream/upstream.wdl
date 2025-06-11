@@ -253,6 +253,7 @@ workflow upstream {
         flatten(pbmm2.msg),
         [qc_sex],
         trgt.msg,
+        paraphase.msg,
         hificnv.msg
       ]
     )
