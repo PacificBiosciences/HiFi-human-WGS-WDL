@@ -1652,7 +1652,7 @@
         },
         "deepvariant_call_variants_gpu": {
           "key": "deepvariant_call_variants_gpu",
-          "digest": "oruoeho4i2o5kuzfey4f6z5or22mvrhl",
+          "digest": "567aoezgiryo64cbsy2c2plt3vblrbpy",
           "tests": [
             {
               "inputs": {
