@@ -1680,19 +1680,19 @@
                 "task_start_index": 0,
                 "tasks_per_shard": 8,
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "example_tfrecord_tar": {
-                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
                   ]
                 },
                 "nonvariant_site_tfrecord_tar": {
-                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1711,22 +1711,22 @@
                 "sample_id": "HG002",
                 "ref_name": "${ref_name}",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecords_tar": {
-                  "value": "${resources_file_path}/deepvariant_call_variants_cpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_call_variants_cpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1738,29 +1738,29 @@
         },
         "deepvariant_call_variants_gpu": {
           "key": "deepvariant_call_variants_gpu",
-          "digest": "567aoezgiryo64cbsy2c2plt3vblrbpy",
+          "digest": "oruoeho4i2o5kuzfey4f6z5or22mvrhl",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG002",
                 "ref_name": "${ref_name}",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0-gpu",
+                "docker_image": "google/deepvariant:1.9.0-gpu",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecords_tar": {
-                  "value": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1777,37 +1777,37 @@
             {
               "inputs": {
                 "sample_id": "HG002",
-                "tfrecords_tar": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                "tfrecords_tar": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "nonvariant_site_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.nonvariant_site_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.nonvariant_site_tfrecords.tar.gz"
                 ],
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p8p0/HG002.GRCh38.small_variants.vcf.gz",
+                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p9p0/HG002.GRCh38.small_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -1815,7 +1815,7 @@
                   ]
                 },
                 "gvcf": {
-                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p8p0/HG002.GRCh38.small_variants.g.vcf.gz",
+                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p9p0/HG002.GRCh38.small_variants.g.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -2246,7 +2246,7 @@
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         },
         "on_demand_runtime_attributes": {
@@ -2255,7 +2255,7 @@
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         }
       }
