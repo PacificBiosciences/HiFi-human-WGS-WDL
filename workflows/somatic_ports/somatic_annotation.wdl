@@ -50,6 +50,7 @@ task vep_annotate {
 
         # Delete cache after annotation
         rm -rf vep_data/
+
     >>>
 
     output {
@@ -125,10 +126,31 @@ task annotsv {
 
         # Delete cache after annotation
         rm -rf annotsv_cache_dir/
+        (head -1 ~{sub(basename(sv_vcf), "\\.vcf.gz$", "")}.annotsv.tsv  | awk -F '\t' -v OFS='\t' '{print $1,$2,$3,$5,$6,$14,$26,$54,$81,$104,$106,$107,$118}' && 
+         tail -n +2 ~{sub(basename(sv_vcf), "\\.vcf.gz$", "")}.annotsv.tsv | 
+         awk -F '\t' -v OFS='\t' '
+         {
+            split($107, classifications, /;/);
+            max_priority = 0;
+            for (i in classifications) {
+                gsub(/^[ \t]+|[ \t]+$/, "", classifications[i]);
+                if (classifications[i] == "Definitive") curr_priority = 4;
+                else if (classifications[i] == "Strong") curr_priority = 3;
+                else if (classifications[i] == "Moderate") curr_priority = 2;
+                else if (classifications[i] == "Supportive") curr_priority = 1;
+                else curr_priority = 0;
+                if (curr_priority > max_priority) max_priority = curr_priority;
+            }
+            print max_priority, ($118+0), $1,$2,$3,$5,$6,$14,$26,$54,$81,$104,$106,$107,$118
+         }' | 
+         sort -s -k1,1nr -k2,2nr | 
+         cut -f3-
+        ) > ~{sub(basename(sv_vcf), "\\.vcf.gz$", "")}.ranked.annotsv.tsv
     >>>
 
     output {
         File annotsv_annotated_tsv = sub(basename(sv_vcf), "\\.vcf.gz$", "") + ".annotsv.tsv"
+        File ranked_annotsv_annotated_tsv = sub(basename(sv_vcf), "\\.vcf.gz$", "") + ".ranked.annotsv.tsv"
     }
 
     runtime {
@@ -179,5 +201,114 @@ task chord_hrd {
     }
 }
 
+
+
+task prioritize_sv_intogen {
+    input {
+        File annotSV_tsv
+        Int threads
+    }
+
+    Float file_size = ceil(size(annotSV_tsv, "GB") + 10)
+
+    command <<<
+    set -euxo pipefail
+    
+    csvtk version
+
+    # Remove any quote from the file
+    sed 's/"//g' ~{annotSV_tsv} > ~{basename(annotSV_tsv)}_noquote.tsv
+
+    csvtk join -t \
+        ~{basename(annotSV_tsv)}_noquote.tsv \
+        /app/Compendium_Cancer_Genes.tsv \
+        -f "Gene_name;SYMBOL" |\
+            csvtk filter2 -t -f '$Annotation_mode == "split"' |\
+            csvtk summary -t -g "$(csvtk headers -t ~{annotSV_tsv} | tr '\n' ',' | sed 's/,$//g')" \
+                -f CANCER_TYPE:collapse,COHORT:collapse,TRANSCRIPT:collapse,MUTATIONS:collapse,ROLE:collapse,CGC_GENE:collapse,CGC_CANCER_GENE:collapse,DOMAINS:collapse,2D_CLUSTERS:collapse,3D_CLUSTERS:collapse -s ";" |\
+                sed 's/:collapse//g'  > ~{sub(basename(annotSV_tsv), "\\.tsv$", "")}_intogenCCG.tsv
+
+    rm -f ~{basename(annotSV_tsv)}_noquote.tsv
+
+    (head -1 ~{sub(basename(annotSV_tsv), "\\.tsv$", "")}_intogenCCG.tsv | awk -F '\t' -v OFS='\t' '{print $1,$2,$3,$5,$6,$14,$26,$54,$81,$104,$106,$107,$118}' && 
+     tail -n +2 ~{sub(basename(annotSV_tsv), "\\.tsv$", "")}_intogenCCG.tsv | 
+     awk -F '\t' -v OFS='\t' '
+     {
+        split($107, classifications, /;/);
+        max_priority = 0;
+        for (i in classifications) {
+            gsub(/^[ \t]+|[ \t]+$/, "", classifications[i]);
+            if (classifications[i] == "Definitive") curr_priority = 4;
+            else if (classifications[i] == "Strong") curr_priority = 3;
+            else if (classifications[i] == "Moderate") curr_priority = 2;
+            else if (classifications[i] == "Supportive") curr_priority = 1;
+            else curr_priority = 0;
+            if (curr_priority > max_priority) max_priority = curr_priority;
+        }
+        print max_priority, ($118+0), $1,$2,$3,$5,$6,$14,$26,$54,$81,$104,$106,$107,$118
+     }' | 
+     sort -s -k1,1nr -k2,2nr | 
+     cut -f3-
+    ) > ~{sub(basename(annotSV_tsv), "\\.tsv$", "")}_intogenCCG.ranked.tsv
+
+    >>>
+
+    output {
+        File annotSV_intogen_tsv = sub(basename(annotSV_tsv), "\\.tsv$", "") + "_intogenCCG.tsv"
+        File annotSV_intogen_ranked_tsv = sub(basename(annotSV_tsv), "\\.tsv$", "") + "_intogenCCG.ranked.tsv"
+    }
+
+    runtime {
+        docker: "quay.io/pacbio/somatic_general_tools@sha256:a25a2e62b88c73fa3c18a0297654420a4675224eb0cf39fa4192f8a1e92b30d6"
+        cpu: threads
+        memory: "~{threads * 4} GB"
+        disk: file_size + " GB"
+        maxRetries: 2
+        preemptible: 1
+    }
+}
+
+task prioritize_small_variants {
+    input {
+        File vep_annotated_vcf
+        Int threads
+        String pname="sample"
+    }
+
+    Float file_size = ceil(size(vep_annotated_vcf, "GB") + 10)
+    String fname = sub(basename(vep_annotated_vcf), "\\.vcf.gz", "") + ".tsv"
+    String fname2 = sub(basename(vep_annotated_vcf), "\\.vcf.gz", "") + "_intogenCCG.tsv"
+
+    command <<<
+    set -euxo pipefail
+
+    csvtk version
+
+    echo -e "CHROM\tPOS\tREF\tALT\tFORMAT\t~{pname}\t$(bcftools +split-vep ~{vep_annotated_vcf} -l | cut -f2 | tr '\n' '\t' | sed 's/\t$//g')" > ~{fname}
+    bcftools +split-vep ~{vep_annotated_vcf} -A tab -f '%CHROM\t%POS\t%REF\t%ALT\t%FORMAT\t%CSQ\n' >> ~{fname}
+
+    csvtk join -t \
+        ~{fname} \
+        <(sed 's/DOMAINS/CCG_DOMAINS/g' /app/Compendium_Cancer_Genes.tsv) \
+        -f SYMBOL |\
+            csvtk summary -t -g "$(csvtk headers -t ~{fname} | tr '\n' ',' | sed 's/,$//g')" \
+                -f CANCER_TYPE:collapse,COHORT:collapse,TRANSCRIPT:collapse,MUTATIONS:collapse,ROLE:collapse,CGC_GENE:collapse,CGC_CANCER_GENE:collapse,CCG_DOMAINS:collapse,2D_CLUSTERS:collapse,3D_CLUSTERS:collapse -s ";" |\
+                sed 's/:collapse//g' > ~{fname2}
+    >>>
+
+    output {
+        File vep_annotated_tsv = fname
+        File vep_annotated_tsv_intogenCCG = fname2
+    }
+
+    runtime {
+        docker: "quay.io/pacbio/somatic_general_tools@sha256:a25a2e62b88c73fa3c18a0297654420a4675224eb0cf39fa4192f8a1e92b30d6"
+        cpu: threads
+        memory: "~{threads * 4} GB"
+        disk: file_size + " GB"
+        maxRetries: 2
+        preemptible: 1
+    }
+}
 
 

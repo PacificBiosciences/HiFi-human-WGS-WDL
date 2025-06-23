@@ -1,6 +1,6 @@
 version 1.0
 
-import "../humanwgs_structs.wdl"
+import "../humanwgs_structs_parentless.wdl"
 import "../wdl-common/wdl/tasks/utilities.wdl" as Utilities
 
 workflow tertiary_analysis {

@@ -1,0 +1,41 @@
+{
+  "humanwgs_family.family": {
+    "family_id": "FAM1",
+    "samples": [
+      {
+        "sample_id": "bc2092_bc2020_jax_kolf", 
+        "parental_bams": [
+            "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/inputs/m64119_220415_203938.hifi-reads.bam"
+        ],
+        "wild_type_bams": [
+            "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/inputs/m84251R1_250214_185925_s1.hifi_reads.bc2020.bam",
+            "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/inputs/m84251R1_250214_185925_s1.hifi_reads.bc2020.bam"
+        ],
+        "affected": false,
+        "sex": "MALE",
+        "father_id": "NA",
+        "mother_id": "NA"
+      },
+      {
+        "sample_id": "bc2024_jax_kolf", 
+        "parental_bams": [
+            "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/inputs/m64119_220415_203938.hifi-reads.bam"
+        ],
+        "wild_type_bams": [
+            "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/inputs/m84251R1_250503_053528_s4.hifi_reads.bc2024.bam",
+        ],
+        "affected": false,
+        "sex": "MALE",
+        "father_id": "NA",
+        "mother_id": "NA"
+      }
+
+    ]
+  },
+  "humanwgs_family.phenotypes": "NA",
+  "humanwgs_family.ref_map_file": "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/hifi-wdl-resources-v2/GRCh38.ref_map.v2p0p0.template.tsv",
+  "humanwgs_family.tertiary_map_file": "/hpc/scratch/group.data.science/ram_temp/HiFi-human-WGS-editing-QC-WDL/hifi-wdl-resources-v2/GRCh38.tertiary_map.v2p0p0.template.tsv",
+  "humanwgs_family.pharmcat_min_coverage": 1,
+  "humanwgs_family.backend": "HPC",
+  "humanwgs_family.preemptible": true
+}
