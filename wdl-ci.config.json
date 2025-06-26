@@ -555,7 +555,7 @@
         },
         "split_vcf_by_sample": {
           "key": "split_vcf_by_sample",
-          "digest": "wrmspgbtubqm4xdskkbakz6krc5iw65k",
+          "digest": "zfx6w6oiy3mzreyjkrxar7wigvygm3un",
           "tests": [
             {
               "inputs": {
@@ -612,6 +612,7 @@
                   "HG003.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi",
                   "HG004.HG002-trio.GRCh38.structural_variants.chr6_10000000_20000000.vcf.gz.tbi"
                 ],
+                "exclude_uncalled": false,
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
@@ -928,93 +929,6 @@
         }
       }
     },
-    "workflows/wdl-common/wdl/tasks/hificnv.wdl": {
-      "key": "workflows/wdl-common/wdl/tasks/hificnv.wdl",
-      "name": "",
-      "description": "",
-      "tasks": {
-        "hificnv": {
-          "key": "hificnv",
-          "digest": "45dcdjjpmnwhymg3vfjeo7yxbyczxart",
-          "tests": [
-            {
-              "inputs": {
-                "sample_id": "HG002",
-                "sex": "MALE",
-                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
-                "vcf": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",
-                "vcf_index": "${resources_file_path}/inputs/HG002.GRCh38.small_variants.vcf.gz",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "exclude_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz",
-                "exclude_bed_index": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/cnv.excluded_regions.common_50.hg38.bed.gz.tbi",
-                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
-                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "cnv_vcf": {
-                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.vcf.gz",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "vcftools_validator",
-                    "check_gzip"
-                  ]
-                },
-                "copynum_bedgraph": {
-                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.copynum.bedgraph",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_bed_columns"
-                  ]
-                },
-                "depth_bw": {
-                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.depth.bw",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "bigwig_validator"
-                  ]
-                },
-                "maf_bw": {
-                  "value": "${resources_file_path}/hificnv/HG002.GRCh38.hificnv.maf.bw",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "bigwig_validator"
-                  ]
-                },
-                "stat_DUP_count": {
-                  "value": "0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_DUP_sum": {
-                  "value": "0",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_DEL_count": {
-                  "value": "89",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                },
-                "stat_DEL_sum": {
-                  "value": "2885534000",
-                  "test_tasks": [
-                    "compare_string"
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
     "workflows/wdl-common/wdl/tasks/hiphase.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/hiphase.wdl",
       "name": "",
@@ -1224,7 +1138,7 @@
       "tasks": {
         "mitorsaw": {
           "key": "mitorsaw",
-          "digest": "bfnbvu2pwnp734bxsb633n3phezm3j7a",
+          "digest": "jxaaawjrrt6zwbrvhkn732nzejadpjja",
           "tests": [
             {
               "inputs": {
@@ -1264,7 +1178,7 @@
       "tasks": {
         "paraphase": {
           "key": "paraphase",
-          "digest": "fpnnrdrj72irojbdzcrrf6ylan5ztrj3",
+          "digest": "jzs4k5qgxgpjwv54mpw7vlf6nnlu2ki2",
           "tests": [
             {
               "inputs": {
@@ -1310,7 +1224,7 @@
       "tasks": {
         "pbstarphase_diplotype": {
           "key": "pbstarphase_diplotype",
-          "digest": "6opgzazl7wm42vg4ftqbmvqlq3b4xsxl",
+          "digest": "qlxl34shcpfmx4dluqdogguhh2mcekda",
           "tests": [
             {
               "inputs": {
@@ -1396,7 +1310,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "g6ywayioaobdtzqdajkngnqfqwmxjtyk",
+          "digest": "knw5lxj7lvuspa7bfxum7zm3n5a5hjgo",
           "tests": [
             {
               "inputs": {
@@ -1485,7 +1399,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "dmgbkalwvudhxs6lr3xkwopq6hkwjttv",
+          "digest": "jywsabnjsznsx6g6rxf7w5zmwee4fgkn",
           "tests": [
             {
               "inputs": {
@@ -1519,7 +1433,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "oc5xxjmuyfnoobc6zqe5sqtfsfgkgak7",
+          "digest": "oecyhm3k4zvuuwkcd5x3jll37pwaewwk",
           "tests": [
             {
               "inputs": {
@@ -1680,19 +1594,19 @@
                 "task_start_index": 0,
                 "tasks_per_shard": 8,
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "example_tfrecord_tar": {
-                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
                   ]
                 },
                 "nonvariant_site_tfrecord_tar": {
-                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1711,22 +1625,22 @@
                 "sample_id": "HG002",
                 "ref_name": "${ref_name}",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecords_tar": {
-                  "value": "${resources_file_path}/deepvariant_call_variants_cpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_call_variants_cpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1738,29 +1652,29 @@
         },
         "deepvariant_call_variants_gpu": {
           "key": "deepvariant_call_variants_gpu",
-          "digest": "567aoezgiryo64cbsy2c2plt3vblrbpy",
+          "digest": "oruoeho4i2o5kuzfey4f6z5or22mvrhl",
           "tests": [
             {
               "inputs": {
                 "sample_id": "HG002",
                 "ref_name": "${ref_name}",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0-gpu",
+                "docker_image": "google/deepvariant:1.9.0-gpu",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "tfrecords_tar": {
-                  "value": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                  "value": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -1777,37 +1691,37 @@
             {
               "inputs": {
                 "sample_id": "HG002",
-                "tfrecords_tar": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p8p0/HG002.GRCh38.call_variants_output.tar.gz",
+                "tfrecords_tar": "${resources_file_path}/deepvariant_call_variants_gpu/output/v1p9p0/HG002.GRCh38.call_variants_output.tar.gz",
                 "example_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.example_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.example_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.example_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.example_tfrecords.tar.gz"
                 ],
                 "nonvariant_site_tfrecord_tars": [
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.8.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.16.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.24.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.32.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.40.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.48.nonvariant_site_tfrecords.tar.gz",
-                  "${resources_file_path}/deepvariant_make_examples/output/v1p8p0/HG002.56.nonvariant_site_tfrecords.tar.gz"
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.0.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.8.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.16.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.24.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.32.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.40.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.48.nonvariant_site_tfrecords.tar.gz",
+                  "${resources_file_path}/deepvariant_make_examples/output/v1p9p0/HG002.56.nonvariant_site_tfrecords.tar.gz"
                 ],
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "ref_name": "${ref_name}",
                 "total_deepvariant_tasks": 64,
-                "docker_image": "google/deepvariant:1.8.0",
+                "docker_image": "google/deepvariant:1.9.0",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p8p0/HG002.GRCh38.small_variants.vcf.gz",
+                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p9p0/HG002.GRCh38.small_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -1815,7 +1729,7 @@
                   ]
                 },
                 "gvcf": {
-                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p8p0/HG002.GRCh38.small_variants.g.vcf.gz",
+                  "value": "${resources_file_path}/deepvariant_postprocess_variants/output/v1p9p0/HG002.GRCh38.small_variants.g.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "vcftools_validator",
@@ -2072,64 +1986,28 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "bpppd3zrlqu4tpyls4fkrzq545ghyskz",
+          "digest": "mluhmv4fzusd5rltn3uffyrcb3w6oary",
           "tests": [
             {
               "inputs": {
+                "sample_id": "HG002-minimal",
                 "sex": "MALE",
-                "aligned_bam": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
+                "aligned_bam": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam",
+                "aligned_bam_index": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam.bai",
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
-                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
-                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
-                "out_prefix": "HG002.GRCh38",
+                "exclude_bed": "${datasets_file_path}/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz",
+                "exclude_bed_index": "${datasets_file_path}/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz.tbi",
+                "expected_male_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XX.bed",
+                "small_variant_vcf": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.GRCh38.small_variants.vcf.gz",
+                "small_variant_vcf_index": "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.GRCh38.small_variants.vcf.gz.tbi",
+                "out_prefix": "HG002-minimal",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "discover_tar": {
-                  "value": "${resources_file_path}/sawfish_discover/output/HG002/HG002.GRCh38.tar",
-                  "test_tasks": [
-                    "compare_file_basename"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "sex": "MALE",
-                "aligned_bam": "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam.bai",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
-                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
-                "out_prefix": "HG003.GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "discover_tar": {
-                  "value": "${resources_file_path}/sawfish_discover/output/HG003/HG003.GRCh38.tar",
-                  "test_tasks": [
-                    "compare_file_basename"
-                  ]
-                }
-              }
-            },
-            {
-              "inputs": {
-                "aligned_bam": "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam",
-                "aligned_bam_index": "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam.bai",
-                "ref_fasta": "${ref_fasta}",
-                "ref_index": "${ref_index}",
-                "expected_male_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XY.bed",
-                "expected_female_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/hificnv/expected_cn.hg38.XX.bed",
-                "out_prefix": "HG004.GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "discover_tar": {
-                  "value": "${resources_file_path}/sawfish_discover/output/HG004/HG004.GRCh38.tar",
+                  "value": "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.tar",
                   "test_tasks": [
                     "compare_file_basename"
                   ]
@@ -2140,28 +2018,30 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "jic2pwxzicg2ci3jz3agp43vep6mhrh6",
+          "digest": "rn2lgqleychf2ppcobtco26uzf4hynpj",
           "tests": [
             {
               "inputs": {
+                "sample_ids": [
+                  "HG002-minimal"
+                ],
                 "discover_tars": [
-                  "${resources_file_path}/sawfish_call/input/HG002.GRCh38.tar"
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.tar"
                 ],
                 "aligned_bams": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam"
+                  "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam"
                 ],
                 "aligned_bam_indices": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai"
+                  "${resources_file_path}/sawfish_discover/inputs/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam.bai"
                 ],
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
-                "out_prefix": "HG002.GRCh38.structural_variants",
+                "out_prefix": "HG002-minimal.GRCh38.structural_variants",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.vcf.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip",
@@ -2169,40 +2049,81 @@
                   ]
                 },
                 "supporting_reads": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002/HG002.GRCh38.structural_variants.supporting_reads.json.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.supporting_reads.json.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
+                  ]
+                },
+                "copynum_bedgraph": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.copynum.bedgraph"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "depth_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.depth.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "gc_bias_corrected_depth_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.gc_bias_corrected_depth.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "maf_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.maf.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
                   ]
                 }
               }
             },
             {
               "inputs": {
+                "sample_ids": [
+                  "HG002-minimal",
+                  "HG003-minimal",
+                  "HG004-minimal"
+                ],
                 "discover_tars": [
-                  "${resources_file_path}/sawfish_call/input/HG002.GRCh38.tar",
-                  "${resources_file_path}/sawfish_call/input/HG003.GRCh38.tar",
-                  "${resources_file_path}/sawfish_call/input/HG004.GRCh38.tar"
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.tar",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG003-minimal.tar",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG004-minimal.tar"
                 ],
                 "aligned_bams": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam",
-                  "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam",
-                  "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam"
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG003-minimal.m84039_241002_000337_s3.hifi_reads.minimal.GRCh38.aligned.bam",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG004-minimal.m84039_241002_020632_s4.hifi_reads.minimal.GRCh38.aligned.bam"
                 ],
                 "aligned_bam_indices": [
-                  "${resources_file_path}/inputs/HG002.GRCh38.chr6_10000000_20000000.bam.bai",
-                  "${resources_file_path}/inputs/HG003.GRCh38.chr6_10000000_20000000.bam.bai",
-                  "${resources_file_path}/inputs/HG004.GRCh38.chr6_10000000_20000000.bam.bai"
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG002-minimal.m84039_241001_220042_s2.hifi_reads.minimal.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG003-minimal.m84039_241002_000337_s3.hifi_reads.minimal.GRCh38.aligned.bam.bai",
+                  "${resources_file_path}/sawfish_call/input/sawfish-2/HG004-minimal.m84039_241002_020632_s4.hifi_reads.minimal.GRCh38.aligned.bam.bai"
                 ],
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
-                "ref_name": "${ref_name}",
                 "out_prefix": "HG002-trio.joint.GRCh38.structural_variants",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip",
@@ -2210,10 +2131,55 @@
                   ]
                 },
                 "supporting_reads": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio/HG002-trio.joint.GRCh38.structural_variants.supporting_reads.json.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio.joint.GRCh38.structural_variants.supporting_reads.json.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
+                  ]
+                },
+                "copynum_bedgraph": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns"
+                  ]
+                },
+                "depth_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "gc_bias_corrected_depth_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
+                  ]
+                },
+                "maf_bw": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "bigwig_validator"
                   ]
                 }
               }
@@ -2237,16 +2203,16 @@
     "engine_params": {
       "pacbio-hpc": {
         "resources_file_path": "/pbi/vast-collections/appslabht/cromwell_tests/humanwgs",
-        "datasets_file_path": "/pbi/vast-collections/appslabht/cromwell_tests/humanwgs/hifi-wdl-resources-v2.0.0",
-        "ref_fasta": "/pbi/vast-collections/appslabht/cromwell_tests/humanwgs/hifi-wdl-resources-v2.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
-        "ref_index": "/pbi/vast-collections/appslabht/cromwell_tests/humanwgs/hifi-wdl-resources-v2.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
+        "datasets_file_path": "/pbi/vast-collections/appslabht/analysis_workflow_inputs/hifi-wgs-wdl-resources/",
+        "ref_fasta": "/pbi/vast-collections/appslabht/analysis_workflow_inputs/hifi-wgs-wdl-resources/GRCh38/human_GRCh38_no_alt_analysis_set.fasta",
+        "ref_index": "/pbi/vast-collections/appslabht/analysis_workflow_inputs/hifi-wgs-wdl-resources/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai",
         "default_runtime_attributes": {
           "backend": "HPC",
           "preemptible_tries": 0,
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         },
         "on_demand_runtime_attributes": {
@@ -2255,7 +2221,7 @@
           "max_retries": 0,
           "zones": "",
           "cpuPlatform": "",
-          "gpuType": "ampere",
+          "gpuType": "tesla",
           "container_registry": "quay.io/pacbio"
         }
       }
