@@ -8,7 +8,6 @@ import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
-import "../wdl-common/wdl/tasks/hificnv.wdl" as Hificnv
 import "../wdl-common/wdl/tasks/mitorsaw.wdl" as Mitorsaw
 
 workflow upstream {
@@ -106,24 +105,32 @@ workflow upstream {
 
   call DeepVariant.deepvariant {
     input:
-      sample_id                    = sample_id,
-      aligned_bams                 = [aligned_bam_data],
-      aligned_bam_indices          = [aligned_bam_index],
-      ref_fasta                    = ref_map["fasta"],             # !FileCoercion
-      ref_index                    = ref_map["fasta_index"],       # !FileCoercion
-      ref_name                     = ref_map["name"],
-      gpu                          = gpu,
-      default_runtime_attributes   = default_runtime_attributes
+      sample_id                  = sample_id,
+      aligned_bams               = [aligned_bam_data],
+      aligned_bam_indices        = [aligned_bam_index],
+      ref_fasta                  = ref_map["fasta"],       # !FileCoercion
+      ref_index                  = ref_map["fasta_index"], # !FileCoercion
+      ref_name                   = ref_map["name"],
+      gpu                        = gpu,
+      default_runtime_attributes = default_runtime_attributes
   }
 
   call Sawfish.sawfish_discover {
     input:
-      aligned_bam         = aligned_bam_data,
-      aligned_bam_index   = aligned_bam_index,
-      ref_fasta           = ref_map["fasta"],                           # !FileCoercion
-      ref_index           = ref_map["fasta_index"],                     # !FileCoercion
-      out_prefix          = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes  = default_runtime_attributes
+      sample_id               = sample_id,
+      sex                     = mosdepth.inferred_sex,
+      aligned_bam             = aligned_bam_data,
+      aligned_bam_index       = aligned_bam_index,
+      ref_fasta               = ref_map["fasta"],                       # !FileCoercion
+      ref_index               = ref_map["fasta_index"],                 # !FileCoercion
+      exclude_bed             = ref_map["sawfish_exclude_bed"],         # !FileCoercion
+      exclude_bed_index       = ref_map["sawfish_exclude_bed_index"],   # !FileCoercion
+      expected_male_bed       = ref_map["sawfish_expected_bed_male"],   # !FileCoercion  # TODO: consider renaming the exclude and expected files
+      expected_female_bed     = ref_map["sawfish_expected_bed_female"], # !FileCoercion
+      small_variant_vcf       = deepvariant.vcf,
+      small_variant_vcf_index = deepvariant.vcf_index,
+      out_prefix              = "~{sample_id}",
+      runtime_attributes      = default_runtime_attributes
   }
 
   call Trgt.trgt {
@@ -149,24 +156,6 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
-  call Hificnv.hificnv {
-    input:
-      sample_id           = sample_id,
-      sex                 = mosdepth.inferred_sex,
-      aligned_bam         = aligned_bam_data,
-      aligned_bam_index   = aligned_bam_index,
-      vcf                 = deepvariant.vcf,
-      vcf_index           = deepvariant.vcf_index,
-      ref_fasta           = ref_map["fasta"],                           # !FileCoercion
-      ref_index           = ref_map["fasta_index"],                     # !FileCoercion
-      ref_name            = ref_map["name"],
-      exclude_bed         = ref_map["hificnv_exclude_bed"],             # !FileCoercion
-      exclude_bed_index   = ref_map["hificnv_exclude_bed_index"],       # !FileCoercion
-      expected_male_bed   = ref_map["hificnv_expected_bed_male"],       # !FileCoercion
-      expected_female_bed = ref_map["hificnv_expected_bed_female"],     # !FileCoercion
-      runtime_attributes  = default_runtime_attributes
-  }
-
   call Mitorsaw.mitorsaw {
     input:
       aligned_bam        = aligned_bam_data,
@@ -179,7 +168,8 @@ workflow upstream {
 
   if (single_sample) {
     call Sawfish.sawfish_call {
-      input: 
+      input:
+        sample_ids          = [sample_id],
         discover_tars       = [sawfish_discover.discover_tar],
         aligned_bams        = [aligned_bam_data],
         aligned_bam_indices = [aligned_bam_index],
@@ -188,6 +178,11 @@ workflow upstream {
         out_prefix          = "~{sample_id}.~{ref_map['name']}.structural_variants",
         runtime_attributes  = default_runtime_attributes
     }
+
+    File copynum_bedgraph_output           = sawfish_call.copynum_bedgraph[0]
+    File depth_bw_output                   = sawfish_call.depth_bw[0]
+    File gc_bias_corrected_depth_bw_output = sawfish_call.gc_bias_corrected_depth_bw[0]
+    File maf_bw_output                     = sawfish_call.maf_bw[0]
   }
 
   output {
@@ -207,9 +202,13 @@ workflow upstream {
     File discover_tar = sawfish_discover.discover_tar
 
     # sawfish outputs for single sample
-    File? sv_vcf              = sawfish_call.vcf
-    File? sv_vcf_index        = sawfish_call.vcf_index
-    File? sv_supporting_reads = sawfish_call.supporting_reads
+    File? sv_vcf                        = sawfish_call.vcf
+    File? sv_vcf_index                  = sawfish_call.vcf_index
+    File? sv_supporting_reads           = sawfish_call.supporting_reads
+    File? sv_copynum_bedgraph           = copynum_bedgraph_output
+    File? sv_depth_bw                   = depth_bw_output
+    File? sv_gc_bias_corrected_depth_bw = gc_bias_corrected_depth_bw_output
+    File? sv_maf_bw                     = maf_bw_output
 
     # small variant outputs
     File small_variant_vcf        = deepvariant.vcf
@@ -231,17 +230,6 @@ workflow upstream {
     File? paraphase_realigned_bam_index = paraphase.bam_index
     File? paraphase_vcfs                = paraphase.vcfs_tar
 
-    # per sample hificnv outputs
-    File   cnv_vcf              = hificnv.cnv_vcf
-    File   cnv_vcf_index        = hificnv.cnv_vcf_index
-    File   cnv_copynum_bedgraph = hificnv.copynum_bedgraph
-    File   cnv_depth_bw         = hificnv.depth_bw
-    File   cnv_maf_bw           = hificnv.maf_bw
-    String stat_cnv_DUP_count   = hificnv.stat_DUP_count
-    String stat_cnv_DEL_count   = hificnv.stat_DEL_count
-    String stat_cnv_DUP_sum     = hificnv.stat_DUP_sum
-    String stat_cnv_DEL_sum     = hificnv.stat_DEL_sum
-
     # per sample mitorsaw outputs
     File mitorsaw_vcf       = mitorsaw.vcf
     File mitorsaw_vcf_index = mitorsaw.vcf_index
@@ -253,8 +241,7 @@ workflow upstream {
         flatten(pbmm2.msg),
         [qc_sex],
         trgt.msg,
-        paraphase.msg,
-        hificnv.msg
+        sawfish_discover.msg
       ]
     )
   }

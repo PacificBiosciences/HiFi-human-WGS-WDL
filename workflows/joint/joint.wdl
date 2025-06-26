@@ -56,6 +56,15 @@ workflow joint {
     sv_supporting_reads: {
       name: "Supporting reads JSON"
     }
+    sv_copynum_bedgraph: {
+      name: "Copy number bedgraph"
+    }
+    sv_depth_bw: {
+      name: "Depth bedgraph"
+    }
+    sv_maf_bw: {
+      name: "MAF bedgraph"
+    }
   }
 
   input {
@@ -80,11 +89,12 @@ workflow joint {
 
   call Sawfish.sawfish_call {
     input:
+      sample_ids          = sample_ids,
       discover_tars       = discover_tars,
       aligned_bams        = aligned_bams,
       aligned_bam_indices = aligned_bam_indices,
-      ref_fasta           = ref_map["fasta"],                                      # !FileCoercion
-      ref_index           = ref_map["fasta_index"],                                # !FileCoercion
+      ref_fasta           = ref_map["fasta"],                                            # !FileCoercion
+      ref_index           = ref_map["fasta_index"],                                      # !FileCoercion
       out_prefix          = "~{family_id}.joint.~{ref_map['name']}.structural_variants",
       runtime_attributes  = default_runtime_attributes
   }
@@ -103,6 +113,7 @@ workflow joint {
       vcf_index             = sawfish_call.vcf_index,
       split_vcf_names       = split_sv_vcf_name,
       split_vcf_index_names = split_sv_vcf_index_name,
+      exclude_uncalled      = false,
       runtime_attributes    = default_runtime_attributes
   }
 
@@ -139,5 +150,9 @@ workflow joint {
     Array[File] split_joint_small_variant_vcfs             = split_glnexus.split_vcfs
     Array[File] split_joint_small_variant_vcf_indices      = split_glnexus.split_vcf_indices
     File sv_supporting_reads                               = select_first([sawfish_call.supporting_reads])
+    Array[File] sv_copynum_bedgraph                        = sawfish_call.copynum_bedgraph
+    Array[File] sv_depth_bw                                = sawfish_call.depth_bw
+    Array[File] sv_gc_bias_corrected_depth_bw              = sawfish_call.gc_bias_corrected_depth_bw
+    Array[File] sv_maf_bw                                  = sawfish_call.maf_bw
   }
 }

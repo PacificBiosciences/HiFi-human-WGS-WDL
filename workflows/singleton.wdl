@@ -190,10 +190,6 @@ workflow humanwgs_singleton {
     'sv_INV_count': [downstream.stat_sv_INV_count],
     'sv_SWAP_count': [downstream.stat_sv_SWAP_count],
     'sv_BND_count': [downstream.stat_sv_BND_count],
-    'cnv_DUP_count': [upstream.stat_cnv_DUP_count],
-    'cnv_DEL_count': [upstream.stat_cnv_DEL_count],
-    'cnv_DUP_sum': [upstream.stat_cnv_DUP_sum],
-    'cnv_DEL_sum': [upstream.stat_cnv_DEL_sum],
     'trgt_genotyped_count': [upstream.stat_trgt_genotyped_count],
     'trgt_uncalled_count': [upstream.stat_trgt_uncalled_count]
   }
@@ -259,9 +255,13 @@ workflow humanwgs_singleton {
     String stat_cpg_combined_count = downstream.stat_combined_cpg_count
 
     # sv outputs
-    File phased_sv_vcf       = downstream.phased_sv_vcf
-    File phased_sv_vcf_index = downstream.phased_sv_vcf_index
-    File sv_supporting_reads = select_first([upstream.sv_supporting_reads])
+    File phased_sv_vcf                 = downstream.phased_sv_vcf
+    File phased_sv_vcf_index           = downstream.phased_sv_vcf_index
+    File sv_supporting_reads           = select_first([upstream.sv_supporting_reads])
+    File sv_copynum_bedgraph           = select_first([upstream.sv_copynum_bedgraph])
+    File sv_depth_bw                   = select_first([upstream.sv_depth_bw])
+    File sv_gc_bias_corrected_depth_bw = select_first([upstream.sv_gc_bias_corrected_depth_bw])
+    File sv_maf_bw                     = select_first([upstream.sv_maf_bw])
 
     # sv stats
     String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
@@ -302,17 +302,6 @@ workflow humanwgs_singleton {
     File? paraphase_realigned_bam       = upstream.paraphase_realigned_bam
     File? paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
     File? paraphase_vcfs                = upstream.paraphase_vcfs
-
-    # per sample cnv outputs
-    File   cnv_vcf              = upstream.cnv_vcf
-    File   cnv_vcf_index        = upstream.cnv_vcf_index
-    File   cnv_copynum_bedgraph = upstream.cnv_copynum_bedgraph
-    File   cnv_depth_bw         = upstream.cnv_depth_bw
-    File   cnv_maf_bw           = upstream.cnv_maf_bw
-    String stat_cnv_DUP_count   = upstream.stat_cnv_DUP_count
-    String stat_cnv_DEL_count   = upstream.stat_cnv_DEL_count
-    String stat_cnv_DUP_sum     = upstream.stat_cnv_DUP_sum
-    String stat_cnv_DEL_sum     = upstream.stat_cnv_DEL_sum
 
     # per sample mitorsaw outputs
     File mitorsaw_vcf       = upstream.mitorsaw_vcf
