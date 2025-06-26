@@ -179,9 +179,10 @@ workflow upstream {
         runtime_attributes  = default_runtime_attributes
     }
 
-    File copynum_bedgraph_output = sawfish_call.copynum_bedgraph[0]
-    File depth_bw_output         = sawfish_call.depth_bw[0]
-    File maf_bw_output           = sawfish_call.maf_bw[0]
+    File copynum_bedgraph_output           = sawfish_call.copynum_bedgraph[0]
+    File depth_bw_output                   = sawfish_call.depth_bw[0]
+    File gc_bias_corrected_depth_bw_output = sawfish_call.gc_bias_corrected_depth_bw[0]
+    File maf_bw_output                     = sawfish_call.maf_bw[0]
   }
 
   output {
@@ -201,12 +202,13 @@ workflow upstream {
     File discover_tar = sawfish_discover.discover_tar
 
     # sawfish outputs for single sample
-    File? sv_vcf              = sawfish_call.vcf
-    File? sv_vcf_index        = sawfish_call.vcf_index
-    File? sv_supporting_reads = sawfish_call.supporting_reads
-    File? sv_copynum_bedgraph = copynum_bedgraph_output
-    File? sv_depth_bw         = depth_bw_output
-    File? sv_maf_bw           = maf_bw_output
+    File? sv_vcf                        = sawfish_call.vcf
+    File? sv_vcf_index                  = sawfish_call.vcf_index
+    File? sv_supporting_reads           = sawfish_call.supporting_reads
+    File? sv_copynum_bedgraph           = copynum_bedgraph_output
+    File? sv_depth_bw                   = depth_bw_output
+    File? sv_gc_bias_corrected_depth_bw = gc_bias_corrected_depth_bw_output
+    File? sv_maf_bw                     = maf_bw_output
 
     # small variant outputs
     File small_variant_vcf        = deepvariant.vcf

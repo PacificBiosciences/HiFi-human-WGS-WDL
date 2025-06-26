@@ -150,8 +150,9 @@ workflow joint {
     Array[File] split_joint_small_variant_vcfs             = split_glnexus.split_vcfs
     Array[File] split_joint_small_variant_vcf_indices      = split_glnexus.split_vcf_indices
     File sv_supporting_reads                               = select_first([sawfish_call.supporting_reads])
-    Array[File] sv_copynum_bedgraph                           = sawfish_call.copynum_bedgraph
-    Array[File] sv_depth_bw                                   = sawfish_call.depth_bw
-    Array[File] sv_maf_bw                                     = sawfish_call.maf_bw
+    Array[File] sv_copynum_bedgraph                        = sawfish_call.copynum_bedgraph
+    Array[File] sv_depth_bw                                = sawfish_call.depth_bw
+    Array[File] sv_gc_bias_corrected_depth_bw              = sawfish_call.gc_bias_corrected_depth_bw
+    Array[File] sv_maf_bw                                  = sawfish_call.maf_bw
   }
 }

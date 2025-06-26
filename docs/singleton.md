@@ -159,6 +159,7 @@ flowchart TD
 | File | sv_supporting_reads | Supporting reads for structural variants |  |
 | File | sv_copynum_bedgraph | CNV copy number BEDGraph |  |
 | File | sv_depth_bw | CNV depth BigWig |  |
+| File | sv_gc_bias_corrected_depth_bw | CNV GC-bias corrected depth BigWig |  |
 | File | sv_maf_bw | CNV MAF BigWig |  |
 | File | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | File | bcftools_roh_bed | Generated from above, without filtering |  |
