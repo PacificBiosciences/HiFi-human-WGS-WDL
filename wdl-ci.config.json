@@ -2118,7 +2118,7 @@
                 ],
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
-                "out_prefix": "HG002-trio-minimal.joint.GRCh38.structural_variants",
+                "out_prefix": "HG002-trio.joint.GRCh38.structural_variants",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
               "output_tests": {
