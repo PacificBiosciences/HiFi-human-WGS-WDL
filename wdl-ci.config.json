@@ -2123,7 +2123,7 @@
               },
               "output_tests": {
                 "vcf": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio-minimal.joint.GRCh38.structural_variants.vcf.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio.joint.GRCh38.structural_variants.vcf.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip",
@@ -2131,7 +2131,7 @@
                   ]
                 },
                 "supporting_reads": {
-                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio-minimal.joint.GRCh38.structural_variants.supporting_reads.json.gz",
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-trio.joint.GRCh38.structural_variants.supporting_reads.json.gz",
                   "test_tasks": [
                     "compare_file_basename",
                     "check_gzip"
@@ -2139,9 +2139,9 @@
                 },
                 "copynum_bedgraph": {
                   "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.copynum.bedgraph",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.copynum.bedgraph",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.copynum.bedgraph"
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum.bedgraph"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
@@ -2151,9 +2151,9 @@
                 },
                 "depth_bw": {
                   "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.depth.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.depth.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.depth.bw"
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.depth.bw"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
@@ -2162,9 +2162,9 @@
                 },
                 "gc_bias_corrected_depth_bw": {
                   "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw"
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.gc_bias_corrected_depth.bw"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
@@ -2173,9 +2173,9 @@
                 },
                 "maf_bw": {
                   "value": [
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.maf.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.maf.bw",
-                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio-minimal.joint.GRCh38.structural_variants.maf.bw"
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.maf.bw"
                   ],
                   "test_tasks": [
                     "compare_file_basename",
