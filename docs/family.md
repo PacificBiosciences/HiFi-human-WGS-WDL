@@ -149,6 +149,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | ---- | ---- | ----------- | ----- |
 | String | workflow_name | Workflow name |  |
 | String | workflow_version | Workflow version |  |
+| Array\[String\] | msg | Messages from the workflow |  |
+| File | msg_file | File containing messages from the workflow |  |
 | Array\[String\] | sample_ids | Sample IDs |  |
 | File | stats_file | Table of summary statistics |  |
 | Array\[File\] | bam_stats | BAM stats | Per-read length and read-quality |

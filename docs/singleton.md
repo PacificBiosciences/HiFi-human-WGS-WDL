@@ -106,6 +106,8 @@ flowchart TD
 | ---- | ---- | ----------- | ----- |
 | String | workflow_name | Workflow name |  |
 | String | workflow_version | Workflow version |  |
+| Array\[String\] | msg | Messages from the workflow |  |
+| File | msg_file | File containing messages from the workflow |  |
 | File | stats_file | Table of summary statistics |  |
 | File | bam_stats | BAM stats | Per-read length and read-quality |
 | File | read_length_plot | Read length plot |  |

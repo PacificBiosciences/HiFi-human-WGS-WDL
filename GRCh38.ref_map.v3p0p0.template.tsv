@@ -1,9 +1,7 @@
 name	GRCh38
 fasta	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta
 fasta_index	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai
-pbsv_splits	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.pbsv_splits.json
-pbsv_tandem_repeat_bed	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/human_GRCh38_no_alt_analysis_set.trf.bed
-trgt_tandem_repeat_bed	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed
+trgt_tandem_repeat_bed	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/trgt/adotto_strchive_20250626.hg38.bed.gz
 sawfish_exclude_bed	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz
 sawfish_exclude_bed_index	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz.tbi
 sawfish_expected_bed_male	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/expected_cn.hg38.XY.bed

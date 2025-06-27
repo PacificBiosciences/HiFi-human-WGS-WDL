@@ -14,26 +14,3 @@
 | File | sawfish_expected_bed_female | Expected allosome copy number BED for XX samples | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#expected-copy-number) |
 | File | pharmcat_positions_vcf | PharmCAT positions VCF |  |
 | File | pharmcat_positions_vcf_index | PharmCAT positions VCF index |  |
-
-## pbsv_splits
-
-The `pbsv_splits` file is a JSON array of arrays of strings. Each inner array contains one or more chromosome names such that each inner array is of roughly equal size in base pairs. The inner arrays are processed in parallel.  For example:
-
-```json
-[
-  ...
-    [
-        "chr10",
-        "chr11"
-    ],
-    [
-        "chr12",
-        "chr13"
-    ],
-    [
-        "chr14",
-        "chr15"
-    ],
-  ...
-]
-```

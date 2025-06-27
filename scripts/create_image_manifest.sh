@@ -10,7 +10,7 @@ grep '@sha' -h -r workflows/ \
 | sort --unique \
 > ./image_manifest.txt
 
-deepvariant_version=1.8.0
+deepvariant_version=1.9.0
 echo "google/deepvariant:${deepvariant_version}" >> ./image_manifest.txt
 echo "google/deepvariant:${deepvariant_version}-gpu" >> ./image_manifest.txt
 

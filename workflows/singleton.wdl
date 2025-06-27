@@ -334,7 +334,7 @@ workflow humanwgs_singleton {
     )
 
     # workflow metadata
-    String workflow_name    = "humanwgs_family"
-    String workflow_version = "v3.0.0-alpha1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_name    = "humanwgs_singleton"
+    String workflow_version = "v3.0.0-alpha2" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
