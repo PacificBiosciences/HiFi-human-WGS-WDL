@@ -1,20 +1,6 @@
 version: 1.2
 
 workflows:
-  - name: HiFi-human-WGS-WDL
-    subclass: WDL
-    primaryDescriptorPath: /workflows/main.wdl
-    readMePath: /README.md
-    authors:
-      - orcid: 0000-0001-5921-2022 # Juniper Lake
-      - orcid: 0000-0001-7628-5645 # Gregory Concepcion
-      - orcid: 0000-0003-1183-0432 # Aaron Wenger
-      - orcid: 0000-0002-7422-1194 # William Rowell
-      - orcid: 0000-0002-5507-0896 # Heather Ward
-      - orcid: 0009-0001-0205-4614 # Karen Fang
-    latestTagAsDefault: False
-    filters:
-      tags: [ /v1\..*dockstore/ ]
   - name: HiFi-human-WGS-WDL-singleton
     subclass: WDL
     primaryDescriptorPath: /workflows/singleton.wdl
