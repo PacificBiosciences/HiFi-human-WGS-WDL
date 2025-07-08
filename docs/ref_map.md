@@ -8,6 +8,7 @@
 | File | pbsv_splits | Regions for pbsv parallelization | [below](#pbsv_splits) |
 | File | pbsv_tandem_repeat_bed | Tandem Repeat BED used by PBSV to normalize SVs within TRs | [link](https://github.com/PacificBiosciences/pbsv/tree/master/annotations) |
 | File | trgt_tandem_repeat_bed | Tandem Repeat catalog (BED) for TRGT genotyping | [link](https://github.com/PacificBiosciences/trgt/blob/main/docs/repeat_files.md) |
+| File | trgt_pathogenic_bed | Pathogenic Tandem Repeat catalog (BED) for TRGT genotyping | If fail_reads are provided, fail_reads aligning to these regions will be used for TRGT. |
 | File | sawfish_exclude_bed | Regions to be excluded for Sawfish CNV calls in gzipped BED format | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#cnv-excluded-regions) |
 | File | sawfish_exclude_bed_index | BED index | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#cnv-excluded-regions) |
 | File | sawfish_expected_bed_male | Expected allosome copy number BED for XY samples | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#expected-copy-number) |
