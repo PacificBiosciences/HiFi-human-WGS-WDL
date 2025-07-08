@@ -67,8 +67,8 @@ workflow upstream {
         sample_id                  = sample_id,
         bam                        = hifi_read_bam,
         max_reads_per_chunk        = max_reads_per_alignment_chunk,
-        ref_fasta                  = ref_map["fasta"],       # !FileCoercion
-        ref_index                  = ref_map["fasta_index"], # !FileCoercion
+        ref_fasta                  = ref_map["fasta"],              # !FileCoercion
+        ref_index                  = ref_map["fasta_index"],        # !FileCoercion
         ref_name                   = ref_map["name"],
         default_runtime_attributes = default_runtime_attributes
     }
@@ -125,7 +125,7 @@ workflow upstream {
       ref_index               = ref_map["fasta_index"],                 # !FileCoercion
       exclude_bed             = ref_map["sawfish_exclude_bed"],         # !FileCoercion
       exclude_bed_index       = ref_map["sawfish_exclude_bed_index"],   # !FileCoercion
-      expected_male_bed       = ref_map["sawfish_expected_bed_male"],   # !FileCoercion  # TODO: consider renaming the exclude and expected files
+      expected_male_bed       = ref_map["sawfish_expected_bed_male"],   # !FileCoercion
       expected_female_bed     = ref_map["sawfish_expected_bed_female"], # !FileCoercion
       small_variant_vcf       = deepvariant.vcf,
       small_variant_vcf_index = deepvariant.vcf_index,
@@ -139,9 +139,9 @@ workflow upstream {
       sex                = mosdepth.inferred_sex,
       aligned_bam        = aligned_bam_data,
       aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta"],                           # !FileCoercion
-      ref_index          = ref_map["fasta_index"],                     # !FileCoercion
-      trgt_bed           = ref_map["trgt_tandem_repeat_bed"],          # !FileCoercion
+      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
+      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
       out_prefix         = "~{sample_id}.~{ref_map['name']}",
       runtime_attributes = default_runtime_attributes
   }
