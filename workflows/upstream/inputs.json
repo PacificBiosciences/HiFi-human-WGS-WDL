@@ -2,6 +2,7 @@
   "upstream.sample_id": "String",
   "upstream.sex": "String? (optional)",
   "upstream.hifi_reads": "Array[File]",
+  "upstream.fail_reads": "Array[File]? (optional)",
   "upstream.ref_map_file": "File",
   "upstream.max_reads_per_alignment_chunk": "Int",
   "upstream.single_sample": "Boolean (optional, default = false)",

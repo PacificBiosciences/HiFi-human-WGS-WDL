@@ -138,6 +138,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`.  Used for tertiary analysis X-linked inheritance filtering. |
 | Boolean | affected | Affected status | If set to `true`, sample is described as being affected by all HPO terms in `phenotypes`.<br/>If set to `false`, sample is described as not being affected by all HPO terms in `phenotypes`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
+| Array\[File\]? | fail_reads | Array of paths to failed HiFi reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
 | String? | father_id | sample_id of father (optional) |  |
 | String? | mother_id | sample_id of mother (optional) |  |
 

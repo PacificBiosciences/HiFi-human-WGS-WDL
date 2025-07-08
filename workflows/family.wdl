@@ -121,6 +121,7 @@ workflow humanwgs_family {
         sample_id                     = sample.sample_id,
         sex                           = sample.sex,
         hifi_reads                    = sample.hifi_reads,
+        fail_reads                    = sample.fail_reads,
         ref_map_file                  = ref_map_file,
         max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
         single_sample                 = single_sample,
@@ -399,6 +400,6 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v3.0.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.0.1-fail_reads_alpha" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }

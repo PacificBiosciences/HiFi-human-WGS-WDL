@@ -24,6 +24,9 @@ workflow humanwgs_singleton {
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
     }
+    fail_reads: {
+      name: "Array of paths to failed reads in unaligned BAM format; optional"
+    }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
     }
@@ -71,6 +74,7 @@ workflow humanwgs_singleton {
     String sample_id
     String? sex
     Array[File] hifi_reads
+    Array[File]? fail_reads
 
     String phenotypes = "HP:0000001"
 
@@ -110,6 +114,7 @@ workflow humanwgs_singleton {
       sample_id                     = sample_id,
       sex                           = sex,
       hifi_reads                    = hifi_reads,
+      fail_reads                    = fail_reads,
       ref_map_file                  = ref_map_file,
       max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
       single_sample                 = true,
@@ -335,6 +340,6 @@ workflow humanwgs_singleton {
 
     # workflow metadata
     String workflow_name    = "humanwgs_singleton"
-    String workflow_version = "v3.0.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.0.1-fail_reads_alpha" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
