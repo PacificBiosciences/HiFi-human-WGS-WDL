@@ -4,6 +4,7 @@
   "humanwgs_singleton.hifi_reads": [
     "File"
   ],
+  "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.phenotypes": "String? (optional)",
   "humanwgs_singleton.ref_map_file": "File",
   "humanwgs_singleton.tertiary_map_file": "File? (optional)",

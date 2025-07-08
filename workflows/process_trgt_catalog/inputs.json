@@ -1,0 +1,14 @@
+{
+  "process_trgt_catalog.trgt_catalog": "File",
+  "process_trgt_catalog.ref_fasta": "File",
+  "process_trgt_catalog.ref_index": "File",
+  "process_trgt_catalog.default_runtime_attributes": {
+    "max_retries": "Int",
+    "container_registry": "String",
+    "gpuType": "String",
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "zones": "String",
+    "cpuPlatform": "String"
+  }
+}

@@ -2,11 +2,11 @@ version 1.0
 
 import "humanwgs_structs.wdl"
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
+import "process_trgt_catalog/process_trgt_catalog.wdl" as ProcessTrgtCatalog
 import "upstream/upstream.wdl" as Upstream
 import "downstream/downstream.wdl" as Downstream
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
-
 
 workflow humanwgs_singleton {
   meta {
@@ -23,6 +23,9 @@ workflow humanwgs_singleton {
     }
     hifi_reads: {
       name: "Array of paths to HiFi reads in unaligned BAM format."
+    }
+    fail_reads: {
+      name: "Array of paths to failed reads in unaligned BAM format; optional"
     }
     phenotypes: {
       name: "Comma-delimited list of HPO codes for phenotypes"
@@ -71,6 +74,7 @@ workflow humanwgs_singleton {
     String sample_id
     String? sex
     Array[File] hifi_reads
+    Array[File]? fail_reads
 
     String phenotypes = "HP:0000001"
 
@@ -105,13 +109,28 @@ workflow humanwgs_singleton {
 
   RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
 
+  Map[String, String] ref_map = read_map(ref_map_file)
+
+  call ProcessTrgtCatalog.process_trgt_catalog {
+    input:
+      trgt_catalog               = ref_map["trgt_tandem_repeat_bed"],  # !FileCoercion
+      ref_fasta                  = ref_map["fasta"],                   # !FileCoercion
+      ref_index                  = ref_map["fasta_index"],             # !FileCoercion
+      default_runtime_attributes = default_runtime_attributes
+  }
+
   call Upstream.upstream {
     input:
       sample_id                     = sample_id,
       sex                           = sex,
       hifi_reads                    = hifi_reads,
+      fail_reads                    = fail_reads,
       ref_map_file                  = ref_map_file,
       max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+      trgt_catalog                  = process_trgt_catalog.full_catalog,
+      fail_reads_bed                = process_trgt_catalog.include_fail_reads_bed,
+      fail_reads_bait_fasta         = process_trgt_catalog.fail_reads_bait_fasta,
+      fail_reads_bait_index         = process_trgt_catalog.fail_reads_bait_index,
       single_sample                 = true,
       gpu                           = gpu,
       default_runtime_attributes    = default_runtime_attributes
@@ -126,6 +145,7 @@ workflow humanwgs_singleton {
       sv_vcf_index               = select_first([upstream.sv_vcf_index]),
       trgt_vcf                   = upstream.trgt_vcf,
       trgt_vcf_index             = upstream.trgt_vcf_index,
+      trgt_catalog               = process_trgt_catalog.full_catalog,
       aligned_bam                = upstream.out_bam,
       aligned_bam_index          = upstream.out_bam_index,
       pharmcat_min_coverage      = pharmcat_min_coverage,
@@ -201,7 +221,7 @@ workflow humanwgs_singleton {
     input:
       id                 = sample_id,
       stats              = stats,
-      msg_array          = flatten([upstream.msg]),
+      msg_array          = flatten([process_trgt_catalog.msg, upstream.msg]),
       runtime_attributes = default_runtime_attributes
   }
 
@@ -336,12 +356,13 @@ workflow humanwgs_singleton {
     # qc messages
     Array[String] msg = flatten(
       [
+        process_trgt_catalog.msg,
         upstream.msg
       ]
     )
 
     # workflow metadata
     String workflow_name    = "humanwgs_singleton"
-    String workflow_version = "v3.0.2" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "develop-v3-fail_reads_alpha" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }

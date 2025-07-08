@@ -21,12 +21,23 @@
 title: singleton.wdl
 ---
 flowchart TD
+  subgraph "create fail_reads bait FASTA"
+    trgt_catalog["TRGT catalog BED"]
+    bait_fasta["create bait FASTA"]
+  end
   subgraph "`**Upstream of Phasing**`"
-    subgraph "per-movie"
+    subgraph "per hifi_reads uBAM"
       ubam[/"HiFi uBAM"/]
       pbmm2_align["pbmm2 align"]
     end
+    subgraph "per fail_reads uBAM"
+      fail_ubam[/"fail reads uBAM (if provided)"/]
+      bait_fail_reads["baited fail reads (if fail_reads provided)"]
+      pbmm2_align_fail_reads["pbmm2 align baited fail_reads (if fail_reads provided)"]
+      filter_fail_reads["filter fail_reads alignments (if fail_reads provided)"]
+    end
     samtools_merge["samtools merge"]
+    samtools_merge_fail_reads["samtools merge hifi_reads and fail_reads"]
     mosdepth["mosdepth"]
     paraphase["Paraphase"]
     mitorsaw["MitorSaw"]
@@ -53,12 +64,13 @@ flowchart TD
     slivar_svpack["slivar svpack tsv"]
   end
 
+  trgt_catalog --> bait_fasta --> bait_fail_reads
+  fail_ubam --> bait_fail_reads --> pbmm2_align_fail_reads --> filter_fail_reads --> samtools_merge_fail_reads
   ubam --> pbmm2_align --> samtools_merge
   samtools_merge --> mosdepth
   samtools_merge --> paraphase
   samtools_merge --> mitorsaw
-  samtools_merge --> trgt
-  samtools_merge --> trgt_dropouts
+  samtools_merge_fail_reads --> trgt
   samtools_merge --> deepvariant
   samtools_merge --> sawfish_discover
   samtools_merge --> hiphase
@@ -74,6 +86,7 @@ flowchart TD
   hiphase --> cpg_pileup
   hiphase --> starphase
   hiphase --> pharmcat
+  hiphase --> trgt_dropouts
   starphase --> pharmcat
   cpg_pileup --> methbat
 
@@ -89,6 +102,7 @@ flowchart TD
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
 | String? | sex | Sample sex<br/>`["MALE", "FEMALE"]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
+| Array\[File\]? | fail_reads | Array of paths to failed HiFi reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
 | File | [ref_map_file](./ref_map.md) | TSV containing reference genome file paths; must match backend |  |
 | String? | phenotypes | Comma-delimited list of HPO terms. | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort.<br/><br/>If omitted, tertiary analysis will be skipped. |
 | File? | [tertiary_map_file](./tertiary_map.md) | TSV containing tertiary analysis file paths and thresholds; must match backend | `AF`/`AC`/`nhomalt` thresholds can be modified, but this will affect performance.<br/><br/>If omitted, tertiary analysis will be skipped. |

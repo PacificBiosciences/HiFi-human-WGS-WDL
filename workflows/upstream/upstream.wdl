@@ -26,11 +26,26 @@ workflow upstream {
     hifi_reads: {
       name: "HiFi reads (BAMs)"
     }
+    fail_reads: {
+      name: "Failed reads (BAMs)"
+    }
     ref_map_file: {
       name: "TSV containing reference genome information"
     }
     max_reads_per_alignment_chunk: {
       name: "Maximum reads per alignment chunk"
+    }
+    trgt_catalog: {
+      name: "Repeat catalog for TRGT; BED"
+    }
+    fail_reads_bed: {
+      name: "Subset of genome for which to include fail reads; BED"
+    }
+    fail_reads_bait_fasta: {
+      name: "FASTA of reference sequences for baiting fail reads; FASTA"
+    }
+    fail_reads_bait_index: {
+      name: "Index of reference sequences for baiting fail reads; FASTA index"
     }
     single_sample: {
       name: "Single sample workflow"
@@ -47,10 +62,16 @@ workflow upstream {
     String sample_id
     String? sex
     Array[File] hifi_reads
+    Array[File]? fail_reads
 
     File ref_map_file
 
     Int max_reads_per_alignment_chunk
+
+    File trgt_catalog
+    File? fail_reads_bed
+    File? fail_reads_bait_fasta
+    File? fail_reads_bait_index
 
     Boolean single_sample = false
 
@@ -74,9 +95,46 @@ workflow upstream {
     }
   }
 
+  if (
+    defined(fail_reads) && defined(fail_reads_bed) && defined(fail_reads_bait_fasta) && defined(fail_reads_bait_index)
+  ) {
+    scatter (fail_read_bam in select_first([fail_reads])) {
+      call Pbmm2.pbmm2_align_wgs as bait_fail_reads {
+        input:
+          sample_id          = sample_id,
+          bam                = fail_read_bam,
+          ref_fasta          = select_first([fail_reads_bait_fasta]),
+          ref_index          = select_first([fail_reads_bait_index]),
+          ref_name           = ref_map["name"],
+          min_length         = 1000,
+          runtime_attributes = default_runtime_attributes
+      }
+
+      call Pbmm2.pbmm2_align_wgs as align_captured_fail_reads {
+        input:
+          sample_id          = sample_id,
+          bam                = bait_fail_reads.aligned_bam,
+          ref_fasta          = ref_map["fasta"],            # !FileCoercion
+          ref_index          = ref_map["fasta_index"],      # !FileCoercion
+          ref_name           = ref_map["name"],
+          runtime_attributes = default_runtime_attributes
+      }
+
+      call Samtools.subset_bam {
+        input:
+          bed                = select_first([fail_reads_bed]),
+          aligned_bam        = align_captured_fail_reads.aligned_bam,
+          aligned_bam_index  = align_captured_fail_reads.aligned_bam_index,
+          ref_index          = ref_map["fasta_index"],                                 # !FileCoercion
+          out_prefix         = "~{sample_id}.~{ref_map['name']}.baited_fail_reads",
+          runtime_attributes = default_runtime_attributes
+      }
+    }
+  }
+
   # merge aligned bams if there are multiple
   if (length(flatten(pbmm2.aligned_bams)) > 1) {
-    call Samtools.samtools_merge {
+    call Samtools.samtools_merge as merge_hifi_bams {
       input:
         bams               = flatten(pbmm2.aligned_bams),
         out_prefix         = "~{sample_id}.~{ref_map['name']}",
@@ -85,8 +143,8 @@ workflow upstream {
   }
 
   # select the merged bam if it exists, otherwise select the first (only) aligned bam
-  File aligned_bam_data  = select_first([samtools_merge.merged_bam, flatten(pbmm2.aligned_bams)[0]])
-  File aligned_bam_index = select_first([samtools_merge.merged_bam_index, flatten(pbmm2.aligned_bam_indices)[0]])
+  File aligned_bam_data  = select_first([merge_hifi_bams.merged_bam, flatten(pbmm2.aligned_bams)[0]])
+  File aligned_bam_index = select_first([merge_hifi_bams.merged_bam_index, flatten(pbmm2.aligned_bam_indices)[0]])
 
   call Mosdepth.mosdepth {
     input:
@@ -133,19 +191,6 @@ workflow upstream {
       runtime_attributes      = default_runtime_attributes
   }
 
-  call Trgt.trgt {
-    input:
-      sample_id          = sample_id,
-      sex                = mosdepth.inferred_sex,
-      aligned_bam        = aligned_bam_data,
-      aligned_bam_index  = aligned_bam_index,
-      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
-      ref_index          = ref_map["fasta_index"],            # !FileCoercion
-      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes = default_runtime_attributes
-  }
-
   call Paraphase.paraphase {
     input:
       aligned_bam        = aligned_bam_data,
@@ -163,6 +208,35 @@ workflow upstream {
       ref_fasta          = ref_map["fasta"],                  # !FileCoercion
       ref_index          = ref_map["fasta_index"],            # !FileCoercion
       out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
+
+  # if fail_reads are provided, merge them with the aligned hifi bams for trgt
+  if (defined(fail_reads)) {
+    call Samtools.samtools_merge as merge_hifi_fail_bams {
+      input:
+        bams               = flatten(select_all([flatten(pbmm2.aligned_bams), subset_bam.bam])),
+        out_prefix         = "~{sample_id}.~{ref_map['name']}",
+        runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  String include_fail_reads = 
+    if (defined(fail_reads) && defined(fail_reads_bed)) 
+    then "Including fail_reads for TRGT genotyping for regions specified in the TRGT catalog."
+    else ""
+
+  call Trgt.trgt {
+    input:
+      sample_id          = sample_id,
+      sex                = mosdepth.inferred_sex,
+      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, aligned_bam_data]),
+      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, aligned_bam_index]),
+      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
+      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      trgt_bed           = trgt_catalog,
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      min_read_quality   = -1.0,
       runtime_attributes = default_runtime_attributes
   }
 
@@ -240,6 +314,7 @@ workflow upstream {
       [
         flatten(pbmm2.msg),
         [qc_sex],
+        [include_fail_reads],
         trgt.msg,
         sawfish_discover.msg
       ]
