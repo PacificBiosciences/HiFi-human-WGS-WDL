@@ -145,8 +145,8 @@ workflow humanwgs_family {
       input:
         family_id                  = family.family_id,
         sample_ids                 = sample_id,
-        gvcfs                      = upstream.small_variant_vcf,
-        gvcf_indices               = upstream.small_variant_vcf_index,
+        gvcfs                      = upstream.small_variant_gvcf,
+        gvcf_indices               = upstream.small_variant_gvcf_index,
         discover_tars              = upstream.discover_tar,
         aligned_bams               = upstream.out_bam,
         aligned_bam_indices        = upstream.out_bam_index,
