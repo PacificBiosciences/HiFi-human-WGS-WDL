@@ -1,0 +1,17 @@
+{
+  "pbmm2.sample_id": "String",
+  "pbmm2.bam": "File",
+  "pbmm2.max_reads_per_chunk": "Int",
+  "pbmm2.ref_fasta": "File",
+  "pbmm2.ref_index": "File",
+  "pbmm2.ref_name": "String",
+  "pbmm2.default_runtime_attributes": {
+    "backend": "String",
+    "preemptible_tries": "Int",
+    "max_retries": "Int",
+    "zones": "String",
+    "gpuType": "String",
+    "container_registry": "String",
+    "cpuPlatform": "String"
+  }
+}
