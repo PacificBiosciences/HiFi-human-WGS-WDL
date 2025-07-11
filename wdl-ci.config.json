@@ -1433,7 +1433,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "oecyhm3k4zvuuwkcd5x3jll37pwaewwk",
+          "digest": "rtq5s4pftxqs4d7xkpz3dyyct3a2seyx",
           "tests": [
             {
               "inputs": {
@@ -1774,7 +1774,7 @@
         },
         "split_input_bam": {
           "key": "split_input_bam",
-          "digest": "b7xnykjq4l2ecpvku2gxuswdnrnk3xka",
+          "digest": "uzdcqs4d3i62rs62hwoa5pe65uv7l2cm",
           "tests": [
             {
               "inputs": {
