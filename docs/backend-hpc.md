@@ -48,6 +48,8 @@ See [the inputs section of the singleton README](./singleton.md#inputs) for more
 miniwdl run workflows/singleton.wdl --input <inputs_json_file>
 ```
 
+If your compute nodes cannot contact the internet, you can use the script at [`./scripts/populate_miniwdl_singularity_cache.sh`](../scripts/populate_miniwdl_singularity_cache.sh) with the image manifest at [`./image_manifest.txt`](../image_manifest.txt) to populate the miniwdl singularity cache with the required images from a login node with internet access.
+
 #### Running via Cromwell
 
 ```bash
