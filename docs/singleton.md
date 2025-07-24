@@ -22,11 +22,22 @@ title: singleton.wdl
 ---
 flowchart TD
   subgraph "`**Upstream of Phasing**`"
-    subgraph "per-movie"
+    subgraph "create fail_reads bait FASTA"
+      pathogenic_repeats_bed["pathogenic repeats BED"]
+      bait_fasta["create bait FASTA"]
+    end
+    subgraph "per hifi_reads uBAM"
       ubam[/"HiFi uBAM"/]
       pbmm2_align["pbmm2 align"]
     end
+    subgraph "per fail_reads uBAM"
+      fail_ubam[/"fail reads uBAM (if provided)"/]
+      bait_fail_reads["baited fail reads (if fail_reads provided)"]
+      pbmm2_align_fail_reads["pbmm2 align baited fail_reads (if fail_reads provided)"]
+      filter_fail_reads["filter fail_reads alignments (if fail_reads provided)"]
+    end
     samtools_merge["samtools merge"]
+    samtools_merge_fail_reads["samtools merge hifi_reads and fail_reads"]
     mosdepth["mosdepth"]
     paraphase["Paraphase"]
     mitorsaw["MitorSaw"]
@@ -52,12 +63,14 @@ flowchart TD
     slivar_svpack["slivar svpack tsv"]
   end
 
+  pathogenic_repeats_bed --> bait_fasta --> bait_fail_reads
+  fail_ubam --> bait_fail_reads --> pbmm2_align_fail_reads --> filter_fail_reads --> samtools_merge_fail_reads
   ubam --> pbmm2_align --> samtools_merge
   samtools_merge --> mosdepth
   samtools_merge --> paraphase
   samtools_merge --> mitorsaw
-  samtools_merge --> trgt
-  samtools_merge --> trgt_dropouts
+  samtools_merge_fail_reads --> trgt
+  samtools_merge_fail_reads --> trgt_dropouts
   samtools_merge --> deepvariant
   samtools_merge --> sawfish_discover
   samtools_merge --> hiphase
