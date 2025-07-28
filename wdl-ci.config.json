@@ -1138,7 +1138,7 @@
       "tasks": {
         "mitorsaw": {
           "key": "mitorsaw",
-          "digest": "zs5hcur6jvanxdlx3kiszbrcfc3fl57v",
+          "digest": "vzdinv7ullc2eobkrznr47mtjchvzuv4",
           "tests": [
             {
               "inputs": {
@@ -1686,7 +1686,7 @@
         },
         "deepvariant_postprocess_variants": {
           "key": "deepvariant_postprocess_variants",
-          "digest": "bpmzthuph6iudzhtwxu2uw5myotxykva",
+          "digest": "7j2ndq2oubqpprkj3xqp7z32eszuqb44",
           "tests": [
             {
               "inputs": {
@@ -1986,7 +1986,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "mluhmv4fzusd5rltn3uffyrcb3w6oary",
+          "digest": "w6ibz5424mjp5xgg3t3cd3gjklbjbsj3",
           "tests": [
             {
               "inputs": {
@@ -2018,7 +2018,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "rn2lgqleychf2ppcobtco26uzf4hynpj",
+          "digest": "zm7w4vzg4ncahd3464imevnoihzvkn6q",
           "tests": [
             {
               "inputs": {
