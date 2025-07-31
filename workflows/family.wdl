@@ -37,6 +37,9 @@ workflow humanwgs_family {
     glnexus_mem_gb: {
       name: "Override GLnexus memory request (GB)"
     }
+    keep_sawfish_discover: {
+      name: "Keep Sawfish discover output files"
+    }
     gpu: {
       name: "Use GPU when possible"
     }
@@ -75,6 +78,8 @@ workflow humanwgs_family {
     Int max_reads_per_alignment_chunk = 500000
     Int pharmcat_min_coverage = 10
     Int? glnexus_mem_gb
+
+    Boolean keep_sawfish_discover = false
 
     Boolean gpu = false
 
@@ -138,6 +143,10 @@ workflow humanwgs_family {
       pedigree_sex[upstream.inferred_sex],
       if sample.affected then "2" else "1"
     ]
+  }
+
+  if (keep_sawfish_discover) {
+    Array[File] discover_tar = upstream.discover_tar
   }
 
   if (!single_sample) {
@@ -311,9 +320,10 @@ workflow humanwgs_family {
     Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
 
     # sv outputs
+    Array[File]? sv_discover_tar              = discover_tar
     Array[File] phased_sv_vcf                 = downstream.phased_sv_vcf
     Array[File] phased_sv_vcf_index           = downstream.phased_sv_vcf_index
-    File sv_supporting_reads                  = select_first([joint.sv_supporting_reads, upstream.sv_supporting_reads[0]])
+    File  sv_supporting_reads                 = select_first([joint.sv_supporting_reads, upstream.sv_supporting_reads[0]])
     Array[File] sv_copynum_bedgraph           = select_first([joint.sv_copynum_bedgraph, select_all(upstream.sv_copynum_bedgraph)])
     Array[File] sv_depth_bw                   = select_first([joint.sv_depth_bw, select_all(upstream.sv_depth_bw)])
     Array[File] sv_gc_bias_corrected_depth_bw = select_first([joint.sv_gc_bias_corrected_depth_bw, select_all(upstream.sv_gc_bias_corrected_depth_bw)])

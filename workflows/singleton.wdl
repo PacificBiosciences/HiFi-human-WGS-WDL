@@ -39,6 +39,9 @@ workflow humanwgs_singleton {
     pharmcat_min_coverage: {
       name: "Minimum coverage for PharmCAT"
     }
+    keep_sawfish_discover: {
+      name: "Keep Sawfish discover output files"
+    }
     gpu: {
       name: "Use GPU when possible"
     }
@@ -80,6 +83,8 @@ workflow humanwgs_singleton {
     Int max_reads_per_alignment_chunk = 500000
     Int pharmcat_min_coverage = 10
 
+    Boolean keep_sawfish_discover = false
+
     Boolean gpu = false
 
     # Backend configuration
@@ -115,6 +120,10 @@ workflow humanwgs_singleton {
       single_sample                 = true,
       gpu                           = gpu,
       default_runtime_attributes    = default_runtime_attributes
+  }
+
+  if (keep_sawfish_discover) {
+    File discover_tar = upstream.discover_tar
   }
 
   call Downstream.downstream {
@@ -255,13 +264,14 @@ workflow humanwgs_singleton {
     String stat_cpg_combined_count = downstream.stat_combined_cpg_count
 
     # sv outputs
-    File phased_sv_vcf                 = downstream.phased_sv_vcf
-    File phased_sv_vcf_index           = downstream.phased_sv_vcf_index
-    File sv_supporting_reads           = select_first([upstream.sv_supporting_reads])
-    File sv_copynum_bedgraph           = select_first([upstream.sv_copynum_bedgraph])
-    File sv_depth_bw                   = select_first([upstream.sv_depth_bw])
-    File sv_gc_bias_corrected_depth_bw = select_first([upstream.sv_gc_bias_corrected_depth_bw])
-    File sv_maf_bw                     = select_first([upstream.sv_maf_bw])
+    File? sv_discover_tar               = discover_tar
+    File  phased_sv_vcf                 = downstream.phased_sv_vcf
+    File  phased_sv_vcf_index           = downstream.phased_sv_vcf_index
+    File  sv_supporting_reads           = select_first([upstream.sv_supporting_reads])
+    File  sv_copynum_bedgraph           = select_first([upstream.sv_copynum_bedgraph])
+    File  sv_depth_bw                   = select_first([upstream.sv_depth_bw])
+    File  sv_gc_bias_corrected_depth_bw = select_first([upstream.sv_gc_bias_corrected_depth_bw])
+    File  sv_maf_bw                     = select_first([upstream.sv_maf_bw])
 
     # sv stats
     String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
