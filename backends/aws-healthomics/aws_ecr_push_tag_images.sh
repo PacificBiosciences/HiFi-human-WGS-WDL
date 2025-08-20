@@ -56,7 +56,7 @@ push_aws() {
     > /dev/null
 
     log "Pushing image ${TARGET_IMAGE}"
-    docker push "${TARGET_IMAGE}"
+    docker push --platform linux/amd64 "${TARGET_IMAGE}"
 }
 
 while getopts "hd:r:a:" OPTION; do
@@ -108,7 +108,7 @@ aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AW
 
 while read -r image || [[ -n "${image}" ]]; do
     log "Pulling image ${image}"
-    docker pull "${image}"
+    docker pull --platform linux/amd64 "${image}"
     # If the image is a @sha256 rather than a tag, tag the image with the sha hash (removing @sha256)
     target_image=${AWS_CONTAINER_REGISTRY}/$(echo "${image}" | awk -F "/" '{print $NF}' | sed "s~@sha256~~")
     log "${target_image}"
