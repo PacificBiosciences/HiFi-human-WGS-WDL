@@ -889,6 +889,99 @@
         }
       }
     },
+    "workflows/wdl-common/wdl/tasks/methbat.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/methbat.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "methbat": {
+          "key": "methbat",
+          "digest": "",
+          "tests": [
+            {
+              "inputs": {
+                "sample_prefix": "HG002.GRCh38.cpg_pileup",
+                "methylation_pileup_beds": [
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bed.gz",
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap1.bed.gz",
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap2.bed.gz"
+                ],
+                "region_tsv": "${datasets_file_path}/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "profile": {
+                  "value": "${resources_file_path}/methbat/all_bed_files/HG002.GRCh38.methbat.profile.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "stat_methbat_methylated_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_unmethylated_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_asm_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_prefix": "HG002.GRCh38.cpg_pileup",
+                "methylation_pileup_beds": [
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bed.gz"
+                ],
+                "region_tsv": "${datasets_file_path}/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "profile": {
+                  "value": "${resources_file_path}/methbat/combined_only/HG002.GRCh38.methbat.profile.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "stat_methbat_methylated_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_unmethylated_count": {
+                  "value": "1",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_asm_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "workflows/wdl-common/wdl/tasks/glnexus.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/glnexus.wdl",
       "name": "",
