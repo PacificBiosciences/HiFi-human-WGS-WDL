@@ -296,7 +296,7 @@ workflow humanwgs_family {
     Array[String] stat_phased_basepairs = downstream.stat_phased_basepairs
     Array[String] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
-    # cpg_pileup outputs
+    # methylation outputs and profile
     Array[File?]  cpg_combined_bed        = downstream.cpg_combined_bed
     Array[File?]  cpg_combined_bed_index  = downstream.cpg_combined_bed_index
     Array[File?]  cpg_hap1_bed            = downstream.cpg_hap1_bed
@@ -309,6 +309,7 @@ workflow humanwgs_family {
     Array[String] stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
     Array[String] stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
     Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
+    Array[File?]  methbat_profile         = downstream.methbat_profile
 
     # sv outputs
     Array[File] phased_sv_vcf                 = downstream.phased_sv_vcf
