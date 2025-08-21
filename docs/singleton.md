@@ -43,7 +43,7 @@ flowchart TD
     bcftools_stats["bcftools stats\n(small variants)"]
     sv_stats["SV stats"]
     cpg_pileup["5mCpG pileup"]
-    methbat["Methbat"]
+    methbat["MethBat"]
     starphase["StarPhase"]
     pharmcat["PharmCat"]
   end
@@ -223,7 +223,7 @@ flowchart TD
 | String | stat_cpg_hap1_count | Hap1 CpG count |  |
 | String | stat_cpg_hap2_count | Hap2 CpG count |  |
 | String | stat_cpg_combined_count | Combined CpG count |  |
-| File? | methbat_profile | Methbat CpG profile |  |
+| File? | methbat_profile | MethBat CpG profile |  |
 
 ### PGx Typing
 

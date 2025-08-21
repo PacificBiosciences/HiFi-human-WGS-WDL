@@ -50,7 +50,7 @@ flowchart TD
     bcftools_stats["bcftools stats\n(small variants)"]
     sv_stats["SV stats"]
     cpg_pileup["5mCpG pileup"]
-    methbat["Methbat"]
+    methbat["MethBat"]
     starphase["StarPhase"]
     pharmcat["PharmCat"]
   end
@@ -273,7 +273,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_cpg_hap1_count | Hap1 CpG count |  |
 | Array\[String\] | stat_cpg_hap2_count | Hap2 CpG count |  |
 | Array\[String\] | stat_cpg_combined_count | Combined CpG count |  |
-| Array\[File?\] | methbat_profile | Methbat CpG profile |  |
+| Array\[File?\] | methbat_profile | MethBat CpG profile |  |
 
 ### PGx Typing
 
