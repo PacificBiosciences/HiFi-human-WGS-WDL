@@ -269,7 +269,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "orfdav6zki7q3pvp6vpikfns2fjdkzrx",
+          "digest": "3gn3hurjmdifhucjdrnykji4w4cf7yjq",
           "tests": [
             {
               "inputs": {
@@ -376,7 +376,7 @@
       "tasks": {
         "bcftools_stats_roh_small_variants": {
           "key": "bcftools_stats_roh_small_variants",
-          "digest": "a2jlnfpnjbi7gmodm5ooyo2juxbgizzo",
+          "digest": "h7v3tdbxigcxsqk5wnvgdpi4wj2e7fv3",
           "tests": [
             {
               "inputs": {
@@ -1026,7 +1026,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "4drmk2f7kwb57hftqv6udfy5fh4eol7d",
+          "digest": "2v5nba4jocqjrhiqatikbwszq4mvtdtb",
           "tests": [
             {
               "inputs": {
