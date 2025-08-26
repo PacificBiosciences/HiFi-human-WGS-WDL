@@ -1986,7 +1986,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "w6ibz5424mjp5xgg3t3cd3gjklbjbsj3",
+          "digest": "oj3rtaieh2io3n2csf53cu3v4mtok5rf",
           "tests": [
             {
               "inputs": {
@@ -2018,7 +2018,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "zm7w4vzg4ncahd3464imevnoihzvkn6q",
+          "digest": "r2qja6ebd3ulzvxfozzibvq5qzjq5oke",
           "tests": [
             {
               "inputs": {
