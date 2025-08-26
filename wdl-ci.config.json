@@ -920,19 +920,19 @@
                   ]
                 },
                 "stat_methbat_methylated_count": {
-                  "value": "1",
+                  "value": "7",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
                 "stat_methbat_unmethylated_count": {
-                  "value": "1",
+                  "value": "57",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
                 "stat_methbat_asm_count": {
-                  "value": "1",
+                  "value": "0",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -959,13 +959,13 @@
                   ]
                 },
                 "stat_methbat_methylated_count": {
-                  "value": "1",
+                  "value": "7",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
                 "stat_methbat_unmethylated_count": {
-                  "value": "1",
+                  "value": "57",
                   "test_tasks": [
                     "compare_string"
                   ]
