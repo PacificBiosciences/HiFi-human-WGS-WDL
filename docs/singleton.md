@@ -224,9 +224,9 @@ flowchart TD
 | String | stat_cpg_hap2_count | Hap2 CpG count |  |
 | String | stat_cpg_combined_count | Combined CpG count |  |
 | File? | methbat_profile | MethBat CpG profile |  |
-| String? | stat_methbat_methylated_count | Count of profiled regions labeled as methylated |  |
-| String? | stat_methbat_unmethylated_count | Count of profiled regions labeled as unmethylated |  |
-| String? | stat_methbat_asm_count | Count of profiled regions labeled as having allele specific methylation |  |
+| String | stat_methbat_methylated_count | Count of profiled regions labeled as methylated |  |
+| String | stat_methbat_unmethylated_count | Count of profiled regions labeled as unmethylated |  |
+| String | stat_methbat_asm_count | Count of profiled regions labeled as having allele specific methylation |  |
 
 ### PGx Typing
 
