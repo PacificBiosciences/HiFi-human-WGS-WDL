@@ -1310,7 +1310,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "pepbz2ll6ejtac3fg3nywigv6gf5rjym",
+          "digest": "knw5lxj7lvuspa7bfxum7zm3n5a5hjgo",
           "tests": [
             {
               "inputs": {
@@ -1399,7 +1399,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "kfoep64umfynj4jfl7gnfmdoejazpspl",
+          "digest": "jywsabnjsznsx6g6rxf7w5zmwee4fgkn",
           "tests": [
             {
               "inputs": {
@@ -1433,7 +1433,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "eyhyifvmfx5g5tcvujinmiu64pb6h4wf",
+          "digest": "rtq5s4pftxqs4d7xkpz3dyyct3a2seyx",
           "tests": [
             {
               "inputs": {
