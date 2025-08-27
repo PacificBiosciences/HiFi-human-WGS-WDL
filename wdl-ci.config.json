@@ -325,7 +325,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "3gn3hurjmdifhucjdrnykji4w4cf7yjq",
+          "digest": "n7yzgzllk24zqced7wsgijsmdjoot66t",
           "tests": [
             {
               "inputs": {
@@ -395,6 +395,12 @@
                     "compare_string"
                   ]
                 },
+                "stat_read_length_n50": {
+                  "value": "16945",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
                 "stat_read_quality_mean": {
                   "value": "35.91",
                   "test_tasks": [
@@ -415,6 +421,12 @@
                 },
                 "stat_mapped_percent": {
                   "value": "100.0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_mean_gap_compressed_identity": {
+                  "value": "99.77",
                   "test_tasks": [
                     "compare_string"
                   ]

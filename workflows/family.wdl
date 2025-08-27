@@ -239,10 +239,12 @@ workflow humanwgs_family {
     'num_reads': downstream.stat_num_reads,
     'read_length_mean': downstream.stat_read_length_mean,
     'read_length_median': downstream.stat_read_length_median,
+    'read_length_n50': downstream.stat_read_length_n50,
     'read_quality_mean': downstream.stat_read_quality_mean,
     'read_quality_median': downstream.stat_read_quality_median,
     'mapped_read_count': downstream.stat_mapped_read_count,
     'mapped_percent': downstream.stat_mapped_percent,
+    'mean_gap_compressed_identity': downstream.stat_mean_gap_compressed_identity,
     'mean_depth': upstream.stat_mean_depth,
     'inferred_sex': upstream.inferred_sex,
     'stat_phased_basepairs': downstream.stat_phased_basepairs,
@@ -282,18 +284,20 @@ workflow humanwgs_family {
     File  msg_file           = consolidate_stats.messages
 
     # bam stats
-    Array[File]   bam_statistics           = downstream.bam_statistics
-    Array[File]   read_length_plot         = downstream.read_length_plot
-    Array[File?]  read_quality_plot        = downstream.read_quality_plot
-    Array[File]   mapq_distribution_plot   = downstream.mapq_distribution_plot
-    Array[File]   mg_distribution_plot     = downstream.mg_distribution_plot
-    Array[String] stat_num_reads           = downstream.stat_num_reads
-    Array[String] stat_read_length_mean    = downstream.stat_read_length_mean
-    Array[String] stat_read_length_median  = downstream.stat_read_length_median
-    Array[String] stat_read_quality_mean   = downstream.stat_read_quality_mean
-    Array[String] stat_read_quality_median = downstream.stat_read_quality_median
-    Array[String] stat_mapped_read_count   = downstream.stat_mapped_read_count
-    Array[String] stat_mapped_percent      = downstream.stat_mapped_percent
+    Array[File]   bam_statistics                    = downstream.bam_statistics
+    Array[File]   read_length_plot                  = downstream.read_length_plot
+    Array[File?]  read_quality_plot                 = downstream.read_quality_plot
+    Array[File]   mapq_distribution_plot            = downstream.mapq_distribution_plot
+    Array[File]   mg_distribution_plot              = downstream.mg_distribution_plot
+    Array[String] stat_num_reads                    = downstream.stat_num_reads
+    Array[String] stat_read_length_mean             = downstream.stat_read_length_mean
+    Array[String] stat_read_length_median           = downstream.stat_read_length_median
+    Array[String] stat_read_length_n50              = downstream.stat_read_length_n50
+    Array[String] stat_read_quality_mean            = downstream.stat_read_quality_mean
+    Array[String] stat_read_quality_median          = downstream.stat_read_quality_median
+    Array[String] stat_mapped_read_count            = downstream.stat_mapped_read_count
+    Array[String] stat_mapped_percent               = downstream.stat_mapped_percent
+    Array[String] stat_mean_gap_compressed_identity = downstream.stat_mean_gap_compressed_identity
 
     # merged, haplotagged alignments
     Array[File]   merged_haplotagged_bam       = downstream.merged_haplotagged_bam

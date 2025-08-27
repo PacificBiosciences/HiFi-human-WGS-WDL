@@ -183,10 +183,12 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_num_reads | Number of reads |  |
 | Array\[String\] | stat_read_length_mean | Mean read length |  |
 | Array\[String\] | stat_read_length_median | Median read length |  |
+| Array\[String\] | stat_read_length_n50 | Read length N50 |  |
 | Array\[String\] | stat_read_quality_mean | Mean read quality |  |
 | Array\[String\] | stat_read_quality_median | Median read quality |  |
 | Array\[String\] | stat_mapped_read_count | Count of reads mapped to reference |  |
 | Array\[String\] | stat_mapped_percent | Percent of reads mapped to reference |  |
+| Array\[String\] | stat_mean_gap_compressed_identity | Mean gap-compressed identity |  |
 | Array\[String\] | inferred_sex | Inferred sex | Sex is inferred based on relative depth of chrY alignments. |
 | Array\[String\] | stat_mean_depth | Mean depth | |
 

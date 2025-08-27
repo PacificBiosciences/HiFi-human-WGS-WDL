@@ -189,10 +189,12 @@ workflow humanwgs_singleton {
     'num_reads': [downstream.stat_num_reads],
     'read_length_mean': [downstream.stat_read_length_mean],
     'read_length_median': [downstream.stat_read_length_median],
+    'read_length_n50': [downstream.stat_read_length_n50],
     'read_quality_mean': [downstream.stat_read_quality_mean],
     'read_quality_median': [downstream.stat_read_quality_median],
     'mapped_read_count': [downstream.stat_mapped_read_count],
     'mapped_percent': [downstream.stat_mapped_percent],
+    'mean_gap_compressed_identity': [downstream.stat_mean_gap_compressed_identity],
     'mean_depth': [upstream.stat_mean_depth],
     'inferred_sex': [upstream.inferred_sex],
     'stat_phased_basepairs': [downstream.stat_phased_basepairs],
@@ -231,18 +233,20 @@ workflow humanwgs_singleton {
     File msg_file   = consolidate_stats.messages
 
     # bam stats
-    File   bam_statistics           = downstream.bam_statistics
-    File   read_length_plot         = downstream.read_length_plot
-    File?  read_quality_plot        = downstream.read_quality_plot
-    File   mapq_distribution_plot   = downstream.mapq_distribution_plot
-    File   mg_distribution_plot     = downstream.mg_distribution_plot
-    String stat_num_reads           = downstream.stat_num_reads
-    String stat_read_length_mean    = downstream.stat_read_length_mean
-    String stat_read_length_median  = downstream.stat_read_length_median
-    String stat_read_quality_mean   = downstream.stat_read_quality_mean
-    String stat_read_quality_median = downstream.stat_read_quality_median
-    String stat_mapped_read_count   = downstream.stat_mapped_read_count
-    String stat_mapped_percent      = downstream.stat_mapped_percent
+    File   bam_statistics                    = downstream.bam_statistics
+    File   read_length_plot                  = downstream.read_length_plot
+    File?  read_quality_plot                 = downstream.read_quality_plot
+    File   mapq_distribution_plot            = downstream.mapq_distribution_plot
+    File   mg_distribution_plot              = downstream.mg_distribution_plot
+    String stat_num_reads                    = downstream.stat_num_reads
+    String stat_read_length_mean             = downstream.stat_read_length_mean
+    String stat_read_length_median           = downstream.stat_read_length_median
+    String stat_read_length_n50              = downstream.stat_read_length_n50
+    String stat_read_quality_mean            = downstream.stat_read_quality_mean
+    String stat_read_quality_median          = downstream.stat_read_quality_median
+    String stat_mapped_read_count            = downstream.stat_mapped_read_count
+    String stat_mapped_percent               = downstream.stat_mapped_percent
+    String stat_mean_gap_compressed_identity = downstream.stat_mean_gap_compressed_identity
 
     # merged, haplotagged alignments
     File   merged_haplotagged_bam       = downstream.merged_haplotagged_bam
