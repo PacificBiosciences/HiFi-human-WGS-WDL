@@ -50,6 +50,7 @@ flowchart TD
     bcftools_stats["bcftools stats\n(small variants)"]
     sv_stats["SV stats"]
     cpg_pileup["5mCpG pileup"]
+    methbat["MethBat"]
     starphase["StarPhase"]
     pharmcat["PharmCat"]
   end
@@ -91,6 +92,7 @@ flowchart TD
   hiphase --> starphase
   hiphase --> pharmcat
   starphase --> pharmcat
+  cpg_pileup --> methbat
 
   hiphase --> merge_small_variants
   hiphase --> merge_svs
@@ -271,6 +273,10 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[String\] | stat_cpg_hap1_count | Hap1 CpG count |  |
 | Array\[String\] | stat_cpg_hap2_count | Hap2 CpG count |  |
 | Array\[String\] | stat_cpg_combined_count | Combined CpG count |  |
+| Array\[File?\] | methbat_profile | MethBat CpG profile |  |
+| Array\[String\] | stat_methbat_methylated_count | Count of profiled regions labeled as methylated |  |
+| Array\[String\] | stat_methbat_unmethylated_count | Count of profiled regions labeled as unmethylated |  |
+| Array\[String\] | stat_methbat_asm_count | Count of profiled regions labeled as having allele specific methylation |  |
 
 ### PGx Typing
 

@@ -235,6 +235,9 @@ workflow humanwgs_family {
     'cpg_combined_count': downstream.stat_combined_cpg_count,
     'cpg_hap1_count': downstream.stat_hap1_cpg_count,
     'cpg_hap2_count': downstream.stat_hap2_cpg_count,
+    'methbat_methylated_count': downstream.stat_methbat_methylated_count,
+    'methbat_unmethylated_count': downstream.stat_methbat_unmethylated_count,
+    'methbat_asm_count': downstream.stat_methbat_asm_count,
     'SNV_count': downstream.stat_SNV_count,
     'TSTV_ratio': downstream.stat_TSTV_ratio,
     'HETHOM_ratio': downstream.stat_HETHOM_ratio,
@@ -296,19 +299,23 @@ workflow humanwgs_family {
     Array[String] stat_phased_basepairs = downstream.stat_phased_basepairs
     Array[String] stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
-    # cpg_pileup outputs
-    Array[File?]  cpg_combined_bed        = downstream.cpg_combined_bed
-    Array[File?]  cpg_combined_bed_index  = downstream.cpg_combined_bed_index
-    Array[File?]  cpg_hap1_bed            = downstream.cpg_hap1_bed
-    Array[File?]  cpg_hap1_bed_index      = downstream.cpg_hap1_bed_index
-    Array[File?]  cpg_hap2_bed            = downstream.cpg_hap2_bed
-    Array[File?]  cpg_hap2_bed_index      = downstream.cpg_hap2_bed_index
-    Array[File?]  cpg_combined_bw         = downstream.cpg_combined_bw
-    Array[File?]  cpg_hap1_bw             = downstream.cpg_hap1_bw
-    Array[File?]  cpg_hap2_bw             = downstream.cpg_hap2_bw
-    Array[String] stat_cpg_hap1_count     = downstream.stat_hap1_cpg_count
-    Array[String] stat_cpg_hap2_count     = downstream.stat_hap2_cpg_count
-    Array[String] stat_cpg_combined_count = downstream.stat_combined_cpg_count
+    # methylation outputs and profile
+    Array[File?]  cpg_combined_bed                 = downstream.cpg_combined_bed
+    Array[File?]  cpg_combined_bed_index           = downstream.cpg_combined_bed_index
+    Array[File?]  cpg_hap1_bed                     = downstream.cpg_hap1_bed
+    Array[File?]  cpg_hap1_bed_index               = downstream.cpg_hap1_bed_index
+    Array[File?]  cpg_hap2_bed                     = downstream.cpg_hap2_bed
+    Array[File?]  cpg_hap2_bed_index               = downstream.cpg_hap2_bed_index
+    Array[File?]  cpg_combined_bw                  = downstream.cpg_combined_bw
+    Array[File?]  cpg_hap1_bw                      = downstream.cpg_hap1_bw
+    Array[File?]  cpg_hap2_bw                      = downstream.cpg_hap2_bw
+    Array[String] stat_cpg_hap1_count              = downstream.stat_hap1_cpg_count
+    Array[String] stat_cpg_hap2_count              = downstream.stat_hap2_cpg_count
+    Array[String] stat_cpg_combined_count          = downstream.stat_combined_cpg_count
+    Array[File?]  methbat_profile                  = downstream.methbat_profile
+    Array[String] stat_methbat_methylated_count   = downstream.stat_methbat_methylated_count
+    Array[String] stat_methbat_unmethylated_count = downstream.stat_methbat_unmethylated_count
+    Array[String] stat_methbat_asm_count          = downstream.stat_methbat_asm_count
 
     # sv outputs
     Array[File] phased_sv_vcf                 = downstream.phased_sv_vcf

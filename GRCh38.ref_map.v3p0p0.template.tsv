@@ -6,5 +6,6 @@ sawfish_exclude_bed	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/annotation
 sawfish_exclude_bed_index	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz.tbi
 sawfish_expected_bed_male	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/expected_cn.hg38.XY.bed
 sawfish_expected_bed_female	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/sawfish/expected_cn.hg38.XX.bed
+methbat_region_tsv	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv
 pharmcat_positions_vcf	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz
 pharmcat_positions_vcf_index	<prefix>/hifi-wdl-resources-v3.0.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz.csi

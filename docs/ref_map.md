@@ -12,5 +12,6 @@
 | File | sawfish_exclude_bed_index | BED index | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#cnv-excluded-regions) |
 | File | sawfish_expected_bed_male | Expected allosome copy number BED for XY samples | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#expected-copy-number) |
 | File | sawfish_expected_bed_female | Expected allosome copy number BED for XX samples | [link](https://github.com/PacificBiosciences/sawfish/blob/main/docs/user_guide.md#expected-copy-number) |
+| File | methbat_region_tsv | Regions for MethBat methylation profiling in tab-separated format | [link](https://github.com/PacificBiosciences/MethBat/tree/main/data) |
 | File | pharmcat_positions_vcf | PharmCAT positions VCF |  |
 | File | pharmcat_positions_vcf_index | PharmCAT positions VCF index |  |

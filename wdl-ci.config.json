@@ -889,6 +889,99 @@
         }
       }
     },
+    "workflows/wdl-common/wdl/tasks/methbat.wdl": {
+      "key": "workflows/wdl-common/wdl/tasks/methbat.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "methbat": {
+          "key": "methbat",
+          "digest": "ucr2qn3njliesjm4iwrv2keb2ootn5v5",
+          "tests": [
+            {
+              "inputs": {
+                "sample_prefix": "HG002.GRCh38.cpg_pileup",
+                "methylation_pileup_beds": [
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bed.gz",
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap1.bed.gz",
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.hap2.bed.gz"
+                ],
+                "region_tsv": "${datasets_file_path}/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "profile": {
+                  "value": "${resources_file_path}/methbat/all_bed_files/HG002.GRCh38.methbat.profile.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "stat_methbat_methylated_count": {
+                  "value": "7",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_unmethylated_count": {
+                  "value": "57",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_asm_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "sample_prefix": "HG002.GRCh38.cpg_pileup",
+                "methylation_pileup_beds": [
+                  "${resources_file_path}/cpg_pileup/HG002.GRCh38.cpg_pileup.combined.bed.gz"
+                ],
+                "region_tsv": "${datasets_file_path}/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv",
+                "out_prefix": "HG002.GRCh38",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "profile": {
+                  "value": "${resources_file_path}/methbat/combined_only/HG002.GRCh38.methbat.profile.tsv",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
+                "stat_methbat_methylated_count": {
+                  "value": "7",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_unmethylated_count": {
+                  "value": "57",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_methbat_asm_count": {
+                  "value": "0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "workflows/wdl-common/wdl/tasks/glnexus.wdl": {
       "key": "workflows/wdl-common/wdl/tasks/glnexus.wdl",
       "name": "",
@@ -1178,7 +1271,7 @@
       "tasks": {
         "paraphase": {
           "key": "paraphase",
-          "digest": "jzs4k5qgxgpjwv54mpw7vlf6nnlu2ki2",
+          "digest": "wnyb2riyyywgia2suckhs4nr7xpsotaq",
           "tests": [
             {
               "inputs": {
@@ -1310,7 +1403,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "knw5lxj7lvuspa7bfxum7zm3n5a5hjgo",
+          "digest": "pepbz2ll6ejtac3fg3nywigv6gf5rjym",
           "tests": [
             {
               "inputs": {
@@ -1399,7 +1492,7 @@
         },
         "trgt_merge": {
           "key": "trgt_merge",
-          "digest": "jywsabnjsznsx6g6rxf7w5zmwee4fgkn",
+          "digest": "kfoep64umfynj4jfl7gnfmdoejazpspl",
           "tests": [
             {
               "inputs": {
@@ -1433,7 +1526,7 @@
         },
         "coverage_dropouts": {
           "key": "coverage_dropouts",
-          "digest": "rtq5s4pftxqs4d7xkpz3dyyct3a2seyx",
+          "digest": "eyhyifvmfx5g5tcvujinmiu64pb6h4wf",
           "tests": [
             {
               "inputs": {
@@ -1986,7 +2079,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "w6ibz5424mjp5xgg3t3cd3gjklbjbsj3",
+          "digest": "oj3rtaieh2io3n2csf53cu3v4mtok5rf",
           "tests": [
             {
               "inputs": {
@@ -2018,7 +2111,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "zm7w4vzg4ncahd3464imevnoihzvkn6q",
+          "digest": "r2qja6ebd3ulzvxfozzibvq5qzjq5oke",
           "tests": [
             {
               "inputs": {

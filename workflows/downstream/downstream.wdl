@@ -6,6 +6,7 @@ import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
 import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
+import "../wdl-common/wdl/tasks/methbat.wdl" as Methbat
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
 import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
 
@@ -146,6 +147,24 @@ workflow downstream {
       runtime_attributes    = default_runtime_attributes
   }
 
+  Array[File] cpg_pileup_beds = select_all([
+    cpg_pileup.combined_bed,
+    cpg_pileup.hap1_bed,
+    cpg_pileup.hap2_bed
+  ])
+
+  if (length(cpg_pileup_beds) > 0) {
+    # If any cpg_pileup_beds are generated, we can run methbat
+    call Methbat.methbat {
+      input:
+        sample_prefix           = "~{sample_id}.~{ref_map['name']}.cpg_pileup",
+        methylation_pileup_beds = cpg_pileup_beds,
+        region_tsv              = ref_map["methbat_region_tsv"],     # !FileCoercion
+        out_prefix              = "~{sample_id}.~{ref_map['name']}",
+        runtime_attributes      = default_runtime_attributes
+    }
+  }
+
   call Pbstarphase.pbstarphase_diplotype {
     input:
       sample_id                           = sample_id,
@@ -226,19 +245,23 @@ workflow downstream {
     String stat_sv_BND_count  = sv_stats.stat_sv_BND_count
     String stat_sv_SWAP_count = sv_stats.stat_sv_SWAP_count
 
-    # cpg_pileup outputs
-    File?  cpg_combined_bed        = cpg_pileup.combined_bed
-    File?  cpg_combined_bed_index  = cpg_pileup.combined_bed_index
-    File?  cpg_hap1_bed            = cpg_pileup.hap1_bed
-    File?  cpg_hap1_bed_index      = cpg_pileup.hap1_bed_index
-    File?  cpg_hap2_bed            = cpg_pileup.hap2_bed
-    File?  cpg_hap2_bed_index      = cpg_pileup.hap2_bed_index
-    File?  cpg_combined_bw         = cpg_pileup.combined_bw
-    File?  cpg_hap1_bw             = cpg_pileup.hap1_bw
-    File?  cpg_hap2_bw             = cpg_pileup.hap2_bw
-    String stat_hap1_cpg_count     = cpg_pileup.stat_hap1_cpg_count
-    String stat_hap2_cpg_count     = cpg_pileup.stat_hap2_cpg_count
-    String stat_combined_cpg_count = cpg_pileup.stat_combined_cpg_count
+    # methylation outputs and profile
+    File?  cpg_combined_bed                = cpg_pileup.combined_bed
+    File?  cpg_combined_bed_index          = cpg_pileup.combined_bed_index
+    File?  cpg_hap1_bed                    = cpg_pileup.hap1_bed
+    File?  cpg_hap1_bed_index              = cpg_pileup.hap1_bed_index
+    File?  cpg_hap2_bed                    = cpg_pileup.hap2_bed
+    File?  cpg_hap2_bed_index              = cpg_pileup.hap2_bed_index
+    File?  cpg_combined_bw                 = cpg_pileup.combined_bw
+    File?  cpg_hap1_bw                     = cpg_pileup.hap1_bw
+    File?  cpg_hap2_bw                     = cpg_pileup.hap2_bw
+    String stat_hap1_cpg_count             = cpg_pileup.stat_hap1_cpg_count
+    String stat_hap2_cpg_count             = cpg_pileup.stat_hap2_cpg_count
+    String stat_combined_cpg_count         = cpg_pileup.stat_combined_cpg_count
+    File?  methbat_profile                 = methbat.profile
+    String stat_methbat_methylated_count   = select_first([methbat.stat_methbat_methylated_count, "0"])
+    String stat_methbat_unmethylated_count = select_first([methbat.stat_methbat_unmethylated_count, "0"])
+    String stat_methbat_asm_count          = select_first([methbat.stat_methbat_asm_count, "0"])
 
     # pbstarphase outputs
     File pbstarphase_json = pbstarphase_diplotype.out_json
