@@ -228,6 +228,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[File\] | sv_depth_bw | CNV depth BigWig |  |
 | Array\[File\] | sv_gc_bias_corrected_depth_bw | CNV GC-bias corrected depth BigWig |  |
 | Array\[File\] | sv_maf_bw | CNV MAF BigWig |  |
+| Array\[String\] | sv_copynum_summary | CNV copy number summary JSON |  |
 | Array\[File\] | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | Array\[File\] | bcftools_roh_bed | Generated from above, without filtering |  |
 | File? | joint_sv_vcf | Joint-called structural variant VCF |  |

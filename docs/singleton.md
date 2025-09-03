@@ -182,6 +182,7 @@ flowchart TD
 | File | sv_depth_bw | CNV depth BigWig |  |
 | File | sv_gc_bias_corrected_depth_bw | CNV GC-bias corrected depth BigWig |  |
 | File | sv_maf_bw | CNV MAF BigWig |  |
+| File | sv_copynum_summary | CNV copy number summary JSON |  |
 | File | bcftools_roh_out | ROH calling |  `bcftools roh` |
 | File | bcftools_roh_bed | Generated from above, without filtering |  |
 

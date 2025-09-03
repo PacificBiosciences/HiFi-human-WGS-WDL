@@ -2299,6 +2299,13 @@
                     "compare_file_basename",
                     "bigwig_validator"
                   ]
+                },
+                "copynum_summary": {
+                  "value": "${resources_file_path}/sawfish_call/output/HG002-minimal/HG002-minimal.GRCh38.structural_variants.copynum_summary.json",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
+                  ]
                 }
               }
             },
@@ -2388,6 +2395,17 @@
                   "test_tasks": [
                     "compare_file_basename",
                     "bigwig_validator"
+                  ]
+                },
+                "copynum_summary": {
+                  "value": [
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG002-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum_summary.json",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG003-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum_summary.json",
+                    "${resources_file_path}/sawfish_call/output/HG002-trio-minimal/HG004-minimal.HG002-trio.joint.GRCh38.structural_variants.copynum_summary.json"
+                  ],
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_json"
                   ]
                 }
               }

@@ -295,6 +295,7 @@ workflow humanwgs_singleton {
     File sv_depth_bw                   = select_first([upstream.sv_depth_bw])
     File sv_gc_bias_corrected_depth_bw = select_first([upstream.sv_gc_bias_corrected_depth_bw])
     File sv_maf_bw                     = select_first([upstream.sv_maf_bw])
+    File sv_copynum_summary            = select_first([upstream.sv_copynum_summary])
 
     # sv stats
     String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
