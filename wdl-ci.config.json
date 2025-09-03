@@ -1937,7 +1937,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "mx3btau4zkpnivs2m6kgg5xzyuea4aip",
+          "digest": "b27rhkpyqkpqzxsdn4uctagacoib6z7w",
           "tests": [
             {
               "inputs": {
