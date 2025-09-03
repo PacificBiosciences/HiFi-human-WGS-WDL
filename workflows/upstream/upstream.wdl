@@ -105,7 +105,8 @@ workflow upstream {
           bam                = fail_read_bam,
           ref_fasta          = select_first([fail_reads_bait_fasta]),
           ref_index          = select_first([fail_reads_bait_index]),
-          ref_name           = ref_map["name"],
+          ref_name           = 'bait_ref',
+          keep_unmapped      = false,
           min_length         = 1000,
           runtime_attributes = default_runtime_attributes
       }
@@ -117,6 +118,7 @@ workflow upstream {
           ref_fasta          = ref_map["fasta"],            # !FileCoercion
           ref_index          = ref_map["fasta_index"],      # !FileCoercion
           ref_name           = ref_map["name"],
+          keep_unmapped      = false,
           runtime_attributes = default_runtime_attributes
       }
 
@@ -211,8 +213,8 @@ workflow upstream {
       runtime_attributes = default_runtime_attributes
   }
 
-  # if fail_reads are provided, merge them with the aligned hifi bams for trgt
-  if (defined(fail_reads)) {
+  # if fail_reads were aligned, merge them with the aligned hifi bams for trgt
+  if (defined(subset_bam.bam)) {
     call Samtools.samtools_merge as merge_hifi_fail_bams {
       input:
         bams               = flatten(select_all([flatten(pbmm2.aligned_bams), subset_bam.bam])),
@@ -222,7 +224,7 @@ workflow upstream {
   }
 
   String include_fail_reads = 
-    if (defined(fail_reads) && defined(fail_reads_bed)) 
+    if (defined(subset_bam.bam) && defined(fail_reads_bed)) 
     then "Including fail_reads for TRGT genotyping for regions specified in the TRGT catalog."
     else ""
 
