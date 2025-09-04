@@ -325,7 +325,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "3gn3hurjmdifhucjdrnykji4w4cf7yjq",
+          "digest": "wxkxruu66mviqyn3adhnfhj7mik7db3g",
           "tests": [
             {
               "inputs": {
@@ -377,7 +377,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_num_reads": {
+                "stat_read_count": {
                   "value": "27398",
                   "test_tasks": [
                     "compare_string"
@@ -391,6 +391,12 @@
                 },
                 "stat_read_length_median": {
                   "value": "14666.5",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_read_length_n50": {
+                  "value": "16945",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -413,8 +419,20 @@
                     "compare_string"
                   ]
                 },
-                "stat_mapped_percent": {
+                "stat_mapped_read_percent": {
                   "value": "100.0",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_gap_compressed_identity_mean": {
+                  "value": "99.77",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_gap_compressed_identity_median": {
+                  "value": "99.81",
                   "test_tasks": [
                     "compare_string"
                   ]
@@ -1175,7 +1193,7 @@
       "tasks": {
         "mosdepth": {
           "key": "mosdepth",
-          "digest": "2v5nba4jocqjrhiqatikbwszq4mvtdtb",
+          "digest": "4du2vr6g4guw5rztw3eoeuexvy7ucfqs",
           "tests": [
             {
               "inputs": {
@@ -1213,7 +1231,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_mean_depth": {
+                "stat_depth_mean": {
                   "value": "0.07",
                   "test_tasks": [
                     "compare_string"
@@ -1262,7 +1280,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_mean_depth": {
+                "stat_depth_mean": {
                   "value": "0.07",
                   "test_tasks": [
                     "compare_string"
