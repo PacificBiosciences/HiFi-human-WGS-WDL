@@ -216,21 +216,22 @@ workflow downstream {
     String stat_phase_block_ng50          = hiphase.stat_phase_block_ng50
 
     # bam stats
-    File   bam_statistics                    = bam_stats.bam_statistics
-    File   read_length_plot                  = bam_stats.read_length_plot
-    File?  read_quality_plot                 = bam_stats.read_quality_plot
-    File   mapq_distribution_plot            = bam_stats.mapq_distribution_plot
-    File   mg_distribution_plot              = bam_stats.mg_distribution_plot
-    String stat_num_reads                    = bam_stats.stat_num_reads
-    String stat_read_length_mean             = bam_stats.stat_read_length_mean
-    String stat_read_length_median           = bam_stats.stat_read_length_median
-    String stat_read_length_n50              = bam_stats.stat_read_length_n50
-    String stat_read_quality_mean            = bam_stats.stat_read_quality_mean
-    String stat_read_quality_median          = bam_stats.stat_read_quality_median
-    String stat_mapped_read_count            = bam_stats.stat_mapped_read_count
-    String stat_mapped_percent               = bam_stats.stat_mapped_percent
-    String stat_mean_gap_compressed_identity = bam_stats.stat_mean_gap_compressed_identity
-    File   trgt_coverage_dropouts            = coverage_dropouts.dropouts
+    File   bam_statistics                      = bam_stats.bam_statistics
+    File   read_length_plot                    = bam_stats.read_length_plot
+    File?  read_quality_plot                   = bam_stats.read_quality_plot
+    File   mapq_distribution_plot              = bam_stats.mapq_distribution_plot
+    File   mg_distribution_plot                = bam_stats.mg_distribution_plot
+    String stat_read_count                     = bam_stats.stat_read_count
+    String stat_read_length_mean               = bam_stats.stat_read_length_mean
+    String stat_read_length_median             = bam_stats.stat_read_length_median
+    String stat_read_length_n50                = bam_stats.stat_read_length_n50
+    String stat_read_quality_mean              = bam_stats.stat_read_quality_mean
+    String stat_read_quality_median            = bam_stats.stat_read_quality_median
+    String stat_mapped_read_count              = bam_stats.stat_mapped_read_count
+    String stat_mapped_read_percent            = bam_stats.stat_mapped_read_percent
+    String stat_gap_compressed_identity_mean   = bam_stats.stat_gap_compressed_identity_mean
+    String stat_gap_compressed_identity_median = bam_stats.stat_gap_compressed_identity_median
+    File   trgt_coverage_dropouts              = coverage_dropouts.dropouts
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats

@@ -24,7 +24,7 @@ A histogram of read qualities, using only records marked `prim` or `unmapped`. T
 
 A histogram of mapping qualities and gap-compressed identities, respectively.
 
-## `stat_num_reads`, `stat_read_length_mean`, `stat_read_length_median`, `stat_read_length_n50`, `stat_read_quality_mean`, `stat_read_quality_median`
+## `stat_read_count`, `stat_read_length_mean`, `stat_read_length_median`, `stat_read_length_n50`, `stat_read_quality_mean`, `stat_read_quality_median`
 
 Statistics computed using only records marked `prim` or `unmapped`.
 
@@ -32,6 +32,6 @@ Statistics computed using only records marked `prim` or `unmapped`.
 
 Count of primary alignments, and primary alignments as a percentage of total reads.
 
-## `stat_mean_gap_compressed_identity`
+## `stat_gap_compressed_identity_mean`, `stat_gap_compressed_identity_median`
 
-Mean gap-compressed identity of primary and supplementary alignments.
+Summary of gap-compressed identity for primary and supplementary alignments.

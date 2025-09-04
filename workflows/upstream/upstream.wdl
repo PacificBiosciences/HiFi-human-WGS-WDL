@@ -272,7 +272,7 @@ workflow upstream {
     File   mosdepth_region_bed_index        = mosdepth.region_bed_index
     File   mosdepth_depth_distribution_plot = mosdepth.depth_distribution_plot
     String inferred_sex                     = mosdepth.inferred_sex
-    String stat_mean_depth                  = mosdepth.stat_mean_depth
+    String stat_depth_mean                  = mosdepth.stat_depth_mean
 
     # per sample sv signatures
     File discover_tar = sawfish_discover.discover_tar

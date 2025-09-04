@@ -136,17 +136,18 @@ flowchart TD
 | File | mosdepth_depth_distribution_plot |  |  |
 | File | mapq_distribution_plot | Distribution of mapping quality per alignment | |
 | File | mg_distribution_plot | Distribution of gap-compressed identity score per alignment | |
-| String | stat_num_reads | Number of reads |  |
+| String | stat_read_count | Number of reads |  |
 | String | stat_read_length_mean | Mean read length |  |
 | String | stat_read_length_median | Median read length |  |
 | String | stat_read_length_n50 | Read length N50 |  |
 | String | stat_read_quality_mean | Mean read quality |  |
 | String | stat_read_quality_median | Median read quality |  |
 | String | stat_mapped_read_count | Count of reads mapped to reference |  |
-| String | stat_mapped_percent | Percent of reads mapped to reference |  |
-| String | stat_mean_gap_compressed_identity | Mean gap-compressed identity |  |
+| String | stat_mapped_read_percent | Percent of reads mapped to reference |  |
+| String | stat_gap_compressed_identity_mean | Mean gap-compressed identity |  |
+| String | stat_gap_compressed_identity_median | Median gap-compressed identity |  |
 | String | inferred_sex | Inferred sex | Sex is inferred based on relative depth of chrY alignments. |
-| String | stat_mean_depth | Mean depth | |
+| String | stat_depth_mean | Mean depth | |
 
 ### Small Variants (<50 bp)
 

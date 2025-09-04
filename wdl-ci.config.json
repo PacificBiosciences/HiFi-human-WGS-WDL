@@ -377,7 +377,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_num_reads": {
+                "stat_read_count": {
                   "value": "27398",
                   "test_tasks": [
                     "compare_string"
@@ -419,13 +419,19 @@
                     "compare_string"
                   ]
                 },
-                "stat_mapped_percent": {
+                "stat_mapped_read_percent": {
                   "value": "100.0",
                   "test_tasks": [
                     "compare_string"
                   ]
                 },
-                "stat_mean_gap_compressed_identity": {
+                "stat_gap_compressed_identity_mean": {
+                  "value": "99.77",
+                  "test_tasks": [
+                    "compare_string"
+                  ]
+                },
+                "stat_gap_compressed_identity_median": {
                   "value": "99.77",
                   "test_tasks": [
                     "compare_string"
@@ -1225,7 +1231,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_mean_depth": {
+                "stat_depth_mean": {
                   "value": "0.07",
                   "test_tasks": [
                     "compare_string"
@@ -1274,7 +1280,7 @@
                     "png_validator"
                   ]
                 },
-                "stat_mean_depth": {
+                "stat_depth_mean": {
                   "value": "0.07",
                   "test_tasks": [
                     "compare_string"
