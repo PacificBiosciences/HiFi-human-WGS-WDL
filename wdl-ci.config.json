@@ -1700,18 +1700,20 @@
             {
               "inputs": {
                 "id": "String",
-                "stats": {
-                  "letters": [
+                "stats": [
+                  [
+                    "letters",
                     "a",
                     "b",
                     "c"
                   ],
-                  "numbers": [
+                  [
+                    "numbers",
                     "1",
                     "2",
                     "3"
                   ]
-                },
+                ],
                 "msg_array": [
                   "hello",
                   "",
