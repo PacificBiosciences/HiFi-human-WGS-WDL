@@ -2,8 +2,13 @@
   "upstream.sample_id": "String",
   "upstream.sex": "String? (optional)",
   "upstream.hifi_reads": "Array[File]",
+  "upstream.fail_reads": "Array[File]? (optional)",
   "upstream.ref_map_file": "File",
   "upstream.max_reads_per_alignment_chunk": "Int",
+  "upstream.trgt_catalog": "File",
+  "upstream.fail_reads_bed": "File? (optional)",
+  "upstream.fail_reads_bait_fasta": "File? (optional)",
+  "upstream.fail_reads_bait_index": "File? (optional)",
   "upstream.single_sample": "Boolean (optional, default = false)",
   "upstream.gpu": "Boolean",
   "upstream.default_runtime_attributes": {

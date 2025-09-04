@@ -6,6 +6,7 @@
   "downstream.sv_vcf_index": "File",
   "downstream.trgt_vcf": "File",
   "downstream.trgt_vcf_index": "File",
+  "downstream.trgt_catalog": "File",
   "downstream.aligned_bam": "File",
   "downstream.aligned_bam_index": "File",
   "downstream.pharmcat_min_coverage": "Int",

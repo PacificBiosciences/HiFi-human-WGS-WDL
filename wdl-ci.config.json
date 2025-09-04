@@ -30,6 +30,62 @@
       "description": "",
       "tasks": {}
     },
+    "workflows/process_trgt_catalog/process_trgt_catalog.wdl": {
+      "key": "workflows/process_trgt_catalog/process_trgt_catalog.wdl",
+      "name": "",
+      "description": "",
+      "tasks": {
+        "filter_trgt_catalog": {
+          "key": "filter_trgt_catalog",
+          "digest": "iajobme7e6ssn3vqsng3lmlr4uxi7a6h",
+          "tests": [
+            {
+              "inputs": {
+                "trgt_catalog": "${datasets_file_path}/GRCh38/trgt/adotto_strchive_20250827.hg38.bed.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "full_catalog": {
+                  "value": "${resources_file_path}/filter_trgt_catalog/trgt.bed",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "calculate_md5sum"
+                  ]
+                },
+                "include_fail_reads_bed": {
+                  "value": "${resources_file_path}/filter_trgt_catalog/include_fail_reads.trgt.bed",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            },
+            {
+              "inputs": {
+                "trgt_catalog": "${datasets_file_path}/GRCh38/trgt/adotto_strchive_20250626.hg38.bed.gz",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "full_catalog": {
+                  "value": "${resources_file_path}/filter_trgt_catalog/trgt.bed",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_bed_columns",
+                    "calculate_md5sum"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
     "workflows/tertiary/tertiary.wdl": {
       "key": "workflows/tertiary/tertiary.wdl",
       "name": "",
@@ -1384,15 +1440,54 @@
             }
           ]
         },
-        "samtools_fasta": {
-          "key": "samtools_fasta",
-          "digest": "",
-          "tests": []
+        "subset_reference": {
+          "key": "subset_reference",
+          "digest": "bp5xzq323jqlo3zobarqetc76iotp3z2",
+          "tests": [
+            {
+              "inputs": {
+                "bed": "${resources_file_path}/filter_trgt_catalog/include_fail_reads.trgt.bed",
+                "ref_fasta": "${ref_fasta}",
+                "ref_index": "${ref_index}",
+                "out_prefix": "include_fail_reads",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "fasta": {
+                  "value": "${resources_file_path}/subset_reference/include_fail_reads.fasta",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "fasta_validator"
+                  ]
+                }
+              }
+            }
+          ]
         },
-        "samtools_reset": {
-          "key": "samtools_reset",
-          "digest": "",
-          "tests": []
+        "subset_bam": {
+          "key": "subset_bam",
+          "digest": "rqdqdzxpguplcszosrprsid75csl3j6f",
+          "tests": [
+            {
+              "inputs": {
+                "bed": "${resources_file_path}/filter_trgt_catalog/include_fail_reads.trgt.bed",
+                "aligned_bam": "${resources_file_path}/subset_bam/HG002.GRCh38.chr13_102100000-102200000.bam",
+                "aligned_bam_index": "${resources_file_path}/subset_bam/HG002.GRCh38.chr13_102100000-102200000.bam.bai",
+                "ref_index": "${ref_index}",
+                "out_prefix": "HG002.GRCh38.baited_fail_reads",
+                "runtime_attributes": "${default_runtime_attributes}"
+              },
+              "output_tests": {
+                "bam": {
+                  "value": "${resources_file_path}/subset_bam/HG002.GRCh38.baited_fail_reads.bam",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "samtools_quickcheck"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     },
@@ -1403,7 +1498,7 @@
       "tasks": {
         "trgt": {
           "key": "trgt",
-          "digest": "pepbz2ll6ejtac3fg3nywigv6gf5rjym",
+          "digest": "x2lnix7cnso6qjljqx6ckhbrz3lcpimm",
           "tests": [
             {
               "inputs": {
@@ -1842,7 +1937,7 @@
       "tasks": {
         "pbmm2_align_wgs": {
           "key": "pbmm2_align_wgs",
-          "digest": "kobmohrwnpy2pzlsd7l2qvoo7ulkxth2",
+          "digest": "b27rhkpyqkpqzxsdn4uctagacoib6z7w",
           "tests": [
             {
               "inputs": {

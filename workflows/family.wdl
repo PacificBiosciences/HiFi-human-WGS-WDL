@@ -2,6 +2,7 @@ version 1.0
 
 import "humanwgs_structs.wdl"
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
+import "process_trgt_catalog/process_trgt_catalog.wdl" as ProcessTrgtCatalog
 import "upstream/upstream.wdl" as Upstream
 import "joint/joint.wdl" as Joint
 import "downstream/downstream.wdl" as Downstream
@@ -103,6 +104,14 @@ workflow humanwgs_family {
 
   Map [String, String] ref_map = read_map(ref_map_file)
 
+  call ProcessTrgtCatalog.process_trgt_catalog {
+    input:
+      trgt_catalog               = ref_map["trgt_tandem_repeat_bed"],  # !FileCoercion
+      ref_fasta                  = ref_map["fasta"],                   # !FileCoercion
+      ref_index                  = ref_map["fasta_index"],             # !FileCoercion
+      default_runtime_attributes = default_runtime_attributes
+  }
+
   Boolean single_sample = length(family.samples) == 1
 
   Map[String, String] pedigree_sex = {
@@ -121,7 +130,12 @@ workflow humanwgs_family {
         sample_id                     = sample.sample_id,
         sex                           = sample.sex,
         hifi_reads                    = sample.hifi_reads,
+        fail_reads                    = sample.fail_reads,
         ref_map_file                  = ref_map_file,
+        trgt_catalog                  = process_trgt_catalog.full_catalog,
+        fail_reads_bed                = process_trgt_catalog.include_fail_reads_bed,
+        fail_reads_bait_fasta         = process_trgt_catalog.fail_reads_bait_fasta,
+        fail_reads_bait_index         = process_trgt_catalog.fail_reads_bait_index,
         max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
         single_sample                 = single_sample,
         gpu                           = gpu,
@@ -166,6 +180,7 @@ workflow humanwgs_family {
         sv_vcf_index               = select_first([joint.split_joint_structural_variant_vcf_indices, select_all(upstream.sv_vcf_index)])[sample_index],
         trgt_vcf                   = upstream.trgt_vcf[sample_index],
         trgt_vcf_index             = upstream.trgt_vcf_index[sample_index],
+        trgt_catalog               = process_trgt_catalog.full_catalog,
         aligned_bam                = upstream.out_bam[sample_index],
         aligned_bam_index          = upstream.out_bam_index[sample_index],
         pharmcat_min_coverage      = pharmcat_min_coverage,
@@ -256,7 +271,7 @@ workflow humanwgs_family {
     input:
       id                 = family.family_id,
       stats              = stats,
-      msg_array          = flatten([flatten(upstream.msg)]),
+      msg_array          = flatten([process_trgt_catalog.msg, flatten(upstream.msg)]),
       runtime_attributes = default_runtime_attributes
   }
 
@@ -400,12 +415,13 @@ workflow humanwgs_family {
     # qc messages
     Array[String] msg = flatten(
       [
+        process_trgt_catalog.msg,
         flatten(upstream.msg)
       ]
     )
 
     # workflow metadata
     String workflow_name    = "humanwgs_family"
-    String workflow_version = "v3.0.2" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "develop-v3-fail_reads_alpha" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }

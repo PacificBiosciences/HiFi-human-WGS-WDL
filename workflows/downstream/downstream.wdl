@@ -37,6 +37,9 @@ workflow downstream {
     trgt_vcf_index: {
       name: "TRGT VCF index"
     }
+    trgt_catalog: {
+      name: "TRGT tandem repeat catalog BED"
+    }
     aligned_bam: {
       name: "Aligned BAM"
     }
@@ -63,6 +66,7 @@ workflow downstream {
     File sv_vcf_index
     File trgt_vcf
     File trgt_vcf_index
+    File trgt_catalog
 
     File aligned_bam
     File aligned_bam_index
@@ -117,7 +121,7 @@ workflow downstream {
     input: 
       aligned_bam        = hiphase.haplotagged_bam,
       aligned_bam_index  = hiphase.haplotagged_bam_index,
-      trgt_bed           = ref_map["trgt_tandem_repeat_bed"], # !FileCoercion
+      trgt_bed           = trgt_catalog,
       out_prefix         = "~{sample_id}.~{ref_map['name']}",
       runtime_attributes = default_runtime_attributes
   }

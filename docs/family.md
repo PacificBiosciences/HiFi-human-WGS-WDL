@@ -23,12 +23,23 @@
 title: family.wdl
 ---
 flowchart TD
+  subgraph "create fail_reads bait FASTA"
+    trgt_catalog["TRGT catalog BED"]
+    bait_fasta["create bait FASTA"]
+  end
   subgraph "`**Upstream of Phasing\n(per-sample)**`"
-    subgraph "per-movie"
+    subgraph "per hifi_reads uBAM"
       ubam[/"HiFi uBAM"/]
       pbmm2_align["pbmm2 align"]
     end
+    subgraph "per fail_reads uBAM"
+      fail_ubam[/"fail reads uBAM (if provided)"/]
+      bait_fail_reads["baited fail reads (if fail_reads provided)"]
+      pbmm2_align_fail_reads["pbmm2 align baited fail_reads (if fail_reads provided)"]
+      filter_fail_reads["filter fail_reads alignments (if fail_reads provided)"]
+    end
     samtools_merge["samtools merge"]
+    samtools_merge_fail_reads["samtools merge hifi_reads and fail_reads"]
     mosdepth["mosdepth"]
     paraphase["Paraphase"]
     mitorsaw["MitorSaw"]
@@ -65,12 +76,13 @@ flowchart TD
     slivar_svpack["slivar svpack tsv"]
   end
 
+  trgt_catalog --> bait_fasta --> bait_fail_reads
+  fail_ubam --> bait_fail_reads --> pbmm2_align_fail_reads --> filter_fail_reads --> samtools_merge_fail_reads
   ubam --> pbmm2_align --> samtools_merge
   samtools_merge --> mosdepth
   samtools_merge --> paraphase
   samtools_merge --> mitorsaw
-  samtools_merge --> trgt
-  samtools_merge --> trgt_dropouts
+  samtools_merge_fail_reads --> trgt
   samtools_merge --> deepvariant
   samtools_merge --> sawfish_discover
   samtools_merge --> hiphase
@@ -91,6 +103,7 @@ flowchart TD
   hiphase --> cpg_pileup
   hiphase --> starphase
   hiphase --> pharmcat
+  hiphase --> trgt_dropouts
   starphase --> pharmcat
   cpg_pileup --> methbat
 
@@ -140,6 +153,7 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`.  Used for tertiary analysis X-linked inheritance filtering. |
 | Boolean | affected | Affected status | If set to `true`, sample is described as being affected by all HPO terms in `phenotypes`.<br/>If set to `false`, sample is described as not being affected by all HPO terms in `phenotypes`. |
 | Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
+| Array\[File\]? | fail_reads | Array of paths to failed HiFi reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
 | String? | father_id | sample_id of father (optional) |  |
 | String? | mother_id | sample_id of mother (optional) |  |
 
