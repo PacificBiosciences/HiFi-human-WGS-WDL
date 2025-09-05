@@ -259,6 +259,7 @@ workflow upstream {
     File depth_bw_output                   = sawfish_call.depth_bw[0]
     File gc_bias_corrected_depth_bw_output = sawfish_call.gc_bias_corrected_depth_bw[0]
     File maf_bw_output                     = sawfish_call.maf_bw[0]
+    File copynum_summary_output            = sawfish_call.copynum_summary[0]
   }
 
   output {
@@ -285,6 +286,7 @@ workflow upstream {
     File? sv_depth_bw                   = depth_bw_output
     File? sv_gc_bias_corrected_depth_bw = gc_bias_corrected_depth_bw_output
     File? sv_maf_bw                     = maf_bw_output
+    File? sv_copynum_summary            = copynum_summary_output
 
     # small variant outputs
     File small_variant_vcf        = deepvariant.vcf

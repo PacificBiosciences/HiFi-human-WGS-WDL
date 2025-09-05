@@ -60,10 +60,16 @@ workflow joint {
       name: "Copy number bedgraph"
     }
     sv_depth_bw: {
-      name: "Depth bedgraph"
+      name: "Depth bigWig"
+    }
+    sv_gc_bias_corrected_depth_bw: {
+      name: "GC bias corrected depth bigWig"
     }
     sv_maf_bw: {
-      name: "MAF bedgraph"
+      name: "MAF bigWig"
+    }
+    sv_copynum_summary: {
+      name: "Copy number summary JSON"
     }
   }
 
@@ -154,5 +160,6 @@ workflow joint {
     Array[File] sv_depth_bw                                = sawfish_call.depth_bw
     Array[File] sv_gc_bias_corrected_depth_bw              = sawfish_call.gc_bias_corrected_depth_bw
     Array[File] sv_maf_bw                                  = sawfish_call.maf_bw
+    Array[File] sv_copynum_summary                         = sawfish_call.copynum_summary
   }
 }
