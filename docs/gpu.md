@@ -5,7 +5,7 @@ Starting in workflow version 2.0.0, we have added support for running workflows 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | Boolean | gpu | Use GPUs. | default = `false` |
-| String | gpuType | Type of GPU/Accelerator to use. | This will depend on your backend configuration. |
+| String | gpuType | Type of GPU/Accelerator to use. | This value will depend on your backend configuration. |
 
 ## GPU Types
 
