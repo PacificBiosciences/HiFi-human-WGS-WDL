@@ -12,4 +12,4 @@ flowchart TD
   postprocess_variants --> gvcf[/"small variant gVCF"/]
 ```
 
-This subworkflow runs the three steps of DeepVariant individually in order to make best use of resources.  If a GPU is available and `gpu==true`, the `call_variants` step will run on 1 GPU and 8 cpu threads, otherwise it will run on 64 CPU threads.  The `make_examples` and `postprocess_variants` steps will always run on the CPU.
+This subworkflow runs the three steps of DeepVariant individually in order to make best use of resources.  If a GPU is available and `gpu==true`, the `call_variants` step will run on 1GPU/8CPU/32GiB, otherwise it will run on 64CPU/256GiB.  The `make_examples` and `postprocess_variants` steps will always run on the CPU.
