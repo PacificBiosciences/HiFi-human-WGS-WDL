@@ -325,7 +325,7 @@
       "tasks": {
         "bam_stats": {
           "key": "bam_stats",
-          "digest": "wxkxruu66mviqyn3adhnfhj7mik7db3g",
+          "digest": "wy4fhzjozbsr2ub3xl3nldqhzw36xrv4",
           "tests": [
             {
               "inputs": {
