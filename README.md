@@ -106,7 +106,7 @@ Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the eng
 
 #### Run directly using miniwdl
 
-`miniwdl run workflows/singleton.wdl -i <input_file_path.json>`
+`miniwdl run --verbose workflows/singleton.wdl -i <input_file_path.json>`
 
 #### Run directly using Cromwell
 
