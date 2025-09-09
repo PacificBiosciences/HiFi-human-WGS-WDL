@@ -4,9 +4,10 @@
   "humanwgs_singleton.hifi_reads": [
     "File"
   ],
+  "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.phenotypes": "String? (optional)",
-  "humanwgs_singleton.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v3.0.0/GRCh38.ref_map.v3p0p0.gcp.tsv",
-  "humanwgs_singleton.tertiary_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v3.0.0/GRCh38.tertiary_map.v3p0p0.gcp.tsv",
+  "humanwgs_singleton.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v3.1.0/GRCh38.ref_map.v3p1p0.gcp.tsv",
+  "humanwgs_singleton.tertiary_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v3.1.0/GRCh38.tertiary_map.v3p1p0.gcp.tsv",
   "humanwgs_singleton.backend": "GCP",
   "humanwgs_singleton.zones": "String",
   "humanwgs_singleton.preemptible": "Boolean"

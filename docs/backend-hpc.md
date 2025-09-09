@@ -58,14 +58,14 @@ cromwell run workflows/singleton.wdl --input <inputs_json_file>
 
 ## Reference data bundle
 
-[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.15750792.svg" alt="10.5281/zenodo.15750792">](https://zenodo.org/records/15750792)
+[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17086906.svg" alt="10.5281/zenodo.17086906">](https://zenodo.org/records/17086906)
 
-Reference data is hosted on Zenodo at [10.5281/zenodo.15750792](https://zenodo.org/record/15750792). Download the reference data bundle and extract it to a location on your HPC, then update the input template file with the path to the reference data.
+Reference data is hosted on Zenodo at [10.5281/zenodo.17086906](https://zenodo.org/record/17086906). Download the reference data bundle and extract it to a location on your HPC, then update the input template file with the path to the reference data.
 
 ```bash
 ## download the reference data bundle
-wget https://zenodo.org/record/15750792/files/hifi-wdl-resources-v3.0.0.tar
+wget https://zenodo.org/record/17086906/files/hifi-wdl-resources-v3.1.0.tar
 
 ## extract the reference data bundle and rename as dataset
-tar -xvf hifi-wdl-resources-v3.0.0.tar
+tar -xvf hifi-wdl-resources-v3.1.0.tar
 ```

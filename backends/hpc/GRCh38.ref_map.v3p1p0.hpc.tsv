@@ -1,0 +1,11 @@
+name	GRCh38
+fasta	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta
+fasta_index	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/human_GRCh38_no_alt_analysis_set.fasta.fai
+trgt_tandem_repeat_bed	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/trgt/adotto_strchive_20250827.hg38.bed.gz
+sawfish_exclude_bed	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz
+sawfish_exclude_bed_index	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/sawfish/annotation_and_common_cnv.hg38.bed.gz.tbi
+sawfish_expected_bed_male	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/sawfish/expected_cn.hg38.XY.bed
+sawfish_expected_bed_female	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/sawfish/expected_cn.hg38.XX.bed
+methbat_region_tsv	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/methbat/cpgIslandExt.sorted.hg38.tsv
+pharmcat_positions_vcf	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz
+pharmcat_positions_vcf_index	<prefix>/hifi-wdl-resources-v3.1.0/GRCh38/pharmcat/pharmcat_positions_2.15.4.vcf.bgz.csi

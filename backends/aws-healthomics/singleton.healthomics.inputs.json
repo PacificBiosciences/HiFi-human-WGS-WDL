@@ -4,9 +4,10 @@
   "humanwgs_singleton.hifi_reads": [
     "File"
   ],
+  "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.phenotypes": "String? (optional)",
-  "humanwgs_singleton.ref_map_file": "s3://<bucket_path>/GRCh38.ref_map.v3p0p0.aws.tsv",
-  "humanwgs_singleton.tertiary_map_file": "s3://<bucket_path>/GRCh38.tertiary_map.v3p0p0.aws.tsv",
+  "humanwgs_singleton.ref_map_file": "s3://<bucket_path>/GRCh38.ref_map.v3p1p0.aws.tsv",
+  "humanwgs_singleton.tertiary_map_file": "s3://<bucket_path>/GRCh38.tertiary_map.v3p1p0.aws.tsv",
   "humanwgs_singleton.backend": "AWS-HealthOmics",
   "humanwgs_singleton.container_registry": "String",
   "humanwgs_singleton.preemptible": true

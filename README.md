@@ -24,18 +24,18 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v3.0.2):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v3.1.0):
 
   ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.0.2/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.0.2/hifi-human-wgs-family.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.1.0/hifi-human-wgs-singleton.zip
+  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.1.0/hifi-human-wgs-family.zip
   ```
 
 2) Clone the repository and initialize the submodules:
 
   ```bash
   git clone \
-    --depth 1 --branch v3.0.2 \
+    --depth 1 --branch v3.1.0 \
     --recursive \
     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
   ```
@@ -127,7 +127,7 @@ At a high level, we have two types of inputs files:
 
 The resource bundle containing the GRCh38 reference and other files used in this workflow can be downloaded from Zenodo:
 
-[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.15750792.svg" alt="10.5281/zenodo.15750792">](https://zenodo.org/records/15750792)
+[<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17086906.svg" alt="10.5281/zenodo.17086906">](https://zenodo.org/records/17086906)
 
 # Tool versions and Docker images
 
