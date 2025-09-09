@@ -2,7 +2,7 @@
 
 The PacBio Human WGS Variant Pipeline is an analysis workflow for PacBio HiFi human whole genome sequencing data, with joint calling for related samples.
 
-Templates and instructions for how to submit the `family` input on the DNAnexus platform are provided in the [Example JSON Documents](#example-json-documents) and [Submitting to DNAnexus](#submitting-to-dnanexus) sections below.  
+Templates and instructions for how to submit the `Family struct` input on the DNAnexus platform are provided in the [Example JSON Documents](#example-json-documents) and [Submitting to DNAnexus](#submitting-to-dnanexus) sections below.
 
 ## Inputs
 
@@ -10,16 +10,17 @@ The workflow has the following inputs:
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| Struct | family | Family struct describing samples, relationships, and unaligned BAM paths. | See below for more information |
-| String | phenotypes | [Human Phenotype Ontology](https://hpo.jax.org/) (HPO) phenotypes associated with the affected proband. | For example, if the proband has seizures and hypotonia, then the `phenotypes` string might be `"HP:0001250,HP:0001252"`. |
-| File | trgt_tandem_repeat_bed | BED file containing repeat coordinates and information about the repeat structure | The default file should be sufficient for most use cases |
-| Integer | glnexus_mem_gb | Override GLnexus memory request (GB) | Optional. Should only be specified if GLnexus step fails. |
-| Integer | pbsv_call_mem_gb | Override PBSV call memory request (GB) | Optional. Should only be specified if PBSV step fails. |
-| Boolean | run_tertiary | Whether to run tertiary analysis for small variants and structural variants | Default: `true` |
+| File chooser | Family struct | One or more files corresponding to the sample data described in your Family struct JSON below. | 
+| File chooser | TRGT Tandem Repeat Definitions | BED file containing repeat coordinates and information about the repeat structure. | The default file should be sufficient for most use cases. |
+| Struct | Family struct | Family struct JSON describing samples, relationships, and unaligned BAM paths. | See below for more information. |
+| Integer | GLnexus memory override | Override GLnexus memory request (GB) | Optional. Should only be specified if GLnexus step fails. |
+| Integer | PBSV memory override | Override PBSV call memory request (GB) | Optional. Should only be specified if PBSV step fails. |
+| String | Phenotypes | [Human Phenotype Ontology](https://hpo.jax.org/) Comma-delimited string of (HPO) phenotypes associated with the affected proband. | For example, if the proband has seizures and hypotonia, then the `phenotypes` string would be `HP:0001250,HP:0001252`. |
+| Boolean | Run tertiary analysis | Whether to run tertiary analysis for small variants and structural variants | Default: `true` |
 
 ## Family Struct Syntax
 
-The `Family` input for the HiFi-human-WGS-WDL workflow is a JSON document that contains the samples for the family. The same struct is used for a single sample or trio, with the single sample case having only one entry in the `samples` array.
+The `Family` input for the HiFi-human-WGS-WDL workflow is a JSON document that contains the samples for the family. The same struct syntax is used for a single sample or trio, with the single sample case having only one entry in the `samples` array.
 
 ### Structs and Field Descriptions
 
@@ -85,52 +86,50 @@ In this example, the optional `sex` field is not specified, so tools will defaul
 
 ```json
 {
-  "family": {
-    "family_id": "AJTRIO",
-    "samples": [
-      {
-        "sample_id": "HG002",
-        "hifi_reads": [
+  "family_id": "AJTRIO",
+  "samples": [
+    {
+      "sample_id": "HG002",
+      "hifi_reads": [
+        {
+          "$dnanexus_link": {
+            "id": "file-xxxx",
+            "project": "project-xxxx"
+          }
+        }
+      ],
+      "affected": true,
+      "sex": "MALE",
+      "father_id": "HG003",
+      "mother_id": "HG004"
+    },
+    {
+      "sample_id": "HG003",
+      "hifi_reads": [
+        {
+          "$dnanexus_link": {
+            "id": "file-xxxx",
+            "project": "project-xxxx"
+          }
+        }
+      ],
+      "affected": false,
+      "sex": "MALE"
+    },
+    {
+      "sample_id": "HG004",
+      "hifi_reads": [
           {
-            "$dnanexus_link": {
-              "id": "file-xxxx",
-              "project": "project-xxxx"
-            }
+          "$dnanexus_link": {
+            "id": "file-xxxx",
+            "project": "project-xxxx"
           }
-        ],
-        "affected": true,
-        "sex": "MALE",
-        "father_id": "HG003",
-        "mother_id": "HG004"
-      },
-      {
-        "sample_id": "HG003",
-        "hifi_reads": [
-          {
-            "$dnanexus_link": {
-              "id": "file-xxxx",
-              "project": "project-xxxx"
-            }
-          }
-        ],
-        "affected": false,
-        "sex": "MALE"
-      },
-      {
-        "sample_id": "HG004",
-        "hifi_reads": [
-            {
-            "$dnanexus_link": {
-              "id": "file-xxxx",
-              "project": "project-xxxx"
-            }
-          }
-        ],
-        "affected": false,
-        "sex": "FEMALE"
-      }
-    ]
-  }
+        }
+      ],
+      "affected": false,
+      "sex": "FEMALE"
+    }
+  ]
 }
 ```
 
