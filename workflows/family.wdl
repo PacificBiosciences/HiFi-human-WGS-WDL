@@ -158,8 +158,8 @@ workflow humanwgs_family {
       input:
         family_id                  = family.family_id,
         sample_ids                 = sample_id,
-        gvcfs                      = upstream.small_variant_gvcf,
-        gvcf_indices               = upstream.small_variant_gvcf_index,
+        gvcfs                      = select_all(upstream.small_variant_gvcf),
+        gvcf_indices               = select_all(upstream.small_variant_gvcf_index),
         discover_tars              = upstream.discover_tar,
         aligned_bams               = upstream.aligned_hifi_reads,
         aligned_bam_indices        = upstream.aligned_hifi_reads_index,
@@ -359,8 +359,8 @@ workflow humanwgs_family {
     # small variant outputs
     Array[File] phased_small_variant_vcf       = downstream.phased_small_variant_vcf
     Array[File] phased_small_variant_vcf_index = downstream.phased_small_variant_vcf_index
-    Array[File] small_variant_gvcf             = upstream.small_variant_gvcf
-    Array[File] small_variant_gvcf_index       = upstream.small_variant_gvcf_index
+    Array[File?] small_variant_gvcf             = upstream.small_variant_gvcf
+    Array[File?] small_variant_gvcf_index       = upstream.small_variant_gvcf_index
 
     # small variant stats
     Array[File]   small_variant_stats             = downstream.small_variant_stats

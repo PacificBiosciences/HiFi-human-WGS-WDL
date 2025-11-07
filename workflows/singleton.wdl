@@ -308,8 +308,8 @@ workflow humanwgs_singleton {
     # small variant outputs
     File phased_small_variant_vcf       = downstream.phased_small_variant_vcf
     File phased_small_variant_vcf_index = downstream.phased_small_variant_vcf_index
-    File small_variant_gvcf             = upstream.small_variant_gvcf
-    File small_variant_gvcf_index       = upstream.small_variant_gvcf_index
+    File? small_variant_gvcf             = upstream.small_variant_gvcf
+    File? small_variant_gvcf_index       = upstream.small_variant_gvcf_index
 
     # small variant stats
     File   small_variant_stats             = downstream.small_variant_stats

@@ -290,8 +290,8 @@ workflow upstream {
     # small variant outputs
     File small_variant_vcf        = deepvariant.vcf
     File small_variant_vcf_index  = deepvariant.vcf_index
-    File small_variant_gvcf       = deepvariant.gvcf
-    File small_variant_gvcf_index = deepvariant.gvcf_index
+    File? small_variant_gvcf       = deepvariant.gvcf
+    File? small_variant_gvcf_index = deepvariant.gvcf_index
 
     # paraphase outputs
     File? paraphase_output_json         = paraphase.out_json
