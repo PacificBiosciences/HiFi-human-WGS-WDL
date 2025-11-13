@@ -2194,7 +2194,7 @@
       "tasks": {
         "sawfish_discover": {
           "key": "sawfish_discover",
-          "digest": "6cb4uacwdxuz6dwig7etyc6zclinut62",
+          "digest": "igtmmzgsyfmpg27cl7i7xbchgcslr6jc",
           "tests": [
             {
               "inputs": {
@@ -2226,7 +2226,7 @@
         },
         "sawfish_call": {
           "key": "sawfish_call",
-          "digest": "q3onpb3gte6qvzwbjlt3va5qyd5v7noq",
+          "digest": "fzalv3oaacgmjk65fmoivrj5ufkl6uyi",
           "tests": [
             {
               "inputs": {
