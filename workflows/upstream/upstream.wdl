@@ -4,6 +4,7 @@ import "../wdl-common/wdl/structs.wdl"
 import "../wdl-common/wdl/workflows/pbmm2/pbmm2.wdl" as Pbmm2
 import "../wdl-common/wdl/tasks/sawfish.wdl" as Sawfish
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
+import "../wdl-common/wdl/workflows/parabricks_deepvariant/parabricks_deepvariant.wdl" as ParabricksDeepVariant
 import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
@@ -49,6 +50,9 @@ workflow upstream {
     gpu: {
       name: "Use GPU for DeepVariant"
     }
+    parabricks: {
+      name: "Use Parabricks DeepVariant"
+    }
     default_runtime_attributes: {
       name: "Runtime attribute structure"
     }
@@ -71,6 +75,7 @@ workflow upstream {
     Boolean single_sample = false
 
     Boolean gpu
+    Boolean parabricks
 
     RuntimeAttributes default_runtime_attributes
   }
@@ -177,17 +182,37 @@ workflow upstream {
     then "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
     else ""
 
-  call DeepVariant.deepvariant {
-    input:
-      sample_id                  = sample_id,
-      aligned_bams               = [aligned_bam_data],
-      aligned_bam_indices        = [aligned_bam_index],
-      ref_fasta                  = ref_map["fasta"],       # !FileCoercion
-      ref_index                  = ref_map["fasta_index"], # !FileCoercion
-      ref_name                   = ref_map["name"],
-      gpu                        = gpu,
-      default_runtime_attributes = default_runtime_attributes
+  if (gpu && parabricks) {
+    call ParabricksDeepVariant.parabricks_deepvariant {
+      input:
+        sample_id                  = sample_id,
+        aligned_bam                = aligned_bam_data,
+        aligned_bam_index          = aligned_bam_index,
+        ref_fasta                  = ref_map["fasta"],       # !FileCoercion
+        ref_index                  = ref_map["fasta_index"], # !FileCoercion
+        ref_name                   = ref_map["name"],
+        default_runtime_attributes = default_runtime_attributes
+    }
   }
+
+  if (!parabricks || (!gpu && parabricks)) {
+    call DeepVariant.deepvariant {
+      input:
+        sample_id                  = sample_id,
+        aligned_bams               = [aligned_bam_data],
+        aligned_bam_indices        = [aligned_bam_index],
+        ref_fasta                  = ref_map["fasta"],       # !FileCoercion
+        ref_index                  = ref_map["fasta_index"], # !FileCoercion
+        ref_name                   = ref_map["name"],
+        gpu                        = gpu,
+        default_runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  File deepvariant_vcf        = select_first([parabricks_deepvariant.vcf, deepvariant.vcf])
+  File deepvariant_vcf_index  = select_first([parabricks_deepvariant.vcf_index, deepvariant.vcf_index])
+  File deepvariant_gvcf       = select_first([parabricks_deepvariant.gvcf, deepvariant.gvcf])
+  File deepvariant_gvcf_index = select_first([parabricks_deepvariant.gvcf_index, deepvariant.gvcf_index])
 
   call Sawfish.sawfish_discover {
     input:
@@ -201,8 +226,8 @@ workflow upstream {
       exclude_bed_index       = ref_map["sawfish_exclude_bed_index"],   # !FileCoercion
       expected_male_bed       = ref_map["sawfish_expected_bed_male"],   # !FileCoercion
       expected_female_bed     = ref_map["sawfish_expected_bed_female"], # !FileCoercion
-      small_variant_vcf       = deepvariant.vcf,
-      small_variant_vcf_index = deepvariant.vcf_index,
+      small_variant_vcf       = deepvariant_vcf,
+      small_variant_vcf_index = deepvariant_vcf_index,
       out_prefix              = "~{sample_id}",
       runtime_attributes      = default_runtime_attributes
   }
@@ -288,10 +313,10 @@ workflow upstream {
     File? sv_copynum_summary            = copynum_summary_output
 
     # small variant outputs
-    File small_variant_vcf        = deepvariant.vcf
-    File small_variant_vcf_index  = deepvariant.vcf_index
-    File small_variant_gvcf       = deepvariant.gvcf
-    File small_variant_gvcf_index = deepvariant.gvcf_index
+    File small_variant_vcf        = deepvariant_vcf
+    File small_variant_vcf_index  = deepvariant_vcf_index
+    File small_variant_gvcf       = deepvariant_gvcf
+    File small_variant_gvcf_index = deepvariant_gvcf_index
 
     # paraphase outputs
     File? paraphase_output_json         = paraphase.out_json
