@@ -17,3 +17,4 @@ quay.io/pacbio/wgs_tertiary@sha256:410597030e0c85cf16eb27a877d260e7e2824747f5e8b
 google/deepvariant:1.9.0
 google/deepvariant:1.9.0-gpu
 pgkb/pharmcat:2.15.4
+nvcr.io/nvidia/clara/clara-parabricks:4.6.0-2

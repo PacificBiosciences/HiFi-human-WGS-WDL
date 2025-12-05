@@ -126,6 +126,7 @@ flowchart TD
 | Int? | glnexus_mem_gb | Override GLnexus memory; optional |  |
 | Int? | pbsv_call_mem_gb | Override PBSV call memory; optional |  |
 | Boolean | gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
+| Boolean | parabricks | Use Parabricks DeepVariant implementation<br/><br/>Default: `false` | If both `parabricks` and `gpu` are set to `true`, Parabricks DeepVariant will be used instead of standard DeepVariant.<br/><br/>[Parabricks DeepVariant](./parabricks_deepvariant.md) |
 | String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-HealthOmics", "HPC"]` |  |
 | String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in GCP](./backends.md/gcp#determining-available-zones) |
 | String? | cpuPlatform | Minimum CPU platform to use for tasks on GCP | Optional, only necessary in certain zones lacking n1 nodes. |

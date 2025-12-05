@@ -45,6 +45,9 @@ workflow humanwgs_singleton {
     gpu: {
       name: "Use GPU when possible"
     }
+    parabricks: {
+      name: "Use Parabricks DeepVariant for small variant calling when GPU is enabled"
+    }
     backend: {
       name: "Backend where the workflow will be executed",
       choices: ["GCP", "Azure", "AWS-HealthOmics", "HPC"]
@@ -85,6 +88,7 @@ workflow humanwgs_singleton {
     Int pharmcat_min_coverage = 10
 
     Boolean gpu = false
+    Boolean parabricks = false
 
     # Backend configuration
     String backend
@@ -132,6 +136,7 @@ workflow humanwgs_singleton {
       max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
       single_sample                 = true,
       gpu                           = gpu,
+      parabricks                    = parabricks,
       default_runtime_attributes    = default_runtime_attributes
   }
 
