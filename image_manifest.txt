@@ -12,7 +12,7 @@ quay.io/pacbio/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de7
 quay.io/pacbio/sawfish@sha256:18ba096219fea38d6b32f5706fb794a05cc5d1d6cc16e2a09e3a13d62d8181d4
 quay.io/pacbio/slivar@sha256:f71a27f756e2d69ec30949cbea97c54abbafde757562a98ef965f21a28aa8eaa
 quay.io/pacbio/svpack@sha256:628e9851e425ed8044a907d33de04043d1ef02d4d2b2667cf2e9a389bb011eba
-quay.io/pacbio/trgt@sha256:7511072d0f57396b1b99c7e0c08934db417138b6b4ce5d93c4974115faab2a0d
+quay.io/pacbio/trgt@sha256:169cb4307fc3c873ca6ffeed4977700aefc7b134e500a23fcfe681f5c8954a5e
 quay.io/pacbio/wgs_tertiary@sha256:410597030e0c85cf16eb27a877d260e7e2824747f5e8b05566a1aaa729d71136
 google/deepvariant:1.9.0
 google/deepvariant:1.9.0-gpu

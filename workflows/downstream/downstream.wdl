@@ -1,6 +1,7 @@
 version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
+import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
 import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
@@ -19,6 +20,25 @@ workflow downstream {
     sample_id: {
       name: "Sample ID"
     }
+    sex: {
+      name: "Sample sex",
+      choices: ["MALE", "FEMALE"]
+    }
+    aligned_hifi_reads: {
+      name: "Aligned hifi_reads BAM"
+    }
+    aligned_hifi_reads_index: {
+      name: "Aligned hifi_reads BAI"
+    }
+    aligned_fail_reads: {
+      name: "Aligned fail_reads BAM"
+    }
+    aligned_fail_reads_index: {
+      name: "Aligned fail_reads BAI"
+    }
+    trgt_catalog: {
+      name: "TRGT tandem repeat catalog BED"
+    }
     small_variant_vcf: {
       name: "Small variant VCF"
     }
@@ -30,21 +50,6 @@ workflow downstream {
     }
     sv_vcf_index: {
       name: "Structural variant VCF index"
-    }
-    trgt_vcf: {
-      name: "TRGT VCF"
-    }
-    trgt_vcf_index: {
-      name: "TRGT VCF index"
-    }
-    trgt_catalog: {
-      name: "TRGT tandem repeat catalog BED"
-    }
-    aligned_bam: {
-      name: "Aligned BAM"
-    }
-    aligned_bam_index: {
-      name: "Aligned BAI"
     }
     pharmcat_min_coverage: {
       name: "Minimum coverage for PharmCAT"
@@ -59,17 +64,19 @@ workflow downstream {
 
   input {
     String sample_id
+    String sex
+
+    File aligned_hifi_reads
+    File aligned_hifi_reads_index
+    File? aligned_fail_reads
+    File? aligned_fail_reads_index
+
+    File trgt_catalog
 
     File small_variant_vcf
     File small_variant_vcf_index
     File sv_vcf
     File sv_vcf_index
-    File trgt_vcf
-    File trgt_vcf_index
-    File trgt_catalog
-
-    File aligned_bam
-    File aligned_bam_index
 
     Int pharmcat_min_coverage
 
@@ -80,8 +87,8 @@ workflow downstream {
 
   Map[String, String] ref_map = read_map(ref_map_file)
 
-  Array[File] hiphase_input_vcfs = [small_variant_vcf, sv_vcf, trgt_vcf]
-  Array[File] hiphase_input_vcf_indices = [small_variant_vcf_index, sv_vcf_index, trgt_vcf_index]
+  Array[File] hiphase_input_vcfs = [small_variant_vcf, sv_vcf]
+  Array[File] hiphase_input_vcf_indices = [small_variant_vcf_index, sv_vcf_index]
 
   scatter (vcf_index in range(length(hiphase_input_vcfs))) {
     # generate an array of phased VCF names that match the input VCFs
@@ -96,8 +103,8 @@ workflow downstream {
       vcf_indices            = hiphase_input_vcf_indices,
       phased_vcf_names       = phased_vcf_name,
       phased_vcf_index_names = phased_vcf_index_name,
-      aligned_bam            = aligned_bam,
-      aligned_bam_index      = aligned_bam_index,
+      aligned_bam            = aligned_hifi_reads,
+      aligned_bam_index      = aligned_hifi_reads_index,
       ref_name               = ref_map["name"],
       ref_fasta              = ref_map["fasta"],          # !FileCoercion
       ref_index              = ref_map["fasta_index"],    # !FileCoercion
@@ -106,7 +113,39 @@ workflow downstream {
 
   # hiphase.phased_vcfs[0] -> phased small variant VCF
   # hiphase.phased_vcfs[1] -> phased SV VCF
-  # hiphase.phased_vcfs[2] -> phased TRGT VCF
+
+  # if fail_reads were aligned, merge them with the aligned hifi bams for trgt
+  if (defined(aligned_fail_reads)) {
+    call Samtools.samtools_merge as merge_hifi_fail_bams {
+      input:
+        bams               = select_all([hiphase.haplotagged_bam, aligned_fail_reads]),
+        out_prefix         = "~{sample_id}.~{ref_map['name']}",
+        runtime_attributes = default_runtime_attributes
+    }
+  }
+
+  call Trgt.trgt {
+    input:
+      sample_id          = sample_id,
+      sex                = sex,
+      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, hiphase.haplotagged_bam]),
+      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, hiphase.haplotagged_bam_index]),
+      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
+      ref_index          = ref_map["fasta_index"],            # !FileCoercion
+      trgt_bed           = trgt_catalog,
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      min_read_quality   = -1.0,
+      runtime_attributes = default_runtime_attributes
+  }
+
+  call Trgt.coverage_dropouts {
+    input: 
+      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, hiphase.haplotagged_bam]),
+      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, hiphase.haplotagged_bam_index]),
+      trgt_bed           = trgt_catalog,
+      out_prefix         = "~{sample_id}.~{ref_map['name']}",
+      runtime_attributes = default_runtime_attributes
+  }
 
   call Bamstats.bam_stats {
     input:
@@ -114,15 +153,6 @@ workflow downstream {
       ref_name           = ref_map["name"],
       bam                = hiphase.haplotagged_bam,
       bam_index          = hiphase.haplotagged_bam_index,
-      runtime_attributes = default_runtime_attributes
-  }
-
-  call Trgt.coverage_dropouts {
-    input: 
-      aligned_bam        = hiphase.haplotagged_bam,
-      aligned_bam_index  = hiphase.haplotagged_bam_index,
-      trgt_bed           = trgt_catalog,
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
       runtime_attributes = default_runtime_attributes
   }
 
@@ -207,8 +237,6 @@ workflow downstream {
     File   phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0]
     File   phased_sv_vcf                  = hiphase.phased_vcfs[1]
     File   phased_sv_vcf_index            = hiphase.phased_vcf_indices[1]
-    File   phased_trgt_vcf                = hiphase.phased_vcfs[2]
-    File   phased_trgt_vcf_index          = hiphase.phased_vcf_indices[2]
     File   phase_stats                    = hiphase.phase_stats
     File   phase_blocks                   = hiphase.phase_blocks
     File   phase_haplotags                = hiphase.phase_haplotags
@@ -252,6 +280,14 @@ workflow downstream {
     String stat_sv_BND_count  = sv_stats.stat_sv_BND_count
     String stat_sv_SWAP_count = sv_stats.stat_sv_SWAP_count
 
+    # trgt outputs
+    File   trgt_vcf                  = trgt.vcf
+    File   trgt_vcf_index            = trgt.vcf_index
+    File   trgt_spanning_reads       = trgt.bam
+    File   trgt_spanning_reads_index = trgt.bam_index
+    String stat_trgt_genotyped_count = trgt.stat_genotyped_count
+    String stat_trgt_uncalled_count  = trgt.stat_uncalled_count
+
     # methylation outputs and profile
     File?  cpg_combined_bed                = cpg_pileup.combined_bed
     File?  cpg_combined_bed_index          = cpg_pileup.combined_bed_index
@@ -278,5 +314,12 @@ workflow downstream {
     File? pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
     File? pharmcat_report_html    = pharmcat.pharmcat_report_html
     File? pharmcat_report_json    = pharmcat.pharmcat_report_json
+
+    # qc messages
+    Array[String] msg = flatten(
+      [
+        trgt.msg
+      ]
+    )
   }
 }
