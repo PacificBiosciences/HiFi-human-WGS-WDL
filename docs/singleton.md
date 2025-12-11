@@ -48,7 +48,6 @@ flowchart TD
     hiphase["HiPhase"]
     samtools_merge_fail_reads["samtools merge phased hifi_reads and aligned fail_reads"]
     trgt["TRGT"]
-    trgt_dropouts["TR coverage dropouts"]
     bam_stats["BAM stats"]
     bcftools_roh["bcftools roh"]
     bcftools_stats["bcftools stats\n(small variants)"]

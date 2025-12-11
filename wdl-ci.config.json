@@ -1545,6 +1545,14 @@
                     "check_gzip"
                   ]
                 },
+                "dropouts": {
+                  "value": "${resources_file_path}/coverage_dropouts/HG002.GRCh38.trgt.dropouts.txt",
+                  "test_tasks": [
+                    "compare_file_basename",
+                    "check_tab_delimited",
+                    "count_columns"
+                  ]
+                },
                 "stat_genotyped_count": {
                   "value": "9163",
                   "test_tasks": [
@@ -1631,31 +1639,6 @@
                     "compare_file_basename",
                     "vcftools_validator",
                     "check_gzip"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        "coverage_dropouts": {
-          "key": "coverage_dropouts",
-          "digest": "s3j7rp6iang7c3gfbiljrc7juyjh6mna",
-          "tests": [
-            {
-              "inputs": {
-                "aligned_bam": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam",
-                "aligned_bam_index": "${resources_file_path}/trgt/input/HG002.vega_10k.hifi_reads.GRCh38.aligned.bam.bai",
-                "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
-                "out_prefix": "HG002.GRCh38",
-                "runtime_attributes": "${default_runtime_attributes}"
-              },
-              "output_tests": {
-                "dropouts": {
-                  "value": "${resources_file_path}/coverage_dropouts/HG002.GRCh38.trgt.dropouts.txt",
-                  "test_tasks": [
-                    "compare_file_basename",
-                    "check_tab_delimited",
-                    "count_columns"
                   ]
                 }
               }

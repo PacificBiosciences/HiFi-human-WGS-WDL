@@ -138,15 +138,6 @@ workflow downstream {
       runtime_attributes = default_runtime_attributes
   }
 
-  call Trgt.coverage_dropouts {
-    input: 
-      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, hiphase.haplotagged_bam]),
-      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, hiphase.haplotagged_bam_index]),
-      trgt_bed           = trgt_catalog,
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      runtime_attributes = default_runtime_attributes
-  }
-
   call Bamstats.bam_stats {
     input:
       sample_id          = sample_id,
@@ -259,7 +250,7 @@ workflow downstream {
     String stat_mapped_read_percent            = bam_stats.stat_mapped_read_percent
     String stat_gap_compressed_identity_mean   = bam_stats.stat_gap_compressed_identity_mean
     String stat_gap_compressed_identity_median = bam_stats.stat_gap_compressed_identity_median
-    File   trgt_coverage_dropouts              = coverage_dropouts.dropouts
+    File   trgt_coverage_dropouts              = trgt.dropouts
 
     # small variant stats
     File   small_variant_stats     = bcftools_stats_roh_small_variants.stats
