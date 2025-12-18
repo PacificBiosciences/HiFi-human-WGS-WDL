@@ -1526,6 +1526,8 @@
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "expected_male_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XX.bed",
                 "out_prefix": "HG002.GRCh38",
                 "runtime_attributes": "${default_runtime_attributes}"
               },
@@ -1576,6 +1578,8 @@
                 "ref_fasta": "${ref_fasta}",
                 "ref_index": "${ref_index}",
                 "trgt_bed": "${resources_file_path}/hifi-wdl-resources-v2.0.0/GRCh38/trgt/human_GRCh38_no_alt_analysis_set.trgt.v0.3.4.bed",
+                "expected_male_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XY.bed",
+                "expected_female_bed": "${datasets_file_path}/GRCh38/sawfish/expected_cn.hg38.XX.bed",
                 "out_prefix": "HG002.GRCh38",
                 "runtime_attributes": "${default_runtime_attributes}"
               },

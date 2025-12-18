@@ -126,16 +126,18 @@ workflow downstream {
 
   call Trgt.trgt {
     input:
-      sample_id          = sample_id,
-      sex                = sex,
-      aligned_bam        = select_first([merge_hifi_fail_bams.merged_bam, hiphase.haplotagged_bam]),
-      aligned_bam_index  = select_first([merge_hifi_fail_bams.merged_bam_index, hiphase.haplotagged_bam_index]),
-      ref_fasta          = ref_map["fasta"],                  # !FileCoercion
-      ref_index          = ref_map["fasta_index"],            # !FileCoercion
-      trgt_bed           = trgt_catalog,
-      out_prefix         = "~{sample_id}.~{ref_map['name']}",
-      min_read_quality   = -1.0,
-      runtime_attributes = default_runtime_attributes
+      sample_id           = sample_id,
+      sex                 = sex,
+      aligned_bam         = select_first([merge_hifi_fail_bams.merged_bam, hiphase.haplotagged_bam]),
+      aligned_bam_index   = select_first([merge_hifi_fail_bams.merged_bam_index, hiphase.haplotagged_bam_index]),
+      ref_fasta           = ref_map["fasta"],                                                                     # !FileCoercion
+      ref_index           = ref_map["fasta_index"],                                                               # !FileCoercion
+      trgt_bed            = trgt_catalog,
+      expected_male_bed   = ref_map["sawfish_expected_bed_male"],                                                 # !FileCoercion
+      expected_female_bed = ref_map["sawfish_expected_bed_female"],                                               # !FileCoercion
+      out_prefix          = "~{sample_id}.~{ref_map['name']}",
+      min_read_quality    = -1.0,
+      runtime_attributes  = default_runtime_attributes
   }
 
   call Bamstats.bam_stats {
