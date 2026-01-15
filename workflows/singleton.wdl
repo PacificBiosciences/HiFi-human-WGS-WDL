@@ -125,12 +125,11 @@ workflow humanwgs_singleton {
       sex                           = sex,
       hifi_reads                    = hifi_reads,
       fail_reads                    = fail_reads,
-      ref_map_file                  = ref_map_file,
-      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
-      trgt_catalog                  = process_trgt_catalog.full_catalog,
       fail_reads_bed                = process_trgt_catalog.include_fail_reads_bed,
       fail_reads_bait_fasta         = process_trgt_catalog.fail_reads_bait_fasta,
       fail_reads_bait_index         = process_trgt_catalog.fail_reads_bait_index,
+      ref_map_file                  = ref_map_file,
+      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
       single_sample                 = true,
       gpu                           = gpu,
       default_runtime_attributes    = default_runtime_attributes
@@ -139,15 +138,16 @@ workflow humanwgs_singleton {
   call Downstream.downstream {
     input:
       sample_id                  = sample_id,
+      sex                        = upstream.inferred_sex,
+      aligned_hifi_reads         = upstream.aligned_hifi_reads,
+      aligned_hifi_reads_index   = upstream.aligned_hifi_reads_index,
+      aligned_fail_reads         = upstream.aligned_fail_reads,
+      aligned_fail_reads_index   = upstream.aligned_fail_reads_index,
+      trgt_catalog               = process_trgt_catalog.full_catalog,
       small_variant_vcf          = upstream.small_variant_vcf,
       small_variant_vcf_index    = upstream.small_variant_vcf_index,
       sv_vcf                     = select_first([upstream.sv_vcf]),
       sv_vcf_index               = select_first([upstream.sv_vcf_index]),
-      trgt_vcf                   = upstream.trgt_vcf,
-      trgt_vcf_index             = upstream.trgt_vcf_index,
-      trgt_catalog               = process_trgt_catalog.full_catalog,
-      aligned_bam                = upstream.out_bam,
-      aligned_bam_index          = upstream.out_bam_index,
       pharmcat_min_coverage      = pharmcat_min_coverage,
       ref_map_file               = ref_map_file,
       default_runtime_attributes = default_runtime_attributes
@@ -216,8 +216,8 @@ workflow humanwgs_singleton {
     ['sv_INV_count', downstream.stat_sv_INV_count],
     ['sv_SWAP_count', downstream.stat_sv_SWAP_count],
     ['sv_BND_count', downstream.stat_sv_BND_count],
-    ['trgt_genotyped_count', upstream.stat_trgt_genotyped_count],
-    ['trgt_uncalled_count', upstream.stat_trgt_uncalled_count]
+    ['trgt_genotyped_count', downstream.stat_trgt_genotyped_count],
+    ['trgt_uncalled_count', downstream.stat_trgt_uncalled_count]
   ]
 
   call Utilities.consolidate_stats {
@@ -323,13 +323,13 @@ workflow humanwgs_singleton {
     File   indel_distribution_plot         = downstream.indel_distribution_plot
 
     # trgt outputs
-    File   phased_trgt_vcf           = downstream.phased_trgt_vcf
-    File   phased_trgt_vcf_index     = downstream.phased_trgt_vcf_index
-    File   trgt_spanning_reads       = upstream.trgt_spanning_reads
-    File   trgt_spanning_reads_index = upstream.trgt_spanning_reads_index
+    File   phased_trgt_vcf           = downstream.trgt_vcf
+    File   phased_trgt_vcf_index     = downstream.trgt_vcf_index
+    File   trgt_spanning_reads       = downstream.trgt_spanning_reads
+    File   trgt_spanning_reads_index = downstream.trgt_spanning_reads_index
     File   trgt_coverage_dropouts    = downstream.trgt_coverage_dropouts
-    String stat_trgt_genotyped_count = upstream.stat_trgt_genotyped_count
-    String stat_trgt_uncalled_count  = upstream.stat_trgt_uncalled_count
+    String stat_trgt_genotyped_count = downstream.stat_trgt_genotyped_count
+    String stat_trgt_uncalled_count  = downstream.stat_trgt_uncalled_count
 
     # paraphase outputs
     File? paraphase_output_json         = upstream.paraphase_output_json
@@ -364,12 +364,13 @@ workflow humanwgs_singleton {
     Array[String] msg = flatten(
       [
         process_trgt_catalog.msg,
-        upstream.msg
+        upstream.msg,
+        downstream.msg
       ]
     )
 
     # workflow metadata
     String workflow_name    = "humanwgs_singleton"
-    String workflow_version = "v3.1.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_version = "v3.2.0" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
