@@ -180,8 +180,8 @@ workflow upstream {
   call DeepVariant.deepvariant {
     input:
       sample_id                  = sample_id,
-      aligned_bams               = flatten(pbmm2.aligned_bams),
-      aligned_bam_indices        = flatten(pbmm2.aligned_bam_indices),
+      aligned_bams               = [aligned_bam_data],
+      aligned_bam_indices        = [aligned_bam_index],
       ref_fasta                  = ref_map["fasta"],       # !FileCoercion
       ref_index                  = ref_map["fasta_index"], # !FileCoercion
       ref_name                   = ref_map["name"],
