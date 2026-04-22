@@ -1,0 +1,14 @@
+{
+  "process_trgt_catalog.trgt_catalog": "File <REQUIRED>",
+  "process_trgt_catalog.ref_fasta": "File <REQUIRED>",
+  "process_trgt_catalog.ref_index": "File <REQUIRED>",
+  "process_trgt_catalog.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

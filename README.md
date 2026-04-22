@@ -9,11 +9,11 @@ Workflow for analyzing human PacBio whole genome sequencing (WGS) data using [Wo
 
 ## Workflow
 
-Starting in v2, this repo contains two related workflows. The `singleton` workflow is designed to analyze a single sample, while the `family` workflow is designed to analyze a family of related samples.  With the exception of the joint calling tasks in the `family` workflow, both workflows make use of the same tasks, although the input and output structure differ.
+Starting in v2, this repo contains two related workflows. The `singleton` workflow is designed to analyze a single sample, while the `family` workflow is designed to analyze a family of related samples. With the exception of the joint calling tasks in the `family` workflow, both workflows make use of the same tasks, although the input and output structure differ.
 
-The `family` workflow will be best for most use cases.  The `singleton` workflow inputs and output structures are relatively flat, which should improve compatibility with platforms like Terra.
+The `family` workflow will be best for most use cases. The `singleton` workflow inputs and output structures are relatively flat, which should improve compatibility with platforms like Terra.
 
-Both workflows are designed to analyze human PacBio whole genome sequencing (WGS) data.  The workflows are designed to be run on Azure, AWS HealthOmics, GCP, or HPC backends.
+Both workflows are designed to analyze human PacBio whole genome sequencing (WGS) data. The workflows are designed to be run on Azure, AWS HealthOmics, GCP, or HPC backends.
 
 **Workflow entrypoint**:
 
@@ -24,27 +24,26 @@ Both workflows are designed to analyze human PacBio whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v3.2.1):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v3.3.0):
 
-  ```bash
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.2.1/hifi-human-wgs-singleton.zip
-  wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.2.1/hifi-human-wgs-family.zip
-  ```
+   ```bash
+   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.3.0/hifi-human-wgs-singleton.zip
+   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v3.3.0/hifi-human-wgs-family.zip
+   ```
 
 2) Clone the repository and initialize the submodules:
 
-  ```bash
-  git clone \
-    --depth 1 --branch v3.2.1 \
-    --recursive \
-    https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
-  ```
+   ```bash
+   git clone \
+     --depth 1 --branch v3.3.0 \
+     https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
+   ```
 
 ## Resource requirements
 
 The most resource-heavy step in the workflow requires 64 cpu cores and 256 GB of RAM. Ensure that the backend environment you're using has enough quota to run the workflow.
 
-On some backends, you may be able to make use of a GPU to accelerate the DeepVariant step.  The GPU is not required, but it can significantly speed up the workflow.  If you have access to a GPU, you can set the `gpu` parameter to `true` in the inputs JSON file.
+On some backends, you may be able to make use of a GPU to accelerate the DeepVariant step.The GPU is not required, but it can significantly speed up the workflow. If you have access to a GPU, you can set the `gpu` parameter to `true` in the inputs JSON file.
 
 ## Reference datasets and associated workflow files
 
@@ -96,7 +95,7 @@ The input to a workflow run is defined in JSON format. Template input files with
 
 Using the appropriate inputs template file, fill in the cohort and sample information (see [Workflow Inputs](#workflow-inputs) for more information on the input structure).
 
-If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC.  If using Amazon HealthOmics, you will need to download the reference bundle, upload it to your S3 bucket, and adjust paths accordingly.
+If using an HPC backend, you will need to download the reference bundle and replace the `<local_path_prefix>` in the input template file with the local path to the reference datasets on your HPC. If using Amazon HealthOmics, you will need to download the reference bundle, upload it to your S3 bucket, and adjust paths accordingly.
 
 ### Running the workflow
 

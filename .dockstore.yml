@@ -14,8 +14,8 @@ workflows:
       - orcid: 0009-0001-0205-4614 # Karen Fang
     latestTagAsDefault: False
     filters:
-      branches: [ /.*dockstore/ ]
-      tags: [ /v.*dockstore/ ]
+      branches: [ /.*/ ]
+      tags: [ /v.*/ ]
   - name: HiFi-human-WGS-WDL-family
     subclass: WDL
     primaryDescriptorPath: /workflows/family.wdl
@@ -29,5 +29,5 @@ workflows:
       - orcid: 0009-0001-0205-4614 # Karen Fang
     latestTagAsDefault: False
     filters:
-      branches: [ /.*dockstore/ ]
-      tags: [ /v.*dockstore/ ]
+      branches: [ /.*/ ]
+      tags: [ /v.*/ ]

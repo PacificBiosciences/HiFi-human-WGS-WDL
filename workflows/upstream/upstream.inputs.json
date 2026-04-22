@@ -1,0 +1,22 @@
+{
+  "upstream.sample_id": "String <REQUIRED>",
+  "upstream.sex": null,
+  "upstream.hifi_reads": "Array[File] <REQUIRED>",
+  "upstream.fail_reads": null,
+  "upstream.fail_reads_bed": null,
+  "upstream.fail_reads_bait_index": null,
+  "upstream.ref_map_file": "File <REQUIRED>",
+  "upstream.max_reads_per_alignment_chunk": "Int <REQUIRED>",
+  "upstream.single_sample": false,
+  "upstream.use_gpu": "Boolean <REQUIRED>",
+  "upstream.use_parabricks_deepvariant": "Boolean <REQUIRED>",
+  "upstream.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "backend_configuration.backend": "String <REQUIRED>",
+  "backend_configuration.zones": null,
+  "backend_configuration.cpuPlatform": null,
+  "backend_configuration.gpuType": null,
+  "backend_configuration.container_registry": null
+}
