@@ -34,4 +34,4 @@ wget https://zenodo.org/record/17086906/files/hifi-wdl-resources-v3.1.0.tar
 tar -xvf hifi-wdl-resources-v3.1.0.tar
 ```
 
-Upload the hifi-wdl-resources-v3.1.0 directory to Azure Blob Storage. The reference data can be uploaded to any blob storage container for which your Cromwell on Azure instance has access.  Update the [Azure input file template](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/azure/singleton.azure.inputs.json) with the path to the reference data in blob storage.
+Upload the hifi-wdl-resources-v3.1.0 directory to Azure Blob Storage. The reference data can be uploaded to any blob storage container for which your Cromwell on Azure instance has access. Update the [Azure input file template](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/azure/singleton.azure.inputs.json) with the path to the reference data in blob storage.

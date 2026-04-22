@@ -1,0 +1,20 @@
+{
+  "parabricks_deepvariant.sample_id": "String <REQUIRED>",
+  "parabricks_deepvariant.aligned_bam": "File <REQUIRED>",
+  "parabricks_deepvariant.aligned_bam_index": "File <REQUIRED>",
+  "parabricks_deepvariant.regions_bed": null,
+  "parabricks_deepvariant.ref_fasta": "File <REQUIRED>",
+  "parabricks_deepvariant.ref_index": "File <REQUIRED>",
+  "parabricks_deepvariant.ref_name": "String <REQUIRED>",
+  "parabricks_deepvariant.gvcf_output": true,
+  "parabricks_deepvariant.parabricks_version": "4.7.0-1",
+  "parabricks_deepvariant.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

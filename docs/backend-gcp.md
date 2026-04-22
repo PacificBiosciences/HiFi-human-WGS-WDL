@@ -22,7 +22,7 @@ For example, the zones in region `us-central1` are `"us-central1-a us-central1-b
 
 #### Setting the optional cpuPlatform parameter
 
-Some GCP zones, for example `me-central1`, lack the n1 nodes used by many tasks in the workflow.  As a workaround, you can specify the minimum cpu platform to be used by the workflow to `"Intel Cascade Lake"`.  There is no need to specify the `cpuPlatform` input unless you encounter this issue.
+Some GCP zones, for example `me-central1`, lack the n1 nodes used by many tasks in the workflow. As a workaround, you can specify the minimum cpu platform to be used by the workflow to `"Intel Cascade Lake"`. There is no need to specify the `cpuPlatform` input unless you encounter this issue.
 
 ## Running the workflow via Google's genomics Pipelines API
 

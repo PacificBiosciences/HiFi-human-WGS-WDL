@@ -1,0 +1,24 @@
+{
+  "downstream.sample_id": "String <REQUIRED>",
+  "downstream.sex": "String <REQUIRED>",
+  "downstream.aligned_hifi_reads": "File <REQUIRED>",
+  "downstream.aligned_hifi_reads_index": "File <REQUIRED>",
+  "downstream.aligned_fail_reads": null,
+  "downstream.aligned_fail_reads_index": null,
+  "downstream.trgt_catalog": "File <REQUIRED>",
+  "downstream.small_variant_vcf": "File <REQUIRED>",
+  "downstream.small_variant_vcf_index": "File <REQUIRED>",
+  "downstream.sv_vcf": "File <REQUIRED>",
+  "downstream.sv_vcf_index": "File <REQUIRED>",
+  "downstream.pharmcat_min_coverage": "Int <REQUIRED>",
+  "downstream.ref_map_file": "File <REQUIRED>",
+  "downstream.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

@@ -10,7 +10,7 @@ The workflow has the following inputs:
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File chooser | Family struct | One or more files corresponding to the sample data described in your Family struct JSON below. | 
+| File chooser | Family struct | One or more files corresponding to the sample data described in your Family struct JSON below. | |
 | File chooser | TRGT Tandem Repeat Definitions | BED file containing repeat coordinates and information about the repeat structure. | The default file should be sufficient for most use cases. |
 | Struct | Family struct | Family struct JSON describing samples, relationships, and unaligned BAM paths. | See below for more information. |
 | Integer | GLnexus memory override | Override GLnexus memory request (GB) | Optional. Should only be specified if GLnexus step fails. |
@@ -50,7 +50,7 @@ A `Sample` struct contains sample specific data and metadata. The struct has the
 
 #### Specifying HiFi BAM inputs
 
-When specifying DNAnexus `hifi_reads` files, format them as `{"$dnanexus_link": {"id": "file-xxxx", "project": "project-xxxx"}}` as is in the examples below. One or more `hifi_reads` files can be specified for each sample.  The single sample example has multiple files, and the trio example has one file per sample.
+When specifying DNAnexus `hifi_reads` files, format them as `{"$dnanexus_link": {"id": "file-xxxx", "project": "project-xxxx"}}` as is in the examples below. One or more `hifi_reads` files can be specified for each sample. The single sample example has multiple files, and the trio example has one file per sample.
 
 #### Example Single Sample JSON
 
@@ -139,6 +139,6 @@ When submitting files to DNAnexus, start by manually writing the JSON document f
 
 If the job is being submitted via the DNAnexus CLI using an inputs JSON file ([documentation here](https://documentation.dnanexus.com/user/running-apps-and-workflows/running-apps-and-applets#from-the-cli)), the JSON document should be included as the value for the `family` input parameter.
 
-If the job is being submitted via the DNAnexus web interface, there will be two input fields for the `family` input parameter: a file array entry and a text entry. Paste the JSON document into the `family` text input field.  It is safe to paste directly in as a multi-line file as in the examples above.  In the file array entry, select all the read files that are included in the `hifi_reads` section of all included samples.  For the singleton example above, the two read files for the sample would be selected.  For the trio example above, the three read files for the three samples would be selected.
+If the job is being submitted via the DNAnexus web interface, there will be two input fields for the `family` input parameter: a file array entry and a text entry. Paste the JSON document into the `family` text input field. It is safe to paste directly in as a multi-line file as in the examples above. In the file array entry, select all the read files that are included in the `hifi_reads` section of all included samples. For the singleton example above, the two read files for the sample would be selected. For the trio example above, the three read files for the three samples would be selected.
 
 If read files included in the `family` JSON document are not selected, the workflow will fail with the error message `keys (TreeSet(affected, hifi_reads, sample_id)) have members that do not appear in struct Family`.

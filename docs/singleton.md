@@ -100,18 +100,22 @@ flowchart TD
 | ---- | ---- | ----------- | ----- |
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
 | String? | sex | Sample sex<br/>`["MALE", "FEMALE"]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`. |
-| Array\[File\] | hifi_reads | Array of paths to HiFi reads in unaligned BAM format. |  |
-| Array\[File\]? | fail_reads | Array of paths to failed HiFi reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
-| File | [ref_map_file](./ref_map.md) | TSV containing reference genome file paths; must match backend |  |
+| Array\[File\] | hifi_reads | Array of paths to hifi_reads in unaligned BAM format. | |
+| Array\[File\]? | fail_reads | Array of paths to fail_reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
+| File | [ref_map_file](./ref_map.md) | TSV containing reference genome file paths; must match backend | |
 | String? | phenotypes | Comma-delimited list of HPO terms. | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort.<br/><br/>If omitted, tertiary analysis will be skipped. |
 | File? | [tertiary_map_file](./tertiary_map.md) | TSV containing tertiary analysis file paths and thresholds; must match backend | `AF`/`AC`/`nhomalt` thresholds can be modified, but this will affect performance.<br/><br/>If omitted, tertiary analysis will be skipped. |
-| Boolean | gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
-| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-AGC", "AWS-HealthOmics", "HPC"]` |  |
-| String? | zones | Zones where compute will take place; required if backend is set to 'AWS' or 'GCP'. | [Determining available zones in GCP](./backends/gcp.md#determining-available-zones) |
+| Int | max_reads_per_alignment_chunk | Maximum reads per alignment chunk<br/><br/>Default: `500000` | |
+| Int | pharmcat_min_coverage | Minimum coverage for PharmCAT<br/><br/>Default: `10` | |
+| Boolean | use_gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
+| Boolean | use_parabricks_deepvariant | Use Parabricks DeepVariant implementation<br/><br/>Default: `false` | If both `use_parabricks_deepvariant` and `use_gpu` are set to `true`, Parabricks DeepVariant will be used instead of standard DeepVariant.<br/><br/>[Parabricks DeepVariant](./parabricks.md#parabricks-deepvariant-subworkflow) |
+| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-HealthOmics", "HPC"]` | |
+| String? | zones | Zones where compute will take place; required if backend is set to 'GCP' | [Determining available zones in GCP](./backend-gcp.md#determining-available-zones) |
 | String? | cpuPlatform | Minimum CPU platform to use for tasks on GCP | Optional, only necessary in certain zones lacking n1 nodes. |
-| String? | gpuType | GPU type to use; required if gpu is set to `true` for cloud backends; must match backend  | [Available GPU types](./gpu.md#gpu-types) |
+| String? | gpuType | GPU type to use; required if use_gpu is set to `true` for cloud backends; must match backend | [Available GPU types](./gpu.md#gpu-types) |
 | String? | container_registry | Container registry where workflow images are hosted.<br/><br/>Default: `"quay.io/pacbio"` | If omitted, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used.<br/><br/>Custom container_registry must be set if backend is set to 'AWS-HealthOmics'. |
 | Boolean | preemptible | Where possible, run tasks preemptibly<br/><br/>`[true, false]`<br/><br/>Default: `true` | If set to `true`, run tasks preemptibly where possible. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. |
+| String? | debug_version | Debug version for testing purposes | |
 
 ## Outputs
 
@@ -119,32 +123,32 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| String | workflow_name | Workflow name |  |
-| String | workflow_version | Workflow version |  |
-| Array\[String\] | msg | Messages from the workflow |  |
-| File | msg_file | File containing messages from the workflow |  |
-| File | stats_file | Table of summary statistics |  |
-| File | bam_stats | BAM stats | Per-read length and read-quality |
-| File | read_length_plot | Read length plot |  |
-| File? | read_quality_plot | Read quality plot |  |
+| String | workflow_name | Workflow name | |
+| String | workflow_version | Workflow version | |
+| Array\[String\] | msg | Messages from the workflow | |
+| File | msg_file | File containing messages from the workflow | |
+| File | stats_file | Table of summary statistics | |
+| File | bam_statistics | BAM statistics | Per-read length and read-quality |
+| File | read_length_plot | Distribution of read lengths | |
+| File? | read_quality_plot | Distribution of read qualities | |
 | File | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
-| File | merged_haplotagged_bam_index |  |  |
-| File | mosdepth_summary | Summary of aligned read depth. |  |
-| File | mosdepth_region_bed | Median aligned read depth by 500bp windows. |  |
-| File | mosdepth_region_bed_index |  |  |
-| File | mosdepth_depth_distribution_plot |  |  |
+| File | merged_haplotagged_bam_index | | |
+| File | mosdepth_summary | Summary of aligned read depth | |
+| File | mosdepth_region_bed | Median aligned read depth by 500bp windows | |
+| File | mosdepth_region_bed_index | | |
+| File | mosdepth_depth_distribution_plot | Distribution of aligned read depth | |
 | File | mapq_distribution_plot | Distribution of mapping quality per alignment | |
-| File | mg_distribution_plot | Distribution of gap-compressed identity score per alignment | |
-| String | stat_read_count | Number of reads |  |
-| String | stat_read_length_mean | Mean read length |  |
-| String | stat_read_length_median | Median read length |  |
-| String | stat_read_length_n50 | Read length N50 |  |
-| String | stat_read_quality_mean | Mean read quality |  |
-| String | stat_read_quality_median | Median read quality |  |
-| String | stat_mapped_read_count | Count of reads mapped to reference |  |
-| String | stat_mapped_read_percent | Percent of reads mapped to reference |  |
-| String | stat_gap_compressed_identity_mean | Mean gap-compressed identity |  |
-| String | stat_gap_compressed_identity_median | Median gap-compressed identity |  |
+| File | mg_distribution_plot | Distribution of gap-compressed identity per alignment | |
+| String | stat_read_count | Number of reads | |
+| String | stat_read_length_mean | Mean read length | |
+| String | stat_read_length_median | Median read length | |
+| String | stat_read_length_n50 | Read length N50 | |
+| String | stat_read_quality_mean | Mean read quality | |
+| String | stat_read_quality_median | Median read quality | |
+| String | stat_mapped_read_count | Number of reads mapped to reference | |
+| String | stat_mapped_read_percent | Percent of reads mapped to reference | |
+| String | stat_gap_compressed_identity_mean | Mean gap-compressed identity | |
+| String | stat_gap_compressed_identity_median | Median gap-compressed identity | |
 | String | inferred_sex | Inferred sex | Sex is inferred based on relative depth of chrY alignments. |
 | String | stat_depth_mean | Mean depth | |
 
@@ -152,15 +156,15 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | phased_small_variant_vcf | Phased small variant VCF |  |
-| File | phased_small_variant_vcf_index |  |  |
-| File | small_variant_gvcf | Small variant GVCF | Can be used for joint-calling. |
-| File | small_variant_gvcf_index |  |  |
-| File | small_variant_stats | Small variant stats | Generated by `bcftools stats`. |
-| String | stat_small_variant_SNV_count | SNV count | (PASS variants) |
-| String | stat_small_variant_INDEL_count | INDEL count | (PASS variants) |
+| File | phased_small_variant_vcf | Phased small variant VCF | |
+| File | phased_small_variant_vcf_index | | |
+| File? | small_variant_gvcf | Small variant GVCF | Can be used for joint-calling. |
+| File? | small_variant_gvcf_index | | |
+| File | small_variant_stats | Small variant statistics | Generated by `bcftools stats`. |
+| String | stat_small_variant_SNV_count | Number of SNVs | (PASS variants) |
+| String | stat_small_variant_INDEL_count | Number of INDELs | (PASS variants) |
 | String | stat_small_variant_TSTV_ratio | Ts/Tv ratio | (PASS variants) |
-| String | stat_small_variant_HETHOM_ratio | Het/Hom ratio | (PASS variants) |
+| String | stat_small_variant_HETHOM_ratio | Het/Hom ratio for SNVs | (PASS variants) |
 | File | snv_distribution_plot | Distribution of SNVs by REF, ALT | |
 | File | indel_distribution_plot | Distribution of indels by size | |
 
@@ -168,104 +172,103 @@ flowchart TD
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | phased_sv_vcf | Phased structural variant VCF |  |
-| File | phased_sv_vcf_index | Index for phased structural variant VCF |  |
-| String | stat_sv_DUP_count | Structural variant DUP count | (PASS variants) |
-| String | stat_sv_DEL_count | Structural variant DEL count | (PASS variants) |
-| String | stat_sv_INS_count | Structural variant INS count | (PASS variants) |
-| String | stat_sv_INV_count | Structural variant INV count | (PASS variants) |
-| String | stat_sv_BND_count | Structural variant BND count | (PASS variants) |
-| String | stat_sv_SWAP_count | Structural variant sequence swap events | (PASS variants) |
-| File | sv_supporting_reads | Supporting reads for structural variants |  |
-| File | sv_copynum_bedgraph | CNV copy number BEDGraph |  |
-| File | sv_depth_bw | CNV depth BigWig |  |
-| File | sv_gc_bias_corrected_depth_bw | CNV GC-bias corrected depth BigWig |  |
-| File | sv_maf_bw | CNV MAF BigWig |  |
-| File | sv_copynum_summary | CNV copy number summary JSON |  |
-| File | bcftools_roh_out | ROH calling |  `bcftools roh` |
-| File | bcftools_roh_bed | Generated from above, without filtering |  |
+| File | phased_sv_vcf | Phased structural variant VCF | |
+| File | phased_sv_vcf_index | Index for phased structural variant VCF | |
+| String | stat_sv_DUP_count | Number of DUP structural variants | (PASS variants) |
+| String | stat_sv_DEL_count | Number of DEL structural variants | (PASS variants) |
+| String | stat_sv_INS_count | Number of INS structural variants | (PASS variants) |
+| String | stat_sv_INV_count | Number of INV structural variants | (PASS variants) |
+| String | stat_sv_BND_count | Number of BND structural variants | (PASS variants) |
+| String | stat_sv_SWAP_count | Number of structural variant sequence swap events | (PASS variants) |
+| File | sv_supporting_reads | Supporting reads for structural variants | |
+| File | sv_copynum_bedgraph | CNV copy number BEDGraph | |
+| File | sv_depth_bw | CNV depth BigWig | |
+| File | sv_gc_bias_corrected_depth_bw | CNV GC-bias corrected depth BigWig | |
+| File | sv_maf_bw | CNV MAF BigWig | |
+| File | sv_copynum_summary | CNV copy number summary JSON | |
+| File | bcftools_roh_out | Regions of homozygosity | `bcftools roh` |
+| File | bcftools_roh_bed | Regions of homozygosity BED | |
 
 ### Mitochondrial variants and haplotypes
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | mitorsaw_vcf | Mitochondrial variant VCF |  |
-| File | mitorsaw_vcf_index | Index for mitochondrial variant VCF |  |
-| File | mitorsaw_hap_stats | Mitochondrial haplotype stats |  |
+| File | mitorsaw_vcf | Mitochondrial variant VCF | |
+| File | mitorsaw_vcf_index | Index for mitochondrial variant VCF | |
+| File | mitorsaw_hap_stats | Mitochondrial haplotype statistics | |
 
 ### Tandem Repeat Genotyping
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | phased_trgt_vcf | Phased TRGT VCF |  |
-| File | phased_trgt_vcf_index |  |  |
-| File | trgt_spanning_reads | TRGT spanning reads |  |
-| File | trgt_spanning_reads_index |  |  |
-| File | trgt_coverage_dropouts | TRGT coverage dropouts |  |
-| String | stat_trgt_genotyped_count | Count of genotyped sites |  |
-| String | stat_trgt_uncalled_count | Count of ungenotyped sites |  |
+| File | phased_trgt_vcf | Phased TRGT VCF | |
+| File | phased_trgt_vcf_index | | |
+| File | trgt_spanning_reads | Aligned TRGT spanning reads | |
+| File | trgt_spanning_reads_index | | |
+| File | trgt_coverage_dropouts | TRGT regions with coverage dropouts | |
+| String | stat_trgt_genotyped_count | Number of sites genotyped by TRGT | |
+| String | stat_trgt_uncalled_count | Number of sites ungenotyped by TRGT | |
 
 ### Variant Phasing
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | phase_stats | Phasing stats |  |
-| File | phase_blocks | Phase blocks |  |
-| File | phase_haplotags | Per-read haplotag assignment |  |
-| String | stat_phased_basepairs | Count of bp within phase blocks |  |
-| String | stat_phase_block_ng50 | Phase block NG50 |  |
+| File | phase_stats | Phasing statistics | |
+| File | phase_blocks | Phase blocks | |
+| File | phase_haplotags | Per-read phase assignment | |
+| String | stat_phased_basepairs | Number of basepairs within phase blocks | |
+| String | stat_phase_block_ng50 | Phase block NG50 | |
 
 ### Variant Calling in Dark Regions
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File? | paraphase_output_json | Paraphase output JSON |  |
-| File? | paraphase_realigned_bam | Paraphase realigned BAM |  |
-| File? | paraphase_realigned_bam_index |  |  |
+| File? | paraphase_summary | Paraphase summary | |
+| File? | paraphase_realigned_bam | BAM file of reads realigned by Paraphase | |
+| File? | paraphase_realigned_bam_index | | |
 | File? | paraphase_vcfs | Paraphase VCFs | Compressed as `.tar.gz` |
 
 ### 5mCpG Methylation Calling
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File? | cpg_hap1_bed | CpG hap1 BED |  |
-| File? | cpg_hap1_bed_index |  |  |
-| File? | cpg_hap2_bed | CpG hap2 BED |  |
-| File? | cpg_hap2_bed_index |  |  |
-| File? | cpg_combined_bed | CpG combined BED |  |
-| File? | cpg_combined_bed_index |  |  |
-| File? | cpg_hap1_bw | CpG hap1 BigWig |  |
-| File? | cpg_hap2_bw | CpG hap2 BigWig |  |
-| File? | cpg_combined_bw | CpG combined BigWig |  |
-| String | stat_cpg_hap1_count | Hap1 CpG count |  |
-| String | stat_cpg_hap2_count | Hap2 CpG count |  |
-| String | stat_cpg_combined_count | Combined CpG count |  |
-| File? | methbat_profile | MethBat CpG profile |  |
-| String | stat_methbat_methylated_count | Count of profiled regions labeled as methylated |  |
-| String | stat_methbat_unmethylated_count | Count of profiled regions labeled as unmethylated |  |
-| String | stat_methbat_asm_count | Count of profiled regions labeled as having allele specific methylation |  |
+| File? | cpg_hap1_bed | 5mCpG haplotype 1 BED | |
+| File? | cpg_hap1_bed_index | | |
+| File? | cpg_hap2_bed | 5mCpG haplotype 2 BED | |
+| File? | cpg_hap2_bed_index | | |
+| File? | cpg_combined_bed | 5mCpG combined BED | |
+| File? | cpg_combined_bed_index | | |
+| File? | cpg_hap1_bw | 5mCpG haplotype 1 BigWig | |
+| File? | cpg_hap2_bw | 5mCpG haplotype 2 BigWig | |
+| File? | cpg_combined_bw | 5mCpG combined BigWig | |
+| String | stat_cpg_hap1_count | Number of scored reference 5mCpGs in haplotype 1 | |
+| String | stat_cpg_hap2_count | Number of scored reference 5mCpGs in haplotype 2 | |
+| String | stat_cpg_combined_count | Number of scored reference 5mCpGs combined | |
+| File? | methbat_profile | MethBat 5mCpG profile | |
+| String | stat_methbat_methylated_count | Number of profiled regions labeled as methylated | |
+| String | stat_methbat_unmethylated_count | Number of profiled regions labeled as unmethylated | |
+| String | stat_methbat_asm_count | Number of profiled regions labeled as having allele-specific methylation | |
 
 ### PGx Typing
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File | pbstarphase_json | PBstarPhase JSON | Haplotype calls for PGx loci |
-| File? | pharmcat_match_json | PharmCAT match JSON |  |
-| File? | pharmcat_phenotype_json | PharmCAT phenotype JSON |  |
-| File? | pharmcat_report_html | PharmCAT report HTML |  |
-| File? | pharmcat_report_json | PharmCAT report JSON |  |
+| File | pbstarphase_summary | StarPhase summary | Haplotype calls for PGx loci |
+| File? | pharmcat_match_json | PharmCAT match JSON | |
+| File? | pharmcat_phenotype_json | PharmCAT phenotype JSON | |
+| File? | pharmcat_report_html | PharmCAT report HTML | |
+| File? | pharmcat_report_json | PharmCAT report JSON | |
 
 ### Tertiary Analysis
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| File? | pedigree | Pedigree file in PLINK PED [format](https://zzz.bwh.harvard.edu/plink/data.shtml#ped) |  |
-| File? | tertiary_small_variant_filtered_vcf | Filtered, annotated small variant VCF |  |
-| File? | tertiary_small_variant_filtered_vcf_index |  |  |
-| File? | tertiary_small_variant_filtered_tsv | Filtered, annotated small variant calls |  |
-| File? | tertiary_small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF |  |
-| File? | tertiary_small_variant_compound_het_vcf_index |  |  |
-| File? | tertiary_small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant calls |  |
-| File? | tertiary_sv_filtered_vcf | Filtered, annotated structural variant VCF |  |
-| File? | tertiary_sv_filtered_vcf_index |  |  |
-| File? | tertiary_sv_filtered_tsv | Filtered, annotated structural variant TSV |  |
+| File? | tertiary_small_variant_filtered_vcf | Filtered, annotated small variant VCF | |
+| File? | tertiary_small_variant_filtered_vcf_index | | |
+| File? | tertiary_small_variant_filtered_tsv | Filtered, annotated small variant TSV | |
+| File? | tertiary_small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF | |
+| File? | tertiary_small_variant_compound_het_vcf_index | | |
+| File? | tertiary_small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant TSV | |
+| File? | tertiary_sv_filtered_vcf | Filtered, annotated structural variant VCF | |
+| File? | tertiary_sv_filtered_vcf_index | | |
+| File? | tertiary_sv_filtered_tsv | Filtered, annotated structural variant TSV | |

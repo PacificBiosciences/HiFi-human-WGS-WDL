@@ -1,0 +1,20 @@
+{
+  "joint.family_id": "String <REQUIRED>",
+  "joint.sample_ids": "Array[String] <REQUIRED>",
+  "joint.gvcfs": "Array[File] <REQUIRED>",
+  "joint.gvcf_indices": "Array[File] <REQUIRED>",
+  "joint.discover_tars": "Array[File] <REQUIRED>",
+  "joint.aligned_bams": "Array[File] <REQUIRED>",
+  "joint.aligned_bam_indices": "Array[File] <REQUIRED>",
+  "joint.ref_map_file": "File <REQUIRED>",
+  "joint.glnexus_mem_gb": "Int <REQUIRED>",
+  "joint.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

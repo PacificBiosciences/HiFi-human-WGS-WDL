@@ -1,33 +1,18 @@
 {
-  "humanwgs_family.family": {
-    "family_id": "String",
-    "samples": [
-      {
-        "sample_id": "String",
-        "hifi_reads": [
-          "File"
-        ],
-        "fail_reads": "Array[File]? (optional)",
-        "affected": "Boolean",
-        "sex": "String? (optional); ['MALE', 'FEMALE']",
-        "father_id": "String? (optional)",
-        "mother_id": "String? (optional)"
-      }
-    ]
-  },
-  "humanwgs_family.phenotypes": "String? (optional)",
-  "humanwgs_family.ref_map_file": "File",
-  "humanwgs_family.tertiary_map_file": "File? (optional)",
-  "humanwgs_family.max_reads_per_alignment_chunk": "Int (optional, default = 500000)",
-  "humanwgs_family.pharmcat_min_coverage": "Int (optional, default = 10)",
-  "humanwgs_family.glnexus_mem_gb": "Int? (optional)",
-  "humanwgs_family.gpu": "Boolean (optional, default = false)",
-  "humanwgs_family.backend": "String",
-  "humanwgs_family.zones": "String? (optional)",
-  "humanwgs_family.cpuPlatform": "String? (optional)",
-  "humanwgs_family.gpuType": "String? (optional)",
-  "humanwgs_family.container_registry": "String? (optional)",
-  "humanwgs_family.container_namespace": "String? (optional)",
-  "humanwgs_family.preemptible": "Boolean",
-  "humanwgs_family.debug_version": "String? (optional)"
+  "humanwgs_family.family": "Family <REQUIRED>",
+  "humanwgs_family.phenotypes": "HP:0000001",
+  "humanwgs_family.ref_map_file": "File <REQUIRED>",
+  "humanwgs_family.tertiary_map_file": null,
+  "humanwgs_family.max_reads_per_alignment_chunk": 500000,
+  "humanwgs_family.pharmcat_min_coverage": 10,
+  "humanwgs_family.glnexus_mem_gb": 60,
+  "humanwgs_family.use_gpu": false,
+  "humanwgs_family.use_parabricks_deepvariant": false,
+  "humanwgs_family.backend": "String <REQUIRED>",
+  "humanwgs_family.zones": null,
+  "humanwgs_family.cpuPlatform": null,
+  "humanwgs_family.gpuType": null,
+  "humanwgs_family.container_registry": null,
+  "humanwgs_family.preemptible": true,
+  "humanwgs_family.debug_version": null
 }

@@ -1,72 +1,397 @@
 version 1.0
 
-import "humanwgs_structs.wdl"
-import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
-import "process_trgt_catalog/process_trgt_catalog.wdl" as ProcessTrgtCatalog
-import "upstream/upstream.wdl" as Upstream
 import "downstream/downstream.wdl" as Downstream
+import "process_trgt_catalog/process_trgt_catalog.wdl" as ProcessTrgtCatalog
 import "tertiary/tertiary.wdl" as TertiaryAnalysis
+import "upstream/upstream.wdl" as Upstream
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
+import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
 
 workflow humanwgs_singleton {
   meta {
     description: "PacBio HiFi human whole genome sequencing pipeline for individual samples."
+    outputs: {
+      stats_file: {
+        description: "Table of summary statistics"
+      },
+      msg_file: {
+        description: "File containing messages from the workflow"
+      },
+      bam_statistics: {
+        description: "BAM statistics"
+      },
+      read_length_plot: {
+        description: "Distribution of read lengths"
+      },
+      read_quality_plot: {
+        description: "Distribution of read qualities"
+      },
+      mapq_distribution_plot: {
+        description: "Distribution of mapping quality per alignment"
+      },
+      mg_distribution_plot: {
+        description: "Distribution of gap-compressed identity per alignment"
+      },
+      stat_read_count: {
+        description: "Number of reads"
+      },
+      stat_read_length_mean: {
+        description: "Mean read length"
+      },
+      stat_read_length_median: {
+        description: "Median read length"
+      },
+      stat_read_length_n50: {
+        description: "Read length N50"
+      },
+      stat_read_quality_mean: {
+        description: "Mean read quality"
+      },
+      stat_read_quality_median: {
+        description: "Median read quality"
+      },
+      stat_mapped_read_count: {
+        description: "Number of reads mapped to reference"
+      },
+      stat_mapped_read_percent: {
+        description: "Percent of reads mapped to reference"
+      },
+      stat_gap_compressed_identity_mean: {
+        description: "Mean gap-compressed identity"
+      },
+      stat_gap_compressed_identity_median: {
+        description: "Median gap-compressed identity"
+      },
+      merged_haplotagged_bam: {
+        description: "Merged, haplotagged alignments"
+      },
+      merged_haplotagged_bam_index: {
+        description: "Index for merged, haplotagged alignments"
+      },
+      mosdepth_summary: {
+        description: "Summary of aligned read depth"
+      },
+      mosdepth_region_bed: {
+        description: "Median aligned read depth by 500bp windows"
+      },
+      mosdepth_region_bed_index: {
+        description: "Index for median aligned read depth by 500bp windows"
+      },
+      mosdepth_depth_distribution_plot: {
+        description: "Distribution of aligned read depth"
+      },
+      stat_depth_mean: {
+        description: "Mean depth"
+      },
+      inferred_sex: {
+        description: "Inferred sex"
+      },
+      phase_stats: {
+        description: "Phasing statistics"
+      },
+      phase_blocks: {
+        description: "Phase blocks"
+      },
+      phase_haplotags: {
+        description: "Per-read phase assignment"
+      },
+      stat_phased_basepairs: {
+        description: "Number of basepairs within phase blocks"
+      },
+      stat_phase_block_ng50: {
+        description: "Phase block NG50"
+      },
+      cpg_combined_bed: {
+        description: "5mCpG combined BED"
+      },
+      cpg_combined_bed_index: {
+        description: "Index for 5mCpG combined BED"
+      },
+      cpg_hap1_bed: {
+        description: "5mCpG haplotype 1 BED"
+      },
+      cpg_hap1_bed_index: {
+        description: "Index for 5mCpG haplotype 1 BED"
+      },
+      cpg_hap2_bed: {
+        description: "5mCpG haplotype 2 BED"
+      },
+      cpg_hap2_bed_index: {
+        description: "Index for 5mCpG haplotype 2 BED"
+      },
+      cpg_combined_bw: {
+        description: "5mCpG combined BigWig"
+      },
+      cpg_hap1_bw: {
+        description: "5mCpG haplotype 1 BigWig"
+      },
+      cpg_hap2_bw: {
+        description: "5mCpG haplotype 2 BigWig"
+      },
+      stat_cpg_hap1_count: {
+        description: "Number of scored reference 5mCpGs in haplotype 1"
+      },
+      stat_cpg_hap2_count: {
+        description: "Number of scored reference 5mCpGs in haplotype 2"
+      },
+      stat_cpg_combined_count: {
+        description: "Number of scored reference 5mCpGs combined"
+      },
+      methbat_profile: {
+        description: "MethBat 5mCpG profile"
+      },
+      stat_methbat_methylated_count: {
+        description: "Number of profiled regions labeled as methylated"
+      },
+      stat_methbat_unmethylated_count: {
+        description: "Number of profiled regions labeled as unmethylated"
+      },
+      stat_methbat_asm_count: {
+        description: "Number of profiled regions labeled as having allele-specific methylation"
+      },
+      phased_sv_vcf: {
+        description: "Phased structural variant VCF"
+      },
+      phased_sv_vcf_index: {
+        description: "Index for phased structural variant VCF"
+      },
+      sv_supporting_reads: {
+        description: "Supporting reads for structural variants"
+      },
+      sv_copynum_bedgraph: {
+        description: "CNV copy number BEDGraph"
+      },
+      sv_depth_bw: {
+        description: "CNV depth BigWig"
+      },
+      sv_gc_bias_corrected_depth_bw: {
+        description: "CNV GC-bias corrected depth BigWig"
+      },
+      sv_maf_bw: {
+        description: "CNV MAF BigWig"
+      },
+      sv_copynum_summary: {
+        description: "CNV copy number summary JSON"
+      },
+      stat_sv_DUP_count: {
+        description: "Number of DUP structural variants"
+      },
+      stat_sv_DEL_count: {
+        description: "Number of DEL structural variants"
+      },
+      stat_sv_INS_count: {
+        description: "Number of INS structural variants"
+      },
+      stat_sv_INV_count: {
+        description: "Number of INV structural variants"
+      },
+      stat_sv_SWAP_count: {
+        description: "Number of structural variant sequence swap events"
+      },
+      stat_sv_BND_count: {
+        description: "Number of BND structural variants"
+      },
+      phased_small_variant_vcf: {
+        description: "Phased small variant VCF"
+      },
+      phased_small_variant_vcf_index: {
+        description: "Index for phased small variant VCF"
+      },
+      small_variant_gvcf: {
+        description: "Small variant GVCF"
+      },
+      small_variant_gvcf_index: {
+        description: "Index for small variant GVCF"
+      },
+      small_variant_stats: {
+        description: "Small variant statistics"
+      },
+      bcftools_roh_out: {
+        description: "Regions of homozygosity"
+      },
+      bcftools_roh_bed: {
+        description: "Regions of homozygosity BED"
+      },
+      stat_small_variant_SNV_count: {
+        description: "Number of SNVs"
+      },
+      stat_small_variant_INDEL_count: {
+        description: "Number of INDELs"
+      },
+      stat_small_variant_TSTV_ratio: {
+        description: "Ts/Tv ratio"
+      },
+      stat_small_variant_HETHOM_ratio: {
+        description: "Het/Hom ratio for SNVs"
+      },
+      snv_distribution_plot: {
+        description: "Distribution of SNVs by REF, ALT"
+      },
+      indel_distribution_plot: {
+        description: "Distribution of indels by size"
+      },
+      phased_trgt_vcf: {
+        description: "Phased TRGT VCF"
+      },
+      phased_trgt_vcf_index: {
+        description: "Index for phased TRGT VCF"
+      },
+      trgt_spanning_reads: {
+        description: "Aligned TRGT spanning reads"
+      },
+      trgt_spanning_reads_index: {
+        description: "Index for aligned TRGT spanning reads"
+      },
+      trgt_coverage_dropouts: {
+        description: "TRGT regions with coverage dropouts"
+      },
+      stat_trgt_genotyped_count: {
+        description: "Number of sites genotyped by TRGT"
+      },
+      stat_trgt_uncalled_count: {
+        description: "Number of sites ungenotyped by TRGT"
+      },
+      paraphase_summary: {
+        description: "Paraphase summary"
+      },
+      paraphase_realigned_bam: {
+        description: "BAM file of reads realigned by Paraphase"
+      },
+      paraphase_realigned_bam_index: {
+        description: "Index for BAM file of reads realigned by Paraphase"
+      },
+      paraphase_vcfs: {
+        description: "Paraphase VCFs"
+      },
+      mitorsaw_vcf: {
+        description: "Mitochondrial variant VCF"
+      },
+      mitorsaw_vcf_index: {
+        description: "Index for mitochondrial variant VCF"
+      },
+      mitorsaw_hap_stats: {
+        description: "Mitochondrial haplotype statistics"
+      },
+      pbstarphase_summary: {
+        description: "StarPhase summary"
+      },
+      pharmcat_match_json: {
+        description: "PharmCAT match JSON"
+      },
+      pharmcat_phenotype_json: {
+        description: "PharmCAT phenotype JSON"
+      },
+      pharmcat_report_html: {
+        description: "PharmCAT report HTML"
+      },
+      pharmcat_report_json: {
+        description: "PharmCAT report JSON"
+      },
+      tertiary_small_variant_filtered_vcf: {
+        description: "Filtered, annotated small variant VCF"
+      },
+      tertiary_small_variant_filtered_vcf_index: {
+        description: "Index for filtered, annotated small variant VCF"
+      },
+      tertiary_small_variant_filtered_tsv: {
+        description: "Filtered, annotated small variant TSV"
+      },
+      tertiary_small_variant_compound_het_vcf: {
+        description: "Filtered, annotated compound heterozygous small variant VCF"
+      },
+      tertiary_small_variant_compound_het_vcf_index: {
+        description: "Index for filtered, annotated compound heterozygous small variant VCF"
+      },
+      tertiary_small_variant_compound_het_tsv: {
+        description: "Filtered, annotated compound heterozygous small variant TSV"
+      },
+      tertiary_sv_filtered_vcf: {
+        description: "Filtered, annotated structural variant VCF"
+      },
+      tertiary_sv_filtered_vcf_index: {
+        description: "Index for filtered, annotated structural variant VCF"
+      },
+      tertiary_sv_filtered_tsv: {
+        description: "Filtered, annotated structural variant TSV"
+      },
+      msg: {
+        description: "Messages from the workflow"
+      },
+      workflow_name: {
+        description: "Workflow name"
+      },
+      workflow_version: {
+        description: "Workflow version"
+      }
+    }
   }
 
   parameter_meta {
     sample_id: {
-      name: "Unique identifier for the sample"
+      description: "Unique identifier for the sample"
     }
     sex: {
-      name: "Sample sex",
-      choices: ["MALE", "FEMALE"]
+      description: "Sample sex",
+      choices: [
+        "MALE",
+        "FEMALE"
+      ]
     }
     hifi_reads: {
-      name: "Array of paths to HiFi reads in unaligned BAM format."
+      description: "Array of paths to hifi_reads in unaligned BAM format"
     }
     fail_reads: {
-      name: "Array of paths to failed reads in unaligned BAM format; optional"
+      description: "Array of paths to fail_reads in unaligned BAM format"
     }
     phenotypes: {
-      name: "Comma-delimited list of HPO codes for phenotypes"
+      description: "Comma-delimited list of HPO terms for phenotypes",
+      external_help: "https://hpo.jax.org"
     }
     ref_map_file: {
-      name: "TSV containing reference genome file paths; must match backend"
+      description: "TSV containing reference genome file paths; must match backend"
     }
     tertiary_map_file: {
-      name: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+      description: "TSV containing tertiary analysis file paths and thresholds; must match backend"
     }
     max_reads_per_alignment_chunk: {
-      name: "Maximum reads per alignment chunk"
+      description: "Maximum reads per alignment chunk"
     }
     pharmcat_min_coverage: {
-      name: "Minimum coverage for PharmCAT"
+      description: "Minimum coverage for PharmCAT"
     }
-    gpu: {
-      name: "Use GPU when possible"
+    use_gpu: {
+      description: "Use GPU when possible"
+    }
+    use_parabricks_deepvariant: {
+      description: "Use Parabricks DeepVariant for small variant calling when GPU is enabled"
     }
     backend: {
-      name: "Backend where the workflow will be executed",
-      choices: ["GCP", "Azure", "AWS-HealthOmics", "HPC"]
+      description: "Backend where the workflow will be executed",
+      choices: [
+        "GCP",
+        "Azure",
+        "AWS-HealthOmics",
+        "HPC"
+      ]
     }
     zones: {
-      name: "Zones where compute will take place; required if backend is set to 'GCP'"
+      description: "Zones where compute will take place; required if backend is set to 'GCP'"
     }
     cpuPlatform: {
-      help: "Optional minimum CPU platform to use for tasks on GCP"
+      description: "Optional minimum CPU platform to use for tasks on GCP"
     }
     gpuType: {
-      name: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
+      description: "GPU type to use; required if gpu is set to `true` for cloud backends; must match backend"
     }
     container_registry: {
-      name: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used. Must be set if backend is set to 'AWS-HealthOmics'",
+      description: "Container registry where workflow images are hosted. If left blank, PacBio's public Quay.io registry will be used. Must be set if backend is set to 'AWS-HealthOmics'",
       default: "quay.io/pacbio"
     }
     preemptible: {
-      name: "Where possible, run tasks preemptibly"
+      description: "Where possible, run tasks preemptibly"
     }
     debug_version: {
-      name: "Debug version for testing purposes"
+      description: "Debug version for testing purposes"
     }
   }
 
@@ -75,16 +400,13 @@ workflow humanwgs_singleton {
     String? sex
     Array[File] hifi_reads
     Array[File]? fail_reads
-
     String phenotypes = "HP:0000001"
-
     File ref_map_file
     File? tertiary_map_file
-
     Int max_reads_per_alignment_chunk = 500000
     Int pharmcat_min_coverage = 10
-
-    Boolean gpu = false
+    Boolean use_gpu = false
+    Boolean use_parabricks_deepvariant = false
 
     # Backend configuration
     String backend
@@ -92,65 +414,66 @@ workflow humanwgs_singleton {
     String? cpuPlatform
     String? gpuType
     String? container_registry
-
     Boolean preemptible = true
-
     String? debug_version
   }
 
-  call BackendConfiguration.backend_configuration {
-    input:
-      backend            = backend,
-      zones              = zones,
-      cpuPlatform        = cpuPlatform,
-      gpuType            = gpuType,
-      container_registry = container_registry
+  call BackendConfiguration.backend_configuration { input:
+    backend = backend,
+    zones = zones,
+    cpuPlatform = cpuPlatform,
+    gpuType = gpuType,
+    container_registry = container_registry
   }
 
-  RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
+  RuntimeAttributes default_runtime_attributes = if preemptible
+    then backend_configuration.spot_runtime_attributes
+    else backend_configuration.on_demand_runtime_attributes
 
+  #@ except: DeclarationName
   Map[String, String] ref_map = read_map(ref_map_file)
 
-  call ProcessTrgtCatalog.process_trgt_catalog {
-    input:
-      trgt_catalog               = ref_map["trgt_tandem_repeat_bed"],  # !FileCoercion
-      ref_fasta                  = ref_map["fasta"],                   # !FileCoercion
-      ref_index                  = ref_map["fasta_index"],             # !FileCoercion
-      default_runtime_attributes = default_runtime_attributes
+  call ProcessTrgtCatalog.process_trgt_catalog { input:
+    trgt_catalog = ref_map["trgt_tandem_repeat_bed"],  # !FileCoercion
+    ref_fasta = ref_map["fasta"],  # !FileCoercion
+    ref_index = ref_map["fasta_index"],  # !FileCoercion
+    default_runtime_attributes = default_runtime_attributes
   }
 
-  call Upstream.upstream {
-    input:
-      sample_id                     = sample_id,
-      sex                           = sex,
-      hifi_reads                    = hifi_reads,
-      fail_reads                    = fail_reads,
-      fail_reads_bed                = process_trgt_catalog.include_fail_reads_bed,
-      fail_reads_bait_fasta         = process_trgt_catalog.fail_reads_bait_fasta,
-      fail_reads_bait_index         = process_trgt_catalog.fail_reads_bait_index,
-      ref_map_file                  = ref_map_file,
-      max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
-      single_sample                 = true,
-      gpu                           = gpu,
-      default_runtime_attributes    = default_runtime_attributes
+  call Upstream.upstream { input:
+    sample_id = sample_id,
+    sex = sex,
+    hifi_reads = hifi_reads,
+    fail_reads = fail_reads,
+    fail_reads_bed = process_trgt_catalog.include_fail_reads_bed,
+    fail_reads_bait_index = process_trgt_catalog.fail_reads_bait_index,
+    ref_map_file = ref_map_file,
+    max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+    single_sample = true,
+    use_gpu = use_gpu,
+    use_parabricks_deepvariant = use_parabricks_deepvariant,
+    default_runtime_attributes = default_runtime_attributes
   }
 
-  call Downstream.downstream {
-    input:
-      sample_id                  = sample_id,
-      sex                        = upstream.inferred_sex,
-      aligned_hifi_reads         = upstream.aligned_hifi_reads,
-      aligned_hifi_reads_index   = upstream.aligned_hifi_reads_index,
-      aligned_fail_reads         = upstream.aligned_fail_reads,
-      aligned_fail_reads_index   = upstream.aligned_fail_reads_index,
-      trgt_catalog               = process_trgt_catalog.full_catalog,
-      small_variant_vcf          = upstream.small_variant_vcf,
-      small_variant_vcf_index    = upstream.small_variant_vcf_index,
-      sv_vcf                     = select_first([upstream.sv_vcf]),
-      sv_vcf_index               = select_first([upstream.sv_vcf_index]),
-      pharmcat_min_coverage      = pharmcat_min_coverage,
-      ref_map_file               = ref_map_file,
-      default_runtime_attributes = default_runtime_attributes
+  call Downstream.downstream { input:
+    sample_id = sample_id,
+    sex = upstream.inferred_sex,
+    aligned_hifi_reads = upstream.aligned_hifi_reads,
+    aligned_hifi_reads_index = upstream.aligned_hifi_reads_index,
+    aligned_fail_reads = upstream.aligned_fail_reads,
+    aligned_fail_reads_index = upstream.aligned_fail_reads_index,
+    trgt_catalog = process_trgt_catalog.full_catalog,
+    small_variant_vcf = upstream.small_variant_vcf,
+    small_variant_vcf_index = upstream.small_variant_vcf_index,
+    sv_vcf = select_first([
+      upstream.sv_vcf
+    ]),
+    sv_vcf_index = select_first([
+      upstream.sv_vcf_index
+    ]),
+    pharmcat_min_coverage = pharmcat_min_coverage,
+    ref_map_file = ref_map_file,
+    default_runtime_attributes = default_runtime_attributes
   }
 
   Map[String, String] pedigree_sex = {
@@ -162,215 +485,338 @@ workflow humanwgs_singleton {
   # write sample metadata similar to pedigree format
   # family_id, sample_id, father_id, mother_id, sex, affected
   Array[String] sample_metadata = [
-    sample_id, sample_id,
-    ".", ".",
-    pedigree_sex[upstream.inferred_sex], "2"
+    sample_id,
+    sample_id,
+    ".",
+    ".",
+    pedigree_sex[upstream.inferred_sex],
+    "2"
   ]
 
   if (defined(tertiary_map_file)) {
-    call TertiaryAnalysis.tertiary_analysis {
-      input:
-        sample_metadata            = [sample_metadata],
-        phenotypes                 = phenotypes,
-        is_trio_kid                = [false],
-        is_duo_kid                 = [false],
-        small_variant_vcf          = downstream.phased_small_variant_vcf,
-        small_variant_vcf_index    = downstream.phased_small_variant_vcf_index,
-        sv_vcf                     = downstream.phased_sv_vcf,
-        sv_vcf_index               = downstream.phased_sv_vcf_index,
-        ref_map_file               = ref_map_file,
-        tertiary_map_file          = select_first([tertiary_map_file]),
-        default_runtime_attributes = default_runtime_attributes
+    call TertiaryAnalysis.tertiary_analysis { input:
+      sample_metadata = [
+        sample_metadata
+      ],
+      phenotypes = phenotypes,
+      is_trio_kid = [
+        false
+      ],
+      is_duo_kid = [
+        false
+      ],
+      small_variant_vcf = downstream.phased_small_variant_vcf,
+      small_variant_vcf_index = downstream.phased_small_variant_vcf_index,
+      sv_vcf = downstream.phased_sv_vcf,
+      sv_vcf_index = downstream.phased_sv_vcf_index,
+      ref_map_file = ref_map_file,
+      tertiary_map_file = select_first([
+        tertiary_map_file
+      ]),
+      default_runtime_attributes = default_runtime_attributes
     }
   }
 
   Array[Array[String]] stats = [
-    ['sample_id', sample_id],
-    ['read_count', downstream.stat_read_count],
-    ['read_length_mean', downstream.stat_read_length_mean],
-    ['read_length_median', downstream.stat_read_length_median],
-    ['read_length_n50', downstream.stat_read_length_n50],
-    ['read_quality_mean', downstream.stat_read_quality_mean],
-    ['read_quality_median', downstream.stat_read_quality_median],
-    ['mapped_read_count', downstream.stat_mapped_read_count],
-    ['mapped_read_percent', downstream.stat_mapped_read_percent],
-    ['gap_compressed_identity_mean', downstream.stat_gap_compressed_identity_mean],
-    ['gap_compressed_identity_median', downstream.stat_gap_compressed_identity_median],
-    ['depth_mean', upstream.stat_depth_mean],
-    ['inferred_sex', upstream.inferred_sex],
-    ['stat_phased_basepairs', downstream.stat_phased_basepairs],
-    ['phase_block_ng50', downstream.stat_phase_block_ng50],
-    ['cpg_combined_count', downstream.stat_combined_cpg_count],
-    ['cpg_hap1_count', downstream.stat_hap1_cpg_count],
-    ['cpg_hap2_count', downstream.stat_hap2_cpg_count],
-    ['methbat_methylated_count', downstream.stat_methbat_methylated_count],
-    ['methbat_unmethylated_count', downstream.stat_methbat_unmethylated_count],
-    ['methbat_asm_count', downstream.stat_methbat_asm_count],
-    ['SNV_count', downstream.stat_SNV_count],
-    ['TSTV_ratio', downstream.stat_TSTV_ratio],
-    ['HETHOM_ratio', downstream.stat_HETHOM_ratio],
-    ['INDEL_count', downstream.stat_INDEL_count],
-    ['sv_DUP_count', downstream.stat_sv_DUP_count],
-    ['sv_DEL_count', downstream.stat_sv_DEL_count],
-    ['sv_INS_count', downstream.stat_sv_INS_count],
-    ['sv_INV_count', downstream.stat_sv_INV_count],
-    ['sv_SWAP_count', downstream.stat_sv_SWAP_count],
-    ['sv_BND_count', downstream.stat_sv_BND_count],
-    ['trgt_genotyped_count', downstream.stat_trgt_genotyped_count],
-    ['trgt_uncalled_count', downstream.stat_trgt_uncalled_count]
+    [
+      "sample_id",
+      sample_id
+    ],
+    [
+      "read_count",
+      downstream.stat_read_count
+    ],
+    [
+      "read_length_mean",
+      downstream.stat_read_length_mean
+    ],
+    [
+      "read_length_median",
+      downstream.stat_read_length_median
+    ],
+    [
+      "read_length_n50",
+      downstream.stat_read_length_n50
+    ],
+    [
+      "read_quality_mean",
+      downstream.stat_read_quality_mean
+    ],
+    [
+      "read_quality_median",
+      downstream.stat_read_quality_median
+    ],
+    [
+      "mapped_read_count",
+      downstream.stat_mapped_read_count
+    ],
+    [
+      "mapped_read_percent",
+      downstream.stat_mapped_read_percent
+    ],
+    [
+      "gap_compressed_identity_mean",
+      downstream.stat_gap_compressed_identity_mean
+    ],
+    [
+      "gap_compressed_identity_median",
+      downstream.stat_gap_compressed_identity_median
+    ],
+    [
+      "depth_mean",
+      upstream.stat_depth_mean
+    ],
+    [
+      "inferred_sex",
+      upstream.inferred_sex
+    ],
+    [
+      "stat_phased_basepairs",
+      downstream.stat_phased_basepairs
+    ],
+    [
+      "phase_block_ng50",
+      downstream.stat_phase_block_ng50
+    ],
+    [
+      "cpg_combined_count",
+      downstream.stat_combined_cpg_count
+    ],
+    [
+      "cpg_hap1_count",
+      downstream.stat_hap1_cpg_count
+    ],
+    [
+      "cpg_hap2_count",
+      downstream.stat_hap2_cpg_count
+    ],
+    [
+      "methbat_methylated_count",
+      downstream.stat_methbat_methylated_count
+    ],
+    [
+      "methbat_unmethylated_count",
+      downstream.stat_methbat_unmethylated_count
+    ],
+    [
+      "methbat_asm_count",
+      downstream.stat_methbat_asm_count
+    ],
+    [
+      "SNV_count",
+      downstream.stat_SNV_count
+    ],
+    [
+      "TSTV_ratio",
+      downstream.stat_TSTV_ratio
+    ],
+    [
+      "HETHOM_ratio",
+      downstream.stat_HETHOM_ratio
+    ],
+    [
+      "INDEL_count",
+      downstream.stat_INDEL_count
+    ],
+    [
+      "sv_DUP_count",
+      downstream.stat_sv_DUP_count
+    ],
+    [
+      "sv_DEL_count",
+      downstream.stat_sv_DEL_count
+    ],
+    [
+      "sv_INS_count",
+      downstream.stat_sv_INS_count
+    ],
+    [
+      "sv_INV_count",
+      downstream.stat_sv_INV_count
+    ],
+    [
+      "sv_SWAP_count",
+      downstream.stat_sv_SWAP_count
+    ],
+    [
+      "sv_BND_count",
+      downstream.stat_sv_BND_count
+    ],
+    [
+      "trgt_genotyped_count",
+      downstream.stat_trgt_genotyped_count
+    ],
+    [
+      "trgt_uncalled_count",
+      downstream.stat_trgt_uncalled_count
+    ]
   ]
 
-  call Utilities.consolidate_stats {
-    input:
-      id                 = sample_id,
-      stats              = stats,
-      msg_array          = flatten([process_trgt_catalog.msg, upstream.msg]),
-      runtime_attributes = default_runtime_attributes
+  call Utilities.consolidate_stats { input:
+    out_prefix = sample_id,
+    stats = stats,
+    msg_array = flatten([
+      process_trgt_catalog.msg,
+      upstream.msg
+    ]),
+    runtime_attributes = default_runtime_attributes
   }
 
   output {
     # consolidated stats
-    File stats_file = consolidate_stats.output_tsv
-    File msg_file   = consolidate_stats.messages
+    File stats_file = consolidate_stats.stats_tsv
+    File msg_file = consolidate_stats.messages
 
     # bam stats
-    File   bam_statistics                      = downstream.bam_statistics
-    File   read_length_plot                    = downstream.read_length_plot
-    File?  read_quality_plot                   = downstream.read_quality_plot
-    File   mapq_distribution_plot              = downstream.mapq_distribution_plot
-    File   mg_distribution_plot                = downstream.mg_distribution_plot
-    String stat_read_count                     = downstream.stat_read_count
-    String stat_read_length_mean               = downstream.stat_read_length_mean
-    String stat_read_length_median             = downstream.stat_read_length_median
-    String stat_read_length_n50                = downstream.stat_read_length_n50
-    String stat_read_quality_mean              = downstream.stat_read_quality_mean
-    String stat_read_quality_median            = downstream.stat_read_quality_median
-    String stat_mapped_read_count              = downstream.stat_mapped_read_count
-    String stat_mapped_read_percent            = downstream.stat_mapped_read_percent
-    String stat_gap_compressed_identity_mean   = downstream.stat_gap_compressed_identity_mean
+    File bam_statistics = downstream.bam_statistics
+    File read_length_plot = downstream.read_length_plot
+    File? read_quality_plot = downstream.read_quality_plot
+    File mapq_distribution_plot = downstream.mapq_distribution_plot
+    File mg_distribution_plot = downstream.mg_distribution_plot
+    String stat_read_count = downstream.stat_read_count
+    String stat_read_length_mean = downstream.stat_read_length_mean
+    String stat_read_length_median = downstream.stat_read_length_median
+    String stat_read_length_n50 = downstream.stat_read_length_n50
+    String stat_read_quality_mean = downstream.stat_read_quality_mean
+    String stat_read_quality_median = downstream.stat_read_quality_median
+    String stat_mapped_read_count = downstream.stat_mapped_read_count
+    String stat_mapped_read_percent = downstream.stat_mapped_read_percent
+    String stat_gap_compressed_identity_mean = downstream.stat_gap_compressed_identity_mean
     String stat_gap_compressed_identity_median = downstream.stat_gap_compressed_identity_median
 
     # merged, haplotagged alignments
-    File   merged_haplotagged_bam       = downstream.merged_haplotagged_bam
-    File   merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
+    File merged_haplotagged_bam = downstream.merged_haplotagged_bam
+    File merged_haplotagged_bam_index = downstream.merged_haplotagged_bam_index
 
     # mosdepth outputs
-    File   mosdepth_summary                 = upstream.mosdepth_summary
-    File   mosdepth_region_bed              = upstream.mosdepth_region_bed
-    File   mosdepth_region_bed_index        = upstream.mosdepth_region_bed_index
-    File   mosdepth_depth_distribution_plot = upstream.mosdepth_depth_distribution_plot
-    String stat_depth_mean                  = upstream.stat_depth_mean
-    String inferred_sex                     = upstream.inferred_sex
+    File mosdepth_summary = upstream.mosdepth_summary
+    File mosdepth_region_bed = upstream.mosdepth_region_bed
+    File mosdepth_region_bed_index = upstream.mosdepth_region_bed_index
+    File mosdepth_depth_distribution_plot = upstream.mosdepth_depth_distribution_plot
+    String stat_depth_mean = upstream.stat_depth_mean
+    String inferred_sex = upstream.inferred_sex
 
     # phasing stats
-    File   phase_stats           = downstream.phase_stats
-    File   phase_blocks          = downstream.phase_blocks
-    File   phase_haplotags       = downstream.phase_haplotags
+    File phase_stats = downstream.phase_stats
+    File phase_blocks = downstream.phase_blocks
+    File phase_haplotags = downstream.phase_haplotags
     String stat_phased_basepairs = downstream.stat_phased_basepairs
     String stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # methylation outputs and profile
-    File?   cpg_combined_bed                = downstream.cpg_combined_bed
-    File?   cpg_combined_bed_index          = downstream.cpg_combined_bed_index
-    File?   cpg_hap1_bed                    = downstream.cpg_hap1_bed
-    File?   cpg_hap1_bed_index              = downstream.cpg_hap1_bed_index
-    File?   cpg_hap2_bed                    = downstream.cpg_hap2_bed
-    File?   cpg_hap2_bed_index              = downstream.cpg_hap2_bed_index
-    File?   cpg_combined_bw                 = downstream.cpg_combined_bw
-    File?   cpg_hap1_bw                     = downstream.cpg_hap1_bw
-    File?   cpg_hap2_bw                     = downstream.cpg_hap2_bw
-    String  stat_cpg_hap1_count             = downstream.stat_hap1_cpg_count
-    String  stat_cpg_hap2_count             = downstream.stat_hap2_cpg_count
-    String  stat_cpg_combined_count         = downstream.stat_combined_cpg_count
-    File?   methbat_profile                 = downstream.methbat_profile
-    String stat_methbat_methylated_count   = downstream.stat_methbat_methylated_count
+    File? cpg_combined_bed = downstream.cpg_combined_bed
+    File? cpg_combined_bed_index = downstream.cpg_combined_bed_index
+    File? cpg_hap1_bed = downstream.cpg_hap1_bed
+    File? cpg_hap1_bed_index = downstream.cpg_hap1_bed_index
+    File? cpg_hap2_bed = downstream.cpg_hap2_bed
+    File? cpg_hap2_bed_index = downstream.cpg_hap2_bed_index
+    File? cpg_combined_bw = downstream.cpg_combined_bw
+    File? cpg_hap1_bw = downstream.cpg_hap1_bw
+    File? cpg_hap2_bw = downstream.cpg_hap2_bw
+    String stat_cpg_hap1_count = downstream.stat_hap1_cpg_count
+    String stat_cpg_hap2_count = downstream.stat_hap2_cpg_count
+    String stat_cpg_combined_count = downstream.stat_combined_cpg_count
+    File? methbat_profile = downstream.methbat_profile
+    String stat_methbat_methylated_count = downstream.stat_methbat_methylated_count
     String stat_methbat_unmethylated_count = downstream.stat_methbat_unmethylated_count
-    String stat_methbat_asm_count          = downstream.stat_methbat_asm_count
+    String stat_methbat_asm_count = downstream.stat_methbat_asm_count
 
     # sv outputs
-    File phased_sv_vcf                 = downstream.phased_sv_vcf
-    File phased_sv_vcf_index           = downstream.phased_sv_vcf_index
-    File sv_supporting_reads           = select_first([upstream.sv_supporting_reads])
-    File sv_copynum_bedgraph           = select_first([upstream.sv_copynum_bedgraph])
-    File sv_depth_bw                   = select_first([upstream.sv_depth_bw])
-    File sv_gc_bias_corrected_depth_bw = select_first([upstream.sv_gc_bias_corrected_depth_bw])
-    File sv_maf_bw                     = select_first([upstream.sv_maf_bw])
-    File sv_copynum_summary            = select_first([upstream.sv_copynum_summary])
+    File phased_sv_vcf = downstream.phased_sv_vcf
+    File phased_sv_vcf_index = downstream.phased_sv_vcf_index
+    File sv_supporting_reads = select_first([
+      upstream.sv_supporting_reads
+    ])
+    File sv_copynum_bedgraph = select_first([
+      upstream.sv_copynum_bedgraph
+    ])
+    File sv_depth_bw = select_first([
+      upstream.sv_depth_bw
+    ])
+    File sv_gc_bias_corrected_depth_bw = select_first([
+      upstream.sv_gc_bias_corrected_depth_bw
+    ])
+    File sv_maf_bw = select_first([
+      upstream.sv_maf_bw
+    ])
+    File sv_copynum_summary = select_first([
+      upstream.sv_copynum_summary
+    ])
 
     # sv stats
-    String stat_sv_DUP_count  = downstream.stat_sv_DUP_count
-    String stat_sv_DEL_count  = downstream.stat_sv_DEL_count
-    String stat_sv_INS_count  = downstream.stat_sv_INS_count
-    String stat_sv_INV_count  = downstream.stat_sv_INV_count
+    String stat_sv_DUP_count = downstream.stat_sv_DUP_count
+    String stat_sv_DEL_count = downstream.stat_sv_DEL_count
+    String stat_sv_INS_count = downstream.stat_sv_INS_count
+    String stat_sv_INV_count = downstream.stat_sv_INV_count
     String stat_sv_SWAP_count = downstream.stat_sv_SWAP_count
-    String stat_sv_BND_count  = downstream.stat_sv_BND_count
+    String stat_sv_BND_count = downstream.stat_sv_BND_count
 
     # small variant outputs
-    File phased_small_variant_vcf       = downstream.phased_small_variant_vcf
+    File phased_small_variant_vcf = downstream.phased_small_variant_vcf
     File phased_small_variant_vcf_index = downstream.phased_small_variant_vcf_index
-    File small_variant_gvcf             = upstream.small_variant_gvcf
-    File small_variant_gvcf_index       = upstream.small_variant_gvcf_index
+    File? small_variant_gvcf = upstream.small_variant_gvcf
+    File? small_variant_gvcf_index = upstream.small_variant_gvcf_index
 
     # small variant stats
-    File   small_variant_stats             = downstream.small_variant_stats
-    File   bcftools_roh_out                = downstream.bcftools_roh_out
-    File   bcftools_roh_bed                = downstream.bcftools_roh_bed
-    String stat_small_variant_SNV_count    = downstream.stat_SNV_count
-    String stat_small_variant_INDEL_count  = downstream.stat_INDEL_count
-    String stat_small_variant_TSTV_ratio   = downstream.stat_TSTV_ratio
+    File small_variant_stats = downstream.small_variant_stats
+    File bcftools_roh_out = downstream.bcftools_roh_out
+    File bcftools_roh_bed = downstream.bcftools_roh_bed
+    String stat_small_variant_SNV_count = downstream.stat_SNV_count
+    String stat_small_variant_INDEL_count = downstream.stat_INDEL_count
+    String stat_small_variant_TSTV_ratio = downstream.stat_TSTV_ratio
     String stat_small_variant_HETHOM_ratio = downstream.stat_HETHOM_ratio
-    File   snv_distribution_plot           = downstream.snv_distribution_plot
-    File   indel_distribution_plot         = downstream.indel_distribution_plot
+    File snv_distribution_plot = downstream.snv_distribution_plot
+    File indel_distribution_plot = downstream.indel_distribution_plot
 
     # trgt outputs
-    File   phased_trgt_vcf           = downstream.trgt_vcf
-    File   phased_trgt_vcf_index     = downstream.trgt_vcf_index
-    File   trgt_spanning_reads       = downstream.trgt_spanning_reads
-    File   trgt_spanning_reads_index = downstream.trgt_spanning_reads_index
-    File   trgt_coverage_dropouts    = downstream.trgt_coverage_dropouts
+    File phased_trgt_vcf = downstream.trgt_vcf
+    File phased_trgt_vcf_index = downstream.trgt_vcf_index
+    File trgt_spanning_reads = downstream.trgt_spanning_reads
+    File trgt_spanning_reads_index = downstream.trgt_spanning_reads_index
+    File trgt_coverage_dropouts = downstream.trgt_coverage_dropouts
     String stat_trgt_genotyped_count = downstream.stat_trgt_genotyped_count
-    String stat_trgt_uncalled_count  = downstream.stat_trgt_uncalled_count
+    String stat_trgt_uncalled_count = downstream.stat_trgt_uncalled_count
 
     # paraphase outputs
-    File? paraphase_output_json         = upstream.paraphase_output_json
-    File? paraphase_realigned_bam       = upstream.paraphase_realigned_bam
+    File? paraphase_summary = upstream.paraphase_output_json
+    File? paraphase_realigned_bam = upstream.paraphase_realigned_bam
     File? paraphase_realigned_bam_index = upstream.paraphase_realigned_bam_index
-    File? paraphase_vcfs                = upstream.paraphase_vcfs
+    File? paraphase_vcfs = upstream.paraphase_vcfs
 
     # per sample mitorsaw outputs
-    File mitorsaw_vcf       = upstream.mitorsaw_vcf
+    File mitorsaw_vcf = upstream.mitorsaw_vcf
     File mitorsaw_vcf_index = upstream.mitorsaw_vcf_index
     File mitorsaw_hap_stats = upstream.mitorsaw_hap_stats
 
     # PGx outputs
-    File  pbstarphase_json        = downstream.pbstarphase_json
-    File? pharmcat_match_json     = downstream.pharmcat_match_json
+    File pbstarphase_summary = downstream.pbstarphase_json
+    File? pharmcat_match_json = downstream.pharmcat_match_json
     File? pharmcat_phenotype_json = downstream.pharmcat_phenotype_json
-    File? pharmcat_report_html    = downstream.pharmcat_report_html
-    File? pharmcat_report_json    = downstream.pharmcat_report_json
+    File? pharmcat_report_html = downstream.pharmcat_report_html
+    File? pharmcat_report_json = downstream.pharmcat_report_json
 
     # tertiary analysis outputs
-    File? tertiary_small_variant_filtered_vcf           = tertiary_analysis.small_variant_filtered_vcf
-    File? tertiary_small_variant_filtered_vcf_index     = tertiary_analysis.small_variant_filtered_vcf_index
-    File? tertiary_small_variant_filtered_tsv           = tertiary_analysis.small_variant_filtered_tsv
-    File? tertiary_small_variant_compound_het_vcf       = tertiary_analysis.small_variant_compound_het_vcf
+    File? tertiary_small_variant_filtered_vcf = tertiary_analysis.small_variant_filtered_vcf
+    File? tertiary_small_variant_filtered_vcf_index = tertiary_analysis.small_variant_filtered_vcf_index
+    File? tertiary_small_variant_filtered_tsv = tertiary_analysis.small_variant_filtered_tsv
+    File? tertiary_small_variant_compound_het_vcf = tertiary_analysis.small_variant_compound_het_vcf
     File? tertiary_small_variant_compound_het_vcf_index = tertiary_analysis.small_variant_compound_het_vcf_index
-    File? tertiary_small_variant_compound_het_tsv       = tertiary_analysis.small_variant_compound_het_tsv
-    File? tertiary_sv_filtered_vcf                      = tertiary_analysis.sv_filtered_vcf
-    File? tertiary_sv_filtered_vcf_index                = tertiary_analysis.sv_filtered_vcf_index
-    File? tertiary_sv_filtered_tsv                      = tertiary_analysis.sv_filtered_tsv
+    File? tertiary_small_variant_compound_het_tsv = tertiary_analysis.small_variant_compound_het_tsv
+    File? tertiary_sv_filtered_vcf = tertiary_analysis.sv_filtered_vcf
+    File? tertiary_sv_filtered_vcf_index = tertiary_analysis.sv_filtered_vcf_index
+    File? tertiary_sv_filtered_tsv = tertiary_analysis.sv_filtered_tsv
 
     # qc messages
-    Array[String] msg = flatten(
-      [
-        process_trgt_catalog.msg,
-        upstream.msg,
-        downstream.msg
-      ]
-    )
+    Array[String] msg = flatten([
+      process_trgt_catalog.msg,
+      upstream.msg,
+      downstream.msg
+    ])
 
     # workflow metadata
-    String workflow_name    = "humanwgs_singleton"
-    String workflow_version = "v3.2.1" + if defined(debug_version) then "~{"-" + debug_version}" else ""
+    String workflow_name = "humanwgs_singleton"
+    String workflow_version = "v3.3.0" + if defined(debug_version)
+      then "~{"-" + debug_version}"
+      else ""
   }
 }

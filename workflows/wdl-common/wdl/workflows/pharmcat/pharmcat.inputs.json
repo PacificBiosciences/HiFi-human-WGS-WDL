@@ -1,0 +1,23 @@
+{
+  "pharmcat.sample_id": "String <REQUIRED>",
+  "pharmcat.haplotagged_bam": "File <REQUIRED>",
+  "pharmcat.haplotagged_bam_index": "File <REQUIRED>",
+  "pharmcat.phased_vcf": "File <REQUIRED>",
+  "pharmcat.phased_vcf_index": "File <REQUIRED>",
+  "pharmcat.outside_call_files": "Array[File] <REQUIRED>",
+  "pharmcat.ref_fasta": "File <REQUIRED>",
+  "pharmcat.ref_index": "File <REQUIRED>",
+  "pharmcat.pharmcat_version": "2.15.4",
+  "pharmcat.pharmcat_positions": "File <REQUIRED>",
+  "pharmcat.pharmcat_positions_index": "File <REQUIRED>",
+  "pharmcat.pharmcat_min_coverage": "Int <REQUIRED>",
+  "pharmcat.default_runtime_attributes": {
+    "backend": "String <REQUIRED>",
+    "preemptible_tries": 0,
+    "max_retries": 0,
+    "zones": "String <REQUIRED>",
+    "cpuPlatform": "String <REQUIRED>",
+    "gpuType": "String <REQUIRED>",
+    "container_registry": "String <REQUIRED>"
+  }
+}

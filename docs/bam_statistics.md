@@ -28,7 +28,7 @@ A histogram of mapping qualities and gap-compressed identities, respectively.
 
 Statistics computed using only records marked `prim` or `unmapped`.
 
-## `stat_mapped_read_count`, `stat_mapped_percent`
+## `stat_mapped_read_count`, `stat_mapped_read_percent`
 
 Count of primary alignments, and primary alignments as a percentage of total reads.
 
