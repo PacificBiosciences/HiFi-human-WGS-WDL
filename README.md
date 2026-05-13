@@ -128,6 +128,28 @@ The resource bundle containing the GRCh38 reference and other files used in this
 
 [<img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17086906.svg" alt="10.5281/zenodo.17086906">](https://zenodo.org/records/17086906)
 
+## Navigating workflow outputs
+
+After a successful run, the output directory contains the primary analysis results, indexes, plots, and summary files. The generated output tables in [singleton](./docs/singleton.md#outputs) and [family](./docs/family.md#outputs) documentation list every output and its type. In the `family` workflow, many per-sample outputs are arrays; in the `singleton` workflow, the same outputs are usually single files.
+
+Recommended places to start:
+
+- `stats_file` and `msg_file`: run-level statistics and workflow messages.
+- `bam_statistics`, `read_length_plot`, `read_quality_plot`, `mosdepth_summary`, `mosdepth_region_bed`, `mosdepth_depth_distribution_plot`, `mapq_distribution_plot`, and `mg_distribution_plot`: quick checks for read quality, alignment, and coverage.
+- `merged_haplotagged_bam` and `merged_haplotagged_bam_index`: merged, haplotagged alignments for downstream inspection.
+
+Variant and analysis outputs are grouped by analysis area:
+
+- Small variants: `phased_small_variant_vcf`, `phased_small_variant_vcf_index`, `small_variant_gvcf`, `small_variant_gvcf_index`, `small_variant_stats`, `snv_distribution_plot`, `indel_distribution_plot`, and, for family runs, `joint_small_variants_vcf`.
+- Structural variants and copy number: `phased_sv_vcf`, `phased_sv_vcf_index`, `sv_supporting_reads`, `sv_copynum_bedgraph`, `sv_depth_bw`, `sv_gc_bias_corrected_depth_bw`, `sv_maf_bw`, `sv_copynum_summary`, and, for family runs, `joint_sv_vcf`.
+- Tandem repeats: `phased_trgt_vcf`, `phased_trgt_vcf_index`, `trgt_spanning_reads`, `trgt_spanning_reads_index`, `trgt_coverage_dropouts`, and, for family runs, `joint_trgt_vcf`.
+- Phasing: `phase_stats`, `phase_blocks`, `phase_haplotags`, `stat_phased_basepairs`, and `stat_phase_block_ng50`.
+- Mitochondrial variants and haplotypes: `mitorsaw_vcf`, `mitorsaw_vcf_index`, and `mitorsaw_hap_stats`.
+- 5mCpG methylation: `cpg_combined_bed`, `cpg_hap1_bed`, `cpg_hap2_bed`, `cpg_combined_bw`, `cpg_hap1_bw`, `cpg_hap2_bw`, and `methbat_profile`.
+- Dark-region calling: `paraphase_summary`, `paraphase_realigned_bam`, `paraphase_realigned_bam_index`, and `paraphase_vcfs`.
+- PGx typing: `pbstarphase_summary`, `pharmcat_match_json`, `pharmcat_phenotype_json`, `pharmcat_report_html`, and `pharmcat_report_json`.
+- Tertiary review outputs: `tertiary_small_variant_filtered_vcf`, `tertiary_small_variant_filtered_tsv`, `tertiary_small_variant_compound_het_vcf`, `tertiary_small_variant_compound_het_tsv`, `tertiary_sv_filtered_vcf`, and `tertiary_sv_filtered_tsv`.
+
 # Tool versions and Docker images
 
 Docker images definitions used by this workflow can be found in [the wdl-dockerfiles repository](../../../wdl-dockerfiles/). Images are hosted in PacBio's [quay.io repo](https://quay.io/organization/pacbio). Docker images used in the workflow are pinned to specific versions by referring to their digests rather than tags.
