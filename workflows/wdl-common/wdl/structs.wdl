@@ -20,3 +20,4 @@ struct RuntimeAttributes {
   ## Container registry to use, default is "quay.io/pacbio"
   String container_registry
 }
+

@@ -12,11 +12,11 @@ task hiphase {
       phased_vcf_indices: {
         description: "Indices for phased VCFs"
       },
-      haplotagged_bam: {
-        description: "Haplotagged BAM"
+      haplotagged_bams: {
+        description: "Haplotagged BAMs"
       },
-      haplotagged_bam_index: {
-        description: "Index for haplotagged BAM"
+      haplotagged_bam_indices: {
+        description: "Indices for haplotagged BAMs"
       },
       phase_stats: {
         description: "Phasing statistics"
@@ -32,9 +32,6 @@ task hiphase {
       },
       stat_phase_block_ng50: {
         description: "Phase block NG50"
-      },
-      msg: {
-        description: "Array of messages"
       }
     }
   }
@@ -55,11 +52,17 @@ task hiphase {
     phased_vcf_index_names: {
       description: "Phased VCF index names"
     }
-    aligned_bam: {
-      description: "BAM"
+    aligned_bams: {
+      description: "BAMs"
     }
-    aligned_bam_index: {
-      description: "BAM index"
+    aligned_bam_indices: {
+      description: "BAM indices"
+    }
+    haplotagged_bam_names: {
+      description: "Haplotagged BAM names"
+    }
+    haplotagged_bam_index_names: {
+      description: "Haplotagged BAM index names"
     }
     ref_name: {
       description: "Reference name"
@@ -89,6 +92,12 @@ task hiphase {
     phase_singletons: {
       description: "If true, attempt to phase variants that are not connected to any other variants"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -100,8 +109,10 @@ task hiphase {
     Array[File] vcf_indices
     Array[String] phased_vcf_names
     Array[String] phased_vcf_index_names
-    File aligned_bam
-    File aligned_bam_index
+    Array[File] aligned_bams
+    Array[File] aligned_bam_indices
+    Array[String] haplotagged_bam_names
+    Array[String] haplotagged_bam_index_names
     String ref_name
     File ref_fasta
     File ref_index
@@ -111,26 +122,43 @@ task hiphase {
     Boolean disable_global_realignment = false
     Boolean no_supplemental_joins = false
     Boolean phase_singletons = false
+    Int threads = 16
+    Int mem_gb = 96
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 16
-  Int mem_gb = threads * 6
-  Int disk_size = ceil(size(vcfs, "GB") + size(ref_fasta, "GB") + size(aligned_bam, "GB") * 2 + 20)
+  Int disk_size = ceil(size(vcfs, "GB") + size(ref_fasta, "GB") + size(aligned_bams, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
 
-    touch messages.txt
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
-    ln --symbolic --verbose "~{aligned_bam}" .
-    ln --symbolic --verbose "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    BAM_PREFIX="--bam "
+    BAMS=()
+    for i in ~{sep=" " aligned_bams}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      BAMS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " aligned_bam_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
+
+    VCF_PREFIX="--vcf "
+    VCFS=()
+    for i in ~{sep=" " vcfs}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      VCFS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " vcf_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
 
     hiphase --version
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068,SC2086
     hiphase --threads ~{threads} \
       ~{if defined(preset)
         then "--preset '" + preset + "'"
@@ -141,7 +169,7 @@ task hiphase {
         else ""
       } \
       ~{if defined(min_gq)
-        then "--min-gq '" + min_gq + "'"
+        then "--min-vcf-qual '" + min_gq + "'"
         else ""
       } \
       ~{if no_supplemental_joins
@@ -157,16 +185,17 @@ task hiphase {
         else ""
       } \
       --sample-name "~{sample_id}" \
-      ~{sep=" " prefix("--vcf ", vcfs)} \
+      ${VCFS[@]/#/$VCF_PREFIX} \
       ~{sep=" " prefix("--output-vcf ", phased_vcf_names)} \
-      --bam "~{basename(aligned_bam)}" \
-      --output-bam "~{sample_id}.~{ref_name}.haplotagged.bam" \
+      ${BAMS[@]/#/$BAM_PREFIX} \
+      ~{sep=" " prefix("--output-bam ", haplotagged_bam_names)} \
       --reference "~{basename(ref_fasta)}" \
       --summary-file "~{sample_id}.~{ref_name}.hiphase.stats.tsv" \
       --blocks-file "~{sample_id}.~{ref_name}.hiphase.blocks.tsv" \
       --haplotag-file "~{sample_id}.~{ref_name}.hiphase.haplotags.tsv"
 
-    gzip "~{sample_id}.~{ref_name}.hiphase.haplotags.tsv"
+    gzip "~{sample_id}.~{ref_name}.hiphase.haplotags.tsv" &
+    PID=$!
 
     # pull the phased basepairs and phase block N50
     cat << EOF > get_tsv_stats.py
@@ -177,31 +206,32 @@ task hiphase {
 
     python3 get_tsv_stats.py basepairs_per_block_sum > phased_basepairs.txt
     python3 get_tsv_stats.py block_ng50 > phase_block_ng50.txt
+
+    wait ${PID}
   >>>
 
   output {
     Array[File] phased_vcfs = phased_vcf_names
     Array[File] phased_vcf_indices = phased_vcf_index_names
-    File haplotagged_bam = "~{sample_id}.~{ref_name}.haplotagged.bam"
-    File haplotagged_bam_index = "~{sample_id}.~{ref_name}.haplotagged.bam.bai"
+    Array[File] haplotagged_bams = haplotagged_bam_names
+    Array[File] haplotagged_bam_indices = haplotagged_bam_index_names
     File phase_stats = "~{sample_id}.~{ref_name}.hiphase.stats.tsv"
     File phase_blocks = "~{sample_id}.~{ref_name}.hiphase.blocks.tsv"
     File phase_haplotags = "~{sample_id}.~{ref_name}.hiphase.haplotags.tsv.gz"
     String stat_phased_basepairs = read_string("phased_basepairs.txt")
     String stat_phase_block_ng50 = read_string("phase_block_ng50.txt")
-    Array[String] msg = read_lines("messages.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/hiphase@sha256:2c54932e4992d5fcee03395f271a54daa69d27294d11cfa5a7d05964fbfb1ca6"  # 1.6.0_build1
+    docker: "~{runtime_attributes.container_registry}/hiphase@sha256:41ebe22b55c66e2e78da2013f7fffaecc02a8b4e980400c3ea8d03c87330522e"  # 1.7.0_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

@@ -50,14 +50,14 @@ task sawfish_discover {
     expected_female_bed: {
       description: "Expected CN BED for sample with XX karyotype"
     }
-    small_variant_vcf: {
-      description: "Small variant VCF"
-    }
-    small_variant_vcf_index: {
-      description: "Small variant VCF index"
-    }
     out_prefix: {
       description: "Output prefix"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -75,9 +75,9 @@ task sawfish_discover {
     File exclude_bed_index
     File expected_male_bed
     File expected_female_bed
-    File small_variant_vcf
-    File small_variant_vcf_index
     String out_prefix
+    Int threads = 16
+    Int mem_gb = 128
     RuntimeAttributes runtime_attributes
   }
 
@@ -88,8 +88,6 @@ task sawfish_discover {
     then expected_male_bed
     else expected_female_bed
 
-  Int threads = 16
-  Int mem_gb = threads * 8
   Int disk_size = ceil(size(aligned_bam, "GB") * 2 + size(ref_fasta, "GB") + 20)
 
   command <<<
@@ -101,18 +99,12 @@ task sawfish_discover {
       echo "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for sawfish." >> messages.txt
     fi
 
-    ln --symbolic --verbose "~{aligned_bam}" .
-    ln --symbolic --verbose "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
-    ln --symbolic --verbose "~{exclude_bed}" .
-    ln --symbolic --verbose "~{exclude_bed_index}" .
+    ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
+    ln --symbolic --verbose "~{exclude_bed}" "~{exclude_bed_index}" .
     ln --symbolic --verbose "~{expected_bed}" .
-    ln --symbolic --verbose "~{small_variant_vcf}" .
-    ln --symbolic --verbose "~{small_variant_vcf_index}" .
 
     sawfish --version
-
     sawfish discover \
       --threads ~{threads} \
       --disable-path-canonicalization \
@@ -120,7 +112,6 @@ task sawfish_discover {
       --bam "~{basename(aligned_bam)}" \
       --expected-cn "~{basename(expected_bed)}" \
       --cnv-excluded-regions "~{basename(exclude_bed)}" \
-      --maf "~{basename(small_variant_vcf)}" \
       --output-dir "~{out_prefix}"
 
     tar --create --verbose --file "~{out_prefix}.tar" "~{out_prefix}"
@@ -133,14 +124,13 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:18ba096219fea38d6b32f5706fb794a05cc5d1d6cc16e2a09e3a13d62d8181d4"  # 2.2.1_build1
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:5cf8f02790ecb89e652885c57f103fc9597c41f75ee71be2c05510cbbdf68f59"  # 2.2.1_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -167,9 +157,6 @@ task sawfish_call {
       },
       gc_bias_corrected_depth_bw: {
         description: "CNV GC-bias corrected depth BigWig"
-      },
-      maf_bw: {
-        description: "CNV MAF BigWig"
       },
       copynum_summary: {
         description: "CNV copy number summary JSON"
@@ -211,11 +198,14 @@ task sawfish_call {
     gc_bias_corrected_depth_bw_names: {
       description: "CNV GC-bias corrected depth BigWig output filenames"
     }
-    maf_bw_names: {
-      description: "CNV MAF BigWig output filenames"
-    }
     copynum_summary_names: {
       description: "CNV copy number summary JSON output filenames"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -234,13 +224,12 @@ task sawfish_call {
     Array[String] copynum_bedgraph_names
     Array[String] depth_bw_names
     Array[String] gc_bias_corrected_depth_bw_names
-    Array[String] maf_bw_names
     Array[String] copynum_summary_names
+    Int threads = 16
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 16
-  Int mem_gb = threads * 2
   Int disk_size = ceil(size(aligned_bams, "GB") + size(ref_fasta, "GB") + (size(discover_tars, "GB")) * 2 + 20)
 
   command <<<
@@ -251,8 +240,7 @@ task sawfish_call {
     for i in ~{sep=" " aligned_bams} ~{sep=" " aligned_bam_indices}; do
       ln --symbolic --verbose "${i}" .
     done
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
     # unpack sawfish discover output
     # add the dir names to the SAMPLES list
@@ -261,7 +249,7 @@ task sawfish_call {
 
     while read -r discover_tar || [[ -n "${discover_tar}" ]]; do
       sampledir=$(basename -s .tar "${discover_tar}")
-      SAMPLES+=("$sampledir")
+      SAMPLES+=("${sampledir}")
       tar --no-same-owner --extract --verbose --file "${discover_tar}"
     done < "~{write_lines(discover_tars)}"
 
@@ -279,21 +267,27 @@ task sawfish_call {
 
     # sawshark annotation
     sawshark \
-      --threads ~{(threads / 2)} \
-      --vcf "~{out_prefix}/genotyped.sv.vcf.gz" \
-    | bcftools view - \
-      --threads ~{(threads / 2) - 1} \
-      --output-type z \
-      --output "~{out_prefix}.vcf.gz"
-    bcftools index --tbi \
       ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
+        then "--threads '" + ceil(threads / 2) + "'"
         else ""
       } \
-      "~{out_prefix}.vcf.gz"
+      --vcf "~{out_prefix}/genotyped.sv.vcf.gz" \
+    | bcftools view - \
+      ~{if (threads - ceil(threads / 2)) > 1
+        then "--threads '" + (threads - ceil(threads / 2) - 1) + "'"
+        else ""
+      } \
+      --output-type z \
+      --write-index=tbi \
+      --output "~{out_prefix}.vcf.gz"
 
     # rename the output files to be more informative
-    mv --verbose "~{out_prefix}/supporting_reads.json.gz" "~{out_prefix}.supporting_reads.json.gz"
+    # sawfish only writes supporting_reads.json.gz when
+    # --report-supporting-reads was passed above.
+    ~{if report_supporting_reads
+      then "mv --verbose '" + out_prefix + "/supporting_reads.json.gz' '" + out_prefix + ".supporting_reads.json.gz'"
+      else ""
+    }
 
     for sample_id in ~{sep=" " sample_ids}; do
       if [ "~{length(sample_ids)}" -gt 1 ]; then
@@ -307,8 +301,6 @@ task sawfish_call {
       mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/depth.bw "${PREFIX}.depth.bw"
       # shellcheck disable=SC2086
       mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/gc_bias_corrected_depth.bw "${PREFIX}.gc_bias_corrected_depth.bw"
-      # shellcheck disable=SC2086
-      mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/maf.bw "${PREFIX}.maf.bw"
       # shellcheck disable=SC2086
       mv --verbose ~{out_prefix}/samples/sample????_${sample_id}/copynum.summary.json "${PREFIX}.copynum.summary.json"
     done
@@ -324,20 +316,19 @@ task sawfish_call {
     Array[File] copynum_bedgraph = copynum_bedgraph_names
     Array[File] depth_bw = depth_bw_names
     Array[File] gc_bias_corrected_depth_bw = gc_bias_corrected_depth_bw_names
-    Array[File] maf_bw = maf_bw_names
     Array[File] copynum_summary = copynum_summary_names
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:18ba096219fea38d6b32f5706fb794a05cc5d1d6cc16e2a09e3a13d62d8181d4"  # 2.2.1_build1
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:5cf8f02790ecb89e652885c57f103fc9597c41f75ee71be2c05510cbbdf68f59"  # 2.2.1_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

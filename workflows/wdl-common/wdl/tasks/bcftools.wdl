@@ -55,6 +55,12 @@ task bcftools_stats_roh_small_variants {
     min_qual: {
       description: "Minimum quality for ROH"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -67,11 +73,11 @@ task bcftools_stats_roh_small_variants {
     String ref_name
     Int min_length = 100000
     Int min_qual = 20
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 4
   Int disk_size = ceil(size(vcf, "GB") + size(ref_fasta, "GB") + 20)
 
   command <<<
@@ -79,8 +85,7 @@ task bcftools_stats_roh_small_variants {
 
     bcftools --version
 
-    ln --symbolic --verbose "~{vcf}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
+    ln --symbolic --verbose "~{vcf}" "~{ref_fasta}" .
 
     bcftools norm \
       --fasta-ref "~{basename(ref_fasta)}" \
@@ -105,18 +110,13 @@ task bcftools_stats_roh_small_variants {
     nNonRefHom=$(grep -w '^PSC' "~{sample_id}.~{ref_name}.small_variants.vcf.stats.txt" | cut -f5)
     printf %.2f "$((10**2 * nHets / nNonRefHom))e-2" > hethom_ratio.txt  # hack for low precision float without bc
 
-    # plot SNVs by REF and ALT
+    # plot SNVs by REF and ALT, using the ST (substitution type) section bcftools stats already computed above
     cat << EOF > plot_snvs.py
-    import sys, pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt, numpy as np
+    import sys, pandas as pd, seaborn as sns, matplotlib, numpy as np
     matplotlib.use('Agg')
-    BASES = ['A', 'C', 'G', 'T']
-    df = pd.concat(
-      [
-        pd.read_csv(sys.stdin, sep='\t'),
-        pd.DataFrame.from_dict({'REF': BASES, 'ALT': BASES, 'count': [0] * len(BASES)})
-      ],
-      ignore_index=True
-    )
+    import matplotlib.pyplot as plt
+    df = pd.read_csv(sys.stdin, sep='\t')
+    df[['REF', 'ALT']] = df['type'].str.split('>', expand=True)
     df = pd.pivot(df, index='ALT', columns='REF', values='count')
     sns.set_style('dark')
     mask = np.identity(df.shape[0], dtype=bool)
@@ -131,39 +131,27 @@ task bcftools_stats_roh_small_variants {
     plt.savefig('~{sample_id}.~{ref_name}.small_variants.snv_distribution.png'); plt.close();
     EOF
 
-    # normalize VCF, filtering for PASS SNVs >= GQ20, group by REF and ALT, and plot
-    bcftools norm \
-      --fasta-ref "~{basename(ref_fasta)}" \
-      --multiallelics - \
-      "~{basename(vcf)}" 2>/dev/null \
-    | bcftools view \
-      --apply-filters .,PASS \
-      --include 'TYPE="snp" && GQ>=20.0 && GT="alt"' \
-      --trim-alt-alleles \
-      - \
-    | bcftools query \
-      --format '%REF\t%ALT\n' \
-      - \
-    | sort | uniq -c | sed 's/^\s*//;s/\s/\t/' \
-    | awk -v OFS=$'\t' 'BEGIN {print "REF", "ALT", "count"} {print $2, $3, $1}' \
-    | python3 ./plot_snvs.py -
+    grep -w '^ST' "~{sample_id}.~{ref_name}.small_variants.vcf.stats.txt" \
+    | cut -f3,4 \
+    | awk -v OFS=$'\t' 'BEGIN {print "type", "count"} {print $1, $2}' \
+    | python3 ./plot_snvs.py
 
-    # plot indels by size
+    # plot indels by size, using the IDD (indel distribution) section bcftools stats already computed above
     cat << EOF > plot_indels.py
-    import sys, pandas as pd, seaborn as sns, matplotlib, matplotlib.pyplot as plt
+    import sys, pandas as pd, seaborn as sns, matplotlib
     matplotlib.use('Agg')
-    from numpy import abs
+    import matplotlib.pyplot as plt
     df = pd.read_csv(sys.stdin, sep='\t')
-    def size_filter(df, col, min, max):
-      return df[(abs(df[col]) >= min) & (abs(df[col]) < max)]
-    def plot_hist(ax, df, min, max, bins=100, logy=False, xlabel=True):
-      g = sns.histplot(size_filter(df, 'length', min, max), x='length', weights='count', bins=bins, ax=ax)
+    def size_filter(df, col, min_len, max_len):
+      return df[(df[col].abs() >= min_len) & (df[col].abs() < max_len)]
+    def plot_hist(ax, df, min_len, max_len, logy=False, xlabel=True):
+      g = sns.histplot(size_filter(df, 'length', min_len, max_len), x='length', weights='count', binwidth=1, binrange=(-max_len - 0.5, max_len + 0.5), ax=ax)
       g.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{int(x/1000)}k' if x >= 1000 else f'{int(x)}'))
-      g.set_xlim(-max, max)
-      g.set_title(f'±[{min},{max}) bp')
+      g.set_xlim(-max_len, max_len)
+      g.set_title(f'±[{min_len},{max_len}) bp')
       if not xlabel:
         g.set_xlabel('')
-        g.set_xticklabels([])
+        g.tick_params(labelbottom=False)
       if logy:
         g.set_yscale('log')
         g.set_ylabel('log10(Count)')
@@ -176,23 +164,10 @@ task bcftools_stats_roh_small_variants {
     plt.savefig('~{sample_id}.~{ref_name}.small_variants.indel_distribution.png'); plt.close();
     EOF
 
-    # normalize VCF, filter for PASS indels >= GQ20, group by length, and plot
-    bcftools norm \
-      --fasta-ref "~{basename(ref_fasta)}" \
-      --multiallelics - \
-      "~{basename(vcf)}" 2>/dev/null \
-    | bcftools view \
-      --apply-filters .,PASS \
-      --include 'TYPE="indel" && GQ>=20.0' \
-      --trim-alt-alleles \
-      - \
-    | bcftools query \
-      --format '%REF\t%ALT\n' \
-      - \
-    | awk -v OFS=$'\t' '{print length($2) - length($1)}' \
-    | sort -n | uniq -c | sed 's/^\s*//' \
-    | awk -v OFS=$'\t' 'BEGIN {print "length", "count"} {print $2, $1}' \
-    | python3 ./plot_indels.py -
+    grep -w '^IDD' "~{sample_id}.~{ref_name}.small_variants.vcf.stats.txt" \
+    | cut -f3,4 \
+    | awk -v OFS=$'\t' 'BEGIN {print "length", "count"} {print $1, $2}' \
+    | python3 ./plot_indels.py
 
     # find runs of homozygosity
     bcftools roh \
@@ -207,14 +182,13 @@ task bcftools_stats_roh_small_variants {
     # convert the roh output to a bed file, filtering for length and quality
     cat << EOF > roh_bed.py
     with open('~{sample_id}.~{ref_name}.bcftools_roh.out', 'r') as f:
-      lines = f.readlines()
       print("#chr\tstart\tend\tqual")
-      for line in lines:
+      for line in f:
         if line.startswith("RG"):
           # RG [2]Sample [3]Chromosome [4]Start [5]End [6]Length (bp) [7]Number of markers [8]Quality (average fwd-bwd phred score)
-          _, _, chr, start, end, length, _, score = line.strip().split('\t')
+          _, _, chrom, start, end, length, _, score = line.strip().split('\t')
           if int(length) >= ~{min_length} and float(score) >= ~{min_qual}:
-            print('\t'.join([chr, start, end, score]))
+            print('\t'.join([chrom, start, end, score]))
     EOF
 
     python3 ./roh_bed.py > "~{sample_id}.~{ref_name}.bcftools_roh.bed"
@@ -235,14 +209,13 @@ task bcftools_stats_roh_small_variants {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -280,6 +253,12 @@ task split_vcf_by_sample {
     exclude_uncalled: {
       description: "Exclude uncalled genotypes (default: true)"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -292,11 +271,11 @@ task split_vcf_by_sample {
     Array[String] split_vcf_names
     Array[String] split_vcf_index_names
     Boolean exclude_uncalled = true
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 4
-  Int mem_gb = 8
   Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
   String vcf_basename = basename(vcf, ".vcf.gz")
@@ -304,8 +283,7 @@ task split_vcf_by_sample {
   command <<<
     set -euo pipefail
 
-    ln --symbolic --verbose "~{vcf}" .
-    ln --symbolic --verbose "~{vcf_index}" .
+    ln --symbolic --verbose "~{vcf}" "~{vcf_index}" .
 
     bcftools --version
 
@@ -320,13 +298,8 @@ task split_vcf_by_sample {
           ~{true="--exclude-uncalled" false="" exclude_uncalled} \
           --output-type z \
           --output "${sample_id}.~{vcf_basename}.vcf.gz" \
+          --write-index=tbi \
           "~{basename(vcf)}"
-      bcftools index --tbi \
-        ~{if threads > 1
-          then "--threads '" + (threads - 1) + "'"
-          else ""
-        } \
-        "${sample_id}.~{vcf_basename}.vcf.gz"
     done
   >>>
 
@@ -336,14 +309,13 @@ task split_vcf_by_sample {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -372,6 +344,12 @@ task bcftools_merge {
     out_prefix: {
       description: "Output VCF name"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -381,19 +359,30 @@ task bcftools_merge {
     Array[File] vcfs
     Array[File] vcf_indices
     String out_prefix
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 4
-  Int mem_gb = 8
   Int disk_size = ceil(size(vcfs, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
 
+    VCFS=()
+
+    for i in ~{sep=" " vcfs}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      VCFS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " vcf_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
+
     bcftools --version
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     bcftools merge \
       ~{if threads > 1
         then "--threads '" + (threads - 1) + "'"
@@ -401,8 +390,8 @@ task bcftools_merge {
       } \
       --output-type z \
       --output "~{out_prefix}.vcf.gz" \
-      ~{sep=" " vcfs}
-    bcftools index --tbi "~{out_prefix}.vcf.gz"
+      --write-index=tbi \
+      ${VCFS[@]}
   >>>
 
   output {
@@ -411,14 +400,13 @@ task bcftools_merge {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -459,6 +447,12 @@ task sv_stats {
     max_scar_length: {
       description: "Maximum scar length for INS/DEL to be considered simple"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -468,14 +462,16 @@ task sv_stats {
     File vcf
     Int min_length = 50
     Int max_scar_length = 10
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 4
   Int disk_size = ceil(size(vcf, "GB") + 20)
 
   command <<<
+    set -euo pipefail
+
     bcftools --version
 
     ln --symbolic --verbose "~{vcf}" .
@@ -529,14 +525,13 @@ task sv_stats {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -565,6 +560,12 @@ task bcftools_rename {
     out_prefix: {
       description: "Output VCF prefix"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -574,11 +575,11 @@ task bcftools_rename {
     File vcf
     Array[Array[String]] sample_id_lookup
     String out_prefix
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 4
-  Int mem_gb = 8
   Int disk_size = ceil(size(vcf, "GB") * 2 + 20)
 
   command <<<
@@ -596,7 +597,12 @@ task bcftools_rename {
       --samples "~{write_tsv(sample_id_lookup)}" \
       --output "~{out_prefix}.vcf.gz" \
       "~{basename(vcf)}"
-    bcftools index --tbi "~{out_prefix}.vcf.gz"
+    bcftools index --tbi \
+      ~{if threads > 1
+        then "--threads '" + (threads - 1) + "'"
+        else ""
+      } \
+    "~{out_prefix}.vcf.gz"
   >>>
 
   output {
@@ -605,15 +611,15 @@ task bcftools_rename {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

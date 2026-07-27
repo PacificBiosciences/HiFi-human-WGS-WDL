@@ -22,6 +22,15 @@ task samtools_merge {
     out_prefix: {
       description: "Output BAM prefix"
     }
+    compression_level: {
+      description: "Compression level for the output BAM"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -30,29 +39,38 @@ task samtools_merge {
   input {
     Array[File] bams
     String out_prefix
+    Int compression_level = -1
+    Int threads = 16
+    Int mem_gb = 16
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 16
   Int disk_size = ceil(size(bams, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
 
+    BAMS=()
+
+    for i in ~{sep=" " bams}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      BAMS+=("$(basename ${i})")
+    done
+
     samtools --version
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     samtools merge \
       ~{if threads > 1
         then "--threads '" + (threads - 1) + "'"
         else ""
       } \
+      -l ~{compression_level} \
       -c -p \
-      -o "~{out_prefix}.bam" \
-      ~{sep=" " bams}
-
-    samtools index "~{out_prefix}.bam"
+      --write-index \
+      -o "~{out_prefix}.bam##idx##~{out_prefix}.bam.bai" \
+      ${BAMS[@]}
   >>>
 
   output {
@@ -61,14 +79,13 @@ task samtools_merge {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -88,6 +105,15 @@ task samtools_fasta {
     bam: {
       description: "BAM"
     }
+    exclude_mask: {
+      description: "Exclude reads with this optional mask, default is to include all reads"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -95,11 +121,12 @@ task samtools_fasta {
 
   input {
     File bam
+    Int? exclude_mask
+    Int threads = 16
+    Int mem_gb = 16
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 16
   Int disk_size = ceil(size(bam, "GB") * 3.5 + 20)
 
   String out_prefix = basename(bam, ".bam")
@@ -116,6 +143,10 @@ task samtools_fasta {
         then "--threads '" + (threads - 1) + "'"
         else ""
       } \
+      ~{if defined(exclude_mask)
+        then "--exclude-flags '" + exclude_mask + "'"
+        else ""
+      } \
       "~{basename(bam)}" \
     > "~{out_prefix}.fasta"
   >>>
@@ -125,14 +156,13 @@ task samtools_fasta {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -167,6 +197,12 @@ task subset_reference {
     out_prefix: {
       description: "Output prefix"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -178,19 +214,18 @@ task subset_reference {
     File ref_fasta
     File ref_index
     String out_prefix
+    Int threads = 4
+    Int mem_gb = 8
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 16
   Int disk_size = ceil(size(ref_fasta, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
 
     ln --symbolic --verbose "~{bed}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
     samtools --version
 
@@ -202,6 +237,7 @@ task subset_reference {
           -i "~{basename(bed)}" \
         | awk '{{print $1":"$2"-"$3}}') \
       "~{basename(ref_fasta)}" \
+      --write-index \
     > "~{out_prefix}.fasta"
     samtools faidx "~{out_prefix}.fasta"
   >>>
@@ -212,14 +248,13 @@ task subset_reference {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -234,6 +269,12 @@ task subset_bam {
       },
       bam_index: {
         description: "Output BAM index"
+      },
+      count_passed: {
+        description: "Count of passed records"
+      },
+      count_failed: {
+        description: "Count of failed records"
       }
     }
   }
@@ -257,6 +298,12 @@ task subset_bam {
     out_prefix: {
       description: "Output prefix"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -269,19 +316,18 @@ task subset_bam {
     File ref_index
     Int slop_size = 10000
     String out_prefix
+    Int threads = 4
+    Int mem_gb = 8
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 16
   Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
 
     ln --symbolic --verbose "~{bed}" .
-    ln --symbolic --verbose "~{aligned_bam}" .
-    ln --symbolic --verbose "~{aligned_bam_index}" .
+    ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
     ln --symbolic --verbose "~{ref_index}" .
 
     samtools --version
@@ -296,30 +342,30 @@ task subset_bam {
           -b ~{slop_size} \
           -g "~{basename(ref_index)}" \
           -i "~{basename(bed)}") \
-      --output "~{out_prefix}.bam" \
+      --save-counts "~{out_prefix}.counts.json" \
+        --write-index \
+      --output "~{out_prefix}.bam##idx##~{out_prefix}.bam.bai" \
       "~{basename(aligned_bam)}"
 
-    samtools index \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } "~{out_prefix}.bam"
+    jq '.records_filter_accepted' "~{out_prefix}.counts.json" > "~{out_prefix}.count_passed.txt"
+    jq '.records_filter_rejected' "~{out_prefix}.counts.json" > "~{out_prefix}.count_failed.txt"
   >>>
 
   output {
     File bam = "~{out_prefix}.bam"
     File bam_index = "~{out_prefix}.bam.bai"
+    String count_passed = read_string("~{out_prefix}.count_passed.txt")
+    String count_failed = read_string("~{out_prefix}.count_failed.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -345,6 +391,12 @@ task samtools_reset {
     reject_pg: {
       description: "Reject all PG tags *after* this value"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -352,13 +404,13 @@ task samtools_reset {
 
   input {
     File bam
-    String remove_tags = "HP,PS,PC,SA,mg,mc,mi,rm,fi,fp,ri,rp"
+    String remove_tags = "fi,ri,fp,rp,ip,pw,HP,PS,PC,mc,mg,mi,rm"
     String reject_pg = "pbmm2"
+    Int threads = 16
+    Int mem_gb = 16
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 16
   Int disk_size = ceil(size(bam, "GB") * 3.5 + 20)
 
   String out_prefix = basename(bam, ".bam")
@@ -386,15 +438,15 @@ task samtools_reset {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

@@ -55,6 +55,9 @@ workflow deepvariant {
     gpu: {
       description: "Use GPU for DeepVariant"
     }
+    call_variants_gpu_mem_gb: {
+      description: "Memory to use in GiB for the GPU call_variants task"
+    }
     default_runtime_attributes: {
       description: "Default runtime attribute structure"
     }
@@ -72,6 +75,7 @@ workflow deepvariant {
     Boolean gvcf_output = true
     String deepvariant_version = "1.10.0"
     Boolean gpu
+    Int call_variants_gpu_mem_gb = 32
     RuntimeAttributes default_runtime_attributes
   }
 
@@ -79,10 +83,7 @@ workflow deepvariant {
   Int num_shards = 8
   Int tasks_per_shard = total_deepvariant_tasks / num_shards
 
-  String docker_image = (if (default_runtime_attributes.backend == "AWS-HealthOmics")
-    then default_runtime_attributes.container_registry
-    else "google"
-  ) + "/deepvariant:~{deepvariant_version}"
+  String docker_image = "google/deepvariant:~{deepvariant_version}"
 
   scatter (shard_index in range(num_shards)) {
     Int task_start_index = shard_index * tasks_per_shard
@@ -122,6 +123,7 @@ workflow deepvariant {
       example_tfrecord_tars = deepvariant_make_examples.example_tfrecord_tar,
       total_deepvariant_tasks = total_deepvariant_tasks,
       docker_image = docker_image + "-gpu",
+      mem_gb = call_variants_gpu_mem_gb,
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -204,6 +206,12 @@ task deepvariant_make_examples {
     docker_image: {
       description: "Docker image URL"
     }
+    threads_per_task: {
+      description: "Number of threads to use per task"
+    }
+    mem_gb_per_task: {
+      description: "Memory to use in GiB per task"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -222,26 +230,38 @@ task deepvariant_make_examples {
     Boolean output_deepvariant_phasing
     Boolean gvcf_output
     String docker_image
+    Int threads_per_task = 1
+    Int mem_gb_per_task = 4
     RuntimeAttributes runtime_attributes
   }
 
   Int task_end_index = task_start_index + tasks_per_shard - 1
 
-  Int mem_gb = tasks_per_shard * 4
   Int disk_size = ceil(size(aligned_bams, "GB") * 2 + size(ref_fasta, "GB") + 20)
 
   command <<<
     set -euo pipefail
 
+    BAMS=()
+    for i in ~{sep=" " aligned_bams}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      BAMS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " aligned_bam_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
+
     ln --symbolic --verbose "~{ref_fasta}" .
     ln --symbolic --verbose "~{ref_index}" .
-    if [[ "~{defined(regions_bed)}" == "true" ]]; then
-      ln --symbolic --verbose "~{regions_bed}" .
-    fi
+    ~{if defined(regions_bed)
+      then "ln --symbolic --verbose '" + regions_bed + "' ."
+      else ""
+    }
 
     mkdir example_tfrecords nonvariant_site_tfrecords read_phasing
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068,SC2046,SC2086
     seq ~{task_start_index} ~{task_end_index} \
     | parallel \
       --jobs ~{tasks_per_shard} \
@@ -255,10 +275,10 @@ task deepvariant_make_examples {
           ]))}"
           else ""
         } \
-        --reads ~{sep="," aligned_bams} \
+        --reads $(IFS=,; echo "${BAMS[*]}") \
         --examples "example_tfrecords/make_examples.tfrecord@~{total_deepvariant_tasks}.gz" \
         ~{if (gvcf_output)
-          then "--gvcf nonvariant_site_tfrecords/gvcf.tfrecord@~{total_deepvariant_tasks}.gz"
+          then "--gvcf 'nonvariant_site_tfrecords/gvcf.tfrecord@~{total_deepvariant_tasks}.gz'"
           else ""
         } \
         ~{if (output_deepvariant_phasing)
@@ -266,7 +286,7 @@ task deepvariant_make_examples {
           else ""
         } \
         ~{if (output_deepvariant_phasing)
-          then "--output_local_read_phasing=read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv"
+          then "--output_local_read_phasing='read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv'"
           else ""
         } \
         --checkpoint /opt/models/pacbio \
@@ -292,13 +312,12 @@ task deepvariant_make_examples {
 
   runtime {
     docker: docker_image
-    cpu: tasks_per_shard
-    memory: "~{mem_gb} GiB"
+    cpu: tasks_per_shard * threads_per_task
+    memory: "~{tasks_per_shard * mem_gb_per_task} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -330,6 +349,15 @@ task deepvariant_call_variants_cpu {
     docker_image: {
       description: "Docker image URL"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    writer_threads: {
+      description: "Number of writer threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -341,12 +369,12 @@ task deepvariant_call_variants_cpu {
     Array[File] example_tfrecord_tars
     Int total_deepvariant_tasks
     String docker_image
+    Int threads = 64
+    Int writer_threads = 8
+    Int mem_gb = 256
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = total_deepvariant_tasks
-  Int writer_threads = 8
-  Int mem_gb = total_deepvariant_tasks * 4
   Int disk_size = ceil(size(example_tfrecord_tars, "GB") * 2 + 100)
 
   command <<<
@@ -379,7 +407,6 @@ task deepvariant_call_variants_cpu {
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -411,6 +438,15 @@ task deepvariant_call_variants_gpu {
     docker_image: {
       description: "Docker image URL"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    writer_threads: {
+      description: "Number of writer threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -422,13 +458,14 @@ task deepvariant_call_variants_gpu {
     Array[File] example_tfrecord_tars
     Int total_deepvariant_tasks
     String docker_image
+    Int threads = 8
+    Int writer_threads = 4
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int writer_threads = 4
-  Int mem_gb = 32
   Int disk_size = ceil(size(example_tfrecord_tars, "GB") * 2 + 100)
+  Int gpuCount = 1
 
   command <<<
     set -euo pipefail
@@ -461,12 +498,8 @@ task deepvariant_call_variants_gpu {
     bootDiskSizeGb: 30  # !UnknownRuntimeKey
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
-    gpuCount: 1
+    gpuCount: gpuCount
     gpuType: runtime_attributes.gpuType
-    acceleratorCount: 1  # !UnknownRuntimeKey
-    acceleratorType: runtime_attributes.gpuType  # !UnknownRuntimeKey
-    nvidiaDriverVersion: "535.230.02"  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -522,6 +555,12 @@ task deepvariant_postprocess_variants {
     docker_image: {
       description: "Docker image URL"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -538,17 +577,18 @@ task deepvariant_postprocess_variants {
     String ref_name
     Int total_deepvariant_tasks
     String docker_image
+    Int threads = 2
+    Int mem_gb = 72
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 72
-  Int disk_size = ceil((size(ref_fasta, "GB") + size(tfrecords_tar, "GB") + size(example_tfrecord_tars, "GB") + if length(nonvariant_site_tfrecord_tars) > 0
+  Int disk_size = ceil((size(ref_fasta, "GB") + size(tfrecords_tar, "GB") + size(example_tfrecord_tars, "GB") + (if length(nonvariant_site_tfrecord_tars) > 0
     then size(select_all(nonvariant_site_tfrecord_tars), "GB")
-    else 0 + if length(read_phasing_tars) > 0
-      then size(select_all(read_phasing_tars), "GB")
-      else 0
-  ) * 2 + 20)
+    else 0
+  ) + (if length(read_phasing_tars) > 0
+    then size(select_all(read_phasing_tars), "GB")
+    else 0
+  )) * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -629,8 +669,8 @@ task deepvariant_postprocess_variants {
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

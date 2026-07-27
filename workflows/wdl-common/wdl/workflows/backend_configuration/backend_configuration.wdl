@@ -109,7 +109,7 @@ workflow backend_configuration {
     # GPUs are not available in Azure
     RuntimeAttributes azure_spot_runtime_attributes = object {
       backend: "Azure",
-      preemptible_tries: 3,
+      preemptible_tries: 1,
       max_retries: 3,
       zones: "",
       cpuPlatform: "",
@@ -135,19 +135,34 @@ workflow backend_configuration {
   }
 
   if (backend == "AWS-HealthOmics") {
-    # No distinction between preemptible and on-demand in AWS-HealthOmics configuration
-    # max_retries applies to failures due to preemption or to a nonzero rc
-    # preemptible is not used in AWS
+    # preemptible retries AWS service errors
+    # maxRetries retries OOM errors with 2x memory, requires GNU findutils 4.2.3+
+    # https://docs.aws.amazon.com/omics/latest/dev/workflow-languages-wdl.html#workflow-wdl-directives
 
-    # gpuCount and gpuType are optional and map to acceleratorCount and acceleratorType
-    # acceleratorType: ["nvidia-tesla-a10g", "nvidia-tesla-t4", "nvidia-tesla-t4-a10g"]
+    # gpuCount and gpuType are optional
+    # tested on us-east-1 with "nvidia-t4-a10g-l4"
+    # gpuType options: ["nvidia-tesla-t4", "nvidia-tesla-t4-a10g", "nvidia-tesla-a10g", "nvidia-t4-a10g-l4", "nvidia-l4-a10g", "nvidia-l4", "nvidia-l40s"]
+    # Accelerator spec	->	Healthomics instance types
+    # "nvidia-tesla-t4"	->	G4
+    # "nvidia-tesla-t4-a10g"	->	G4 and G5
+    # "nvidia-tesla-a10g"	->	G5
+    # "nvidia-t4-a10g-l4"	->	G4, G5, and G6
+    # "nvidia-l4-a10g"	->	G5 and G6
+    # "nvidia-l4"	->	G6
+    # "nvidia-l40s"	->	G6e
 
-    # AWS HealthOmics must use containers hosted on ECR and cannot use our Quay registry,
-    # therefore, container_registry must be defined.
+    # AWS HealthOmics must use containers hosted on ECR.
+    # Our recommended approach for HealthOmics is:
+    # 1. Configure ECR pull through cache rules to pull from quay.io (and docker-hub if desired) https://docs.aws.amazon.com/omics/latest/dev/workflows-ecr.html#ecr-pull-through-configure
+    # 2. Configure registry mappings to remap quay.io and docker-hub URLs to your ECR https://docs.aws.amazon.com/omics/latest/dev/workflows-ecr.html#ecr-pull-through-registry-mapping
+    # 3. Manually mirror NVIDIA Clara containers to your ECR
+    # 4. Configure image mappings to remap nvidia clara urls to your ECR https://docs.aws.amazon.com/omics/latest/dev/workflows-ecr.html#ecr-pull-through-mapping-format
+    # Check the workflow documentation for more detailed instructions.
+    # If you don't plan to configure ECR and mappings, mirror the containers you need to your own ECR and set container_registry to your ECR URL prefix
     RuntimeAttributes aws_healthomics_on_demand_runtime_attributes = object {
       backend: "AWS-HealthOmics",
-      preemptible_tries: 0,
-      max_retries: 0,
+      preemptible_tries: 2,
+      max_retries: 1,
       zones: "",
       cpuPlatform: "",
       gpuType: select_first([
@@ -155,14 +170,14 @@ workflow backend_configuration {
         ""
       ]),
       container_registry: select_first([
-        container_registry
+        container_registry,
+        default_container_registry
       ])
     }
   }
 
   if (backend == "HPC") {
     # No distinction between preemptible and on-demand in HPC configuration
-    # default_hpc_partition is provided to specify the partition to use in HPC
     RuntimeAttributes hpc_runtime_attributes = object {
       backend: "HPC",
       preemptible_tries: 0,
@@ -195,3 +210,4 @@ workflow backend_configuration {
     ])
   }
 }
+

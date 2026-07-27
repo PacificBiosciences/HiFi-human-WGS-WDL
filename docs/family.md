@@ -12,9 +12,9 @@
     - [Tandem Repeat Genotyping](#tandem-repeat-genotyping)
     - [Variant Phasing](#variant-phasing)
     - [Variant Calling in Dark Regions](#variant-calling-in-dark-regions)
+    - [Specialized Repeat Genotyping](#specialized-repeat-genotyping)
     - [5mCpG Methylation Calling](#5mcpg-methylation-calling)
     - [PGx Typing](#pgx-typing)
-    - [Tertiary Analysis](#tertiary-analysis)
 
 ## DAG (simplified)
 
@@ -38,10 +38,12 @@ flowchart TD
       pbmm2_align_fail_reads["pbmm2 align baited fail_reads (if fail_reads provided)"]
       filter_fail_reads["filter fail_reads alignments (if fail_reads provided)"]
     end
-    samtools_merge["samtools merge"]
+    pbsamoa_merge["pbsamoa merge"]
     mosdepth["mosdepth"]
     paraphase["Paraphase"]
     mitorsaw["MitorSaw"]
+    kivvi_kiv2["kivvi (KIV2)"]
+    kivvi_d4z4["kivvi (D4Z4)"]
     deepvariant["DeepVariant"]
     sawfish_discover["Sawfish discover"]
   end
@@ -53,38 +55,34 @@ flowchart TD
   end
   subgraph "`**Phasing and Downstream**`"
     hiphase["HiPhase"]
-    samtools_merge_fail_reads["samtools merge hifi_reads and fail_reads"]
+    pbsamoa_merge_fail_reads["pbsamoa merge hifi_reads and fail_reads"]
     trgt["TRGT"]
-    bam_stats["BAM stats"]
+    pbjam["pbjam bam_stats"]
     bcftools_roh["bcftools roh"]
     bcftools_stats["bcftools stats\n(small variants)"]
     sv_stats["SV stats"]
-    cpg_pileup["5mCpG pileup"]
-    methbat["MethBat"]
+    methbat_pileup["MethBat pileup"]
+    methbat_profile["MethBat profile"]
     starphase["StarPhase"]
-    pharmcat["PharmCat"]
   end
   subgraph " "
     merge_small_variants["bcftools merge small variants"]
     merge_svs["bcftools merge SV"]
     trgt_merge["trgt merge"]
   end
-  subgraph "`**Tertiary Analysis**`"
-    slivar_small_variants["slivar small variants"]
-    svpack["svpack filter and annotate"]
-    slivar_svpack["slivar svpack tsv"]
-  end
 
   trgt_catalog --> bait_fasta --> bait_fail_reads
-  fail_ubam --> bait_fail_reads --> pbmm2_align_fail_reads --> filter_fail_reads --> samtools_merge_fail_reads
-  ubam --> pbmm2_align --> samtools_merge
-  samtools_merge --> mosdepth
-  samtools_merge --> paraphase
-  samtools_merge --> mitorsaw
-  samtools_merge_fail_reads --> trgt
-  samtools_merge --> deepvariant
-  samtools_merge --> sawfish_discover
-  samtools_merge --> hiphase
+  fail_ubam --> bait_fail_reads --> pbmm2_align_fail_reads --> filter_fail_reads --> pbsamoa_merge_fail_reads
+  ubam --> pbmm2_align --> pbsamoa_merge
+  pbsamoa_merge --> mosdepth
+  pbsamoa_merge --> paraphase
+  pbsamoa_merge --> mitorsaw
+  pbsamoa_merge --> kivvi_kiv2
+  pbsamoa_merge --> kivvi_d4z4
+  pbsamoa_merge_fail_reads --> trgt
+  pbsamoa_merge --> deepvariant
+  pbsamoa_merge --> sawfish_discover
+  pbsamoa_merge --> hiphase
   deepvariant --> sawfish_discover
   deepvariant --> glnexus
   sawfish_discover --> sawfish_call
@@ -95,24 +93,17 @@ flowchart TD
   split_sawfish --> hiphase
 
   hiphase --> trgt
-  hiphase --> bam_stats
+  hiphase --> pbjam
   hiphase --> bcftools_roh
   hiphase --> bcftools_stats
   hiphase --> sv_stats
-  hiphase --> cpg_pileup
+  hiphase --> methbat_pileup --> methbat_profile
   hiphase --> starphase
-  hiphase --> pharmcat
   hiphase --> trgt_dropouts
-  starphase --> pharmcat
-  cpg_pileup --> methbat
 
   hiphase --> merge_small_variants
   hiphase --> merge_svs
   hiphase --> trgt_merge
-
-  merge_small_variants --> slivar_small_variants
-  merge_svs --> svpack
-  svpack --> slivar_svpack
 ```
 
 ## Inputs
@@ -120,11 +111,10 @@ flowchart TD
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | [Family](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/workflows/humanwgs_structs.wdl#L15) | family | Family struct describing samples, relationships, and unaligned BAM paths | [below](#family-struct) |
-| File | [ref_map_file](./ref_map.md) | TSV containing reference genome file paths; must match backend | |
-| String? | phenotypes | Comma-delimited list of HPO terms. | [Human Phenotype Ontology (HPO) phenotypes](https://hpo.jax.org/app/) associated with the cohort.<br/><br/>If omitted, tertiary analysis will be skipped. |
-| File? | [tertiary_map_file](./tertiary_map.md) | TSV containing tertiary analysis file paths and thresholds; must match backend | `AF`/`AC`/`nhomalt` thresholds can be modified, but this will affect performance.<br/><br/>If omitted, tertiary analysis will be skipped. |
-| Int | max_reads_per_alignment_chunk | Maximum reads per alignment chunk<br/><br/>Default: `500000` | |
-| Int | pharmcat_min_coverage | Minimum coverage for PharmCAT<br/><br/>Default: `10` | |
+| String | ref_name | Reference genome to use for this workflow run<br/><br/>`["GRCh38", "GRCh38_GIABv3"]`<br/><br/>Default: `"GRCh38"` | |
+| File? | trgt_tandem_repeat_bed_override | Optional BED file to override the default TRGT tandem repeat catalog | |
+| File? | methbat_region_tsv_override | Optional TSV file to override the default MethBat methylation profiling regions | |
+| Boolean | use_alignment_chunking | Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk.<br/><br/>Default: `true` | |
 | Int | glnexus_mem_gb | GLnexus memory<br/><br/>Default: `60` | |
 | Boolean | use_gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
 | Boolean | use_parabricks_deepvariant | Use Parabricks DeepVariant implementation<br/><br/>Default: `false` | If both `use_parabricks_deepvariant` and `use_gpu` are set to `true`, Parabricks DeepVariant will be used instead of standard DeepVariant.<br/><br/>[Parabricks DeepVariant](./parabricks.md#parabricks-deepvariant-subworkflow) |
@@ -152,12 +142,8 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
-| String? | sex | Sample sex<br/>`["MALE", "FEMALE", null]` | Used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`.  Used for tertiary analysis X-linked inheritance filtering. |
-| Boolean | affected | Affected status | If set to `true`, sample is described as being affected by all HPO terms in `phenotypes`.<br/>If set to `false`, sample is described as not being affected by all HPO terms in `phenotypes`. |
 | Array\[File\] | hifi_reads | Array of paths to hifi_reads in unaligned BAM format. | |
 | Array\[File\]? | fail_reads | Array of paths to fail_reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
-| String? | father_id | sample_id of father (optional) | |
-| String? | mother_id | sample_id of mother (optional) | |
 
 ## Outputs
 
@@ -171,7 +157,6 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | File | msg_file | File containing messages from the workflow | |
 | Array\[String\] | sample_ids | Sample IDs | |
 | File | stats_file | Table of summary statistics | |
-| Array\[File\] | bam_statistics | BAM statistics | Per-read length and read-quality |
 | Array\[File\] | read_length_plot | Distribution of read lengths | |
 | Array\[File?\] | read_quality_plot | Distribution of read qualities | |
 | Array\[File\] | merged_haplotagged_bam | Merged, haplotagged alignments | Includes unmapped reads |
@@ -277,19 +262,31 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 | Array\[File?\] | paraphase_realigned_bam_index | | |
 | Array\[File?\] | paraphase_vcfs | Paraphase VCFs | Compressed as `.tar.gz` |
 
+### Specialized Repeat Genotyping
+
+| Type | Name | Description | Notes |
+| ---- | ---- | ----------- | ----- |
+| Array\[File?\] | kivvi_kiv2_vcf | KIV2 repeat variant VCF | |
+| Array\[File?\] | kivvi_kiv2_vcf_index | | |
+| Array\[File?\] | kivvi_kiv2_json | KIV2 repeat genotype JSON | |
+| Array\[File?\] | kivvi_kiv2_realigned_bam | KIV2-realigned BAM | |
+| Array\[File?\] | kivvi_kiv2_realigned_bam_index | | |
+| Array\[File?\] | kivvi_kiv2_allele_plot | KIV2 assembled allele plot | |
+| Array\[File?\] | kivvi_d4z4_vcf | D4Z4 repeat variant VCF | |
+| Array\[File?\] | kivvi_d4z4_vcf_index | | |
+| Array\[File?\] | kivvi_d4z4_json | D4Z4 repeat genotype JSON | |
+| Array\[File?\] | kivvi_d4z4_realigned_bam | D4Z4-realigned BAM | |
+| Array\[File?\] | kivvi_d4z4_realigned_bam_index | | |
+| Array\[File?\] | kivvi_d4z4_allele_plot | D4Z4 assembled allele plot | |
+
 ### 5mCpG Methylation Calling
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| Array\[File?\] | cpg_hap1_bed | 5mCpG haplotype 1 BED | |
-| Array\[File?\] | cpg_hap1_bed_index | | |
-| Array\[File?\] | cpg_hap2_bed | 5mCpG haplotype 2 BED | |
-| Array\[File?\] | cpg_hap2_bed_index | | |
-| Array\[File?\] | cpg_combined_bed | 5mCpG combined BED | |
-| Array\[File?\] | cpg_combined_bed_index | | |
-| Array\[File?\] | cpg_hap1_bw | 5mCpG haplotype 1 BigWig | |
-| Array\[File?\] | cpg_hap2_bw | 5mCpG haplotype 2 BigWig | |
-| Array\[File?\] | cpg_combined_bw | 5mCpG combined BigWig | |
+| Array\[File?\] | cpg_pileup_bed | 5mCpG pileup BED | |
+| Array\[File?\] | cpg_pileup_bed_index | | |
+| Array\[File?\] | hmcpg_pileup_bed | 5hmCpG pileup BED | |
+| Array\[File?\] | hmcpg_pileup_bed_index | | |
 | Array\[String\] | stat_cpg_hap1_count | Number of scored reference 5mCpGs in haplotype 1 | |
 | Array\[String\] | stat_cpg_hap2_count | Number of scored reference 5mCpGs in haplotype 2 | |
 | Array\[String\] | stat_cpg_combined_count | Number of scored reference 5mCpGs combined | |
@@ -302,22 +299,5 @@ The `Sample` struct contains sample specific data and metadata. The struct has t
 
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
-| Array\[File\] | pbstarphase_summary | StarPhase summary | Haplotype calls for PGx loci |
-| Array\[File?\] | pharmcat_match_json | PharmCAT match JSON | |
-| Array\[File?\] | pharmcat_phenotype_json | PharmCAT phenotype JSON | |
-| Array\[File?\] | pharmcat_report_html | PharmCAT report HTML | |
-| Array\[File?\] | pharmcat_report_json | PharmCAT report JSON | |
-
-### Tertiary Analysis
-
-| Type | Name | Description | Notes |
-| ---- | ---- | ----------- | ----- |
-| File? | tertiary_small_variant_filtered_vcf | Filtered, annotated small variant VCF | |
-| File? | tertiary_small_variant_filtered_vcf_index | | |
-| File? | tertiary_small_variant_filtered_tsv | Filtered, annotated small variant TSV | |
-| File? | tertiary_small_variant_compound_het_vcf | Filtered, annotated compound heterozygous small variant VCF | |
-| File? | tertiary_small_variant_compound_het_vcf_index | | |
-| File? | tertiary_small_variant_compound_het_tsv | Filtered, annotated compound heterozygous small variant TSV | |
-| File? | tertiary_sv_filtered_vcf | Filtered, annotated structural variant VCF | |
-| File? | tertiary_sv_filtered_vcf_index | | |
-| File? | tertiary_sv_filtered_tsv | Filtered, annotated structural variant TSV | |
+| Array\[File?\] | pbstarphase_summary | StarPhase summary | Haplotype calls for PGx loci |
+| Array\[File?\] | pbstarphase_tsv | StarPhase summary in TSV format for PharmCAT | |

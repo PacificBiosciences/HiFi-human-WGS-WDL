@@ -33,9 +33,6 @@ workflow joint {
       sv_gc_bias_corrected_depth_bw: {
         description: "CNV GC-bias corrected depth BigWig"
       },
-      sv_maf_bw: {
-        description: "CNV MAF BigWig"
-      },
       sv_copynum_summary: {
         description: "CNV copy number summary JSON"
       }
@@ -64,8 +61,14 @@ workflow joint {
     aligned_bam_indices: {
       description: "Aligned BAM indices"
     }
-    ref_map_file: {
-      description: "Reference map file"
+    ref_name: {
+      description: "Reference genome short name"
+    }
+    ref_fasta: {
+      description: "Reference FASTA"
+    }
+    ref_index: {
+      description: "Reference FASTA index"
     }
     glnexus_mem_gb: {
       description: "GLnexus memory (GB)"
@@ -83,22 +86,20 @@ workflow joint {
     Array[File] discover_tars
     Array[File] aligned_bams
     Array[File] aligned_bam_indices
-    File ref_map_file
+    String ref_name
+    File ref_fasta
+    File ref_index
     Int glnexus_mem_gb
     RuntimeAttributes default_runtime_attributes
   }
 
-  #@ except: DeclarationName
-  Map[String, String] ref_map = read_map(ref_map_file)
-
   # In order to properly delocalize the outputs of sawfish_call in cloud engines
   # we need to generate the names of the outputs and pass these to the call.
   scatter (sample_id in sample_ids) {
-    String copynum_bedgraph_name = "~{sample_id}.~{family_id}.joint.~{ref_map["name"]}.structural_variants.copynum.bedgraph"
-    String depth_bw_name = "~{sample_id}.~{family_id}.joint.~{ref_map["name"]}.structural_variants.depth.bw"
-    String gc_bias_corrected_depth_bw_name = "~{sample_id}.~{family_id}.joint.~{ref_map["name"]}.structural_variants.gc_bias_corrected_depth.bw"
-    String maf_bw_name = "~{sample_id}.~{family_id}.joint.~{ref_map["name"]}.structural_variants.maf.bw"
-    String copynum_summary_name = "~{sample_id}.~{family_id}.joint.~{ref_map["name"]}.structural_variants.copynum.summary.json"
+    String copynum_bedgraph_name = "~{sample_id}.~{family_id}.joint.~{ref_name}.structural_variants.copynum.bedgraph"
+    String depth_bw_name = "~{sample_id}.~{family_id}.joint.~{ref_name}.structural_variants.depth.bw"
+    String gc_bias_corrected_depth_bw_name = "~{sample_id}.~{family_id}.joint.~{ref_name}.structural_variants.gc_bias_corrected_depth.bw"
+    String copynum_summary_name = "~{sample_id}.~{family_id}.joint.~{ref_name}.structural_variants.copynum.summary.json"
   }
 
   call Sawfish.sawfish_call { input:
@@ -106,13 +107,12 @@ workflow joint {
     discover_tars = discover_tars,
     aligned_bams = aligned_bams,
     aligned_bam_indices = aligned_bam_indices,
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
-    out_prefix = "~{family_id}.joint.~{ref_map["name"]}.structural_variants",
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    out_prefix = "~{family_id}.joint.~{ref_name}.structural_variants",
     copynum_bedgraph_names = copynum_bedgraph_name,
     depth_bw_names = depth_bw_name,
     gc_bias_corrected_depth_bw_names = gc_bias_corrected_depth_bw_name,
-    maf_bw_names = maf_bw_name,
     copynum_summary_names = copynum_summary_name,
     runtime_attributes = default_runtime_attributes
   }
@@ -139,7 +139,7 @@ workflow joint {
     cohort_id = family_id + ".joint",
     gvcfs = gvcfs,
     gvcf_indices = gvcf_indices,
-    ref_name = ref_map["name"],
+    ref_name = ref_name,
     mem_gb = glnexus_mem_gb,
     runtime_attributes = default_runtime_attributes
   }
@@ -172,7 +172,7 @@ workflow joint {
     Array[File] sv_copynum_bedgraph = sawfish_call.copynum_bedgraph
     Array[File] sv_depth_bw = sawfish_call.depth_bw
     Array[File] sv_gc_bias_corrected_depth_bw = sawfish_call.gc_bias_corrected_depth_bw
-    Array[File] sv_maf_bw = sawfish_call.maf_bw
     Array[File] sv_copynum_summary = sawfish_call.copynum_summary
   }
 }
+

@@ -43,6 +43,12 @@ task pbstarphase_diplotype {
     ref_index: {
       description: "Reference FASTA index"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -58,57 +64,56 @@ task pbstarphase_diplotype {
     File aligned_bam_index
     File ref_fasta
     File ref_index
+    Int threads = 2
+    Int mem_gb = 8
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 16
   Int disk_size = ceil(size(phased_small_variant_vcf, "GB") + size(phased_structural_variant_vcf, "GB") + size(aligned_bam, "GB") + size(ref_fasta, "GB") + 50)
 
   command <<<
     set -euo pipefail
 
-    ln --symbolic --verbose "~{phased_small_variant_vcf}" .
-    ln --symbolic --verbose "~{phased_small_variant_vcf_index}" .
+    ln --symbolic --verbose "~{phased_small_variant_vcf}" "~{phased_small_variant_vcf_index}" .
     ~{if defined(phased_structural_variant_vcf)
       then "ln --symbolic --verbose '" + phased_structural_variant_vcf + "' '" + phased_structural_variant_vcf_index + "' ."
       else ""
     }
-    ln --symbolic --verbose "~{aligned_bam}" .
-    ln --symbolic --verbose "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
     pbstarphase --version
 
     pbstarphase diplotype \
       --database /opt/pbstarphase_db.json.gz \
-      --reference "~{ref_fasta}" \
-      --vcf "~{phased_small_variant_vcf}" \
+      --reference "~{basename(ref_fasta)}" \
+      --vcf "~{basename(phased_small_variant_vcf)}" \
       ~{if defined(phased_structural_variant_vcf)
-        then "--sv-vcf '" + phased_structural_variant_vcf + "'"
+        then "--sv-vcf '" + basename(select_first([
+          phased_structural_variant_vcf
+        ])) + "'"
         else ""
       } \
-      --bam "~{aligned_bam}" \
+      --bam "~{basename(aligned_bam)}" \
       --output-calls "~{out_prefix}.pbstarphase.json" \
-      --pharmcat-tsv "~{out_prefix}.pharmcat.tsv"
+      --pharmcat-tsv "~{out_prefix}.pbstarphase.tsv"
   >>>
 
   output {
     File summary_json = "~{out_prefix}.pbstarphase.json"
-    File pharmcat_tsv = "~{out_prefix}.pharmcat.tsv"
+    File pharmcat_tsv = "~{out_prefix}.pbstarphase.tsv"
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbstarphase@sha256:bad96d68a60d49f95e4b282a3221578e688b5ccde2889e7cb10fbff3244f4b29"  # 2.0.1_build1
+    docker: "~{runtime_attributes.container_registry}/pbstarphase@sha256:d08637c92e0f75d7f951d80ba62be8ff3c77e0d0fc0051f0e38fbb1d82b08161"  # 2.1.0_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

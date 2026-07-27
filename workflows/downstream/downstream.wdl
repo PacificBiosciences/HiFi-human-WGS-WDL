@@ -1,15 +1,12 @@
 version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
-import "../wdl-common/wdl/tasks/bam_stats.wdl" as Bamstats
 import "../wdl-common/wdl/tasks/bcftools.wdl" as Bcftools
-import "../wdl-common/wdl/tasks/cpg_pileup.wdl" as Cpgpileup
 import "../wdl-common/wdl/tasks/hiphase.wdl" as Hiphase
 import "../wdl-common/wdl/tasks/methbat.wdl" as Methbat
+import "../wdl-common/wdl/tasks/pbjam.wdl" as Pbjam
 import "../wdl-common/wdl/tasks/pbstarphase.wdl" as Pbstarphase
-import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
-import "../wdl-common/wdl/workflows/pharmcat/pharmcat.wdl" as Pharmcat
 
 workflow downstream {
   meta {
@@ -47,9 +44,6 @@ workflow downstream {
       },
       stat_phase_block_ng50: {
         description: "Phase block NG50"
-      },
-      bam_statistics: {
-        description: "BAM statistics"
       },
       read_length_plot: {
         description: "Distribution of read lengths"
@@ -159,40 +153,25 @@ workflow downstream {
       stat_trgt_uncalled_count: {
         description: "Number of sites ungenotyped by TRGT"
       },
-      cpg_combined_bed: {
-        description: "5mCpG combined BED"
+      cpg_pileup_bed: {
+        description: "5mCpG pileup BED"
       },
-      cpg_combined_bed_index: {
-        description: "Index for 5mCpG combined BED"
+      cpg_pileup_bed_index: {
+        description: "Index for 5mCpG pileup BED"
       },
-      cpg_hap1_bed: {
-        description: "5mCpG haplotype 1 BED"
+      hmcpg_pileup_bed: {
+        description: "5hmC pileup BED"
       },
-      cpg_hap1_bed_index: {
-        description: "Index for 5mCpG haplotype 1 BED"
+      hmcpg_pileup_bed_index: {
+        description: "Index for 5hmC pileup BED"
       },
-      cpg_hap2_bed: {
-        description: "5mCpG haplotype 2 BED"
-      },
-      cpg_hap2_bed_index: {
-        description: "Index for 5mCpG haplotype 2 BED"
-      },
-      cpg_combined_bw: {
-        description: "5mCpG combined BigWig"
-      },
-      cpg_hap1_bw: {
-        description: "5mCpG haplotype 1 BigWig"
-      },
-      cpg_hap2_bw: {
-        description: "5mCpG haplotype 2 BigWig"
-      },
-      stat_hap1_cpg_count: {
+      stat_cpg_hap1_count: {
         description: "Number of scored reference 5mCpGs in haplotype 1"
       },
-      stat_hap2_cpg_count: {
+      stat_cpg_hap2_count: {
         description: "Number of scored reference 5mCpGs in haplotype 2"
       },
-      stat_combined_cpg_count: {
+      stat_cpg_combined_count: {
         description: "Number of scored reference 5mCpGs combined"
       },
       methbat_profile: {
@@ -210,17 +189,8 @@ workflow downstream {
       pbstarphase_json: {
         description: "StarPhase summary"
       },
-      pharmcat_match_json: {
-        description: "PharmCAT match JSON"
-      },
-      pharmcat_phenotype_json: {
-        description: "PharmCAT phenotype JSON"
-      },
-      pharmcat_report_html: {
-        description: "PharmCAT report HTML"
-      },
-      pharmcat_report_json: {
-        description: "PharmCAT report JSON"
+      pbstarphase_tsv: {
+        description: "StarPhase summary in TSV format for PharmCAT"
       },
       msg: {
         description: "Messages from the workflow"
@@ -266,11 +236,26 @@ workflow downstream {
     sv_vcf_index: {
       description: "Structural variant VCF index"
     }
-    pharmcat_min_coverage: {
-      description: "Minimum coverage for PharmCAT"
+    ref_name: {
+      description: "Reference genome short name"
     }
-    ref_map_file: {
-      description: "Reference map file"
+    ref_fasta: {
+      description: "Reference FASTA"
+    }
+    ref_index: {
+      description: "Reference FASTA index"
+    }
+    sawfish_expected_bed_male: {
+      description: "Expected allosome copy number BED for XY samples"
+    }
+    sawfish_expected_bed_female: {
+      description: "Expected allosome copy number BED for XX samples"
+    }
+    methbat_region_tsv: {
+      description: "Regions for MethBat methylation profiling in tab-separated format"
+    }
+    run_starphase: {
+      description: "Whether to run StarPhase task"
     }
     default_runtime_attributes: {
       description: "Default runtime attribute structure"
@@ -289,13 +274,15 @@ workflow downstream {
     File small_variant_vcf_index
     File sv_vcf
     File sv_vcf_index
-    Int pharmcat_min_coverage
-    File ref_map_file
+    String ref_name
+    File ref_fasta
+    File ref_index
+    File sawfish_expected_bed_male
+    File sawfish_expected_bed_female
+    File methbat_region_tsv
+    Boolean run_starphase
     RuntimeAttributes default_runtime_attributes
   }
-
-  #@ except: DeclarationName
-  Map[String, String] ref_map = read_map(ref_map_file)
 
   Array[File] hiphase_input_vcfs = [
     small_variant_vcf,
@@ -313,69 +300,69 @@ workflow downstream {
     String phased_vcf_index_name = basename(hiphase_input_vcf_indices[vcf_index], ".vcf.gz.tbi") + ".phased.vcf.gz.tbi"
   }
 
+  String haplotagged_bam_name = "~{sample_id}.~{ref_name}.haplotagged.bam"
+  String haplotagged_bam_index_name = "~{sample_id}.~{ref_name}.haplotagged.bam.bai"
+
   call Hiphase.hiphase { input:
     sample_id = sample_id,
     vcfs = hiphase_input_vcfs,
     vcf_indices = hiphase_input_vcf_indices,
     phased_vcf_names = phased_vcf_name,
     phased_vcf_index_names = phased_vcf_index_name,
-    aligned_bam = aligned_hifi_reads,
-    aligned_bam_index = aligned_hifi_reads_index,
-    ref_name = ref_map["name"],
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
+    aligned_bams = [
+      aligned_hifi_reads
+    ],
+    aligned_bam_indices = [
+      aligned_hifi_reads_index
+    ],
+    haplotagged_bam_names = [
+      haplotagged_bam_name
+    ],
+    haplotagged_bam_index_names = [
+      haplotagged_bam_index_name
+    ],
+    ref_name = ref_name,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
     runtime_attributes = default_runtime_attributes
   }
 
   # hiphase.phased_vcfs[0] -> phased small variant VCF
   # hiphase.phased_vcfs[1] -> phased SV VCF
+  # hiphase.haplotagged_bams[0]/haplotagged_bam_indices[0] -> the single
+  # merged BAM downstream.wdl always hands hiphase
 
-  # if fail_reads were aligned, merge them with the aligned hifi bams for trgt
-  if (defined(aligned_fail_reads)) {
-    call Samtools.samtools_merge as merge_hifi_fail_bams { input:
-      bams = select_all([
-        hiphase.haplotagged_bam,
-        aligned_fail_reads
-      ]),
-      out_prefix = "~{sample_id}.~{ref_map["name"]}",
-      runtime_attributes = default_runtime_attributes
-    }
-  }
-
-  call Trgt.trgt { input:
+  call Trgt.trgt_genotype { input:
     sample_id = sample_id,
     sex = sex,
-    aligned_bam = select_first([
-      merge_hifi_fail_bams.merged_bam,
-      hiphase.haplotagged_bam
-    ]),
-    aligned_bam_index = select_first([
-      merge_hifi_fail_bams.merged_bam_index,
-      hiphase.haplotagged_bam_index
-    ]),
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
+    aligned_bam = hiphase.haplotagged_bams[0],
+    aligned_bam_index = hiphase.haplotagged_bam_indices[0],
+    fail_reads_bam = aligned_fail_reads,
+    fail_reads_bam_index = aligned_fail_reads_index,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
     trgt_bed = trgt_catalog,
-    expected_male_bed = ref_map["sawfish_expected_bed_male"],  # !FileCoercion
-    expected_female_bed = ref_map["sawfish_expected_bed_female"],  # !FileCoercion
-    out_prefix = "~{sample_id}.~{ref_map["name"]}",
+    expected_male_bed = sawfish_expected_bed_male,
+    expected_female_bed = sawfish_expected_bed_female,
+    out_prefix = "~{sample_id}.~{ref_name}",
     min_read_quality = -1.0,
+    max_depth = 150,
     runtime_attributes = default_runtime_attributes
   }
 
-  call Bamstats.bam_stats { input:
+  call Pbjam.pbjam_bam_stats { input:
     sample_id = sample_id,
-    ref_name = ref_map["name"],
-    bam = hiphase.haplotagged_bam,
-    bam_index = hiphase.haplotagged_bam_index,
+    ref_name = ref_name,
+    bam = hiphase.haplotagged_bams[0],
+    bam_index = hiphase.haplotagged_bam_indices[0],
     runtime_attributes = default_runtime_attributes
   }
 
   call Bcftools.bcftools_stats_roh_small_variants { input:
     sample_id = sample_id,
     vcf = hiphase.phased_vcfs[0],
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_name = ref_map["name"],
+    ref_fasta = ref_fasta,
+    ref_name = ref_name,
     runtime_attributes = default_runtime_attributes
   }
 
@@ -384,66 +371,44 @@ workflow downstream {
     runtime_attributes = default_runtime_attributes
   }
 
-  call Cpgpileup.cpg_pileup { input:
-    haplotagged_bam = hiphase.haplotagged_bam,
-    haplotagged_bam_index = hiphase.haplotagged_bam_index,
-    out_prefix = "~{sample_id}.~{ref_map["name"]}",
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
+  call Methbat.methbat_pileup { input:
+    haplotagged_bam = hiphase.haplotagged_bams[0],
+    haplotagged_bam_index = hiphase.haplotagged_bam_indices[0],
+    out_prefix = "~{sample_id}.~{ref_name}",
     runtime_attributes = default_runtime_attributes
   }
 
-  Array[File] cpg_pileup_beds = select_all([
-    cpg_pileup.combined_bed,
-    cpg_pileup.hap1_bed,
-    cpg_pileup.hap2_bed
-  ])
-
-  if (length(cpg_pileup_beds) > 0) {
+  if (defined(methbat_pileup.cpg_pileup_bed)) {
     # If any cpg_pileup_beds are generated, we can run methbat
-    call Methbat.methbat { input:
-      sample_prefix = "~{sample_id}.~{ref_map["name"]}.cpg_pileup",
-      methylation_pileup_beds = cpg_pileup_beds,
-      region_tsv = ref_map["methbat_region_tsv"],  # !FileCoercion
-      out_prefix = "~{sample_id}.~{ref_map["name"]}",
+    call Methbat.methbat_profile as methbat_profile_task { input:
+      cpg_pileup_bed = select_first([
+        methbat_pileup.cpg_pileup_bed
+      ]),
+      region_tsv = methbat_region_tsv,
+      out_prefix = "~{sample_id}.~{ref_name}",
       runtime_attributes = default_runtime_attributes
     }
   }
 
-  call Pbstarphase.pbstarphase_diplotype { input:
-    out_prefix = sample_id,
-    phased_small_variant_vcf = hiphase.phased_vcfs[0],
-    phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0],
-    phased_structural_variant_vcf = hiphase.phased_vcfs[1],
-    phased_structural_variant_vcf_index = hiphase.phased_vcf_indices[1],
-    aligned_bam = hiphase.haplotagged_bam,
-    aligned_bam_index = hiphase.haplotagged_bam_index,
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
-    runtime_attributes = default_runtime_attributes
-  }
-
-  call Pharmcat.pharmcat { input:
-    sample_id = sample_id,
-    haplotagged_bam = hiphase.haplotagged_bam,
-    haplotagged_bam_index = hiphase.haplotagged_bam_index,
-    phased_vcf = hiphase.phased_vcfs[0],
-    phased_vcf_index = hiphase.phased_vcf_indices[0],
-    outside_call_files = [
-      pbstarphase_diplotype.pharmcat_tsv
-    ],
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
-    pharmcat_positions = ref_map["pharmcat_positions_vcf"],  # !FileCoercion
-    pharmcat_positions_index = ref_map["pharmcat_positions_vcf_index"],  # !FileCoercion
-    pharmcat_min_coverage = pharmcat_min_coverage,
-    default_runtime_attributes = default_runtime_attributes
+  if (run_starphase) {
+    call Pbstarphase.pbstarphase_diplotype { input:
+      out_prefix = sample_id,
+      phased_small_variant_vcf = hiphase.phased_vcfs[0],
+      phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0],
+      phased_structural_variant_vcf = hiphase.phased_vcfs[1],
+      phased_structural_variant_vcf_index = hiphase.phased_vcf_indices[1],
+      aligned_bam = hiphase.haplotagged_bams[0],
+      aligned_bam_index = hiphase.haplotagged_bam_indices[0],
+      ref_fasta = ref_fasta,
+      ref_index = ref_index,
+      runtime_attributes = default_runtime_attributes
+    }
   }
 
   output {
     # hiphase outputs
-    File merged_haplotagged_bam = hiphase.haplotagged_bam
-    File merged_haplotagged_bam_index = hiphase.haplotagged_bam_index
+    File merged_haplotagged_bam = hiphase.haplotagged_bams[0]
+    File merged_haplotagged_bam_index = hiphase.haplotagged_bam_indices[0]
     File phased_small_variant_vcf = hiphase.phased_vcfs[0]
     File phased_small_variant_vcf_index = hiphase.phased_vcf_indices[0]
     File phased_sv_vcf = hiphase.phased_vcfs[1]
@@ -455,22 +420,21 @@ workflow downstream {
     String stat_phase_block_ng50 = hiphase.stat_phase_block_ng50
 
     # bam stats
-    File bam_statistics = bam_stats.bam_statistics
-    File read_length_plot = bam_stats.read_length_plot
-    File? read_quality_plot = bam_stats.read_quality_plot
-    File mapq_distribution_plot = bam_stats.mapq_distribution_plot
-    File mg_distribution_plot = bam_stats.mg_distribution_plot
-    String stat_read_count = bam_stats.stat_read_count
-    String stat_read_length_mean = bam_stats.stat_read_length_mean
-    String stat_read_length_median = bam_stats.stat_read_length_median
-    String stat_read_length_n50 = bam_stats.stat_read_length_n50
-    String stat_read_quality_mean = bam_stats.stat_read_quality_mean
-    String stat_read_quality_median = bam_stats.stat_read_quality_median
-    String stat_mapped_read_count = bam_stats.stat_mapped_read_count
-    String stat_mapped_read_percent = bam_stats.stat_mapped_read_percent
-    String stat_gap_compressed_identity_mean = bam_stats.stat_gap_compressed_identity_mean
-    String stat_gap_compressed_identity_median = bam_stats.stat_gap_compressed_identity_median
-    File trgt_coverage_dropouts = trgt.dropouts
+    File read_length_plot = pbjam_bam_stats.read_length_plot
+    File read_quality_plot = pbjam_bam_stats.read_quality_plot
+    File mapq_distribution_plot = pbjam_bam_stats.mapq_distribution_plot
+    File mg_distribution_plot = pbjam_bam_stats.mg_distribution_plot
+    String stat_read_count = pbjam_bam_stats.stat_read_count
+    String stat_read_length_mean = pbjam_bam_stats.stat_read_length_mean
+    String stat_read_length_median = pbjam_bam_stats.stat_read_length_median
+    String stat_read_length_n50 = pbjam_bam_stats.stat_read_length_n50
+    String stat_read_quality_mean = pbjam_bam_stats.stat_read_quality_mean
+    String stat_read_quality_median = pbjam_bam_stats.stat_read_quality_median
+    String stat_mapped_read_count = pbjam_bam_stats.stat_mapped_read_count
+    String stat_mapped_read_percent = pbjam_bam_stats.stat_mapped_read_percent
+    String stat_gap_compressed_identity_mean = pbjam_bam_stats.stat_gap_compressed_identity_mean
+    String stat_gap_compressed_identity_median = pbjam_bam_stats.stat_gap_compressed_identity_median
+    File trgt_coverage_dropouts = trgt_genotype.dropouts
 
     # small variant stats
     File small_variant_stats = bcftools_stats_roh_small_variants.stats
@@ -492,52 +456,43 @@ workflow downstream {
     String stat_sv_SWAP_count = sv_stats.stat_sv_SWAP_count
 
     # trgt outputs
-    File trgt_vcf = trgt.vcf
-    File trgt_vcf_index = trgt.vcf_index
-    File trgt_spanning_reads = trgt.bam
-    File trgt_spanning_reads_index = trgt.bam_index
-    String stat_trgt_genotyped_count = trgt.stat_genotyped_count
-    String stat_trgt_uncalled_count = trgt.stat_uncalled_count
+    File trgt_vcf = trgt_genotype.vcf
+    File trgt_vcf_index = trgt_genotype.vcf_index
+    File trgt_spanning_reads = trgt_genotype.bam
+    File trgt_spanning_reads_index = trgt_genotype.bam_index
+    String stat_trgt_genotyped_count = trgt_genotype.stat_genotyped_count
+    String stat_trgt_uncalled_count = trgt_genotype.stat_uncalled_count
 
     # methylation outputs and profile
-    File? cpg_combined_bed = cpg_pileup.combined_bed
-    File? cpg_combined_bed_index = cpg_pileup.combined_bed_index
-    File? cpg_hap1_bed = cpg_pileup.hap1_bed
-    File? cpg_hap1_bed_index = cpg_pileup.hap1_bed_index
-    File? cpg_hap2_bed = cpg_pileup.hap2_bed
-    File? cpg_hap2_bed_index = cpg_pileup.hap2_bed_index
-    File? cpg_combined_bw = cpg_pileup.combined_bw
-    File? cpg_hap1_bw = cpg_pileup.hap1_bw
-    File? cpg_hap2_bw = cpg_pileup.hap2_bw
-    String stat_hap1_cpg_count = cpg_pileup.stat_hap1_cpg_count
-    String stat_hap2_cpg_count = cpg_pileup.stat_hap2_cpg_count
-    String stat_combined_cpg_count = cpg_pileup.stat_combined_cpg_count
-    File? methbat_profile = methbat.profile
+    File? cpg_pileup_bed = methbat_pileup.cpg_pileup_bed
+    File? cpg_pileup_bed_index = methbat_pileup.cpg_pileup_bed_index
+    File? hmcpg_pileup_bed = methbat_pileup.hmcpg_pileup_bed
+    File? hmcpg_pileup_bed_index = methbat_pileup.hmcpg_pileup_bed_index
+    String stat_cpg_hap1_count = methbat_pileup.stat_hap1_cpg_count
+    String stat_cpg_hap2_count = methbat_pileup.stat_hap2_cpg_count
+    String stat_cpg_combined_count = methbat_pileup.stat_combined_cpg_count
+    File? methbat_profile = methbat_profile_task.profile
     String stat_methbat_methylated_count = select_first([
-      methbat.stat_methbat_methylated_count,
+      methbat_profile_task.stat_methbat_methylated_count,
       "0"
     ])
     String stat_methbat_unmethylated_count = select_first([
-      methbat.stat_methbat_unmethylated_count,
+      methbat_profile_task.stat_methbat_unmethylated_count,
       "0"
     ])
     String stat_methbat_asm_count = select_first([
-      methbat.stat_methbat_asm_count,
+      methbat_profile_task.stat_methbat_asm_count,
       "0"
     ])
 
     # pbstarphase outputs
-    File pbstarphase_json = pbstarphase_diplotype.summary_json
-
-    # pharmcat and pangu outputs
-    File? pharmcat_match_json = pharmcat.pharmcat_match_json
-    File? pharmcat_phenotype_json = pharmcat.pharmcat_phenotype_json
-    File? pharmcat_report_html = pharmcat.pharmcat_report_html
-    File? pharmcat_report_json = pharmcat.pharmcat_report_json
+    File? pbstarphase_json = pbstarphase_diplotype.summary_json
+    File? pbstarphase_tsv = pbstarphase_diplotype.pharmcat_tsv
 
     # qc messages
     Array[String] msg = flatten([
-      trgt.msg
+      trgt_genotype.msg
     ])
   }
 }
+

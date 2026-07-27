@@ -2,7 +2,7 @@ version 1.0
 
 import "../structs.wdl"
 
-task trgt {
+task trgt_genotype {
   meta {
     description: "Genotype tandem repeats from aligned reads using TRGT"
     outputs: {
@@ -50,6 +50,12 @@ task trgt {
     aligned_bam_index: {
       description: "Aligned BAM index"
     }
+    fail_reads_bam: {
+      description: "Aligned fail_reads BAM"
+    }
+    fail_reads_bam_index: {
+      description: "Aligned fail_reads BAM index"
+    }
     ref_fasta: {
       description: "Reference FASTA"
     }
@@ -77,6 +83,12 @@ task trgt {
     haplotype_coverage_threshold: {
       description: "Haplotype coverage threshold for dropout analysis"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -87,23 +99,32 @@ task trgt {
     String? sex
     File aligned_bam
     File aligned_bam_index
+    File? fail_reads_bam
+    File? fail_reads_bam_index
     File ref_fasta
     File ref_index
     File trgt_bed
     File expected_male_bed
     File expected_female_bed
     String out_prefix
-    Int max_depth = 50
-    Float min_read_quality = 0.98
+    Int max_depth
+    Float min_read_quality
     Int haplotype_coverage_threshold = 2
+    Int threads = 16
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 32
-  Int mem_gb = 64
   Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
-  Int samtools_sort_threads = 8
+  # Tie samtools sort's own thread count to `threads`, but cap it so
+  # (samtools_sort_mem_mb_per_thread * samtools_sort_threads) never exceeds
+  # the task's total allocated memory.
+  Int samtools_sort_mem_mb_per_thread = 800
+  Int samtools_sort_max_mem_threads = (mem_gb * 1024) / samtools_sort_mem_mb_per_thread
+  Int samtools_sort_threads = if threads < samtools_sort_max_mem_threads
+    then threads
+    else samtools_sort_max_mem_threads
 
   String karyotype = if select_first([
     sex,
@@ -123,16 +144,19 @@ task trgt {
 
     touch messages.txt
 
-    ln --symbolic --verbose "~{aligned_bam}" .
-    ln --symbolic --verbose "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
+    ~{if defined(fail_reads_bam)
+      then "ln --symbolic --verbose '" + fail_reads_bam + "' '" + fail_reads_bam_index + "' ."
+      else ""
+    }
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
     ln --symbolic --verbose "~{trgt_bed}" .
     ln --symbolic --verbose "~{expected_bed}" .
 
-    if [ "~{defined(sex)}" != "true" ]; then
-      echo "Sex is not defined for ~{sample_id}.  Defaulting to karyotype XX for TRGT." >> messages.txt
-    fi
+    ~{if !defined(sex)
+      then "echo 'Sex is not defined for " + sample_id + ".  Defaulting to karyotype XX for TRGT.' >> messages.txt"
+      else ""
+    }
 
     trgt --version
 
@@ -142,6 +166,12 @@ task trgt {
       --genome "~{basename(ref_fasta)}" \
       --repeats "~{basename(trgt_bed)}" \
       --reads "~{basename(aligned_bam)}" \
+      ~{if defined(fail_reads_bam)
+        then "--fail-reads '" + basename(select_first([
+          fail_reads_bam
+        ])) + "'"
+        else ""
+      } \
       --max-depth ~{max_depth} \
       --min-read-quality=~{min_read_quality} \
       --output-prefix "~{out_prefix}.trgt"
@@ -151,29 +181,17 @@ task trgt {
     bcftools sort \
       --output-type z \
       --output "~{out_prefix}.trgt.sorted.vcf.gz" \
+      --write-index=tbi \
       "~{out_prefix}.trgt.vcf.gz"
-
-    bcftools index \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
-      --tbi \
-      "~{out_prefix}.trgt.sorted.vcf.gz"
 
     samtools --version
 
     samtools sort \
       --threads ~{samtools_sort_threads} \
-      -m 800M \
-      -o "~{out_prefix}.trgt.spanning.sorted.bam" \
+      -m ~{samtools_sort_mem_mb_per_thread}M \
+      --write-index \
+      -o "~{out_prefix}.trgt.spanning.sorted.bam##idx##~{out_prefix}.trgt.spanning.sorted.bam.bai" \
       "~{out_prefix}.trgt.spanning.bam"
-    samtools index \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
-      "~{out_prefix}.trgt.spanning.sorted.bam"
 
     find_trgt_dropouts.py \
       --ploidybed "~{basename(expected_bed)}" \
@@ -211,14 +229,13 @@ task trgt {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/trgt@sha256:be0ed7c173d221bd84e360b2b056e2abbecadd07ed86ffd4883a5cecca7a1e57"  # 5.0.0_build3
+    docker: "~{runtime_attributes.container_registry}/trgt@sha256:648aee4a2c9d7371a48e454a7143861a242b853d81ff5453924cc0095d207824"  # 5.1.0_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -253,6 +270,12 @@ task trgt_merge {
     out_prefix: {
       description: "Output prefix"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -264,24 +287,35 @@ task trgt_merge {
     File ref_fasta
     File ref_index
     String out_prefix
+    Int threads = 2
+    Int mem_gb = 8
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 8
   Int disk_size = ceil((size(vcfs, "GB") + size(ref_fasta, "GB")) * 2 + 20)
 
   command <<<
     set -euo pipefail
 
-    ln --symbolic --verbose "~{ref_fasta}" .
-    ln --symbolic --verbose "~{ref_index}" .
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
+
+    VCFS=()
+
+    for i in ~{sep=" " vcfs}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      VCFS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " vcf_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
+
 
     trgt --version
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     trgt merge \
-      --vcf ~{sep=" " vcfs} \
+      --vcf ${VCFS[@]} \
       --genome "~{basename(ref_fasta)}" \
       --output "~{out_prefix}.vcf.gz" \
       --write-index \
@@ -294,15 +328,15 @@ task trgt_merge {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/trgt@sha256:be0ed7c173d221bd84e360b2b056e2abbecadd07ed86ffd4883a5cecca7a1e57"  # 5.0.0_build3
+    docker: "~{runtime_attributes.container_registry}/trgt@sha256:648aee4a2c9d7371a48e454a7143861a242b853d81ff5453924cc0095d207824"  # 5.1.0_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

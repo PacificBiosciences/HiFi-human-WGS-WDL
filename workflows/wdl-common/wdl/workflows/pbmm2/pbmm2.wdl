@@ -25,8 +25,8 @@ workflow pbmm2 {
     bam: {
       description: "Unaligned BAM"
     }
-    max_reads_per_chunk: {
-      description: "Maximum reads per alignment chunk"
+    use_alignment_chunking: {
+      description: "Whether to split the input BAM into chunks for parallel alignment"
     }
     ref_fasta: {
       description: "Reference FASTA"
@@ -42,7 +42,7 @@ workflow pbmm2 {
   input {
     String sample_id
     File bam
-    Int max_reads_per_chunk
+    Boolean use_alignment_chunking = true
     File ref_fasta
     String ref_name
     RuntimeAttributes default_runtime_attributes
@@ -53,23 +53,26 @@ workflow pbmm2 {
     runtime_attributes = default_runtime_attributes
   }
 
-  call split_input_bam { input:
+  call index_input_bam { input:
     bam = bam,
-    max_reads_per_chunk = max_reads_per_chunk,
+    use_alignment_chunking = use_alignment_chunking,
     runtime_attributes = default_runtime_attributes
   }
 
-  scatter (chunk in if (length(split_input_bam.chunks) > 0)
-    then split_input_bam.chunks
+  scatter (chunk_index in if (index_input_bam.num_chunks > 0)
+    then range(index_input_bam.num_chunks)
     else [
-      bam
+      -1
     ]
   ) {
     call pbmm2_align_wgs { input:
       sample_id = sample_id,
-      bam = chunk,
+      bam = bam,
+      pbindex = index_input_bam.pbindex,
       pbmm2_index = create_pbmm2_index.index,
       ref_name = ref_name,
+      chunk_index = chunk_index + 1,  # wdl is 0-indexed, pbmm2 chunking is 1-indexed
+      num_chunks = index_input_bam.num_chunks,
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -77,7 +80,7 @@ workflow pbmm2 {
   output {
     Array[File] aligned_bams = pbmm2_align_wgs.aligned_bam
     Array[File] aligned_bam_indices = pbmm2_align_wgs.aligned_bam_index
-    Array[String] msg = split_input_bam.msg
+    Array[String] msg = index_input_bam.msg
   }
 }
 
@@ -95,6 +98,12 @@ task create_pbmm2_index {
     ref_fasta: {
       description: "Reference FASTA"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -102,11 +111,11 @@ task create_pbmm2_index {
 
   input {
     File ref_fasta
+    Int threads = 8
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 8
-  Int mem_gb = 32
   Int disk_size = ceil(size(ref_fasta, "GB") + 20)
 
   command <<<
@@ -129,25 +138,27 @@ task create_pbmm2_index {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:d27f27b94e7f4b2592addade0476e07ddce5a87db23f1eb200b725eb2b945de4"  # 26.1.0_build1
+    docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:86e39aa67fa5d385769d5f119739e8811ce550163e3b9dfc42bd58d1fecdf3a8"  # 26.2.99_build1
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
 
-task split_input_bam {
+task index_input_bam {
   meta {
     description: "Split HiFi uBAM into chunks of a max size"
     outputs: {
-      chunks: {
-        description: "Split BAMs"
+      pbindex: {
+        description: "pbindex for the input BAM"
+      },
+      num_chunks: {
+        description: "Number of BAM chunks"
       },
       msg: {
         description: "Array of messages"
@@ -159,8 +170,14 @@ task split_input_bam {
     bam: {
       description: "HiFi reads (BAM)"
     }
-    max_reads_per_chunk: {
-      description: "Maximum reads per chunk"
+    use_alignment_chunking: {
+      description: "Whether to split the input BAM into chunks for parallel alignment"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -169,14 +186,12 @@ task split_input_bam {
 
   input {
     File bam
-    Int max_reads_per_chunk
+    Boolean use_alignment_chunking
+    Int threads = 16
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  String movie = basename(bam, ".bam")
-
-  Int threads = 16
-  Int mem_gb = 32
   Int disk_size = ceil(size(bam, "GB") * 3 + 20)
 
   command <<<
@@ -185,8 +200,6 @@ task split_input_bam {
     touch messages.txt
 
     ln --symbolic --verbose "~{bam}" .
-
-    INBAM="./~{basename(bam)}"
 
     # Check for presence of alignment, basemod, and kinetics tags
     cat << EOF > detect_bam_tags.py
@@ -205,83 +218,48 @@ task split_input_bam {
       output['base_modification'] = bool(unique_tags & {'MM', 'ML', 'Mm', 'Ml'})
       output['aligned'] = aligned
       return output
-    print(json.dumps(check_bam_file('~{bam}', 10000)))
+    print(json.dumps(check_bam_file('~{basename(bam)}', 10000)))
     EOF
 
     read -r kinetics base_modification aligned <<< "$(python3 ./detect_bam_tags.py | jq -r '. | [.kinetics, .base_modification, .aligned] | @tsv')"
 
-    if [ "$aligned" = true ]; then
-      echo "Input ~{basename(bam)} is already aligned.  Alignments and haplotype tags will be stripped." >> messages.txt
+    if [ "${aligned}" = true ]; then
+      echo "Input ~{basename(bam)} is already aligned.  Alignments and haplotype tags will be stripped, and chunking will be disabled." >> messages.txt
     fi
 
-    if [ "$base_modification" = false ]; then
+    if [ "${base_modification}" = false ]; then
       echo "Input ~{basename(bam)} does not contain base modification tags.  5mCpG pileups will not be generated." >> messages.txt
     fi
 
-    if [ "$kinetics" = true ]; then
+    if [ "${kinetics}" = true ]; then
       echo "Input ~{basename(bam)} contains consensus kinetics tags. Kinetics will be stripped from the output." >> messages.txt
     fi
 
-    # reset BAM and strip kinetics/haplotype tags if present
-    if [ "$aligned" = true ] || [ "$kinetics" = true ]; then
-      samtools --version
-      samtools reset \
-        ~{if threads > 1
-          then "-@ '" + (threads - 1) + "'"
-          else ""
-        } \
-        --remove-tag fi,ri,fp,rp,ip,pw,HP,PS,PC,mc,mg,mi,rm \
-        -o "~{movie}.reset.bam" \
-        "~{bam}"
-        INBAM="~{movie}.reset.bam"
-    fi
+    echo 0 > chunks.txt  # sentinel value for no chunking
 
-    # if chunking is desired, index the input BAM and list ZMWs
-    if [ "~{max_reads_per_chunk}" -gt "1" ]; then
+    # if chunking is desired, index the input BAM
+    if [ "~{use_alignment_chunking}" = "true" ] && [ "${aligned}" = "false" ]; then
       pbindex --version
-      pbindex --num-threads ~{threads} "$INBAM"
+      pbindex --num-threads ~{threads} "~{basename(bam)}"
 
-      zmwfilter --version
-      zmwfilter --num-threads ~{threads} --show-all "$INBAM" > "~{movie}.zmws.txt"
-
-      # shellcheck disable=SC2086
-      read -r n_records <<< "$(wc -l ~{movie}.zmws.txt | cut -f1 -d' ')"
-
-      # if the number of ZMWs is greater than the chunk size, split the input BAM
-      if [ "$n_records" -gt "~{max_reads_per_chunk}" ]; then
-        split --version
-        split \
-          --verbose \
-          --lines=~{max_reads_per_chunk} \
-          --numeric-suffixes \
-          "~{movie}.zmws.txt" \
-          chunk_
-
-        parallel --version
-        # shellcheck disable=SC2012
-        ls chunk_* | parallel -v -j ~{threads} \
-          zmwfilter --num-threads 1 --include {} "$INBAM" "~{movie}.{}.bam"
-
-        # if the input BAM was reset, remove so that it is not included in the output
-        rm --force --verbose "~{movie}.reset.bam"
-      fi
+      echo 16 > chunks.txt
     fi
   >>>
 
   output {
-    Array[File] chunks = glob("~{movie}.*.bam")
+    File? pbindex = "~{basename(bam)}.pbi"
+    Int num_chunks = read_int("chunks.txt")
     Array[String] msg = read_lines("messages.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbtk@sha256:67cd438ed9f343f90f058108170ddbff8fb1d9b5c193f4016be42b737ee2e73c"  # 3.5.0_build1
+    docker: "~{runtime_attributes.container_registry}/pbtk@sha256:f27bafa0ae6ffff6170d45a86a5677406320c7866760391f89ebe900a74d2039"  # 3.5.0_build2
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -307,6 +285,9 @@ task pbmm2_align_wgs {
     bam: {
       description: "Unaligned BAM"
     }
+    pbindex: {
+      description: "pbindex for the input BAM"
+    }
     pbmm2_index: {
       description: "pbmm2 reference index"
     }
@@ -322,6 +303,18 @@ task pbmm2_align_wgs {
     min_length: {
       description: "Minimum mapped read length in basepairs"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
+    chunk_index: {
+      description: "Chunk index for parallel alignment"
+    }
+    num_chunks: {
+      description: "Total number of chunks for parallel alignment"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -330,28 +323,34 @@ task pbmm2_align_wgs {
   input {
     String sample_id
     File bam
+    File? pbindex
     File pbmm2_index
     String ref_name
     Boolean strip_kinetics = true
     Boolean keep_unmapped = true
     Int min_length = 50
+    Int threads = 32
+    Int mem_gb = 64
+    Int chunk_index = 0
+    Int num_chunks = 1
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 32
-  Int mem_gb = ceil(threads * 4)
   Int disk_size = ceil(size(bam, "GB") * 2 + size(pbmm2_index, "GB") + 70)
 
+  Boolean use_chunking = chunk_index > 0
   String movie = basename(bam, ".bam")
 
   command <<<
     set -euo pipefail
 
-    ln --symbolic --verbose "~{bam}" .
-    ln --symbolic --verbose "~{pbmm2_index}" .
+    ln --symbolic --verbose "~{bam}" "~{pbmm2_index}" .
+    ~{if (defined(pbindex))
+      then "ln --symbolic --verbose ~{pbindex} ~{basename(bam)}.pbi"
+      else ""
+    }
 
     pbmm2 --version
-
     pbmm2 align \
       --num-threads ~{threads} \
       --sort-memory 4G \
@@ -359,29 +358,34 @@ task pbmm2_align_wgs {
       --sample "~{sample_id}" \
       --log-level INFO \
       --sort \
+      --strip-tags HP,PS,PC \
       ~{true="--strip" false="" strip_kinetics} \
       ~{true="--unmapped" false="" keep_unmapped} \
       --min-length ~{min_length} \
+      ~{if (use_chunking)
+        then "--chunk '" + chunk_index + "/" + num_chunks + "' --chunk-mode scatter"
+        else ""
+      } \
       "~{basename(pbmm2_index)}" \
       "~{basename(bam)}" \
-      "~{sample_id}.~{movie}.~{ref_name}.aligned.bam"
+      "~{sample_id}.~{movie}.chunk_~{chunk_index}.~{ref_name}.aligned.bam"
   >>>
 
   output {
-    File aligned_bam = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam"
-    File aligned_bam_index = "~{sample_id}.~{movie}.~{ref_name}.aligned.bam.bai"
+    File aligned_bam = "~{sample_id}.~{movie}.chunk_~{chunk_index}.~{ref_name}.aligned.bam"
+    File aligned_bam_index = "~{sample_id}.~{movie}.chunk_~{chunk_index}.~{ref_name}.aligned.bam.bai"
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:d27f27b94e7f4b2592addade0476e07ddce5a87db23f1eb200b725eb2b945de4"  # 26.1.0_build1
+    docker: "~{runtime_attributes.container_registry}/pbmm2@sha256:86e39aa67fa5d385769d5f119739e8811ce550163e3b9dfc42bd58d1fecdf3a8"  # 26.2.99_build1
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

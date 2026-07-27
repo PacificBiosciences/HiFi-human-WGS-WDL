@@ -31,8 +31,11 @@ task glnexus {
     regions_bed: {
       description: "Regions BED"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
     mem_gb: {
-      description: "Memory (GB)"
+      description: "Memory to use in GiB"
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -45,11 +48,11 @@ task glnexus {
     Array[File] gvcf_indices
     String ref_name
     File? regions_bed
-    Int mem_gb
+    Int threads = 32
+    Int mem_gb = 60
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 32
   Int disk_size = ceil(size(gvcfs, "GB") * 2 + 100)
 
   command <<<
@@ -104,18 +107,38 @@ task glnexus {
           ignore_non_variants: true
     EOF
 
+    GVCFS=()
+    for i in ~{sep=" " gvcfs}; do
+      ln --symbolic --verbose "${i}" .
+      # shellcheck disable=SC2086
+      GVCFS+=("$(basename ${i})")
+    done
+    for i in ~{sep=" " gvcf_indices}; do
+      ln --symbolic --verbose "${i}" .
+    done
+
+    ~{if defined(regions_bed)
+      then "ln --symbolic --verbose '" + regions_bed + "' ."
+      else ""
+    }
+
     # glneux_cli has no version option
     glnexus_cli --help 2>&1 | grep -Eo 'glnexus_cli release v[0-9a-f.-]+'
     bcftools --version
 
-    # shellcheck disable=SC2086
+    # shellcheck disable=SC2068
     glnexus_cli \
       --threads ~{threads} \
       --mem-gbytes ~{mem_gb} \
       --dir "~{cohort_id}.~{ref_name}.GLnexus.DB" \
       --config ./config.yml \
-      ~{"--bed " + regions_bed} \
-      ~{sep=" " gvcfs} \
+      ~{if defined(regions_bed)
+        then "--bed '" + basename(select_first([
+          regions_bed
+        ])) + "'"
+        else ""
+      } \
+      ${GVCFS[@]} \
     > "~{cohort_id}.~{ref_name}.small_variants.bcf"
     bcftools view \
       ~{if threads > 1
@@ -149,8 +172,8 @@ task glnexus {
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

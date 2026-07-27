@@ -19,6 +19,12 @@ task split_string {
     delimiter: {
       description: "Delimiter"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -27,15 +33,21 @@ task split_string {
   input {
     String concatenated_string
     String delimiter = ","
+    Int threads = 1
+    Int mem_gb = 1
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 1
-  Int mem_gb = 1
   Int disk_size = 1
 
   command <<<
-    echo '~{sub(concatenated_string, delimiter, "\n")}'
+    set -euo pipefail
+    # Split on delimiter with awk rather than WDL's sub(), whose pattern argument is always a
+    # regex: per POSIX/awk semantics, a single-character FS (other than space) is matched
+    # literally, so delimiter characters with regex meaning (e.g. "." or "|") still split
+    # correctly here. This only holds for single-character delimiters -- a multi-character
+    # delimiter would still be interpreted as a regex by awk.
+    echo "~{concatenated_string}" | awk -F"~{delimiter}" '{for (i = 1; i <= NF; i++) print $i}'
   >>>
 
   output {
@@ -44,14 +56,13 @@ task split_string {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
@@ -80,6 +91,12 @@ task consolidate_stats {
     msg_array: {
       description: "Array of messages"
     }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -90,14 +107,15 @@ task consolidate_stats {
     Array[Array[String]] stats
     #@ except: DeclarationName
     Array[String] msg_array
+    Int threads = 1
+    Int mem_gb = 1
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 1
-  Int mem_gb = 1
   Int disk_size = 1
 
   command <<<
+    set -euo pipefail
     # flatten the stats map into a TSV format
     # first, like this:
     # stat1 sample1_value1 sample2_value1 ...
@@ -125,15 +143,15 @@ task consolidate_stats {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
   }
 }
+

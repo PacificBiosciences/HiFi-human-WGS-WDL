@@ -1,7 +1,6 @@
 version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
-import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/workflows/pbmm2/pbmm2.wdl" as Pbmm2
 
 workflow process_trgt_catalog {
@@ -47,22 +46,17 @@ workflow process_trgt_catalog {
 
   call filter_trgt_catalog { input:
     trgt_catalog = trgt_catalog,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    out_prefix = "fail_reads_subset",
     runtime_attributes = default_runtime_attributes
   }
 
   if (defined(filter_trgt_catalog.include_fail_reads_bed)) {
-    call Samtools.subset_reference { input:
-      bed = select_first([
-        filter_trgt_catalog.include_fail_reads_bed
-      ]),
-      ref_fasta = ref_fasta,
-      ref_index = ref_index,
-      out_prefix = "fail_reads_subset",
-      runtime_attributes = default_runtime_attributes
-    }
-
     call Pbmm2.create_pbmm2_index { input:
-      ref_fasta = subset_reference.fasta,
+      ref_fasta = select_first([
+        filter_trgt_catalog.fasta
+      ]),
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -85,6 +79,12 @@ task filter_trgt_catalog {
       include_fail_reads_bed: {
         description: "Subset of repeat catalog for which to include fail reads"
       },
+      fasta: {
+        description: "Output FASTA"
+      },
+      fasta_index: {
+        description: "Output FASTA index"
+      },
       msg: {
         description: "Array of messages"
       }
@@ -95,6 +95,24 @@ task filter_trgt_catalog {
     trgt_catalog: {
       description: "Repeat catalog for TRGT"
     }
+    slop_size: {
+      description: "Size in base pairs to extend the regions in the BED file"
+    }
+    ref_fasta: {
+      description: "Reference FASTA"
+    }
+    ref_index: {
+      description: "Reference FASTA index"
+    }
+    out_prefix: {
+      description: "Output prefix"
+    }
+    threads: {
+      description: "Number of threads to use"
+    }
+    mem_gb: {
+      description: "Memory to use in GiB"
+    }
     runtime_attributes: {
       description: "Runtime attribute structure"
     }
@@ -102,56 +120,84 @@ task filter_trgt_catalog {
 
   input {
     File trgt_catalog
+    Int slop_size = 10000
+    File ref_fasta
+    File ref_index
+    String out_prefix
+    Int threads = 4
+    Int mem_gb = 8
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 2
-  Int mem_gb = 4
-  Int disk_size = ceil(size(trgt_catalog, "GB") + 20)
+  Int disk_size = ceil(size(trgt_catalog, "GB") + size(ref_fasta, "GB") * 2 + 20)
 
   command <<<
-    set -eu
+    set -euo pipefail
 
     touch messages.txt
 
-    if gzip --test "~{trgt_catalog}"; then
-      gunzip --stdout "~{trgt_catalog}" > in.bed
+    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
+    ln --symbolic --verbose "~{trgt_catalog}" .
+
+    if gzip --test "~{basename(trgt_catalog)}"; then
+      gunzip --stdout "~{basename(trgt_catalog)}" > in.bed
       bed="./in.bed"
     else
-      bed="~{trgt_catalog}"
+      bed="~{basename(trgt_catalog)}"
     fi
 
     # sanitize general TRGT repeat catalog to remove INCLUDE_FAIL_READS flag
-    sed 's/;INCLUDE_FAIL_READS//' "${bed}" > trgt.bed
+    sed 's/;INCLUDE_FAIL_READS//' "${bed}" > trgt.bed &
+    PID=$!
 
-    # Create a catalog with regions that have the INCLUDE_FAIL_READS flag and sanitize to remove INCLUDE_FAIL_READS flag
+    # Create a catalog with regions that have the INCLUDE_FAIL_READS flag
     # If the flag is not present, remove the file
     grep 'INCLUDE_FAIL_READS' "${bed}" \
-    | sed 's/;INCLUDE_FAIL_READS//' \
     > include_fail_reads.trgt.bed || true
 
-    if [ ! -s include_fail_reads.trgt.bed ]; then
+    if [ -s include_fail_reads.trgt.bed ]; then
+      echo "INCLUDE_FAIL_READS regions: $(cut -f4 include_fail_reads.trgt.bed | cut -f1 -d';' | cut -f2 -d= | paste -sd, -)" >> messages.txt
+
+      samtools --version
+      samtools faidx \
+        --region-file <(\
+          bedtools slop \
+            -b ~{slop_size} \
+            -g "~{ref_index}" \
+            -i "include_fail_reads.trgt.bed" \
+          | awk '{{print $1":"$2"-"$3}}') \
+        "~{basename(ref_fasta)}" \
+        --write-index \
+      > "~{out_prefix}.fasta"
+    else
       echo "No repeats in ~{trgt_catalog} contain INCLUDE_FAIL_READS flag. fail_reads will not be used for TRGT." >> messages.txt
-      rm include_fail_reads.trgt.bed
+      rm --verbose --force include_fail_reads.trgt.bed
     fi
+
+    rm --verbose --force "in.bed"
+
+    wait $PID
   >>>
 
   output {
     File full_catalog = "trgt.bed"
     File? include_fail_reads_bed = "include_fail_reads.trgt.bed"
+    File? fasta = "~{out_prefix}.fasta"
+    File? fasta_index = "~{out_prefix}.fasta.fai"
     Array[String] msg = read_lines("messages.txt")
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:4b889a1f21a6a7fecf18820613cf610103966a93218de772caba126ab70a8e87"  # pb_wdl_base:build2
+    docker: "~{runtime_attributes.container_registry}/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae"  # pb_wdl_base:build4
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
     disks: "local-disk ~{disk_size} HDD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
-    awsBatchRetryAttempts: runtime_attributes.max_retries  # !UnknownRuntimeKey
     zones: runtime_attributes.zones
     cpuPlatform: runtime_attributes.cpuPlatform
+    cacheable: true  # !UnknownRuntimeKey
   }
 }
+

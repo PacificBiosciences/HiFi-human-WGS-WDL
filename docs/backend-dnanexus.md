@@ -40,11 +40,8 @@ A `Sample` struct contains sample specific data and metadata. The struct has the
 | Type | Name | Description | Notes |
 | ---- | ---- | ----------- | ----- |
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
-| String? | sex | Sample sex<br/>`["MALE", "FEMALE"]` | Optional field used by HiFiCNV and TRGT for genotyping. Allosome karyotype will default to XX unless sex is specified as `"MALE"`.  Used for tertiary analysis X-linked inheritance filtering. |
 | Boolean | affected | Affected status | If set to `true`, sample is described as being affected by all HPO terms in `phenotypes`.<br/>If set to `false`, sample is described as not being affected by all HPO terms in `phenotypes`. |
 | Array\[File\] | hifi_reads | Array of [DNAnexus links](https://documentation.dnanexus.com/user/projects/path-resolution#dnanexus-links) for HiFi reads in unaligned BAM format. | |
-| String? | father_id | sample_id of father (optional) | |
-| String? | mother_id | sample_id of mother (optional) | |
 
 ### Example JSON Documents
 
@@ -53,8 +50,6 @@ A `Sample` struct contains sample specific data and metadata. The struct has the
 When specifying DNAnexus `hifi_reads` files, format them as `{"$dnanexus_link": {"id": "file-xxxx", "project": "project-xxxx"}}` as is in the examples below. One or more `hifi_reads` files can be specified for each sample. The single sample example has multiple files, and the trio example has one file per sample.
 
 #### Example Single Sample JSON
-
-In this example, the optional `sex` field is not specified, so tools will default to XX for the allosome karyotype.
 
 ```json
 {
@@ -98,10 +93,7 @@ In this example, the optional `sex` field is not specified, so tools will defaul
           }
         }
       ],
-      "affected": true,
-      "sex": "MALE",
-      "father_id": "HG003",
-      "mother_id": "HG004"
+      "affected": true
     },
     {
       "sample_id": "HG003",
@@ -113,8 +105,7 @@ In this example, the optional `sex` field is not specified, so tools will defaul
           }
         }
       ],
-      "affected": false,
-      "sex": "MALE"
+      "affected": false
     },
     {
       "sample_id": "HG004",
@@ -126,8 +117,7 @@ In this example, the optional `sex` field is not specified, so tools will defaul
           }
         }
       ],
-      "affected": false,
-      "sex": "FEMALE"
+      "affected": false
     }
   ]
 }

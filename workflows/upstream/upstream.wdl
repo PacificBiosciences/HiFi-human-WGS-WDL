@@ -1,9 +1,11 @@
 version 1.0
 
 import "../wdl-common/wdl/structs.wdl"
+import "../wdl-common/wdl/tasks/kivvi.wdl" as Kivvi
 import "../wdl-common/wdl/tasks/mitorsaw.wdl" as Mitorsaw
 import "../wdl-common/wdl/tasks/mosdepth.wdl" as Mosdepth
 import "../wdl-common/wdl/tasks/paraphase.wdl" as Paraphase
+import "../wdl-common/wdl/tasks/pbsamoa.wdl" as Pbsamoa
 import "../wdl-common/wdl/tasks/samtools.wdl" as Samtools
 import "../wdl-common/wdl/tasks/sawfish.wdl" as Sawfish
 import "../wdl-common/wdl/workflows/deepvariant/deepvariant.wdl" as DeepVariant
@@ -65,9 +67,6 @@ workflow upstream {
       sv_gc_bias_corrected_depth_bw: {
         description: "CNV GC-bias corrected depth BigWig"
       },
-      sv_maf_bw: {
-        description: "CNV MAF BigWig"
-      },
       sv_copynum_summary: {
         description: "CNV copy number summary JSON"
       },
@@ -104,6 +103,42 @@ workflow upstream {
       mitorsaw_hap_stats: {
         description: "Mitochondrial haplotype statistics"
       },
+      kivvi_kiv2_vcf: {
+        description: "KIV2 repeat variant VCF"
+      },
+      kivvi_kiv2_vcf_index: {
+        description: "Index for KIV2 repeat variant VCF"
+      },
+      kivvi_kiv2_json: {
+        description: "KIV2 repeat genotype JSON"
+      },
+      kivvi_kiv2_realigned_bam: {
+        description: "KIV2-realigned BAM"
+      },
+      kivvi_kiv2_realigned_bam_index: {
+        description: "Index for KIV2-realigned BAM"
+      },
+      kivvi_kiv2_allele_plot: {
+        description: "KIV2 assembled allele plot"
+      },
+      kivvi_d4z4_vcf: {
+        description: "D4Z4 repeat variant VCF"
+      },
+      kivvi_d4z4_vcf_index: {
+        description: "Index for D4Z4 repeat variant VCF"
+      },
+      kivvi_d4z4_json: {
+        description: "D4Z4 repeat genotype JSON"
+      },
+      kivvi_d4z4_realigned_bam: {
+        description: "D4Z4-realigned BAM"
+      },
+      kivvi_d4z4_realigned_bam_index: {
+        description: "Index for D4Z4-realigned BAM"
+      },
+      kivvi_d4z4_allele_plot: {
+        description: "D4Z4 assembled allele plot"
+      },
       msg: {
         description: "Messages from the workflow"
       }
@@ -113,13 +148,6 @@ workflow upstream {
   parameter_meta {
     sample_id: {
       description: "Sample ID"
-    }
-    sex: {
-      description: "Sample sex",
-      choices: [
-        "MALE",
-        "FEMALE"
-      ]
     }
     hifi_reads: {
       description: "Unaligned hifi_reads BAMs"
@@ -133,11 +161,35 @@ workflow upstream {
     fail_reads_bait_index: {
       description: "Index of reference sequences for baiting fail reads"
     }
-    ref_map_file: {
-      description: "Reference map file"
+    ref_name: {
+      description: "Reference genome short name"
     }
-    max_reads_per_alignment_chunk: {
-      description: "Maximum reads per alignment chunk"
+    ref_fasta: {
+      description: "Reference FASTA"
+    }
+    ref_index: {
+      description: "Reference FASTA index"
+    }
+    max_norm_female_chrY_depth: {
+      description: "Maximum expected normalized chrY depth for samples without chrY"
+    }
+    paraphase_genome_build: {
+      description: "Genome reference build parameter for Paraphase"
+    }
+    sawfish_exclude_bed: {
+      description: "Regions to be excluded for Sawfish CNV calls in gzipped BED format"
+    }
+    sawfish_exclude_bed_index: {
+      description: "Regions to be excluded for Sawfish CNV calls in gzipped BED format index file"
+    }
+    sawfish_expected_bed_male: {
+      description: "Expected allosome copy number BED for XY samples"
+    }
+    sawfish_expected_bed_female: {
+      description: "Expected allosome copy number BED for XX samples"
+    }
+    use_alignment_chunking: {
+      description: "Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk."
     }
     single_sample: {
       description: "Single sample workflow"
@@ -155,38 +207,42 @@ workflow upstream {
 
   input {
     String sample_id
-    String? sex
     Array[File] hifi_reads
     Array[File]? fail_reads
     File? fail_reads_bed
     File? fail_reads_bait_index
-    File ref_map_file
-    Int max_reads_per_alignment_chunk
+    String ref_name
+    File ref_fasta
+    File ref_index
+    Float max_norm_female_chrY_depth
+    String paraphase_genome_build
+    File sawfish_exclude_bed
+    File sawfish_exclude_bed_index
+    File sawfish_expected_bed_male
+    File sawfish_expected_bed_female
+    Boolean use_alignment_chunking
     Boolean single_sample = false
     Boolean use_gpu
     Boolean use_parabricks_deepvariant
     RuntimeAttributes default_runtime_attributes
   }
 
-  #@ except: DeclarationName
-  Map[String, String] ref_map = read_map(ref_map_file)
-
   scatter (hifi_read_bam in hifi_reads) {
     call Pbmm2.pbmm2 as pbmm2 { input:
       sample_id = sample_id,
       bam = hifi_read_bam,
-      max_reads_per_chunk = max_reads_per_alignment_chunk,
-      ref_fasta = ref_map["fasta"],  # !FileCoercion
-      ref_name = ref_map["name"],
+      use_alignment_chunking = use_alignment_chunking,
+      ref_fasta = ref_fasta,
+      ref_name = ref_name,
       default_runtime_attributes = default_runtime_attributes
     }
   }
 
   # merge aligned bams if there are multiple
   if (length(flatten(pbmm2.aligned_bams)) > 1) {
-    call Samtools.samtools_merge as merge_hifi_reads { input:
+    call Pbsamoa.pbsamoa_merge as merge_hifi_reads { input:
       bams = flatten(pbmm2.aligned_bams),
-      out_prefix = "~{sample_id}.~{ref_map["name"]}.hifi_reads",
+      out_prefix = "~{sample_id}.~{ref_name}.hifi_reads",
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -203,25 +259,22 @@ workflow upstream {
 
   call Mosdepth.mosdepth { input:
     sample_id = sample_id,
-    ref_name = ref_map["name"],
+    ref_name = ref_name,
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
     infer_sex = true,
+    max_norm_female_chrY_depth = max_norm_female_chrY_depth,
     runtime_attributes = default_runtime_attributes
   }
-
-  String qc_sex = if (defined(sex) && (mosdepth.inferred_sex != sex))
-    then "~{sample_id}: Reported sex ~{sex} does not match inferred sex ~{mosdepth.inferred_sex}."
-    else ""
 
   if (use_gpu && use_parabricks_deepvariant) {
     call ParabricksDeepVariant.parabricks_deepvariant { input:
       sample_id = sample_id,
       aligned_bam = aligned_bam_data,
       aligned_bam_index = aligned_bam_index,
-      ref_fasta = ref_map["fasta"],  # !FileCoercion
-      ref_index = ref_map["fasta_index"],  # !FileCoercion
-      ref_name = ref_map["name"],
+      ref_fasta = ref_fasta,
+      ref_index = ref_index,
+      ref_name = ref_name,
       default_runtime_attributes = default_runtime_attributes
     }
   }
@@ -235,9 +288,9 @@ workflow upstream {
       aligned_bam_indices = [
         aligned_bam_index
       ],
-      ref_fasta = ref_map["fasta"],  # !FileCoercion
-      ref_index = ref_map["fasta_index"],  # !FileCoercion
-      ref_name = ref_map["name"],
+      ref_fasta = ref_fasta,
+      ref_index = ref_index,
+      ref_name = ref_name,
       gpu = use_gpu,
       default_runtime_attributes = default_runtime_attributes
     }
@@ -265,19 +318,19 @@ workflow upstream {
     sex = mosdepth.inferred_sex,
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
-    exclude_bed = ref_map["sawfish_exclude_bed"],  # !FileCoercion
-    exclude_bed_index = ref_map["sawfish_exclude_bed_index"],  # !FileCoercion
-    expected_male_bed = ref_map["sawfish_expected_bed_male"],  # !FileCoercion
-    expected_female_bed = ref_map["sawfish_expected_bed_female"],  # !FileCoercion
-    small_variant_vcf = deepvariant_vcf,
-    small_variant_vcf_index = deepvariant_vcf_index,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    exclude_bed = sawfish_exclude_bed,
+    exclude_bed_index = sawfish_exclude_bed_index,
+    expected_male_bed = sawfish_expected_bed_male,
+    expected_female_bed = sawfish_expected_bed_female,
     out_prefix = sample_id,
     runtime_attributes = default_runtime_attributes
   }
 
-  if (defined(fail_reads) && defined(fail_reads_bed) && defined(fail_reads_bait_index)) {
+  if (defined(fail_reads) && length(select_first([
+    fail_reads
+  ])) > 0 && defined(fail_reads_bed) && defined(fail_reads_bait_index)) {
     scatter (fail_read_bam in select_first([
       fail_reads
     ])) {
@@ -294,15 +347,15 @@ workflow upstream {
       }
 
       call Pbmm2.create_pbmm2_index { input:
-        ref_fasta = ref_map["fasta"],  # !FileCoercion
+        ref_fasta = ref_fasta,
         runtime_attributes = default_runtime_attributes
       }
 
       call Pbmm2.pbmm2_align_wgs as align_captured_fail_reads { input:
         sample_id = sample_id,
         bam = bait_fail_reads.aligned_bam,
-        pbmm2_index = create_pbmm2_index.index,  # !FileCoercion
-        ref_name = ref_map["name"],
+        pbmm2_index = create_pbmm2_index.index,
+        ref_name = ref_name,
         keep_unmapped = false,
         runtime_attributes = default_runtime_attributes
       }
@@ -313,17 +366,17 @@ workflow upstream {
         ]),
         aligned_bam = align_captured_fail_reads.aligned_bam,
         aligned_bam_index = align_captured_fail_reads.aligned_bam_index,
-        ref_index = ref_map["fasta_index"],  # !FileCoercion
-        out_prefix = "~{sample_id}.~{ref_map["name"]}.baited_fail_reads",
+        ref_index = ref_index,
+        out_prefix = "~{sample_id}.~{ref_name}.baited_fail_reads",
         runtime_attributes = default_runtime_attributes
       }
     }
 
     # merge aligned bams if there are multiple
     if (length(subset_bam.bam) > 1) {
-      call Samtools.samtools_merge as merge_fail_reads { input:
+      call Pbsamoa.pbsamoa_merge as merge_fail_reads { input:
         bams = subset_bam.bam,
-        out_prefix = "~{sample_id}.~{ref_map["name"]}.fail_reads",
+        out_prefix = "~{sample_id}.~{ref_name}.fail_reads",
         runtime_attributes = default_runtime_attributes
       }
     }
@@ -335,7 +388,7 @@ workflow upstream {
     ])
     File aligned_fail_bam_index = select_first([
       merge_fail_reads.merged_bam_index,
-      subset_bam.bam[0]
+      subset_bam.bam_index[0]
     ])
   }
 
@@ -346,8 +399,9 @@ workflow upstream {
   call Paraphase.paraphase { input:
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    genome = paraphase_genome_build,
     sample_id = sample_id,
     runtime_attributes = default_runtime_attributes
   }
@@ -355,18 +409,35 @@ workflow upstream {
   call Mitorsaw.mitorsaw { input:
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
-    out_prefix = "~{sample_id}.~{ref_map["name"]}",
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    out_prefix = "~{sample_id}.~{ref_name}",
+    runtime_attributes = default_runtime_attributes
+  }
+
+  call Kivvi.kivvi_kiv2 { input:
+    aligned_bam = aligned_bam_data,
+    aligned_bam_index = aligned_bam_index,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    out_prefix = "~{sample_id}.~{ref_name}",
+    runtime_attributes = default_runtime_attributes
+  }
+
+  call Kivvi.kivvi_d4z4 { input:
+    aligned_bam = aligned_bam_data,
+    aligned_bam_index = aligned_bam_index,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    out_prefix = "~{sample_id}.~{ref_name}",
     runtime_attributes = default_runtime_attributes
   }
 
   if (single_sample) {
-    String copynum_bedgraph_name = "~{sample_id}.~{ref_map["name"]}.structural_variants.copynum.bedgraph"
-    String depth_bw_name = "~{sample_id}.~{ref_map["name"]}.structural_variants.depth.bw"
-    String gc_bias_corrected_depth_bw_name = "~{sample_id}.~{ref_map["name"]}.structural_variants.gc_bias_corrected_depth.bw"
-    String maf_bw_name = "~{sample_id}.~{ref_map["name"]}.structural_variants.maf.bw"
-    String copynum_summary_name = "~{sample_id}.~{ref_map["name"]}.structural_variants.copynum.summary.json"
+    String copynum_bedgraph_name = "~{sample_id}.~{ref_name}.structural_variants.copynum.bedgraph"
+    String depth_bw_name = "~{sample_id}.~{ref_name}.structural_variants.depth.bw"
+    String gc_bias_corrected_depth_bw_name = "~{sample_id}.~{ref_name}.structural_variants.gc_bias_corrected_depth.bw"
+    String copynum_summary_name = "~{sample_id}.~{ref_name}.structural_variants.copynum.summary.json"
 
     call Sawfish.sawfish_call { input:
       sample_ids = [
@@ -381,9 +452,9 @@ workflow upstream {
       aligned_bam_indices = [
         aligned_bam_index
       ],
-      ref_fasta = ref_map["fasta"],  # !FileCoercion
-      ref_index = ref_map["fasta_index"],  # !FileCoercion
-      out_prefix = "~{sample_id}.~{ref_map["name"]}.structural_variants",
+      ref_fasta = ref_fasta,
+      ref_index = ref_index,
+      out_prefix = "~{sample_id}.~{ref_name}.structural_variants",
       copynum_bedgraph_names = [
         copynum_bedgraph_name
       ],
@@ -392,9 +463,6 @@ workflow upstream {
       ],
       gc_bias_corrected_depth_bw_names = [
         gc_bias_corrected_depth_bw_name
-      ],
-      maf_bw_names = [
-        maf_bw_name
       ],
       copynum_summary_names = [
         copynum_summary_name
@@ -405,7 +473,6 @@ workflow upstream {
     File copynum_bedgraph_output = sawfish_call.copynum_bedgraph[0]
     File depth_bw_output = sawfish_call.depth_bw[0]
     File gc_bias_corrected_depth_bw_output = sawfish_call.gc_bias_corrected_depth_bw[0]
-    File maf_bw_output = sawfish_call.maf_bw[0]
     File copynum_summary_output = sawfish_call.copynum_summary[0]
   }
 
@@ -434,7 +501,6 @@ workflow upstream {
     File? sv_copynum_bedgraph = copynum_bedgraph_output
     File? sv_depth_bw = depth_bw_output
     File? sv_gc_bias_corrected_depth_bw = gc_bias_corrected_depth_bw_output
-    File? sv_maf_bw = maf_bw_output
     File? sv_copynum_summary = copynum_summary_output
 
     # small variant outputs
@@ -454,16 +520,32 @@ workflow upstream {
     File mitorsaw_vcf_index = mitorsaw.vcf_index
     File mitorsaw_hap_stats = mitorsaw.hap_stats
 
+    # per sample kivvi kiv2 outputs
+    File? kivvi_kiv2_vcf = kivvi_kiv2.vcf
+    File? kivvi_kiv2_vcf_index = kivvi_kiv2.vcf_index
+    File? kivvi_kiv2_json = kivvi_kiv2.json
+    File? kivvi_kiv2_realigned_bam = kivvi_kiv2.realigned_bam
+    File? kivvi_kiv2_realigned_bam_index = kivvi_kiv2.realigned_bam_index
+    File? kivvi_kiv2_allele_plot = kivvi_kiv2.allele_plot
+
+    # per sample kivvi d4z4 outputs
+    File? kivvi_d4z4_vcf = kivvi_d4z4.vcf
+    File? kivvi_d4z4_vcf_index = kivvi_d4z4.vcf_index
+    File? kivvi_d4z4_json = kivvi_d4z4.json
+    File? kivvi_d4z4_realigned_bam = kivvi_d4z4.realigned_bam
+    File? kivvi_d4z4_realigned_bam_index = kivvi_d4z4.realigned_bam_index
+    File? kivvi_d4z4_allele_plot = kivvi_d4z4.allele_plot
+
     # qc messages
     Array[String] msg = flatten([
       flatten(pbmm2.msg),
       [
         include_fail_reads
       ],
-      [
-        qc_sex
-      ],
+      kivvi_kiv2.msg,
+      kivvi_d4z4.msg,
       sawfish_discover.msg
     ])
   }
 }
+

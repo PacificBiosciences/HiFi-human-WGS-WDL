@@ -2,7 +2,7 @@ version 1.0
 
 import "downstream/downstream.wdl" as Downstream
 import "process_trgt_catalog/process_trgt_catalog.wdl" as ProcessTrgtCatalog
-import "tertiary/tertiary.wdl" as TertiaryAnalysis
+import "unpack_container_manifest/unpack_container_manifest.wdl" as UnpackContainerManifest
 import "upstream/upstream.wdl" as Upstream
 import "wdl-common/wdl/tasks/utilities.wdl" as Utilities
 import "wdl-common/wdl/workflows/backend_configuration/backend_configuration.wdl" as BackendConfiguration
@@ -16,9 +16,6 @@ workflow humanwgs_singleton {
       },
       msg_file: {
         description: "File containing messages from the workflow"
-      },
-      bam_statistics: {
-        description: "BAM statistics"
       },
       read_length_plot: {
         description: "Distribution of read lengths"
@@ -101,32 +98,17 @@ workflow humanwgs_singleton {
       stat_phase_block_ng50: {
         description: "Phase block NG50"
       },
-      cpg_combined_bed: {
-        description: "5mCpG combined BED"
+      cpg_pileup_bed: {
+        description: "5mCpG pileup BED"
       },
-      cpg_combined_bed_index: {
-        description: "Index for 5mCpG combined BED"
+      cpg_pileup_bed_index: {
+        description: "Index for 5mCpG pileup BED"
       },
-      cpg_hap1_bed: {
-        description: "5mCpG haplotype 1 BED"
+      hmcpg_pileup_bed: {
+        description: "5hmC pileup BED"
       },
-      cpg_hap1_bed_index: {
-        description: "Index for 5mCpG haplotype 1 BED"
-      },
-      cpg_hap2_bed: {
-        description: "5mCpG haplotype 2 BED"
-      },
-      cpg_hap2_bed_index: {
-        description: "Index for 5mCpG haplotype 2 BED"
-      },
-      cpg_combined_bw: {
-        description: "5mCpG combined BigWig"
-      },
-      cpg_hap1_bw: {
-        description: "5mCpG haplotype 1 BigWig"
-      },
-      cpg_hap2_bw: {
-        description: "5mCpG haplotype 2 BigWig"
+      hmcpg_pileup_bed_index: {
+        description: "Index for 5hmC pileup BED"
       },
       stat_cpg_hap1_count: {
         description: "Number of scored reference 5mCpGs in haplotype 1"
@@ -166,9 +148,6 @@ workflow humanwgs_singleton {
       },
       sv_gc_bias_corrected_depth_bw: {
         description: "CNV GC-bias corrected depth BigWig"
-      },
-      sv_maf_bw: {
-        description: "CNV MAF BigWig"
       },
       sv_copynum_summary: {
         description: "CNV copy number summary JSON"
@@ -272,47 +251,47 @@ workflow humanwgs_singleton {
       mitorsaw_hap_stats: {
         description: "Mitochondrial haplotype statistics"
       },
+      kivvi_kiv2_vcf: {
+        description: "KIV2 repeat variant VCF"
+      },
+      kivvi_kiv2_vcf_index: {
+        description: "Index for KIV2 repeat variant VCF"
+      },
+      kivvi_kiv2_json: {
+        description: "KIV2 repeat genotype JSON"
+      },
+      kivvi_kiv2_realigned_bam: {
+        description: "KIV2-realigned BAM"
+      },
+      kivvi_kiv2_realigned_bam_index: {
+        description: "Index for KIV2-realigned BAM"
+      },
+      kivvi_kiv2_allele_plot: {
+        description: "KIV2 assembled allele plot"
+      },
+      kivvi_d4z4_vcf: {
+        description: "D4Z4 repeat variant VCF"
+      },
+      kivvi_d4z4_vcf_index: {
+        description: "Index for D4Z4 repeat variant VCF"
+      },
+      kivvi_d4z4_json: {
+        description: "D4Z4 repeat genotype JSON"
+      },
+      kivvi_d4z4_realigned_bam: {
+        description: "D4Z4-realigned BAM"
+      },
+      kivvi_d4z4_realigned_bam_index: {
+        description: "Index for D4Z4-realigned BAM"
+      },
+      kivvi_d4z4_allele_plot: {
+        description: "D4Z4 assembled allele plot"
+      },
       pbstarphase_summary: {
         description: "StarPhase summary"
       },
-      pharmcat_match_json: {
-        description: "PharmCAT match JSON"
-      },
-      pharmcat_phenotype_json: {
-        description: "PharmCAT phenotype JSON"
-      },
-      pharmcat_report_html: {
-        description: "PharmCAT report HTML"
-      },
-      pharmcat_report_json: {
-        description: "PharmCAT report JSON"
-      },
-      tertiary_small_variant_filtered_vcf: {
-        description: "Filtered, annotated small variant VCF"
-      },
-      tertiary_small_variant_filtered_vcf_index: {
-        description: "Index for filtered, annotated small variant VCF"
-      },
-      tertiary_small_variant_filtered_tsv: {
-        description: "Filtered, annotated small variant TSV"
-      },
-      tertiary_small_variant_compound_het_vcf: {
-        description: "Filtered, annotated compound heterozygous small variant VCF"
-      },
-      tertiary_small_variant_compound_het_vcf_index: {
-        description: "Index for filtered, annotated compound heterozygous small variant VCF"
-      },
-      tertiary_small_variant_compound_het_tsv: {
-        description: "Filtered, annotated compound heterozygous small variant TSV"
-      },
-      tertiary_sv_filtered_vcf: {
-        description: "Filtered, annotated structural variant VCF"
-      },
-      tertiary_sv_filtered_vcf_index: {
-        description: "Index for filtered, annotated structural variant VCF"
-      },
-      tertiary_sv_filtered_tsv: {
-        description: "Filtered, annotated structural variant TSV"
+      pbstarphase_tsv: {
+        description: "StarPhase summary in TSV format for PharmCAT"
       },
       msg: {
         description: "Messages from the workflow"
@@ -330,34 +309,27 @@ workflow humanwgs_singleton {
     sample_id: {
       description: "Unique identifier for the sample"
     }
-    sex: {
-      description: "Sample sex",
-      choices: [
-        "MALE",
-        "FEMALE"
-      ]
-    }
     hifi_reads: {
       description: "Array of paths to hifi_reads in unaligned BAM format"
     }
     fail_reads: {
       description: "Array of paths to fail_reads in unaligned BAM format"
     }
-    phenotypes: {
-      description: "Comma-delimited list of HPO terms for phenotypes",
-      external_help: "https://hpo.jax.org"
+    ref_name: {
+      description: "Reference genome to use for this workflow run",
+      choices: [
+        "GRCh38",
+        "GRCh38_GIABv3"
+      ]
     }
-    ref_map_file: {
-      description: "TSV containing reference genome file paths; must match backend"
+    trgt_tandem_repeat_bed_override: {
+      description: "Optional BED file to override the default TRGT tandem repeat catalog"
     }
-    tertiary_map_file: {
-      description: "TSV containing tertiary analysis file paths and thresholds; must match backend"
+    methbat_region_tsv_override: {
+      description: "Optional TSV file to override the default MethBat methylation profiling regions"
     }
-    max_reads_per_alignment_chunk: {
-      description: "Maximum reads per alignment chunk"
-    }
-    pharmcat_min_coverage: {
-      description: "Minimum coverage for PharmCAT"
+    use_alignment_chunking: {
+      description: "Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk."
     }
     use_gpu: {
       description: "Use GPU when possible"
@@ -397,14 +369,12 @@ workflow humanwgs_singleton {
 
   input {
     String sample_id
-    String? sex
     Array[File] hifi_reads
     Array[File]? fail_reads
-    String phenotypes = "HP:0000001"
-    File ref_map_file
-    File? tertiary_map_file
-    Int max_reads_per_alignment_chunk = 500000
-    Int pharmcat_min_coverage = 10
+    String ref_name = "GRCh38"
+    File? trgt_tandem_repeat_bed_override
+    File? methbat_region_tsv_override
+    Boolean use_alignment_chunking = true
     Boolean use_gpu = false
     Boolean use_parabricks_deepvariant = false
 
@@ -430,25 +400,60 @@ workflow humanwgs_singleton {
     then backend_configuration.spot_runtime_attributes
     else backend_configuration.on_demand_runtime_attributes
 
-  #@ except: DeclarationName
-  Map[String, String] ref_map = read_map(ref_map_file)
+  # Pinned reference data container images, keyed by ref_name; add an entry
+  # here when a new reference is supported (see upstream.wdl's
+  # max_norm_female_chrY_depth for the sibling per-reference map).
+  Map[String, String] reference_container = {
+    "GRCh38": "workflow-data-container-hifi-human-wgs-wdl-grch38@sha256:5e3f23e44c1c09762838e81677f7d136367be2a4063efc608129841cef745b42",  # v4.0.0
+    "GRCh38_GIABv3": "workflow-data-container-hifi-human-wgs-wdl-grch38_giabv3@sha256:f3799c1eff1b816a95ea06ce567d3324d06e945428567077d96eca07c76ad0aa"  # v4.0.0
+  }
+
+  call UnpackContainerManifest.unpack_container_manifest { input:
+    unpack_image = "~{default_runtime_attributes.container_registry}/~{reference_container[ref_name]}",
+    runtime_attributes = default_runtime_attributes
+  }
+
+  File ref_fasta = unpack_container_manifest.ref_fasta
+  File ref_index = unpack_container_manifest.ref_index
+  Float max_norm_female_chrY_depth = unpack_container_manifest.max_norm_female_chrY_depth
+  File trgt_tandem_repeat_bed = select_first([
+    trgt_tandem_repeat_bed_override,
+    unpack_container_manifest.trgt_tandem_repeat_bed
+  ])
+  File sawfish_exclude_bed = unpack_container_manifest.sawfish_exclude_bed
+  File sawfish_exclude_bed_index = unpack_container_manifest.sawfish_exclude_bed_index
+  File sawfish_expected_bed_male = unpack_container_manifest.sawfish_expected_bed_male
+  File sawfish_expected_bed_female = unpack_container_manifest.sawfish_expected_bed_female
+  File methbat_region_tsv = select_first([
+    methbat_region_tsv_override,
+    unpack_container_manifest.methbat_region_tsv
+  ])
+  String paraphase_genome_build = unpack_container_manifest.paraphase_genome_build
+  Boolean run_starphase = unpack_container_manifest.run_starphase
 
   call ProcessTrgtCatalog.process_trgt_catalog { input:
-    trgt_catalog = ref_map["trgt_tandem_repeat_bed"],  # !FileCoercion
-    ref_fasta = ref_map["fasta"],  # !FileCoercion
-    ref_index = ref_map["fasta_index"],  # !FileCoercion
+    trgt_catalog = trgt_tandem_repeat_bed,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
     default_runtime_attributes = default_runtime_attributes
   }
 
   call Upstream.upstream { input:
     sample_id = sample_id,
-    sex = sex,
     hifi_reads = hifi_reads,
     fail_reads = fail_reads,
     fail_reads_bed = process_trgt_catalog.include_fail_reads_bed,
     fail_reads_bait_index = process_trgt_catalog.fail_reads_bait_index,
-    ref_map_file = ref_map_file,
-    max_reads_per_alignment_chunk = max_reads_per_alignment_chunk,
+    ref_name = ref_name,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    max_norm_female_chrY_depth = max_norm_female_chrY_depth,
+    paraphase_genome_build = paraphase_genome_build,
+    sawfish_exclude_bed = sawfish_exclude_bed,
+    sawfish_exclude_bed_index = sawfish_exclude_bed_index,
+    sawfish_expected_bed_male = sawfish_expected_bed_male,
+    sawfish_expected_bed_female = sawfish_expected_bed_female,
+    use_alignment_chunking = use_alignment_chunking,
     single_sample = true,
     use_gpu = use_gpu,
     use_parabricks_deepvariant = use_parabricks_deepvariant,
@@ -471,50 +476,14 @@ workflow humanwgs_singleton {
     sv_vcf_index = select_first([
       upstream.sv_vcf_index
     ]),
-    pharmcat_min_coverage = pharmcat_min_coverage,
-    ref_map_file = ref_map_file,
+    ref_name = ref_name,
+    ref_fasta = ref_fasta,
+    ref_index = ref_index,
+    sawfish_expected_bed_male = sawfish_expected_bed_male,
+    sawfish_expected_bed_female = sawfish_expected_bed_female,
+    methbat_region_tsv = methbat_region_tsv,
+    run_starphase = run_starphase,
     default_runtime_attributes = default_runtime_attributes
-  }
-
-  Map[String, String] pedigree_sex = {
-    "MALE": "1",
-    "FEMALE": "2",
-    "": "."
-  }
-
-  # write sample metadata similar to pedigree format
-  # family_id, sample_id, father_id, mother_id, sex, affected
-  Array[String] sample_metadata = [
-    sample_id,
-    sample_id,
-    ".",
-    ".",
-    pedigree_sex[upstream.inferred_sex],
-    "2"
-  ]
-
-  if (defined(tertiary_map_file)) {
-    call TertiaryAnalysis.tertiary_analysis { input:
-      sample_metadata = [
-        sample_metadata
-      ],
-      phenotypes = phenotypes,
-      is_trio_kid = [
-        false
-      ],
-      is_duo_kid = [
-        false
-      ],
-      small_variant_vcf = downstream.phased_small_variant_vcf,
-      small_variant_vcf_index = downstream.phased_small_variant_vcf_index,
-      sv_vcf = downstream.phased_sv_vcf,
-      sv_vcf_index = downstream.phased_sv_vcf_index,
-      ref_map_file = ref_map_file,
-      tertiary_map_file = select_first([
-        tertiary_map_file
-      ]),
-      default_runtime_attributes = default_runtime_attributes
-    }
   }
 
   Array[Array[String]] stats = [
@@ -580,15 +549,15 @@ workflow humanwgs_singleton {
     ],
     [
       "cpg_combined_count",
-      downstream.stat_combined_cpg_count
+      downstream.stat_cpg_combined_count
     ],
     [
       "cpg_hap1_count",
-      downstream.stat_hap1_cpg_count
+      downstream.stat_cpg_hap1_count
     ],
     [
       "cpg_hap2_count",
-      downstream.stat_hap2_cpg_count
+      downstream.stat_cpg_hap2_count
     ],
     [
       "methbat_methylated_count",
@@ -652,14 +621,32 @@ workflow humanwgs_singleton {
     ]
   ]
 
+  # msg outputs from tasks may contain empty strings when an empty
+  # messages.txt is read back as [""] rather than []; drop them here
+  scatter (m in flatten([
+    process_trgt_catalog.msg,
+    upstream.msg
+  ])) {
+    if (m != "") {
+      String non_empty_stats_msg = m
+    }
+  }
+
   call Utilities.consolidate_stats { input:
     out_prefix = sample_id,
     stats = stats,
-    msg_array = flatten([
-      process_trgt_catalog.msg,
-      upstream.msg
-    ]),
+    msg_array = select_all(non_empty_stats_msg),
     runtime_attributes = default_runtime_attributes
+  }
+
+  scatter (m in flatten([
+    process_trgt_catalog.msg,
+    upstream.msg,
+    downstream.msg
+  ])) {
+    if (m != "") {
+      String non_empty_msg = m
+    }
   }
 
   output {
@@ -668,9 +655,8 @@ workflow humanwgs_singleton {
     File msg_file = consolidate_stats.messages
 
     # bam stats
-    File bam_statistics = downstream.bam_statistics
     File read_length_plot = downstream.read_length_plot
-    File? read_quality_plot = downstream.read_quality_plot
+    File read_quality_plot = downstream.read_quality_plot
     File mapq_distribution_plot = downstream.mapq_distribution_plot
     File mg_distribution_plot = downstream.mg_distribution_plot
     String stat_read_count = downstream.stat_read_count
@@ -704,18 +690,13 @@ workflow humanwgs_singleton {
     String stat_phase_block_ng50 = downstream.stat_phase_block_ng50
 
     # methylation outputs and profile
-    File? cpg_combined_bed = downstream.cpg_combined_bed
-    File? cpg_combined_bed_index = downstream.cpg_combined_bed_index
-    File? cpg_hap1_bed = downstream.cpg_hap1_bed
-    File? cpg_hap1_bed_index = downstream.cpg_hap1_bed_index
-    File? cpg_hap2_bed = downstream.cpg_hap2_bed
-    File? cpg_hap2_bed_index = downstream.cpg_hap2_bed_index
-    File? cpg_combined_bw = downstream.cpg_combined_bw
-    File? cpg_hap1_bw = downstream.cpg_hap1_bw
-    File? cpg_hap2_bw = downstream.cpg_hap2_bw
-    String stat_cpg_hap1_count = downstream.stat_hap1_cpg_count
-    String stat_cpg_hap2_count = downstream.stat_hap2_cpg_count
-    String stat_cpg_combined_count = downstream.stat_combined_cpg_count
+    File? cpg_pileup_bed = downstream.cpg_pileup_bed
+    File? cpg_pileup_bed_index = downstream.cpg_pileup_bed_index
+    File? hmcpg_pileup_bed = downstream.hmcpg_pileup_bed
+    File? hmcpg_pileup_bed_index = downstream.hmcpg_pileup_bed_index
+    String stat_cpg_hap1_count = downstream.stat_cpg_hap1_count
+    String stat_cpg_hap2_count = downstream.stat_cpg_hap2_count
+    String stat_cpg_combined_count = downstream.stat_cpg_combined_count
     File? methbat_profile = downstream.methbat_profile
     String stat_methbat_methylated_count = downstream.stat_methbat_methylated_count
     String stat_methbat_unmethylated_count = downstream.stat_methbat_unmethylated_count
@@ -735,9 +716,6 @@ workflow humanwgs_singleton {
     ])
     File sv_gc_bias_corrected_depth_bw = select_first([
       upstream.sv_gc_bias_corrected_depth_bw
-    ])
-    File sv_maf_bw = select_first([
-      upstream.sv_maf_bw
     ])
     File sv_copynum_summary = select_first([
       upstream.sv_copynum_summary
@@ -788,35 +766,34 @@ workflow humanwgs_singleton {
     File mitorsaw_vcf_index = upstream.mitorsaw_vcf_index
     File mitorsaw_hap_stats = upstream.mitorsaw_hap_stats
 
-    # PGx outputs
-    File pbstarphase_summary = downstream.pbstarphase_json
-    File? pharmcat_match_json = downstream.pharmcat_match_json
-    File? pharmcat_phenotype_json = downstream.pharmcat_phenotype_json
-    File? pharmcat_report_html = downstream.pharmcat_report_html
-    File? pharmcat_report_json = downstream.pharmcat_report_json
+    # kivvi kiv2 outputs
+    File? kivvi_kiv2_vcf = upstream.kivvi_kiv2_vcf
+    File? kivvi_kiv2_vcf_index = upstream.kivvi_kiv2_vcf_index
+    File? kivvi_kiv2_json = upstream.kivvi_kiv2_json
+    File? kivvi_kiv2_realigned_bam = upstream.kivvi_kiv2_realigned_bam
+    File? kivvi_kiv2_realigned_bam_index = upstream.kivvi_kiv2_realigned_bam_index
+    File? kivvi_kiv2_allele_plot = upstream.kivvi_kiv2_allele_plot
 
-    # tertiary analysis outputs
-    File? tertiary_small_variant_filtered_vcf = tertiary_analysis.small_variant_filtered_vcf
-    File? tertiary_small_variant_filtered_vcf_index = tertiary_analysis.small_variant_filtered_vcf_index
-    File? tertiary_small_variant_filtered_tsv = tertiary_analysis.small_variant_filtered_tsv
-    File? tertiary_small_variant_compound_het_vcf = tertiary_analysis.small_variant_compound_het_vcf
-    File? tertiary_small_variant_compound_het_vcf_index = tertiary_analysis.small_variant_compound_het_vcf_index
-    File? tertiary_small_variant_compound_het_tsv = tertiary_analysis.small_variant_compound_het_tsv
-    File? tertiary_sv_filtered_vcf = tertiary_analysis.sv_filtered_vcf
-    File? tertiary_sv_filtered_vcf_index = tertiary_analysis.sv_filtered_vcf_index
-    File? tertiary_sv_filtered_tsv = tertiary_analysis.sv_filtered_tsv
+    # kivvi d4z4 outputs
+    File? kivvi_d4z4_vcf = upstream.kivvi_d4z4_vcf
+    File? kivvi_d4z4_vcf_index = upstream.kivvi_d4z4_vcf_index
+    File? kivvi_d4z4_json = upstream.kivvi_d4z4_json
+    File? kivvi_d4z4_realigned_bam = upstream.kivvi_d4z4_realigned_bam
+    File? kivvi_d4z4_realigned_bam_index = upstream.kivvi_d4z4_realigned_bam_index
+    File? kivvi_d4z4_allele_plot = upstream.kivvi_d4z4_allele_plot
+
+    # PGx outputs
+    File? pbstarphase_summary = downstream.pbstarphase_json
+    File? pbstarphase_tsv = downstream.pbstarphase_tsv
 
     # qc messages
-    Array[String] msg = flatten([
-      process_trgt_catalog.msg,
-      upstream.msg,
-      downstream.msg
-    ])
+    Array[String] msg = select_all(non_empty_msg)
 
     # workflow metadata
     String workflow_name = "humanwgs_singleton"
-    String workflow_version = "v3.3.1" + if defined(debug_version)
+    String workflow_version = "v4.0.0-rc1" + if defined(debug_version)
       then "~{"-" + debug_version}"
       else ""
   }
 }
+
