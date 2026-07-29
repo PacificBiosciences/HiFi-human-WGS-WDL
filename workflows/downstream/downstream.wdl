@@ -135,6 +135,9 @@ workflow downstream {
       stat_sv_SWAP_count: {
         description: "Number of structural variant sequence swap events"
       },
+      sv_stats_plot: {
+        description: "Structural variant size distribution plot"
+      },
       trgt_vcf: {
         description: "Phased TRGT VCF"
       },
@@ -367,6 +370,8 @@ workflow downstream {
   }
 
   call Bcftools.sv_stats { input:
+    sample_id = sample_id,
+    ref_name = ref_name,
     vcf = hiphase.phased_vcfs[1],
     runtime_attributes = default_runtime_attributes
   }
@@ -454,6 +459,7 @@ workflow downstream {
     String stat_sv_INV_count = sv_stats.stat_sv_INV_count
     String stat_sv_BND_count = sv_stats.stat_sv_BND_count
     String stat_sv_SWAP_count = sv_stats.stat_sv_SWAP_count
+    File sv_stats_plot = sv_stats.sv_stats_plot
 
     # trgt outputs
     File trgt_vcf = trgt_genotype.vcf

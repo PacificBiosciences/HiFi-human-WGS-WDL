@@ -168,6 +168,7 @@ flowchart TD
 | String | stat_sv_INV_count | Number of INV structural variants | (PASS variants) |
 | String | stat_sv_BND_count | Number of BND structural variants | (PASS variants) |
 | String | stat_sv_SWAP_count | Number of structural variant sequence swap events | (PASS variants) |
+| File | sv_stats_plot | Distribution of DEL/INS/DUP/INV by size | |
 | File | sv_supporting_reads | Supporting reads for structural variants | |
 | File | sv_copynum_bedgraph | CNV copy number BEDGraph | |
 | File | sv_depth_bw | CNV depth BigWig | |

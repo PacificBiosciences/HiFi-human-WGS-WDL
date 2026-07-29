@@ -55,8 +55,8 @@ workflow deepvariant {
     gpu: {
       description: "Use GPU for DeepVariant"
     }
-    call_variants_gpu_mem_gb: {
-      description: "Memory to use in GiB for the GPU call_variants task"
+    max_nproc: {
+      description: "Max CPUs available on a single node in the target cluster -- drives call_variants_cpu's threads (min(max_nproc, 64)); does not affect call_variants_gpu or postprocess_variants, which don't scale with node size"
     }
     default_runtime_attributes: {
       description: "Default runtime attribute structure"
@@ -75,7 +75,7 @@ workflow deepvariant {
     Boolean gvcf_output = true
     String deepvariant_version = "1.10.0"
     Boolean gpu
-    Int call_variants_gpu_mem_gb = 32
+    Int max_nproc = 64
     RuntimeAttributes default_runtime_attributes
   }
 
@@ -112,6 +112,10 @@ workflow deepvariant {
       example_tfrecord_tars = deepvariant_make_examples.example_tfrecord_tar,
       total_deepvariant_tasks = total_deepvariant_tasks,
       docker_image = docker_image,
+      threads = if (max_nproc < 64)
+        then max_nproc
+        else 64
+      ,
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -123,7 +127,6 @@ workflow deepvariant {
       example_tfrecord_tars = deepvariant_make_examples.example_tfrecord_tar,
       total_deepvariant_tasks = total_deepvariant_tasks,
       docker_image = docker_image + "-gpu",
-      mem_gb = call_variants_gpu_mem_gb,
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -355,8 +358,11 @@ task deepvariant_call_variants_cpu {
     writer_threads: {
       description: "Number of writer threads to use"
     }
+    batch_size: {
+      description: "call_variants --batch_size, DV default is 1024."
+    }
     mem_gb: {
-      description: "Memory to use in GiB"
+      description: "Memory to use in GiB. Default is a formula of batch_size, override to set explicitly"
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -371,7 +377,10 @@ task deepvariant_call_variants_cpu {
     String docker_image
     Int threads = 64
     Int writer_threads = 8
-    Int mem_gb = 256
+    Int batch_size = 1024
+    # mem_gb is batch_size-driven, not threads-driven: true-peak-fit + 1.5x
+    # margin, rounded to the nearest 4 GiB. 28 GiB at the default batch_size.
+    Int mem_gb = 4 * ceil(1.5 * (12.50 + 0.00502 * batch_size) / 4)
     RuntimeAttributes runtime_attributes
   }
 
@@ -386,6 +395,7 @@ task deepvariant_call_variants_cpu {
 
     /opt/deepvariant/bin/call_variants \
       --writer_threads ~{writer_threads} \
+      --batch_size ~{batch_size} \
       --outfile call_variants_output.tfrecord.gz \
       --examples "example_tfrecords/make_examples.tfrecord@~{total_deepvariant_tasks}.gz" \
       --checkpoint "/opt/models/pacbio"
@@ -445,7 +455,7 @@ task deepvariant_call_variants_gpu {
       description: "Number of writer threads to use"
     }
     mem_gb: {
-      description: "Memory to use in GiB"
+      description: "Memory to use in GiB."
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -460,7 +470,7 @@ task deepvariant_call_variants_gpu {
     String docker_image
     Int threads = 8
     Int writer_threads = 4
-    Int mem_gb = 32
+    Int mem_gb = 44
     RuntimeAttributes runtime_attributes
   }
 
@@ -577,8 +587,8 @@ task deepvariant_postprocess_variants {
     String ref_name
     Int total_deepvariant_tasks
     String docker_image
-    Int threads = 2
-    Int mem_gb = 72
+    Int threads = 8
+    Int mem_gb = 48
     RuntimeAttributes runtime_attributes
   }
 

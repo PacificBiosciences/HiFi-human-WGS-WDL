@@ -6,7 +6,6 @@
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.use_gpu": false,
   "humanwgs_singleton.use_parabricks_deepvariant": false,
-  "humanwgs_singleton.ref_map_file": "<local_path_prefix>/dataset/GRCh38.ref_map.v3p1p0.hpc.tsv",
   "humanwgs_singleton.backend": "HPC",
   "humanwgs_singleton.preemptible": true
 }

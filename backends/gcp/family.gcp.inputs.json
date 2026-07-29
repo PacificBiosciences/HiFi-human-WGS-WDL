@@ -11,7 +11,6 @@
       }
     ]
   },
-  "humanwgs_family.ref_map_file": "gs://pacbio-wdl/hifi-wdl-resources-v3.1.0/GRCh38.ref_map.v3p1p0.gcp.tsv",
   "humanwgs_family.backend": "GCP",
   "humanwgs_family.zones": "String",
   "humanwgs_family.preemptible": "Boolean"

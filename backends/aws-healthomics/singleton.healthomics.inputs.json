@@ -6,7 +6,6 @@
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.use_gpu": false,
   "humanwgs_singleton.use_parabricks_deepvariant": false,
-  "humanwgs_singleton.ref_map_file": "s3://<bucket_path>/GRCh38.ref_map.v3p1p0.aws.tsv",
   "humanwgs_singleton.backend": "AWS-HealthOmics",
   "humanwgs_singleton.preemptible": true
 }

@@ -433,11 +433,20 @@ task sv_stats {
       },
       stat_sv_SWAP_count: {
         description: "Number of structural variant sequence swap events"
+      },
+      sv_stats_plot: {
+        description: "Structural variant size distribution plot"
       }
     }
   }
 
   parameter_meta {
+    sample_id: {
+      description: "Sample ID"
+    }
+    ref_name: {
+      description: "Reference name"
+    }
     vcf: {
       description: "VCF"
     }
@@ -459,6 +468,8 @@ task sv_stats {
   }
 
   input {
+    String sample_id
+    String ref_name
     File vcf
     Int min_length = 50
     Int max_scar_length = 10
@@ -476,43 +487,173 @@ task sv_stats {
 
     ln --symbolic --verbose "~{vcf}" .
 
-    # Count the number of variants of each type
-    bcftools view \
-      --no-header \
+    # Count the number of variants of each type. For DUP/DEL/INS/INV,
+    # extract each variant's SVLEN via `bcftools query` instead of just
+    # counting lines -- the same query then serves both the count stat
+    # and the size-distribution plot below, with no extra VCF pass.
+    bcftools query \
+      -f '%INFO/SVLEN\n' \
       --include '(GT!="ref" & GT!="./." & GT!=".") & FILTER="PASS" & ABS(SVLEN)>=~{min_length} & SVTYPE="DUP"' \
       "~{basename(vcf)}" \
-    | wc --lines \
-    > stat_DUP.txt || echo "0" > stat_DUP.txt
-    bcftools view \
-      --no-header \
+    > length_DUP.txt || : > length_DUP.txt
+    wc --lines < length_DUP.txt > stat_DUP.txt
+    bcftools query \
+      -f '%INFO/SVLEN\n' \
       --include 'GT="alt" & FILTER="PASS" & ABS(SVLEN)>=~{min_length} & SVTYPE="DEL" & STRLEN(ALT[0])<=~{max_scar_length}' \
       "~{basename(vcf)}" \
-    | wc --lines \
-    > stat_DEL.txt || echo "0" > stat_DEL.txt
-    bcftools view \
-      --no-header \
+    > length_DEL.txt || : > length_DEL.txt
+    wc --lines < length_DEL.txt > stat_DEL.txt
+    bcftools query \
+      -f '%INFO/SVLEN\n' \
       --include 'GT="alt" & FILTER="PASS" & ABS(SVLEN)>=~{min_length} & SVTYPE="INS" & STRLEN(REF)<=~{max_scar_length}' \
       "~{basename(vcf)}" \
-    | wc --lines \
-    > stat_INS.txt || echo "0" > stat_INS.txt
+    > length_INS.txt || : > length_INS.txt
+    wc --lines < length_INS.txt > stat_INS.txt
     bcftools view \
       --no-header \
       --include 'GT="alt" & FILTER="PASS" & ABS(SVLEN)>=~{min_length} & (SVTYPE="INS" | SVTYPE="DEL") & STRLEN(REF)>~{max_scar_length} & STRLEN(ALT[0])>~{max_scar_length}' \
       "~{basename(vcf)}" \
     | wc --lines \
     > stat_SWAP.txt || echo "0" > stat_SWAP.txt
-    bcftools view \
-      --no-header \
+    bcftools query \
+      -f '%INFO/SVLEN\n' \
       --include 'GT="alt" & FILTER="PASS" & SVTYPE="INV"' \
       "~{basename(vcf)}" \
-    | wc --lines \
-    > stat_INV.txt || echo "0" > stat_INV.txt
+    > length_INV.txt || : > length_INV.txt
+    wc --lines < length_INV.txt > stat_INV.txt
     bcftools view \
       --no-header \
       --include 'GT="alt" & FILTER="PASS" & SVTYPE="BND"' \
       "~{basename(vcf)}" \
     | wc --lines \
     > stat_BND.txt || echo "0" > stat_BND.txt
+
+    # plot size distributions for INS/DEL (combined), DUP, and INV
+    cat << EOF > plot_sv_stats.py
+    import matplotlib, matplotlib.pyplot as plt
+    matplotlib.use('Agg')
+    import seaborn as sns
+    from matplotlib.ticker import MaxNLocator, FuncFormatter
+    sns.set_style('darkgrid')
+    def fmt_bp(x, pos):
+      sign = '-' if x < 0 else ''
+      ax_val = abs(x)
+      if ax_val >= 1000000:
+        return f'{sign}{ax_val/1000000:g}M'
+      if ax_val >= 1000:
+        return f'{sign}{ax_val/1000:g}k'
+      return f'{sign}{ax_val:g}'
+    def read_lengths(path):
+      with open(path) as f:
+        values = []
+        for line in f.read().split():
+          for tok in line.split(','):
+            try:
+              values.append(int(tok))
+            except ValueError:
+              pass
+        return values
+    N_BINS_TOTAL = 50
+    CAP = 2000000
+    def tier_edges(lo, hi):
+      # bin width derived as if this tier started at 0, then the bins that
+      # would fall in [0, lo) are simply not displayed -- keeps bin width
+      # (and bar count) consistent across tiers instead of shrinking bins
+      # to fit each tier's own range
+      w = hi // N_BINS_TOTAL
+      return list(range(lo, hi, w)) + [hi]
+    def plot_del_tier(ax, dele, lo, hi, ylabel=False, legend=False):
+      # Plotted on absolute length (not signed), same tier order/direction
+      # as the INS/DUP row directly below -- each figure column then shares
+      # an identical x-axis across all three rows, rather than mirroring
+      # DEL's sign against INS/DUP.
+      cap = hi is None
+      hi_eff = CAP if cap else hi
+      edges = tier_edges(lo, hi_eff)
+      vals = [min(-x, CAP) for x in dele if -x >= lo] if cap else [-x for x in dele if lo <= -x < hi]
+      ax.hist(vals, bins=edges, color='C1', label='DEL')
+      ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+      ax.set_xlabel('SV length (bp)')
+      ax.xaxis.set_major_formatter(FuncFormatter(fmt_bp))
+      if ylabel:
+        ax.set_ylabel('Count')
+      if legend:
+        ax.legend(fontsize='small')
+      ax.set_title(f'>={lo:,} bp (capped {CAP:,})' if cap else f'[{lo:,}, {hi:,}) bp', fontsize='small')
+    def plot_insdup_tier(ax, ins, dup, lo, hi, legend=False):
+      # INS and DUP stacked together per tier (both are positive-length
+      # events with no separate row of their own), ordered smallest-first
+      # (leftmost, nearest zero) growing outward -- mirrors the DEL tiers
+      cap = hi is None
+      hi_eff = CAP if cap else hi
+      edges = tier_edges(lo, hi_eff)
+      if cap:
+        ins_v = [min(x, CAP) for x in ins if x >= lo]
+        dup_v = [min(x, CAP) for x in dup if x >= lo]
+      else:
+        ins_v = [x for x in ins if lo <= x < hi]
+        dup_v = [x for x in dup if lo <= x < hi]
+      ax.hist([ins_v, dup_v], bins=edges, stacked=True, color=['C0', 'C2'], label=['INS', 'DUP'])
+      ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+      ax.set_xlabel('SV length (bp)')
+      ax.xaxis.set_major_formatter(FuncFormatter(fmt_bp))
+      if legend:
+        ax.legend(fontsize='small')
+      ax.set_title(f'>={lo:,} bp (capped {CAP:,})' if cap else f'[{lo:,}, {hi:,}) bp', fontsize='small')
+    def plot_inv_tier(ax, inv, lo, hi, legend=False):
+      # single-series tiers, same layout/style as the INS/DUP row (smallest
+      # nearest zero growing outward). INV isn't length-filtered elsewhere
+      # in this task (unlike DUP/DEL/INS), so its own smallest tier starts
+      # at 0, not min_length, to keep showing every INV regardless of size.
+      cap = hi is None
+      hi_eff = CAP if cap else hi
+      edges = tier_edges(lo, hi_eff)
+      vals = [min(x, CAP) for x in inv if x >= lo] if cap else [x for x in inv if lo <= x < hi]
+      ax.hist(vals, bins=edges, color='C3', label='INV')
+      ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+      ax.set_xlabel('SV length (bp)')
+      ax.xaxis.set_major_formatter(FuncFormatter(fmt_bp))
+      if legend:
+        ax.legend(fontsize='small')
+      ax.set_title(f'>={lo:,} bp (capped {CAP:,})' if cap else f'[{lo:,}, {hi:,}) bp', fontsize='small')
+    ins = read_lengths('length_INS.txt')
+    dele = read_lengths('length_DEL.txt')
+    # SVLEN sign convention varies by caller/VCF version (e.g. sawfish 2.2.1 emits
+    # positive SVLEN for DEL); force negative here so DEL always plots left of 0.
+    dele = [-abs(x) for x in dele]
+    dup = read_lengths('length_DUP.txt')
+    inv = read_lengths('length_INV.txt')
+    fig, axd = plt.subplot_mosaic(
+      [['d1', 'd2', 'd3', 'd4'],
+       ['i1', 'i2', 'i3', 'i4'],
+       ['v1', 'v2', 'v3', 'v4']],
+      figsize=(13, 12),
+    )
+    plot_del_tier(axd['d1'], dele, ~{min_length}, 1000, ylabel=True, legend=True)
+    plot_del_tier(axd['d2'], dele, 1000, 10000)
+    plot_del_tier(axd['d3'], dele, 10000, 100000)
+    plot_del_tier(axd['d4'], dele, 100000, None)
+    plot_insdup_tier(axd['i1'], ins, dup, ~{min_length}, 1000, legend=True)
+    plot_insdup_tier(axd['i2'], ins, dup, 1000, 10000)
+    plot_insdup_tier(axd['i3'], ins, dup, 10000, 100000)
+    plot_insdup_tier(axd['i4'], ins, dup, 100000, None)
+    plot_inv_tier(axd['v1'], inv, 0, 1000, legend=True)
+    plot_inv_tier(axd['v2'], inv, 1000, 10000)
+    plot_inv_tier(axd['v3'], inv, 10000, 100000)
+    plot_inv_tier(axd['v4'], inv, 100000, None)
+    # DEL and INS/DUP share a column's tier, so give each pair the same
+    # y-limit -- bar heights become directly comparable, not just the
+    # x-axis. INV keeps its own independent y-limits.
+    for d_key, i_key in [('d1', 'i1'), ('d2', 'i2'), ('d3', 'i3'), ('d4', 'i4')]:
+      shared_max = max(axd[d_key].get_ylim()[1], axd[i_key].get_ylim()[1])
+      axd[d_key].set_ylim(0, shared_max)
+      axd[i_key].set_ylim(0, shared_max)
+    fig.suptitle('~{sample_id}.~{ref_name}\nStructural variant size distribution')
+    fig.tight_layout()
+    plt.savefig('~{sample_id}.~{ref_name}.sv_stats.png'); plt.close()
+    EOF
+
+    python3 ./plot_sv_stats.py
   >>>
 
   output {
@@ -522,6 +663,7 @@ task sv_stats {
     String stat_sv_INV_count = read_string("stat_INV.txt")
     String stat_sv_BND_count = read_string("stat_BND.txt")
     String stat_sv_SWAP_count = read_string("stat_SWAP.txt")
+    File sv_stats_plot = "~{sample_id}.~{ref_name}.sv_stats.png"
   }
 
   runtime {

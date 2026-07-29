@@ -170,6 +170,9 @@ workflow humanwgs_singleton {
       stat_sv_BND_count: {
         description: "Number of BND structural variants"
       },
+      sv_stats_plot: {
+        description: "Structural variant size distribution plot"
+      },
       phased_small_variant_vcf: {
         description: "Phased small variant VCF"
       },
@@ -728,6 +731,7 @@ workflow humanwgs_singleton {
     String stat_sv_INV_count = downstream.stat_sv_INV_count
     String stat_sv_SWAP_count = downstream.stat_sv_SWAP_count
     String stat_sv_BND_count = downstream.stat_sv_BND_count
+    File sv_stats_plot = downstream.sv_stats_plot
 
     # small variant outputs
     File phased_small_variant_vcf = downstream.phased_small_variant_vcf
@@ -791,7 +795,7 @@ workflow humanwgs_singleton {
 
     # workflow metadata
     String workflow_name = "humanwgs_singleton"
-    String workflow_version = "v4.0.0-rc1" + if defined(debug_version)
+    String workflow_version = "v4.0.0-rc2" + if defined(debug_version)
       then "~{"-" + debug_version}"
       else ""
   }
