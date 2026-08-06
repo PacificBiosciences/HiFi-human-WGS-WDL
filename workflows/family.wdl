@@ -953,7 +953,7 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name = "humanwgs_family"
-    String workflow_version = "v4.0.0-rc2" + if defined(debug_version)
+    String workflow_version = "4.0.0-rc3" + if defined(debug_version)
       then "~{"-" + debug_version}"
       else ""
   }

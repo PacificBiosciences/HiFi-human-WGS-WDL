@@ -50,17 +50,9 @@ task samtools_merge {
   command <<<
     set -euo pipefail
 
-    BAMS=()
-
-    for i in ~{sep=" " bams}; do
-      ln --symbolic --verbose "${i}" .
-      # shellcheck disable=SC2086
-      BAMS+=("$(basename ${i})")
-    done
-
     samtools --version
 
-    # shellcheck disable=SC2068
+    # shellcheck disable=SC2086
     samtools merge \
       ~{if threads > 1
         then "--threads '" + (threads - 1) + "'"
@@ -70,7 +62,7 @@ task samtools_merge {
       -c -p \
       --write-index \
       -o "~{out_prefix}.bam##idx##~{out_prefix}.bam.bai" \
-      ${BAMS[@]}
+      ~{sep=" " bams}
   >>>
 
   output {

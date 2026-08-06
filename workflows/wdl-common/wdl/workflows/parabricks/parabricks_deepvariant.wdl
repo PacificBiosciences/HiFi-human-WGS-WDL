@@ -199,7 +199,7 @@ task run_parabricks_deepvariant {
         then "--gvcf"
         else ""
       } \
-      --in-bam "~{aligned_bam}" \
+      --in-bam "~{basename(aligned_bam)}" \
       --out-variants "~{sample_id}.~{ref_name}.small_variants~{if (gvcf_output)
         then ".g"
         else ""

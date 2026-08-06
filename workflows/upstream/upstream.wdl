@@ -374,7 +374,7 @@ workflow upstream {
 
     # merge aligned bams if there are multiple
     if (length(subset_bam.bam) > 1) {
-      call Pbsamoa.pbsamoa_merge as merge_fail_reads { input:
+      call Samtools.samtools_merge as merge_fail_reads { input:
         bams = subset_bam.bam,
         out_prefix = "~{sample_id}.~{ref_name}.fail_reads",
         runtime_attributes = default_runtime_attributes

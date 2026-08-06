@@ -107,8 +107,8 @@ task consolidate_stats {
     Array[Array[String]] stats
     #@ except: DeclarationName
     Array[String] msg_array
-    Int threads = 1
-    Int mem_gb = 1
+    Int threads = 2
+    Int mem_gb = 4
     RuntimeAttributes runtime_attributes
   }
 

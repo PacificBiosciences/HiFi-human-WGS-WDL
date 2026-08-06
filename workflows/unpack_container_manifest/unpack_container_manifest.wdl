@@ -36,7 +36,7 @@ task unpack_container_manifest {
     RuntimeAttributes runtime_attributes
   }
 
-  Int threads = 1
+  Int threads = 2
   Int mem_gb = 4
   Int disk_size = 20
   Int boot_disk_size = 20
