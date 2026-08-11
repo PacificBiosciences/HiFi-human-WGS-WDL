@@ -59,7 +59,7 @@ task pbsamoa_merge {
     pbsamoa merge \
       --compress-threads ~{ceil(threads * 3 / 4)} \
       --decode-threads ~{floor(threads * 1 / 4)} \
-      --memory ~{mem_gb}G \
+      --memory "~{floor(mem_gb / 2)}G" \
       --compression ~{compression} \
       --bai \
       "~{out_prefix}.bam" \
@@ -72,7 +72,7 @@ task pbsamoa_merge {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/pbsamoa@sha256:381891341e4d33ea9b3ca1c8a7cac7d86d4feea282bc8d12b6201a77cbd4216e"  # 20250702_build1
+    docker: "~{runtime_attributes.container_registry}/pbsamoa@sha256:cf70c89422d63c3a4e4b2ffd912160c3e7481303a211cd6134236fe6e9f9461f"  # 20260811_build1
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"

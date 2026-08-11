@@ -183,6 +183,7 @@ task run_parabricks_deepvariant {
 
     /usr/local/parabricks/pbrun deepvariant \
       --num-gpus ~{gpuCount} \
+      --preserve-file-symlinks \
       ~{if !defined(regions_bed)
         then "--run-partition"
         else ""
