@@ -5,6 +5,7 @@ import "../../structs.wdl"
 workflow backend_configuration {
   meta {
     description: "Set runtime attributes depending on the backend in use"
+    category: "Utility"
     outputs: {
       spot_runtime_attributes: {
         description: "Runtime attributes for spot/preemptible tasks"

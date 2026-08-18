@@ -6,6 +6,5 @@
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.use_gpu": false,
   "humanwgs_singleton.use_parabricks_deepvariant": false,
-  "humanwgs_singleton.backend": "HPC",
-  "humanwgs_singleton.preemptible": true
+  "humanwgs_singleton.backend": "HPC"
 }

@@ -12,6 +12,5 @@
     ]
   },
   "humanwgs_family.backend": "GCP",
-  "humanwgs_family.zones": "String",
-  "humanwgs_family.preemptible": "Boolean"
+  "humanwgs_family.zones": "String"
 }

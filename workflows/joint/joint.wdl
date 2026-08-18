@@ -8,6 +8,8 @@ import "../wdl-common/wdl/tasks/sawfish.wdl" as Sawfish
 workflow joint {
   meta {
     description: "Tasks for joint-calling variants from a set of samples and splitting the joint calls by sample for parallel phasing."
+    help: "Called by family entrypoint.  Not intended to be called directly."
+    category: "Subworkflow"
     outputs: {
       split_joint_structural_variant_vcfs: {
         description: "Joint-called structural variant VCFs, split by sample"

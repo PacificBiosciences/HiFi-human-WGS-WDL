@@ -5,6 +5,5 @@
   ],
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
   "humanwgs_singleton.backend": "GCP",
-  "humanwgs_singleton.zones": "String",
-  "humanwgs_singleton.preemptible": "Boolean"
+  "humanwgs_singleton.zones": "String"
 }

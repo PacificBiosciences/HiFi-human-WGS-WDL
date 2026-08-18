@@ -11,7 +11,7 @@ Either `miniwdl` or `Cromwell` can be used to run workflows on the HPC.
 
 ### Configuration
 
-An [example miniwdl.cfg file](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/hpc/miniwdl.cfg) is provided here. This should be placed at `~/.config/miniwdl.cfg` and edited to match your slurm configuration. This allows running workflows using a basic SLURM setup.
+An [example miniwdl-slurm.cfg file](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/backends/hpc/miniwdl-slurm.cfg) is provided here. This should be placed at `~/.config/miniwdl.cfg` and edited to match your slurm configuration. This allows running workflows using a basic SLURM setup.
 
 > [!IMPORTANT]
 > In order to simplify workflow inputs, we make use of `map` files to specify the input data. This allows for a more concise input file, but requires changing a miniwdl configuration option to allow workflows to access files that are not expressly supplied with workflow inputs. To enable this, add the following line to your `miniwdl.cfg` file:
@@ -21,7 +21,7 @@ An [example miniwdl.cfg file](https://github.com/PacificBiosciences/HiFi-human-W
 > allow_any_input = true
 > ```
 >
-> This option is already included in the example miniwdl.cfg file described in this section.
+> This option is already included in the example miniwdl-slurm.cfg file described in this section.
 
 ## Installing and configuring `Cromwell`
 

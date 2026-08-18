@@ -38,12 +38,6 @@ task kivvi_kiv2 {
     aligned_bam_index: {
       description: "Aligned BAM index"
     }
-    ref_fasta: {
-      description: "Reference FASTA"
-    }
-    ref_index: {
-      description: "Reference FASTA index"
-    }
     out_prefix: {
       description: "Output prefix"
     }
@@ -64,8 +58,6 @@ task kivvi_kiv2 {
   input {
     File aligned_bam
     File aligned_bam_index
-    File ref_fasta
-    File ref_index
     String out_prefix
     Boolean sensitive = false
     Int threads = 2
@@ -73,7 +65,7 @@ task kivvi_kiv2 {
     RuntimeAttributes runtime_attributes
   }
 
-  Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
+  Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -81,7 +73,6 @@ task kivvi_kiv2 {
     touch messages.txt
 
     ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
     kivvi --version
 
@@ -93,7 +84,6 @@ task kivvi_kiv2 {
       --bam "~{basename(aligned_bam)}" \
       --out . \
       --prefix "~{out_prefix}" \
-      --reference "~{basename(ref_fasta)}" \
       kiv2 \
       || echo "kivvi kiv2 failed for ~{basename(aligned_bam)}, presumably due to low coverage." >> messages.txt
 
@@ -114,7 +104,7 @@ task kivvi_kiv2 {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/kivvi@sha256:55292b4ee7b65645572807a4608832ca6c7e27b0efe2764d671335a7c6d68dca"  # 1.0.0_build2
+    docker: "~{runtime_attributes.container_registry}/kivvi@sha256:9e4a390821ea999af9b3faa483c5f7dce58041c439a35e4af3676f25edecd204"  # 1.1.0
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
@@ -162,12 +152,6 @@ task kivvi_d4z4 {
     aligned_bam_index: {
       description: "Aligned BAM index"
     }
-    ref_fasta: {
-      description: "Reference FASTA"
-    }
-    ref_index: {
-      description: "Reference FASTA index"
-    }
     out_prefix: {
       description: "Output prefix"
     }
@@ -188,8 +172,6 @@ task kivvi_d4z4 {
   input {
     File aligned_bam
     File aligned_bam_index
-    File ref_fasta
-    File ref_index
     String out_prefix
     Boolean sensitive = false
     Int threads = 2
@@ -197,7 +179,7 @@ task kivvi_d4z4 {
     RuntimeAttributes runtime_attributes
   }
 
-  Int disk_size = ceil((size(aligned_bam, "GB") + size(ref_fasta, "GB")) * 2 + 20)
+  Int disk_size = ceil(size(aligned_bam, "GB") * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -205,7 +187,6 @@ task kivvi_d4z4 {
     touch messages.txt
 
     ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
-    ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
     kivvi --version
 
@@ -217,7 +198,6 @@ task kivvi_d4z4 {
       --bam "~{basename(aligned_bam)}" \
       --out . \
       --prefix "~{out_prefix}" \
-      --reference "~{basename(ref_fasta)}" \
       d4z4 \
       || echo "kivvi d4z4 failed for ~{basename(aligned_bam)}, presumably due to low coverage." >> messages.txt
 
@@ -238,7 +218,7 @@ task kivvi_d4z4 {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/kivvi@sha256:55292b4ee7b65645572807a4608832ca6c7e27b0efe2764d671335a7c6d68dca"  # 1.0.0_build2
+    docker: "~{runtime_attributes.container_registry}/kivvi@sha256:9e4a390821ea999af9b3faa483c5f7dce58041c439a35e4af3676f25edecd204"  # 1.1.0
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"

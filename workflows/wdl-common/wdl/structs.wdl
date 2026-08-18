@@ -1,5 +1,6 @@
 version 1.0
 
+## Runtime attributes to be used by tasks and subworkflows.
 struct RuntimeAttributes {
   ## Backend where the workflow will be executed
   String backend

@@ -11,6 +11,5 @@
       }
     ]
   },
-  "humanwgs_family.backend": "Azure",
-  "humanwgs_family.preemptible": "Boolean"
+  "humanwgs_family.backend": "Azure"
 }

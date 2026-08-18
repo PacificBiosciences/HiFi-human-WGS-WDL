@@ -4,6 +4,5 @@
     "File"
   ],
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
-  "humanwgs_singleton.backend": "Azure",
-  "humanwgs_singleton.preemptible": "Boolean"
+  "humanwgs_singleton.backend": "Azure"
 }

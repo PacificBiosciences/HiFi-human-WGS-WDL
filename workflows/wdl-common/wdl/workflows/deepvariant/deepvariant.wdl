@@ -5,6 +5,7 @@ import "../../structs.wdl"
 workflow deepvariant {
   meta {
     description: "Call variants from aligned HiFi reads using DeepVariant"
+    category: "Utility - Variant Calling"
     outputs: {
       vcf: {
         description: "Small variant VCF"
@@ -358,11 +359,8 @@ task deepvariant_call_variants_cpu {
     writer_threads: {
       description: "Number of writer threads to use"
     }
-    batch_size: {
-      description: "call_variants --batch_size, DV default is 1024."
-    }
     mem_gb: {
-      description: "Memory to use in GiB. Default is a formula of batch_size, override to set explicitly"
+      description: "Memory to use in GiB."
     }
     runtime_attributes: {
       description: "Runtime attribute structure"
@@ -377,10 +375,7 @@ task deepvariant_call_variants_cpu {
     String docker_image
     Int threads = 64
     Int writer_threads = 8
-    Int batch_size = 1024
-    # mem_gb is batch_size-driven, not threads-driven: true-peak-fit + 1.5x
-    # margin, rounded to the nearest 4 GiB. 28 GiB at the default batch_size.
-    Int mem_gb = 4 * ceil(1.5 * (12.50 + 0.00502 * batch_size) / 4)
+    Int mem_gb = 28
     RuntimeAttributes runtime_attributes
   }
 
@@ -395,7 +390,6 @@ task deepvariant_call_variants_cpu {
 
     /opt/deepvariant/bin/call_variants \
       --writer_threads ~{writer_threads} \
-      --batch_size ~{batch_size} \
       --outfile call_variants_output.tfrecord.gz \
       --examples "example_tfrecords/make_examples.tfrecord@~{total_deepvariant_tasks}.gz" \
       --checkpoint "/opt/models/pacbio"

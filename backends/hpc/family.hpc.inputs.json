@@ -13,6 +13,5 @@
   },
   "humanwgs_family.use_gpu": false,
   "humanwgs_family.use_parabricks_deepvariant": false,
-  "humanwgs_family.backend": "HPC",
-  "humanwgs_family.preemptible": true
+  "humanwgs_family.backend": "HPC"
 }

@@ -14,7 +14,9 @@ import "../wdl-common/wdl/workflows/pbmm2/pbmm2.wdl" as Pbmm2
 
 workflow upstream {
   meta {
-    description: "Given a set of HiFi reads for a human sample, run steps upstream of phasing."
+    description: "Align reads and call variants."
+    help: "Called by singleton and family entrypoints.  Not intended to be called directly."
+    category: "Subworkflow"
     outputs: {
       aligned_hifi_reads: {
         description: "Aligned HiFi reads"
@@ -153,13 +155,16 @@ workflow upstream {
       description: "Unaligned hifi_reads BAMs"
     }
     fail_reads: {
-      description: "Unaligned fail_reads BAMs"
+      description: "Unaligned fail_reads BAMs",
+      group: "Common"
     }
     fail_reads_bed: {
-      description: "Subset of genome for which to include fail reads"
+      description: "Subset of genome for which to include fail reads",
+      group: "Common"
     }
     fail_reads_bait_index: {
-      description: "Index of reference sequences for baiting fail reads"
+      description: "Index of reference sequences for baiting fail reads",
+      group: "Common"
     }
     ref_name: {
       description: "Reference genome short name"
@@ -192,7 +197,8 @@ workflow upstream {
       description: "Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk."
     }
     single_sample: {
-      description: "Single sample workflow"
+      description: "Single sample workflow",
+      group: "Common"
     }
     use_gpu: {
       description: "Use GPU when possible"
@@ -374,7 +380,7 @@ workflow upstream {
 
     # merge aligned bams if there are multiple
     if (length(subset_bam.bam) > 1) {
-      call Samtools.samtools_merge as merge_fail_reads { input:
+      call Pbsamoa.pbsamoa_merge as merge_fail_reads { input:
         bams = subset_bam.bam,
         out_prefix = "~{sample_id}.~{ref_name}.fail_reads",
         runtime_attributes = default_runtime_attributes
@@ -418,8 +424,6 @@ workflow upstream {
   call Kivvi.kivvi_kiv2 { input:
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
-    ref_fasta = ref_fasta,
-    ref_index = ref_index,
     out_prefix = "~{sample_id}.~{ref_name}",
     runtime_attributes = default_runtime_attributes
   }
@@ -427,8 +431,6 @@ workflow upstream {
   call Kivvi.kivvi_d4z4 { input:
     aligned_bam = aligned_bam_data,
     aligned_bam_index = aligned_bam_index,
-    ref_fasta = ref_fasta,
-    ref_index = ref_index,
     out_prefix = "~{sample_id}.~{ref_name}",
     runtime_attributes = default_runtime_attributes
   }

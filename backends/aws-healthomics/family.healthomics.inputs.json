@@ -1,5 +1,5 @@
 {
-  "humanwgs_family.family": {
+  "family": {
     "family_id": "String",
     "samples": [
       {
@@ -11,8 +11,7 @@
       }
     ]
   },
-  "humanwgs_family.use_gpu": false,
-  "humanwgs_family.use_parabricks_deepvariant": false,
-  "humanwgs_family.backend": "AWS-HealthOmics",
-  "humanwgs_family.preemptible": true
+  "use_gpu": false,
+  "use_parabricks_deepvariant": false,
+  "backend": "AWS-HealthOmics"
 }

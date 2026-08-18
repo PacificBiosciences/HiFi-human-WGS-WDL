@@ -4,7 +4,8 @@ import "../wdl-common/wdl/structs.wdl"
 
 task unpack_container_manifest {
   meta {
-    description: "Unpack static workflow inputs from a container manifest."
+    description: "Unpack reference assets from a container manifest."
+    category: "Subworkflow"
     outputs: {
       ref_name: "Short name for reference",
       ref_fasta: "Reference genome FASTA",

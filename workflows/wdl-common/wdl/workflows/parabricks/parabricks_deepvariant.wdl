@@ -5,6 +5,7 @@ import "../../structs.wdl"
 workflow parabricks_deepvariant {
   meta {
     description: "Call variants from aligned HiFi reads using Parabricks DeepVariant"
+    category: "Utility - Variant Calling"
     outputs: {
       vcf: {
         description: "Small variant VCF"

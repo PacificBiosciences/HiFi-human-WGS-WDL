@@ -5,6 +5,7 @@ import "../../structs.wdl"
 workflow pbmm2 {
   meta {
     description: "Align HiFi reads to a reference genome with pbmm2"
+    category: "Utility - Alignment"
     outputs: {
       aligned_bams: {
         description: "Array of aligned BAMs"

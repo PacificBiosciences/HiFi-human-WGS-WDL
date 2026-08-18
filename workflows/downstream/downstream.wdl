@@ -11,6 +11,8 @@ import "../wdl-common/wdl/tasks/trgt.wdl" as Trgt
 workflow downstream {
   meta {
     description: "Phases small variants, SVs, and TRGTs, haplotags alignments, calls HLA and PGx alleles."
+    help: "Called by singleton and family entrypoints.  Not intended to be called directly."
+    category: "Subworkflow"
     outputs: {
       merged_haplotagged_bam: {
         description: "Merged, haplotagged alignments"
@@ -219,10 +221,12 @@ workflow downstream {
       description: "Aligned hifi_reads BAM index"
     }
     aligned_fail_reads: {
-      description: "Aligned fail_reads BAM"
+      description: "Aligned fail_reads BAM",
+      group: "Common"
     }
     aligned_fail_reads_index: {
-      description: "Aligned fail_reads BAM index"
+      description: "Aligned fail_reads BAM index",
+      group: "Common"
     }
     trgt_catalog: {
       description: "TRGT tandem repeat catalog"

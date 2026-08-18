@@ -1,11 +1,10 @@
 {
-  "humanwgs_singleton.sample_id": "String",
-  "humanwgs_singleton.hifi_reads": [
+  "sample_id": "String",
+  "hifi_reads": [
     "File"
   ],
-  "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
-  "humanwgs_singleton.use_gpu": false,
-  "humanwgs_singleton.use_parabricks_deepvariant": false,
-  "humanwgs_singleton.backend": "AWS-HealthOmics",
-  "humanwgs_singleton.preemptible": true
+  "fail_reads": "Array[File]? (optional)",
+  "use_gpu": false,
+  "use_parabricks_deepvariant": false,
+  "backend": "AWS-HealthOmics"
 }

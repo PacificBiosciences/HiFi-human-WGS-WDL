@@ -6,6 +6,8 @@ import "../wdl-common/wdl/workflows/pbmm2/pbmm2.wdl" as Pbmm2
 workflow process_trgt_catalog {
   meta {
     description: "Process a TRGT catalog to identify regions for which to include fail_reads."
+    help: "Called by singleton and family entrypoints.  Not intended to be called directly."
+    category: "Subworkflow"
     outputs: {
       full_catalog: {
         description: "Repeat catalog for TRGT, flags stripped"

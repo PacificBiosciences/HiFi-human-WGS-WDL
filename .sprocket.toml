@@ -1,0 +1,15 @@
+[doc]
+github_url = "https://github.com/PacificBiosciences/HiFi-human-WGS-WDL"
+logo = "images/logo_wdl_workflows.svg"
+index_page = "README.md"
+
+[doc.seo]
+title = "PacBio WGS Variant Pipeline"
+description = "Reference documentation for PacBio WGS Variant Pipeline"
+author = "Pacific Biosciences"
+keywords = ["WDL", "workflows", "hifi", "wgs", "long reads", "long-read sequencing", "variants"]
+image_url = "https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/blob/main/images/img_wgs_variant_pipeline.png"
+locale = "en_US"
+twitter_handle = "@PacBio"
+robots = "index, follow"
+theme_color = "#DF1995"
