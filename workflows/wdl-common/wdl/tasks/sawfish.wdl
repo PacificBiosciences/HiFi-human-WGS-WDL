@@ -76,15 +76,12 @@ task sawfish_discover {
     File expected_male_bed
     File expected_female_bed
     String out_prefix
-    Int threads = 16
-    Int mem_gb = 128
+    Int threads = 32
+    Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
 
-  File expected_bed = if select_first([
-    sex,
-    "FEMALE"
-  ]) == "MALE"
+  File expected_bed = if select_first([sex, "FEMALE"]) == "MALE"
     then expected_male_bed
     else expected_female_bed
 
@@ -124,11 +121,11 @@ task sawfish_discover {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:5cf8f02790ecb89e652885c57f103fc9597c41f75ee71be2c05510cbbdf68f59"  # 2.2.1_build2
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:0a29c51f60552b28b4c8357ce2760a653e78b7f2a3f2d634231f3f4c840f867b"  # 2.3.1
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -225,7 +222,7 @@ task sawfish_call {
     Array[String] depth_bw_names
     Array[String] gc_bias_corrected_depth_bw_names
     Array[String] copynum_summary_names
-    Int threads = 16
+    Int threads = 32
     Int mem_gb = 32
     RuntimeAttributes runtime_attributes
   }
@@ -258,25 +255,16 @@ task sawfish_call {
     # shellcheck disable=SC2068
     sawfish joint-call \
       --threads ~{threads} \
-      ~{if report_supporting_reads
-        then "--report-supporting-reads"
-        else ""
-      } \
+      ~{if report_supporting_reads then "--report-supporting-reads" else ""} \
       ${SAMPLES[@]/#/$PREFIX} \
       --output-dir "~{out_prefix}"
 
     # sawshark annotation
     sawshark \
-      ~{if threads > 1
-        then "--threads '" + ceil(threads / 2) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + ceil(threads / 2) + "'" else ""} \
       --vcf "~{out_prefix}/genotyped.sv.vcf.gz" \
     | bcftools view - \
-      ~{if (threads - ceil(threads / 2)) > 1
-        then "--threads '" + (threads - ceil(threads / 2) - 1) + "'"
-        else ""
-      } \
+      ~{if (threads - ceil(threads / 2)) > 1 then "--threads '" + (threads - ceil(threads / 2) - 1) + "'" else ""} \
       --output-type z \
       --write-index=tbi \
       --output "~{out_prefix}.vcf.gz"
@@ -284,10 +272,7 @@ task sawfish_call {
     # rename the output files to be more informative
     # sawfish only writes supporting_reads.json.gz when
     # --report-supporting-reads was passed above.
-    ~{if report_supporting_reads
-      then "mv --verbose '" + out_prefix + "/supporting_reads.json.gz' '" + out_prefix + ".supporting_reads.json.gz'"
-      else ""
-    }
+    ~{if report_supporting_reads then "mv --verbose '" + out_prefix + "/supporting_reads.json.gz' '" + out_prefix + ".supporting_reads.json.gz'" else ""}
 
     for sample_id in ~{sep=" " sample_ids}; do
       if [ "~{length(sample_ids)}" -gt 1 ]; then
@@ -320,11 +305,11 @@ task sawfish_call {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:5cf8f02790ecb89e652885c57f103fc9597c41f75ee71be2c05510cbbdf68f59"  # 2.2.1_build2
+    docker: "~{runtime_attributes.container_registry}/sawfish@sha256:0a29c51f60552b28b4c8357ce2760a653e78b7f2a3f2d634231f3f4c840f867b"  # 2.3.1
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

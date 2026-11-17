@@ -11,6 +11,6 @@
       }
     ]
   },
-  "humanwgs_family.backend": "GCP",
+  "humanwgs_family.backend": "GCP-Batch",
   "humanwgs_family.zones": "String"
 }

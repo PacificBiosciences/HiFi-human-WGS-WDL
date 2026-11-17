@@ -291,14 +291,8 @@ workflow downstream {
     RuntimeAttributes default_runtime_attributes
   }
 
-  Array[File] hiphase_input_vcfs = [
-    small_variant_vcf,
-    sv_vcf
-  ]
-  Array[File] hiphase_input_vcf_indices = [
-    small_variant_vcf_index,
-    sv_vcf_index
-  ]
+  Array[File] hiphase_input_vcfs = [small_variant_vcf, sv_vcf]
+  Array[File] hiphase_input_vcf_indices = [small_variant_vcf_index, sv_vcf_index]
 
   # In order to properly delocalize the VCF outputs of hiphase in cloud engines
   # we need to generate the names of the outputs and pass these to the call.
@@ -316,18 +310,10 @@ workflow downstream {
     vcf_indices = hiphase_input_vcf_indices,
     phased_vcf_names = phased_vcf_name,
     phased_vcf_index_names = phased_vcf_index_name,
-    aligned_bams = [
-      aligned_hifi_reads
-    ],
-    aligned_bam_indices = [
-      aligned_hifi_reads_index
-    ],
-    haplotagged_bam_names = [
-      haplotagged_bam_name
-    ],
-    haplotagged_bam_index_names = [
-      haplotagged_bam_index_name
-    ],
+    aligned_bams = [aligned_hifi_reads],
+    aligned_bam_indices = [aligned_hifi_reads_index],
+    haplotagged_bam_names = [haplotagged_bam_name],
+    haplotagged_bam_index_names = [haplotagged_bam_index_name],
     ref_name = ref_name,
     ref_fasta = ref_fasta,
     ref_index = ref_index,
@@ -390,9 +376,7 @@ workflow downstream {
   if (defined(methbat_pileup.cpg_pileup_bed)) {
     # If any cpg_pileup_beds are generated, we can run methbat
     call Methbat.methbat_profile as methbat_profile_task { input:
-      cpg_pileup_bed = select_first([
-        methbat_pileup.cpg_pileup_bed
-      ]),
+      cpg_pileup_bed = select_first([methbat_pileup.cpg_pileup_bed]),
       region_tsv = methbat_region_tsv,
       out_prefix = "~{sample_id}.~{ref_name}",
       runtime_attributes = default_runtime_attributes
@@ -482,27 +466,16 @@ workflow downstream {
     String stat_cpg_hap2_count = methbat_pileup.stat_hap2_cpg_count
     String stat_cpg_combined_count = methbat_pileup.stat_combined_cpg_count
     File? methbat_profile = methbat_profile_task.profile
-    String stat_methbat_methylated_count = select_first([
-      methbat_profile_task.stat_methbat_methylated_count,
-      "0"
-    ])
-    String stat_methbat_unmethylated_count = select_first([
-      methbat_profile_task.stat_methbat_unmethylated_count,
-      "0"
-    ])
-    String stat_methbat_asm_count = select_first([
-      methbat_profile_task.stat_methbat_asm_count,
-      "0"
-    ])
+    String stat_methbat_methylated_count = select_first([methbat_profile_task.stat_methbat_methylated_count, "0"])
+    String stat_methbat_unmethylated_count = select_first([methbat_profile_task.stat_methbat_unmethylated_count, "0"])
+    String stat_methbat_asm_count = select_first([methbat_profile_task.stat_methbat_asm_count, "0"])
 
     # pbstarphase outputs
     File? pbstarphase_json = pbstarphase_diplotype.summary_json
     File? pbstarphase_tsv = pbstarphase_diplotype.pharmcat_tsv
 
     # qc messages
-    Array[String] msg = flatten([
-      trgt_genotype.msg
-    ])
+    Array[String] msg = flatten([trgt_genotype.msg])
   }
 }
 

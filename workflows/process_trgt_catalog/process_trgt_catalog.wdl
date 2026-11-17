@@ -56,9 +56,7 @@ workflow process_trgt_catalog {
 
   if (defined(filter_trgt_catalog.include_fail_reads_bed)) {
     call Pbmm2.create_pbmm2_index { input:
-      ref_fasta = select_first([
-        filter_trgt_catalog.fasta
-      ]),
+      ref_fasta = select_first([filter_trgt_catalog.fasta]),
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -194,7 +192,7 @@ task filter_trgt_catalog {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

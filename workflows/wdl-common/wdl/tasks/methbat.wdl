@@ -122,22 +122,10 @@ task methbat_pileup {
       --min-coverage ~{min_coverage} \
       --edge-trimming-size ~{edge_trimming_size} \
       --phase-set-min-fraction ~{phase_set_min_fraction} \
-      ~{if (include_empty_sites)
-        then "--include-empty-sites"
-        else ""
-      } \
-      ~{if (skip_5mC)
-        then "--skip-5mC"
-        else ""
-      } \
-      ~{if (skip_5hmC)
-        then "--skip-5hmC"
-        else ""
-      } \
-      ~{if (skip_6mA)
-        then "--skip-6mA"
-        else ""
-      } \
+      ~{if (include_empty_sites) then "--include-empty-sites" else ""} \
+      ~{if (skip_5mC) then "--skip-5mC" else ""} \
+      ~{if (skip_5hmC) then "--skip-5hmC" else ""} \
+      ~{if (skip_6mA) then "--skip-6mA" else ""} \
       --output-prefix "~{out_prefix}" \
     || echo "MethBat pileup failed" >> messages.txt
 
@@ -171,7 +159,7 @@ task methbat_pileup {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -263,7 +251,7 @@ task methbat_profile {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

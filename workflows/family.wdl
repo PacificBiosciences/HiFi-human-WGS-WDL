@@ -14,30 +14,32 @@ import "wdl-common/wdl/workflows/filter_messages/filter_messages.wdl" as FilterM
 
 workflow humanwgs_family {
   meta {
-    version: "4.0.0"
+    version: "4.1.0"
     apiVersion: "2.1.0"
     name: "HiFi Human WGS Variant Pipeline (family)"
     isAutoAnalysis: true
     supportedBackends: [
       "HPC",
-      "AWS-HealthOmics"
+      "AWS-HealthOmics",
+      "GCP-Batch"
     ]
     tags: "ccs analysis auto-analysis"
     containers: [
+      "quay.io/pacbio/fibertools@sha256:bc721a08a447625400efbb152b6be4f0f36cd7b983429f178771fe326fcd3180",
       "quay.io/pacbio/glnexus@sha256:ce6fecf59dddc6089a8100b31c29c1e6ed50a0cf123da9f2bc589ee4b0c69c8e",
       "quay.io/pacbio/hiphase@sha256:41ebe22b55c66e2e78da2013f7fffaecc02a8b4e980400c3ea8d03c87330522e",
       "quay.io/pacbio/kivvi@sha256:9e4a390821ea999af9b3faa483c5f7dce58041c439a35e4af3676f25edecd204",
       "quay.io/pacbio/methbat@sha256:281569947c0a6154f9a6bdaa1bb5f1e67dd160ccb49028d3218a49a37a0488fb",
       "quay.io/pacbio/mitorsaw@sha256:9b610f343ae018b21c86977259d91dba587e1f22d7a73e115937e428d3c7adeb",
       "quay.io/pacbio/mosdepth@sha256:f4edf52e6a31eb18f1755e8cb90224fec6aa88e4a4353a673b16a89f59cbe822",
-      "quay.io/pacbio/paraphase@sha256:665ac4fefcef92e0023395eae9e0ca3f6e65d1228c49afba3ad3f8e7b3f3d1cb",
+      "quay.io/pacbio/paraphase@sha256:bf3b6061eb615f7c0f63de9c50edc88ebd5a9f3c7e2414190847ab306900dd79",
       "quay.io/pacbio/pbjam@sha256:1b90537ed6683ac7b89002c0f59e940b4ea46c600d292904f549af1ae2760bba",
       "quay.io/pacbio/pbmm2@sha256:86e39aa67fa5d385769d5f119739e8811ce550163e3b9dfc42bd58d1fecdf3a8",
       "quay.io/pacbio/pbsamoa@sha256:cf70c89422d63c3a4e4b2ffd912160c3e7481303a211cd6134236fe6e9f9461f",
       "quay.io/pacbio/pbstarphase@sha256:86aeeb3a9663c22c135d08353de700050e1d268406c1f63832cad5f139cdd390",
       "quay.io/pacbio/pbtk@sha256:f27bafa0ae6ffff6170d45a86a5677406320c7866760391f89ebe900a74d2039",
       "quay.io/pacbio/pb_wdl_base@sha256:03cb3c01937eccc907f8ad71c87b258581504572205fe3f31a657e318f3564ae",
-      "quay.io/pacbio/sawfish@sha256:5cf8f02790ecb89e652885c57f103fc9597c41f75ee71be2c05510cbbdf68f59",
+      "quay.io/pacbio/sawfish@sha256:0a29c51f60552b28b4c8357ce2760a653e78b7f2a3f2d634231f3f4c840f867b",
       "quay.io/pacbio/trgt@sha256:648aee4a2c9d7371a48e454a7143861a242b853d81ff5453924cc0095d207824",
       "google/deepvariant:1.10.0",
       "google/deepvariant:1.10.0-gpu",
@@ -571,6 +573,16 @@ workflow humanwgs_family {
       name: "Use alignment chunking",
       description: "Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk."
     }
+    pbsamoa_merge_mem_gb: {
+      name: "pbsamoa merge memory override",
+      description: "Override pbsamoa merge memory request (GB)",
+      group: "Resource"
+    }
+    sawfish_call_mem_gb: {
+      name: "Sawfish call memory override",
+      description: "Override Sawfish call memory request (GB)",
+      group: "Resource"
+    }
     glnexus_mem_gb: {
       name: "GLnexus memory override",
       description: "Override GLnexus memory request (GB)",
@@ -586,11 +598,15 @@ workflow humanwgs_family {
       description: "Use Parabricks DeepVariant for small variant calling when GPU is enabled",
       group: "Resource"
     }
+    run_fibertools: {
+      name: "Run fibertools",
+      description: "Run fibertools to add nucleosome and MSP annotations to the aligned BAM"
+    }
     backend: {
       name: "Backend",
       description: "Backend where the workflow will be executed",
       choices: [
-        "GCP",
+        "GCP-Batch",
         "Azure",
         "AWS-HealthOmics",
         "HPC"
@@ -599,13 +615,13 @@ workflow humanwgs_family {
     }
     zones: {
       name: "Zones",
-      description: "Zones where compute will take place; required if backend is set to 'GCP'",
+      description: "Zones where compute will take place; required if backend is set to 'GCP-Batch'",
       hidden: true,
       group: "Resource"
     }
     cpuPlatform: {
       name: "CPU platform",
-      description: "Optional minimum CPU platform to use for tasks on GCP",
+      description: "Optional minimum CPU platform to use for tasks on GCP-Batch; defaults to 'Intel Cascade Lake'",
       hidden: true,
       group: "Resource"
     }
@@ -641,9 +657,12 @@ workflow humanwgs_family {
     File? trgt_tandem_repeat_bed_override
     File? methbat_region_tsv_override
     Boolean use_alignment_chunking = true
+    Int pbsamoa_merge_mem_gb = 32
+    Int sawfish_call_mem_gb = 32
     Int glnexus_mem_gb = 60
     Boolean use_gpu = false
     Boolean use_parabricks_deepvariant = false
+    Boolean run_fibertools = false
 
     # Backend configuration
     String backend = "HPC"
@@ -663,9 +682,7 @@ workflow humanwgs_family {
     container_registry = container_registry
   }
 
-  RuntimeAttributes default_runtime_attributes = if preemptible
-    then backend_configuration.spot_runtime_attributes
-    else backend_configuration.on_demand_runtime_attributes
+  RuntimeAttributes default_runtime_attributes = if preemptible then backend_configuration.spot_runtime_attributes else backend_configuration.on_demand_runtime_attributes
 
   # Pinned reference data container images, keyed by ref_name; add an entry
   # here when a new reference is supported.
@@ -682,18 +699,12 @@ workflow humanwgs_family {
   File ref_fasta = unpack_container_manifest.ref_fasta
   File ref_index = unpack_container_manifest.ref_index
   Float max_norm_female_chrY_depth = unpack_container_manifest.max_norm_female_chrY_depth
-  File trgt_tandem_repeat_bed = select_first([
-    trgt_tandem_repeat_bed_override,
-    unpack_container_manifest.trgt_tandem_repeat_bed
-  ])
+  File trgt_tandem_repeat_bed = select_first([trgt_tandem_repeat_bed_override, unpack_container_manifest.trgt_tandem_repeat_bed])
   File sawfish_exclude_bed = unpack_container_manifest.sawfish_exclude_bed
   File sawfish_exclude_bed_index = unpack_container_manifest.sawfish_exclude_bed_index
   File sawfish_expected_bed_male = unpack_container_manifest.sawfish_expected_bed_male
   File sawfish_expected_bed_female = unpack_container_manifest.sawfish_expected_bed_female
-  File methbat_region_tsv = select_first([
-    methbat_region_tsv_override,
-    unpack_container_manifest.methbat_region_tsv
-  ])
+  File methbat_region_tsv = select_first([methbat_region_tsv_override, unpack_container_manifest.methbat_region_tsv])
   String paraphase_genome_build = unpack_container_manifest.paraphase_genome_build
   Boolean run_starphase = unpack_container_manifest.run_starphase
 
@@ -725,9 +736,11 @@ workflow humanwgs_family {
       sawfish_expected_bed_male = sawfish_expected_bed_male,
       sawfish_expected_bed_female = sawfish_expected_bed_female,
       use_alignment_chunking = use_alignment_chunking,
+      pbsamoa_merge_mem_gb = pbsamoa_merge_mem_gb,
       single_sample = single_sample,
       use_gpu = use_gpu,
       use_parabricks_deepvariant = use_parabricks_deepvariant,
+      run_fibertools = run_fibertools,
       default_runtime_attributes = default_runtime_attributes
     }
   }
@@ -739,11 +752,12 @@ workflow humanwgs_family {
       gvcfs = select_all(upstream.small_variant_gvcf),
       gvcf_indices = select_all(upstream.small_variant_gvcf_index),
       discover_tars = upstream.discover_tar,
-      aligned_bams = upstream.aligned_hifi_reads,
-      aligned_bam_indices = upstream.aligned_hifi_reads_index,
+      aligned_bams = upstream.discover_aligned_bam,
+      aligned_bam_indices = upstream.discover_aligned_bam_index,
       ref_name = ref_name,
       ref_fasta = ref_fasta,
       ref_index = ref_index,
+      sawfish_call_mem_gb = sawfish_call_mem_gb,
       glnexus_mem_gb = glnexus_mem_gb,
       default_runtime_attributes = default_runtime_attributes
     }
@@ -758,22 +772,10 @@ workflow humanwgs_family {
       aligned_fail_reads = upstream.aligned_fail_reads[sample_index],
       aligned_fail_reads_index = upstream.aligned_fail_reads_index[sample_index],
       trgt_catalog = process_trgt_catalog.full_catalog,
-      small_variant_vcf = select_first([
-        joint.split_joint_small_variant_vcfs,
-        upstream.small_variant_vcf
-      ])[sample_index],
-      small_variant_vcf_index = select_first([
-        joint.split_joint_small_variant_vcf_indices,
-        upstream.small_variant_vcf_index
-      ])[sample_index],
-      sv_vcf = select_first([
-        joint.split_joint_structural_variant_vcfs,
-        select_all(upstream.sv_vcf)
-      ])[sample_index],
-      sv_vcf_index = select_first([
-        joint.split_joint_structural_variant_vcf_indices,
-        select_all(upstream.sv_vcf_index)
-      ])[sample_index],
+      small_variant_vcf = select_first([joint.split_joint_small_variant_vcfs, upstream.small_variant_vcf])[sample_index],
+      small_variant_vcf_index = select_first([joint.split_joint_small_variant_vcf_indices, upstream.small_variant_vcf_index])[sample_index],
+      sv_vcf = select_first([joint.split_joint_structural_variant_vcfs, select_all(upstream.sv_vcf)])[sample_index],
+      sv_vcf_index = select_first([joint.split_joint_structural_variant_vcf_indices, select_all(upstream.sv_vcf_index)])[sample_index],
       ref_name = ref_name,
       ref_fasta = ref_fasta,
       ref_index = ref_index,
@@ -812,211 +814,141 @@ workflow humanwgs_family {
 
   Array[Array[String]] stats = [
     flatten([
-      [
-        "sample_id"
-      ],
+      ["sample_id"],
       sample_id
     ]),
     flatten([
-      [
-        "read_count"
-      ],
+      ["read_count"],
       downstream.stat_read_count
     ]),
     flatten([
-      [
-        "read_length_mean"
-      ],
+      ["read_length_mean"],
       downstream.stat_read_length_mean
     ]),
     flatten([
-      [
-        "read_length_median"
-      ],
+      ["read_length_median"],
       downstream.stat_read_length_median
     ]),
     flatten([
-      [
-        "read_length_n50"
-      ],
+      ["read_length_n50"],
       downstream.stat_read_length_n50
     ]),
     flatten([
-      [
-        "read_quality_mean"
-      ],
+      ["read_quality_mean"],
       downstream.stat_read_quality_mean
     ]),
     flatten([
-      [
-        "read_quality_median"
-      ],
+      ["read_quality_median"],
       downstream.stat_read_quality_median
     ]),
     flatten([
-      [
-        "mapped_read_count"
-      ],
+      ["mapped_read_count"],
       downstream.stat_mapped_read_count
     ]),
     flatten([
-      [
-        "mapped_read_percent"
-      ],
+      ["mapped_read_percent"],
       downstream.stat_mapped_read_percent
     ]),
     flatten([
-      [
-        "gap_compressed_identity_mean"
-      ],
+      ["gap_compressed_identity_mean"],
       downstream.stat_gap_compressed_identity_mean
     ]),
     flatten([
-      [
-        "gap_compressed_identity_median"
-      ],
+      ["gap_compressed_identity_median"],
       downstream.stat_gap_compressed_identity_median
     ]),
     flatten([
-      [
-        "depth_mean"
-      ],
+      ["depth_mean"],
       upstream.stat_depth_mean
     ]),
     flatten([
-      [
-        "inferred_sex"
-      ],
+      ["inferred_sex"],
       upstream.inferred_sex
     ]),
     flatten([
-      [
-        "stat_phased_basepairs"
-      ],
+      ["stat_phased_basepairs"],
       downstream.stat_phased_basepairs
     ]),
     flatten([
-      [
-        "phase_block_ng50"
-      ],
+      ["phase_block_ng50"],
       downstream.stat_phase_block_ng50
     ]),
     flatten([
-      [
-        "cpg_combined_count"
-      ],
+      ["cpg_combined_count"],
       downstream.stat_cpg_combined_count
     ]),
     flatten([
-      [
-        "cpg_hap1_count"
-      ],
+      ["cpg_hap1_count"],
       downstream.stat_cpg_hap1_count
     ]),
     flatten([
-      [
-        "cpg_hap2_count"
-      ],
+      ["cpg_hap2_count"],
       downstream.stat_cpg_hap2_count
     ]),
     flatten([
-      [
-        "methbat_methylated_count"
-      ],
+      ["methbat_methylated_count"],
       downstream.stat_methbat_methylated_count
     ]),
     flatten([
-      [
-        "methbat_unmethylated_count"
-      ],
+      ["methbat_unmethylated_count"],
       downstream.stat_methbat_unmethylated_count
     ]),
     flatten([
-      [
-        "methbat_asm_count"
-      ],
+      ["methbat_asm_count"],
       downstream.stat_methbat_asm_count
     ]),
     flatten([
-      [
-        "SNV_count"
-      ],
+      ["SNV_count"],
       downstream.stat_SNV_count
     ]),
     flatten([
-      [
-        "TSTV_ratio"
-      ],
+      ["TSTV_ratio"],
       downstream.stat_TSTV_ratio
     ]),
     flatten([
-      [
-        "HETHOM_ratio"
-      ],
+      ["HETHOM_ratio"],
       downstream.stat_HETHOM_ratio
     ]),
     flatten([
-      [
-        "INDEL_count"
-      ],
+      ["INDEL_count"],
       downstream.stat_INDEL_count
     ]),
     flatten([
-      [
-        "sv_DUP_count"
-      ],
+      ["sv_DUP_count"],
       downstream.stat_sv_DUP_count
     ]),
     flatten([
-      [
-        "sv_DEL_count"
-      ],
+      ["sv_DEL_count"],
       downstream.stat_sv_DEL_count
     ]),
     flatten([
-      [
-        "sv_INS_count"
-      ],
+      ["sv_INS_count"],
       downstream.stat_sv_INS_count
     ]),
     flatten([
-      [
-        "sv_INV_count"
-      ],
+      ["sv_INV_count"],
       downstream.stat_sv_INV_count
     ]),
     flatten([
-      [
-        "sv_SWAP_count"
-      ],
+      ["sv_SWAP_count"],
       downstream.stat_sv_SWAP_count
     ]),
     flatten([
-      [
-        "sv_BND_count"
-      ],
+      ["sv_BND_count"],
       downstream.stat_sv_BND_count
     ]),
     flatten([
-      [
-        "trgt_genotyped_count"
-      ],
+      ["trgt_genotyped_count"],
       downstream.stat_trgt_genotyped_count
     ]),
     flatten([
-      [
-        "trgt_uncalled_count"
-      ],
+      ["trgt_uncalled_count"],
       downstream.stat_trgt_uncalled_count
     ])
   ]
 
   call FilterMessages.filter_messages { input:
-    message_arrays = [
-      process_trgt_catalog.msg,
-      flatten(upstream.msg),
-      flatten(downstream.msg)
-    ]
+    message_arrays = [process_trgt_catalog.msg, flatten(upstream.msg), flatten(downstream.msg)]
   }
 
   call Utilities.consolidate_stats { input:
@@ -1083,26 +1015,11 @@ workflow humanwgs_family {
     # sv outputs
     Array[File] phased_sv_vcf = downstream.phased_sv_vcf
     Array[File] phased_sv_vcf_index = downstream.phased_sv_vcf_index
-    File sv_supporting_reads = select_first([
-      joint.sv_supporting_reads,
-      upstream.sv_supporting_reads[0]
-    ])
-    Array[File] sv_copynum_bedgraph = select_first([
-      joint.sv_copynum_bedgraph,
-      select_all(upstream.sv_copynum_bedgraph)
-    ])
-    Array[File] sv_depth_bw = select_first([
-      joint.sv_depth_bw,
-      select_all(upstream.sv_depth_bw)
-    ])
-    Array[File] sv_gc_bias_corrected_depth_bw = select_first([
-      joint.sv_gc_bias_corrected_depth_bw,
-      select_all(upstream.sv_gc_bias_corrected_depth_bw)
-    ])
-    Array[File] sv_copynum_summary = select_first([
-      joint.sv_copynum_summary,
-      select_all(upstream.sv_copynum_summary)
-    ])
+    File sv_supporting_reads = select_first([joint.sv_supporting_reads, upstream.sv_supporting_reads[0]])
+    Array[File] sv_copynum_bedgraph = select_first([joint.sv_copynum_bedgraph, select_all(upstream.sv_copynum_bedgraph)])
+    Array[File] sv_depth_bw = select_first([joint.sv_depth_bw, select_all(upstream.sv_depth_bw)])
+    Array[File] sv_gc_bias_corrected_depth_bw = select_first([joint.sv_gc_bias_corrected_depth_bw, select_all(upstream.sv_gc_bias_corrected_depth_bw)])
+    Array[File] sv_copynum_summary = select_first([joint.sv_copynum_summary, select_all(upstream.sv_copynum_summary)])
 
     # sv stats
     Array[String] stat_sv_DUP_count = downstream.stat_sv_DUP_count
@@ -1183,9 +1100,7 @@ workflow humanwgs_family {
 
     # workflow metadata
     String workflow_name = "humanwgs_family"
-    String workflow_version = "4.0.0" + if defined(debug_version)
-      then "~{"-" + debug_version}"
-      else ""
+    String workflow_version = "4.1.0" + if defined(debug_version) then "~{"-" + debug_version}" else ""
   }
 }
 

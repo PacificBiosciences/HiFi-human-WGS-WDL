@@ -75,10 +75,7 @@ task pbstarphase_diplotype {
     set -euo pipefail
 
     ln --symbolic --verbose "~{phased_small_variant_vcf}" "~{phased_small_variant_vcf_index}" .
-    ~{if defined(phased_structural_variant_vcf)
-      then "ln --symbolic --verbose '" + phased_structural_variant_vcf + "' '" + phased_structural_variant_vcf_index + "' ."
-      else ""
-    }
+    ~{if defined(phased_structural_variant_vcf) then "ln --symbolic --verbose '" + phased_structural_variant_vcf + "' '" + phased_structural_variant_vcf_index + "' ." else ""}
     ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
     ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
 
@@ -89,11 +86,8 @@ task pbstarphase_diplotype {
       --reference "~{basename(ref_fasta)}" \
       --vcf "~{basename(phased_small_variant_vcf)}" \
       ~{if defined(phased_structural_variant_vcf)
-        then "--sv-vcf '" + basename(select_first([
-          phased_structural_variant_vcf
-        ])) + "'"
-        else ""
-      } \
+        then "--sv-vcf '" + basename(select_first([phased_structural_variant_vcf])) + "'"
+        else ""} \
       --bam "~{basename(aligned_bam)}" \
       --output-calls "~{out_prefix}.pbstarphase.json" \
       --pharmcat-tsv "~{out_prefix}.pbstarphase.tsv"
@@ -109,7 +103,7 @@ task pbstarphase_diplotype {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

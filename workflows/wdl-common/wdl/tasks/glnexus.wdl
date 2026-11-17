@@ -117,10 +117,7 @@ task glnexus {
       ln --symbolic --verbose "${i}" .
     done
 
-    ~{if defined(regions_bed)
-      then "ln --symbolic --verbose '" + regions_bed + "' ."
-      else ""
-    }
+    ~{if defined(regions_bed) then "ln --symbolic --verbose '" + regions_bed + "' ." else ""}
 
     # glneux_cli has no version option
     glnexus_cli --help 2>&1 | grep -Eo 'glnexus_cli release v[0-9a-f.-]+'
@@ -133,26 +130,17 @@ task glnexus {
       --dir "~{cohort_id}.~{ref_name}.GLnexus.DB" \
       --config ./config.yml \
       ~{if defined(regions_bed)
-        then "--bed '" + basename(select_first([
-          regions_bed
-        ])) + "'"
-        else ""
-      } \
+        then "--bed '" + basename(select_first([regions_bed])) + "'"
+        else ""} \
       ${GVCFS[@]} \
     > "~{cohort_id}.~{ref_name}.small_variants.bcf"
     bcftools view \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --output-type z \
       --output-file "~{cohort_id}.~{ref_name}.small_variants.vcf.gz" \
       "~{cohort_id}.~{ref_name}.small_variants.bcf"
     bcftools index \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --tbi \
       "~{cohort_id}.~{ref_name}.small_variants.vcf.gz"
     # cleanup intermediate files
@@ -169,7 +157,7 @@ task glnexus {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

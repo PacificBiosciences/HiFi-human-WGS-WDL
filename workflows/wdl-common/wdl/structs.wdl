@@ -10,9 +10,9 @@ struct RuntimeAttributes {
   ## The number of times to retry a task that fails due a to nonzero return code
   Int max_retries
 
-  ## Zones where compute will take place; required if backend is set to 'GCP'
+  ## Zones where compute will take place; required if backend is set to 'GCP-Batch'
   String zones
-  ## Optional minimum CPU platform to use for tasks on GCP
+  ## Optional minimum CPU platform to use for tasks on GCP-Batch
   String cpuPlatform
 
   ## Optional type of GPU/Accelerator to use

@@ -54,10 +54,7 @@ task samtools_merge {
 
     # shellcheck disable=SC2086
     samtools merge \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       -l ~{compression_level} \
       -c -p \
       --write-index \
@@ -75,7 +72,7 @@ task samtools_merge {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -131,14 +128,8 @@ task samtools_fasta {
     samtools --version
 
     samtools fasta \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
-      ~{if defined(exclude_mask)
-        then "--exclude-flags '" + exclude_mask + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
+      ~{if defined(exclude_mask) then "--exclude-flags '" + exclude_mask + "'" else ""} \
       "~{basename(bam)}" \
     > "~{out_prefix}.fasta"
   >>>
@@ -152,7 +143,7 @@ task samtools_fasta {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -244,7 +235,7 @@ task subset_reference {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -325,10 +316,7 @@ task subset_bam {
     samtools --version
 
     samtools view \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --targets-file <(\
         bedtools slop \
           -b ~{slop_size} \
@@ -355,7 +343,7 @@ task subset_bam {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -415,10 +403,7 @@ task samtools_reset {
     samtools --version
 
     samtools reset \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --remove-tag "~{remove_tags}" \
       --reject-PG "~{reject_pg}" \
       -o "~{out_prefix}.reset.bam" \
@@ -434,7 +419,7 @@ task samtools_reset {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

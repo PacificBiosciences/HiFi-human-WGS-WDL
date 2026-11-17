@@ -175,73 +175,46 @@ task run_parabricks_deepvariant {
 
     ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
     ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
-    ~{if defined(regions_bed)
-      then "ln --symbolic --verbose '" + regions_bed + "' ."
-      else ""
-    }
+    ~{if defined(regions_bed) then "ln --symbolic --verbose '" + regions_bed + "' ." else ""}
 
     export TCMALLOC_MAX_TOTAL_THREAD_CACHE_BYTES=268435456
 
     /usr/local/parabricks/pbrun deepvariant \
       --num-gpus ~{gpuCount} \
       --preserve-file-symlinks \
-      ~{if !defined(regions_bed)
-        then "--run-partition"
-        else ""
-      } \
+      ~{if !defined(regions_bed) then "--run-partition" else ""} \
       --mode pacbio \
       --ref "~{basename(ref_fasta)}" \
       ~{if defined(regions_bed)
-        then "--interval-file '" + basename(select_first([
-          regions_bed
-        ])) + "'"
-        else ""
-      } \
-      ~{if (gvcf_output)
-        then "--gvcf"
-        else ""
-      } \
+        then "--interval-file '" + basename(select_first([regions_bed])) + "'"
+        else ""} \
+      ~{if (gvcf_output) then "--gvcf" else ""} \
       --in-bam "~{basename(aligned_bam)}" \
-      --out-variants "~{sample_id}.~{ref_name}.small_variants~{if (gvcf_output)
-        then ".g"
-        else ""
-      }.vcf"
+      --out-variants "~{sample_id}.~{ref_name}.small_variants~{if (gvcf_output) then ".g" else ""}.vcf"
 
     bcftools --version
 
     if [[ "~{gvcf_output}" == "true" ]]; then
       bcftools view \
-        ~{if threads > 1
-          then "--threads '" + (threads - 1) + "'"
-          else ""
-        } \
+        ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
         --output-type z \
         --output-file "~{sample_id}.~{ref_name}.small_variants.g.vcf.gz" \
         "~{sample_id}.~{ref_name}.small_variants.g.vcf"
       bcftools index --tbi --force \
-        ~{if threads > 1
-          then "--threads '" + (threads - 1) + "'"
-          else ""
-        } \
+        ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
         "~{sample_id}.~{ref_name}.small_variants.g.vcf.gz"
       rm --verbose "~{sample_id}.~{ref_name}.small_variants.g.vcf"
     fi
 
     # Filter VCF to remove uncalled sites
     bcftools view \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --exclude-uncalled \
       --output-type z \
       --output-file "~{sample_id}.~{ref_name}.small_variants.vcf.gz" \
       "~{sample_id}.~{ref_name}.small_variants.vcf"
     bcftools index --tbi --force \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       "~{sample_id}.~{ref_name}.small_variants.vcf.gz"
     rm --verbose "~{sample_id}.~{ref_name}.small_variants.vcf"
   >>>
@@ -258,7 +231,7 @@ task run_parabricks_deepvariant {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     gpuCount: gpuCount

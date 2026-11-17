@@ -1,6 +1,7 @@
 # Reference data containers
 
-Static workflow assets that used to be passed in as individual input files — the reference FASTA and index, TRGT/Sawfish/MethBat region files, and per-reference defaults like `paraphase_genome_build` — are now packaged together into a single container image per reference genome. The raw files backing these containers are archived at [Zenodo](https://zenodo.org/records/21517827).
+Static workflow assets that used to be passed in as individual input files — the reference FASTA and index, TRGT/Sawfish/MethBat region files, and per-reference defaults like `paraphase_genome_build` — are now packaged together into a single container image per reference genome. The raw files backing these containers are archived at [Zenodo](https://zenodo.org/records/21517827).<br>
+Citation: [Lake, J. A., Wenger, A. M., & Rowell, W. J. (2026). Reference data bundle for PacificBiosciences/HiFi-human-WGS-WDL (Version 4.0.0) [Data set]. Zenodo.](https://doi.org/10.5281/zenodo.21517827)
 
 ## How it works
 

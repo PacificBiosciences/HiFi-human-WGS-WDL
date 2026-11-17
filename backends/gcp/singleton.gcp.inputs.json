@@ -4,6 +4,6 @@
     "File"
   ],
   "humanwgs_singleton.fail_reads": "Array[File]? (optional)",
-  "humanwgs_singleton.backend": "GCP",
+  "humanwgs_singleton.backend": "GCP-Batch",
   "humanwgs_singleton.zones": "String"
 }

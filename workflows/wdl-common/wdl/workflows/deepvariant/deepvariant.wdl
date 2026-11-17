@@ -113,10 +113,7 @@ workflow deepvariant {
       example_tfrecord_tars = deepvariant_make_examples.example_tfrecord_tar,
       total_deepvariant_tasks = total_deepvariant_tasks,
       docker_image = docker_image,
-      threads = if (max_nproc < 64)
-        then max_nproc
-        else 64
-      ,
+      threads = if (max_nproc < 64) then max_nproc else 64,
       runtime_attributes = default_runtime_attributes
     }
   }
@@ -134,10 +131,7 @@ workflow deepvariant {
 
   call deepvariant_postprocess_variants { input:
     sample_id = sample_id,
-    tfrecords_tar = select_first([
-      deepvariant_call_variants_gpu.tfrecords_tar,
-      deepvariant_call_variants_cpu.tfrecords_tar
-    ]),
+    tfrecords_tar = select_first([deepvariant_call_variants_gpu.tfrecords_tar, deepvariant_call_variants_cpu.tfrecords_tar]),
     example_tfrecord_tars = deepvariant_make_examples.example_tfrecord_tar,
     nonvariant_site_tfrecord_tars = select_all(deepvariant_make_examples.nonvariant_site_tfrecord_tar),
     read_phasing_tars = select_all(deepvariant_make_examples.read_phasing_tar),
@@ -258,10 +252,7 @@ task deepvariant_make_examples {
 
     ln --symbolic --verbose "~{ref_fasta}" .
     ln --symbolic --verbose "~{ref_index}" .
-    ~{if defined(regions_bed)
-      then "ln --symbolic --verbose '" + regions_bed + "' ."
-      else ""
-    }
+    ~{if defined(regions_bed) then "ln --symbolic --verbose '" + regions_bed + "' ." else ""}
 
     mkdir example_tfrecords nonvariant_site_tfrecords read_phasing
 
@@ -274,25 +265,13 @@ task deepvariant_make_examples {
         --mode calling \
         --ref "~{basename(ref_fasta)}" \
         ~{if defined(regions_bed)
-          then "--regions ~{basename(select_first([
-            regions_bed
-          ]))}"
-          else ""
-        } \
+          then "--regions ~{basename(select_first([regions_bed]))}"
+          else ""} \
         --reads $(IFS=,; echo "${BAMS[*]}") \
         --examples "example_tfrecords/make_examples.tfrecord@~{total_deepvariant_tasks}.gz" \
-        ~{if (gvcf_output)
-          then "--gvcf 'nonvariant_site_tfrecords/gvcf.tfrecord@~{total_deepvariant_tasks}.gz'"
-          else ""
-        } \
-        ~{if (output_deepvariant_phasing)
-          then "--output_phase_info=true"
-          else ""
-        } \
-        ~{if (output_deepvariant_phasing)
-          then "--output_local_read_phasing='read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv'"
-          else ""
-        } \
+        ~{if (gvcf_output) then "--gvcf 'nonvariant_site_tfrecords/gvcf.tfrecord@~{total_deepvariant_tasks}.gz'" else ""} \
+        ~{if (output_deepvariant_phasing) then "--output_phase_info=true" else ""} \
+        ~{if (output_deepvariant_phasing) then "--output_local_read_phasing='read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv'" else ""} \
         --checkpoint /opt/models/pacbio \
         --task {}
 
@@ -300,12 +279,10 @@ task deepvariant_make_examples {
     && rm --recursive --force --verbose example_tfrecords
     ~{if (gvcf_output)
       then "tar --gzip --create --verbose --file ~{sample_id}.~{task_start_index}.nonvariant_site_tfrecords.tar.gz nonvariant_site_tfrecords && rm --recursive --force --verbose nonvariant_site_tfrecords"
-      else ""
-    }
+      else ""}
     ~{if (output_deepvariant_phasing)
       then "tar --gzip --create --verbose --file ~{sample_id}.~{task_start_index}.read_phasing.tar.gz read_phasing && rm --recursive --force --verbose read_phasing"
-      else ""
-    }
+      else ""}
   >>>
 
   output {
@@ -319,7 +296,7 @@ task deepvariant_make_examples {
     cpu: tasks_per_shard * threads_per_task
     memory: "~{tasks_per_shard * mem_gb_per_task} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -408,7 +385,7 @@ task deepvariant_call_variants_cpu {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -498,7 +475,7 @@ task deepvariant_call_variants_gpu {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     bootDiskSizeGb: 30  # !UnknownRuntimeKey
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
@@ -588,11 +565,9 @@ task deepvariant_postprocess_variants {
 
   Int disk_size = ceil((size(ref_fasta, "GB") + size(tfrecords_tar, "GB") + size(example_tfrecord_tars, "GB") + (if length(nonvariant_site_tfrecord_tars) > 0
     then size(select_all(nonvariant_site_tfrecord_tars), "GB")
-    else 0
-  ) + (if length(read_phasing_tars) > 0
+    else 0) + (if length(read_phasing_tars) > 0
     then size(select_all(read_phasing_tars), "GB")
-    else 0
-  )) * 2 + 20)
+    else 0)) * 2 + 20)
 
   command <<<
     set -euo pipefail
@@ -627,20 +602,13 @@ task deepvariant_postprocess_variants {
       --small_model_cvo_records "example_tfrecords/make_examples_call_variant_outputs.tfrecord@~{total_deepvariant_tasks}.gz" \
       ~{if (length(nonvariant_site_tfrecord_tars) > 0)
         then "--nonvariant_site_tfrecord_path nonvariant_site_tfrecords/gvcf.tfrecord@~{total_deepvariant_tasks}.gz --gvcf_outfile ~{sample_id}.~{ref_name}.small_variants.g.vcf.gz"
-        else ""
-      } \
-      ~{if (length(read_phasing_tars) > 0)
-        then "--phased_reads_input_path=read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv"
-        else ""
-      } \
+        else ""} \
+      ~{if (length(read_phasing_tars) > 0) then "--phased_reads_input_path=read_phasing/read_phasing_debug@~{total_deepvariant_tasks}.tsv" else ""} \
       --outfile "~{sample_id}.~{ref_name}.small_variants.vcf.gz"
 
     # Filter for only PASS variants
     bcftools view \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --exclude-uncalled \
       --output-type z \
       --output-file "~{sample_id}.~{ref_name}.small_variants.passing.vcf.gz" \
@@ -648,10 +616,7 @@ task deepvariant_postprocess_variants {
 
     mv --verbose "~{sample_id}.~{ref_name}.small_variants.passing.vcf.gz" "~{sample_id}.~{ref_name}.small_variants.vcf.gz"
     bcftools index --tbi --force \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       "~{sample_id}.~{ref_name}.small_variants.vcf.gz"
 
     rm --verbose call_variants_output*.tfrecord.gz \
@@ -670,7 +635,7 @@ task deepvariant_postprocess_variants {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

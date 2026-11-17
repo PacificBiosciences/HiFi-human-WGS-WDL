@@ -160,30 +160,12 @@ task hiphase {
 
     # shellcheck disable=SC2068,SC2086
     hiphase --threads ~{threads} \
-      ~{if defined(preset)
-        then "--preset '" + preset + "'"
-        else ""
-      } \
-      ~{if defined(min_mapq)
-        then "--min-mapq '" + min_mapq + "'"
-        else ""
-      } \
-      ~{if defined(min_gq)
-        then "--min-vcf-qual '" + min_gq + "'"
-        else ""
-      } \
-      ~{if no_supplemental_joins
-        then "--no-supplemental-joins"
-        else ""
-      } \
-      ~{if phase_singletons
-        then "--phase-singletons"
-        else ""
-      } \
-      ~{if disable_global_realignment
-        then "--disable-global-realignment"
-        else ""
-      } \
+      ~{if defined(preset) then "--preset '" + preset + "'" else ""} \
+      ~{if defined(min_mapq) then "--min-mapq '" + min_mapq + "'" else ""} \
+      ~{if defined(min_gq) then "--min-vcf-qual '" + min_gq + "'" else ""} \
+      ~{if no_supplemental_joins then "--no-supplemental-joins" else ""} \
+      ~{if phase_singletons then "--phase-singletons" else ""} \
+      ~{if disable_global_realignment then "--disable-global-realignment" else ""} \
       --sample-name "~{sample_id}" \
       ${VCFS[@]/#/$VCF_PREFIX} \
       ~{sep=" " prefix("--output-vcf ", phased_vcf_names)} \
@@ -227,7 +209,7 @@ task hiphase {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

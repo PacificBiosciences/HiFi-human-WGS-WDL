@@ -122,20 +122,12 @@ task trgt_genotype {
   # the task's total allocated memory.
   Int samtools_sort_mem_mb_per_thread = 800
   Int samtools_sort_max_mem_threads = (mem_gb * 1024) / samtools_sort_mem_mb_per_thread
-  Int samtools_sort_threads = if threads < samtools_sort_max_mem_threads
-    then threads
-    else samtools_sort_max_mem_threads
+  Int samtools_sort_threads = if threads < samtools_sort_max_mem_threads then threads else samtools_sort_max_mem_threads
 
-  String karyotype = if select_first([
-    sex,
-    "FEMALE"
-  ]) == "MALE"
+  String karyotype = if select_first([sex, "FEMALE"]) == "MALE"
     then "XY"
     else "XX"
-  File expected_bed = if select_first([
-    sex,
-    "FEMALE"
-  ]) == "MALE"
+  File expected_bed = if select_first([sex, "FEMALE"]) == "MALE"
     then expected_male_bed
     else expected_female_bed
 
@@ -145,18 +137,12 @@ task trgt_genotype {
     touch messages.txt
 
     ln --symbolic --verbose "~{aligned_bam}" "~{aligned_bam_index}" .
-    ~{if defined(fail_reads_bam)
-      then "ln --symbolic --verbose '" + fail_reads_bam + "' '" + fail_reads_bam_index + "' ."
-      else ""
-    }
+    ~{if defined(fail_reads_bam) then "ln --symbolic --verbose '" + fail_reads_bam + "' '" + fail_reads_bam_index + "' ." else ""}
     ln --symbolic --verbose "~{ref_fasta}" "~{ref_index}" .
     ln --symbolic --verbose "~{trgt_bed}" .
     ln --symbolic --verbose "~{expected_bed}" .
 
-    ~{if !defined(sex)
-      then "echo 'Sex is not defined for " + sample_id + ".  Defaulting to karyotype XX for TRGT.' >> messages.txt"
-      else ""
-    }
+    ~{if !defined(sex) then "echo 'Sex is not defined for " + sample_id + ".  Defaulting to karyotype XX for TRGT.' >> messages.txt" else ""}
 
     trgt --version
 
@@ -167,11 +153,8 @@ task trgt_genotype {
       --repeats "~{basename(trgt_bed)}" \
       --reads "~{basename(aligned_bam)}" \
       ~{if defined(fail_reads_bam)
-        then "--fail-reads '" + basename(select_first([
-          fail_reads_bam
-        ])) + "'"
-        else ""
-      } \
+        then "--fail-reads '" + basename(select_first([fail_reads_bam])) + "'"
+        else ""} \
       --max-depth ~{max_depth} \
       --min-read-quality=~{min_read_quality} \
       --output-prefix "~{out_prefix}.trgt"
@@ -201,18 +184,12 @@ task trgt_genotype {
       > "~{out_prefix}.trgt.dropouts.txt"
 
     bcftools view --no-header --exclude-uncalled \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       "~{out_prefix}.trgt.sorted.vcf.gz" \
     | wc --lines > genotyped_count.txt || echo "0" > genotyped_count.txt
 
     bcftools view --no-header --uncalled \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       "~{out_prefix}.trgt.sorted.vcf.gz"   \
     | wc --lines > uncalled_count.txt || echo "0" > uncalled_count.txt
   >>>
@@ -233,7 +210,7 @@ task trgt_genotype {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -332,7 +309,7 @@ task trgt_merge {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

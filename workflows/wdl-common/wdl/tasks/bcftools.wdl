@@ -171,10 +171,7 @@ task bcftools_stats_roh_small_variants {
 
     # find runs of homozygosity
     bcftools roh \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --AF-dflt 0.4 \
       "~{basename(vcf)}" \
     > "~{sample_id}.~{ref_name}.bcftools_roh.out"
@@ -213,7 +210,7 @@ task bcftools_stats_roh_small_variants {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -290,10 +287,7 @@ task split_vcf_by_sample {
     for sample_id in ~{sep=" " sample_ids}; do
       # Extract sample, optionally excluding uncalled genotypes
         bcftools view \
-          ~{if threads > 1
-            then "--threads '" + (threads - 1) + "'"
-            else ""
-          } \
+          ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
           --samples "${sample_id}" \
           ~{true="--exclude-uncalled" false="" exclude_uncalled} \
           --output-type z \
@@ -313,7 +307,7 @@ task split_vcf_by_sample {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -384,10 +378,7 @@ task bcftools_merge {
 
     # shellcheck disable=SC2068
     bcftools merge \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --output-type z \
       --output "~{out_prefix}.vcf.gz" \
       --write-index=tbi \
@@ -404,7 +395,7 @@ task bcftools_merge {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -671,7 +662,7 @@ task sv_stats {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -732,18 +723,12 @@ task bcftools_rename {
     ln --symbolic --verbose "~{vcf}" .
 
     bcftools reheader \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --samples "~{write_tsv(sample_id_lookup)}" \
       --output "~{out_prefix}.vcf.gz" \
       "~{basename(vcf)}"
     bcftools index --tbi \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
     "~{out_prefix}.vcf.gz"
   >>>
 
@@ -757,7 +742,7 @@ task bcftools_rename {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

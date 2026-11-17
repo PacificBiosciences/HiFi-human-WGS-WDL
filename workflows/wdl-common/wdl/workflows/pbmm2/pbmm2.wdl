@@ -62,10 +62,7 @@ workflow pbmm2 {
 
   scatter (chunk_index in if (index_input_bam.num_chunks > 0)
     then range(index_input_bam.num_chunks)
-    else [
-      -1
-    ]
-  ) {
+    else [-1]) {
     call pbmm2_align_wgs { input:
       sample_id = sample_id,
       bam = bam,
@@ -143,7 +140,7 @@ task create_pbmm2_index {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -258,7 +255,7 @@ task index_input_bam {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones
@@ -346,10 +343,7 @@ task pbmm2_align_wgs {
     set -euo pipefail
 
     ln --symbolic --verbose "~{bam}" "~{pbmm2_index}" .
-    ~{if (defined(pbindex))
-      then "ln --symbolic --verbose ~{pbindex} ~{basename(bam)}.pbi"
-      else ""
-    }
+    ~{if (defined(pbindex)) then "ln --symbolic --verbose ~{pbindex} ~{basename(bam)}.pbi" else ""}
 
     pbmm2 --version
     pbmm2 align \
@@ -363,10 +357,7 @@ task pbmm2_align_wgs {
       ~{true="--strip" false="" strip_kinetics} \
       ~{true="--unmapped" false="" keep_unmapped} \
       --min-length ~{min_length} \
-      ~{if (use_chunking)
-        then "--chunk '" + chunk_index + "/" + num_chunks + "' --chunk-mode scatter"
-        else ""
-      } \
+      ~{if (use_chunking) then "--chunk '" + chunk_index + "/" + num_chunks + "' --chunk-mode scatter" else ""} \
       "~{basename(pbmm2_index)}" \
       "~{basename(bam)}" \
       "~{sample_id}.~{movie}.chunk_~{chunk_index}.~{ref_name}.aligned.bam"
@@ -382,7 +373,7 @@ task pbmm2_align_wgs {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

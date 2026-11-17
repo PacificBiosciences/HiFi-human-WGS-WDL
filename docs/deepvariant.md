@@ -14,6 +14,8 @@ flowchart TD
 
 This subworkflow runs the three steps of DeepVariant individually in order to make best use of resources. If a GPU is available and `use_gpu==true`, the `call_variants` step will run on 1GPU/8CPU/32GiB, otherwise it will run on 64CPU/256GiB. The `make_examples` and `postprocess_variants` steps will always run on the CPU. We run standard DeepVariant v1.10.0.
 
+DeepVariant results are only expected to be identical when run on the same compute hardware; see [How deterministic are variant calling results?](determinism.md).
+
 ## Parabricks alternative
 
 If `use_gpu` and `use_parabricks_deepvariant` are both set to `true`, this subworkflow is skipped entirely in favor of the [Parabricks DeepVariant subworkflow](parabricks.md), which replaces all three steps above with a single `pbrun deepvariant` call. Parabricks DeepVariant uses NVIDIA Clara Parabricks 4.7.0-1, which NVIDIA states is functionally equivalent to standard DeepVariant v1.9.0 — one version behind the standard DeepVariant we run directly. See [GPU support](gpu.md) for how to enable it.

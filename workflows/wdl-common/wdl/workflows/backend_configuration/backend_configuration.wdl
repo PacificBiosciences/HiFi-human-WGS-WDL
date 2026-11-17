@@ -20,6 +20,7 @@ workflow backend_configuration {
     backend: {
       description: "Backend where the workflow will be executed",
       choices: [
+        "GCP-Batch",
         "GCP",
         "Azure",
         "AWS-HealthOmics",
@@ -27,10 +28,10 @@ workflow backend_configuration {
       ]
     }
     zones: {
-      description: "Zones where compute will take place; required if backend is set to 'GCP'"
+      description: "Zones where compute will take place; required if backend is set to 'GCP-Batch'"
     }
     cpuPlatform: {
-      description: "Optional minimum CPU platform to use for tasks on GCP"
+      description: "Optional minimum CPU platform to use for tasks on GCP-Batch; defaults to 'Intel Cascade Lake'"
     }
     gpuType: {
       description: "Type of GPU/Accelerator to use"
@@ -50,9 +51,11 @@ workflow backend_configuration {
 
   String default_container_registry = "quay.io/pacbio"
 
-  if (backend == "GCP") {
+  # 'GCP' is a deprecated alias for 'GCP-Batch'. It will be removed in the next major release.
+  # Both values set the output struct backend to 'GCP-Batch'.
+  if (backend == "GCP-Batch" || backend == "GCP") {
     # zones must be defined
-    # cpuPlatform may be defined
+    # cpuPlatform may be defined; defaults to "Intel Cascade Lake" if not
 
     # preemptible_tries applies to failures due to preemption only
     # max_retries applies to failures due to a nonzero rc
@@ -61,45 +64,23 @@ workflow backend_configuration {
     #           "nvidia-tesla-a100", "nvidia-a100-80gb", "nvidia-l4", "nvidia-h100-80gb"]
     # TODO: Which are compatible with machine type for deepvariant_call_variants?
     RuntimeAttributes gcp_spot_runtime_attributes = object {
-      backend: "GCP",
+      backend: "GCP-Batch",
       preemptible_tries: 3,
       max_retries: 3,
-      zones: select_first([
-        zones
-      ]),
-      cpuPlatform: select_first([
-        cpuPlatform,
-        ""
-      ]),
-      gpuType: select_first([
-        gpuType,
-        ""
-      ]),
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      zones: select_first([zones]),
+      cpuPlatform: select_first([cpuPlatform, "Intel Cascade Lake"]),
+      gpuType: select_first([gpuType, ""]),
+      container_registry: select_first([container_registry, default_container_registry])
     }
 
     RuntimeAttributes gcp_on_demand_runtime_attributes = object {
-      backend: "GCP",
+      backend: "GCP-Batch",
       preemptible_tries: 0,
       max_retries: 0,
-      zones: select_first([
-        zones
-      ]),
-      cpuPlatform: select_first([
-        cpuPlatform,
-        ""
-      ]),
-      gpuType: select_first([
-        gpuType,
-        ""
-      ]),
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      zones: select_first([zones]),
+      cpuPlatform: select_first([cpuPlatform, "Intel Cascade Lake"]),
+      gpuType: select_first([gpuType, ""]),
+      container_registry: select_first([container_registry, default_container_registry])
     }
   }
 
@@ -115,10 +96,7 @@ workflow backend_configuration {
       zones: "",
       cpuPlatform: "",
       gpuType: "",
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      container_registry: select_first([container_registry, default_container_registry])
     }
 
     RuntimeAttributes azure_on_demand_runtime_attributes = object {
@@ -128,10 +106,7 @@ workflow backend_configuration {
       zones: "",
       cpuPlatform: "",
       gpuType: "",
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      container_registry: select_first([container_registry, default_container_registry])
     }
   }
 
@@ -166,14 +141,8 @@ workflow backend_configuration {
       max_retries: 1,
       zones: "",
       cpuPlatform: "",
-      gpuType: select_first([
-        gpuType,
-        ""
-      ]),
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      gpuType: select_first([gpuType, ""]),
+      container_registry: select_first([container_registry, default_container_registry])
     }
   }
 
@@ -185,14 +154,8 @@ workflow backend_configuration {
       max_retries: 3,
       zones: "",
       cpuPlatform: "",
-      gpuType: select_first([
-        gpuType,
-        ""
-      ]),
-      container_registry: select_first([
-        container_registry,
-        default_container_registry
-      ])
+      gpuType: select_first([gpuType, ""]),
+      container_registry: select_first([container_registry, default_container_registry])
     }
   }
 

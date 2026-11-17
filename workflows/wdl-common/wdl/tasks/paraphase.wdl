@@ -125,11 +125,11 @@ task paraphase {
   }
 
   runtime {
-    docker: "~{runtime_attributes.container_registry}/paraphase@sha256:665ac4fefcef92e0023395eae9e0ca3f6e65d1228c49afba3ad3f8e7b3f3d1cb"  # 4.0.0_build2
+    docker: "~{runtime_attributes.container_registry}/paraphase@sha256:bf3b6061eb615f7c0f63de9c50edc88ebd5a9f3c7e2414190847ab306900dd79"  # 4.1.0
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

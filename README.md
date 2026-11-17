@@ -12,7 +12,9 @@ Starting in v2, this repo contains two related workflows. The `singleton` workfl
 
 The `family` workflow will be best for most use cases. The `singleton` workflow inputs and output structures are relatively flat, which should improve compatibility with platforms like Terra.
 
-Both workflows are designed to analyze PacBio human whole genome sequencing (WGS) data. The workflows are primarily tested and designed to be run on AWS HealthOmics and HPC backends, but are most likely still compatible with Azure (Cromwell on Azure) and GCP (Pipelines API).
+Both workflows are designed to analyze PacBio human whole genome sequencing (WGS) data. The workflows are primarily tested and designed to be run on AWS HealthOmics and HPC backends, but are most likely still compatible with Azure (Cromwell on Azure) and GCP-Batch (Google Cloud Batch).
+
+At a high level, this is a best-practices workflow composed of tools developed by PacBio and the community: each sample's HiFi reads are aligned, then a set of analyses run off that alignment independently -- small- and structural-variant calling (the latter jointly across a family when more than one sample is provided), mitochondrial variant calling, calling in paralogous gene families, and genotyping of specific hard-to-call repeat loci. The small and structural variants are then phased and used to haplotag the alignment, which in turn feeds tandem-repeat genotyping, methylation profiling, and HLA/pharmacogenomic typing, before QC stats and summary reports are generated. For the full stage-by-stage walkthrough, see [docs/overview.md](./docs/overview.md). For the broader tool landscape this pipeline consolidates, see PacBio's [WGS Variant Pipeline application note](https://www.pacb.com/wp-content/uploads/Application-note-Consolidated-analysis-tools-with-the-PacBio-WGS-Variant-Pipeline.pdf).
 
 **Workflow entrypoint**:
 
@@ -23,18 +25,18 @@ Both workflows are designed to analyze PacBio human whole genome sequencing (WGS
 
 This is an actively developed workflow with multiple versioned releases, and we make use of git submodules for common tasks that are shared by multiple workflows. There are two ways to ensure you are using a supported release of the workflow and ensure that the submodules are correctly initialized:
 
-1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v4.0.0):
+1) Download the release zips directly from a [supported release](https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/tag/v4.1.0):
 
    ```bash
-   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v4.0.0/hifi-human-wgs-singleton.zip
-   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v4.0.0/hifi-human-wgs-family.zip
+   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v4.1.0/hifi-human-wgs-singleton.zip
+   wget https://github.com/PacificBiosciences/HiFi-human-WGS-WDL/releases/download/v4.1.0/hifi-human-wgs-family.zip
    ```
 
 2) Clone the repository and initialize the submodules:
 
    ```bash
    git clone \
-     --depth 1 --branch v4.0.0 \
+     --depth 1 --branch v4.1.0 \
      https://github.com/PacificBiosciences/HiFi-human-WGS-WDL.git
    ```
 
@@ -59,7 +61,7 @@ For backend-specific configuration, see the relevant documentation:
 
 - [Azure](./docs/backend-azure.md)
 - [AWS](./docs/backend-aws-healthomics.md)
-- [GCP](./docs/backend-gcp.md)
+- [GCP-Batch](./docs/backend-gcp-batch.md)
 - [HPC](./docs/backend-hpc.md)
 
 ### Configuring a workflow engine and container runtime
@@ -87,7 +89,7 @@ Using the appropriate inputs template file, fill in the cohort and sample inform
 
 ### Running the workflow
 
-Run the workflow using the engine and backend that you have configured ([miniwdl](#run-directly-using-miniwdl), [Cromwell](#run-directly-using-cromwell)).
+Run the workflow using the engine and backend that you have configured ([miniwdl](docs/backend-hpc.md#running-via-miniwdl), [Cromwell](docs/backend-hpc.md#running-via-cromwell)).
 
 Note that the calls to `miniwdl` and `Cromwell` assume you are accessing the engine directly on the machine on which it has been deployed. Depending on the backend you have configured, you may be able to submit workflows using different methods (e.g. using trigger files in Azure, or using the Amazon Genomics CLI in AWS).
 

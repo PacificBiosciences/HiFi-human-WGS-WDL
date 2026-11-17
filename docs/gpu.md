@@ -17,7 +17,11 @@ Workflows can optionally run small variant calling on GPU-enabled nodes. Two inp
 
 | Backend | GPU Type | Notes |
 | ------- | -------- | ----- |
-| GCP | `nvidia-tesla-k80`, `nvidia-tesla-p100`, `nvidia-tesla-v100`, `nvidia-tesla-p4`, `nvidia-tesla-t4`, `nvidia-tesla-a100`, `nvidia-a100-80gb`, `nvidia-l4`, `nvidia-h100-80gb` | [GPU availability varies by zone.](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones) |
+| GCP-Batch | `nvidia-tesla-k80`, `nvidia-tesla-p100`, `nvidia-tesla-v100`, `nvidia-tesla-p4`, `nvidia-tesla-t4`, `nvidia-tesla-a100`, `nvidia-a100-80gb`, `nvidia-l4`, `nvidia-h100-80gb` | [GPU availability varies by zone.](https://cloud.google.com/compute/docs/gpus/gpu-regions-zones) |
 | AWS-HealthOmics | `nvidia-tesla-t4`, `nvidia-tesla-t4-a10g`, `nvidia-tesla-a10g`, `nvidia-t4-a10g-l4`, `nvidia-l4-a10g`, `nvidia-l4`, `nvidia-l40s` | Maps to HealthOmics instance families: `nvidia-tesla-t4`→G4, `nvidia-tesla-t4-a10g`→G4/G5, `nvidia-tesla-a10g`→G5, `nvidia-t4-a10g-l4`→G4/G5/G6, `nvidia-l4-a10g`→G5/G6, `nvidia-l4`→G6, `nvidia-l40s`→G6e. **Recommended: `nvidia-t4-a10g-l4`** — it spans the most instance families (G4/G5/G6) and is what we've tested on us-east-1. |
 | Azure | | GPUs are not available on Azure. |
 | HPC | | Depends on HPC and miniwdl/Cromwell/sprocket configuration. Reach out to [support@pacb.com](mailto:support@pacb.com?subject=WDL%20Workflows%20-%20GPU%20Support) |
+
+## Reproducibility
+
+CPU and GPU runs of DeepVariant (and Parabricks DeepVariant) can produce slightly different variant calls. See [How deterministic are variant calling results?](determinism.md).

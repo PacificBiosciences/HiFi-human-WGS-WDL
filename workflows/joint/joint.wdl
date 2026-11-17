@@ -72,6 +72,9 @@ workflow joint {
     ref_index: {
       description: "Reference FASTA index"
     }
+    sawfish_call_mem_gb: {
+      description: "Sawfish call memory (GB)"
+    }
     glnexus_mem_gb: {
       description: "GLnexus memory (GB)"
     }
@@ -91,6 +94,7 @@ workflow joint {
     String ref_name
     File ref_fasta
     File ref_index
+    Int sawfish_call_mem_gb
     Int glnexus_mem_gb
     RuntimeAttributes default_runtime_attributes
   }
@@ -116,6 +120,7 @@ workflow joint {
     depth_bw_names = depth_bw_name,
     gc_bias_corrected_depth_bw_names = gc_bias_corrected_depth_bw_name,
     copynum_summary_names = copynum_summary_name,
+    mem_gb = sawfish_call_mem_gb,
     runtime_attributes = default_runtime_attributes
   }
 
@@ -168,9 +173,7 @@ workflow joint {
     Array[File] split_joint_structural_variant_vcf_indices = split_sawfish.split_vcf_indices
     Array[File] split_joint_small_variant_vcfs = split_glnexus.split_vcfs
     Array[File] split_joint_small_variant_vcf_indices = split_glnexus.split_vcf_indices
-    File sv_supporting_reads = select_first([
-      sawfish_call.supporting_reads
-    ])
+    File sv_supporting_reads = select_first([sawfish_call.supporting_reads])
     Array[File] sv_copynum_bedgraph = sawfish_call.copynum_bedgraph
     Array[File] sv_depth_bw = sawfish_call.depth_bw
     Array[File] sv_gc_bias_corrected_depth_bw = sawfish_call.gc_bias_corrected_depth_bw

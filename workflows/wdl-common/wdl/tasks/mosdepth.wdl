@@ -84,10 +84,7 @@ task mosdepth {
     mosdepth --version
 
     mosdepth \
-      ~{if threads > 1
-        then "--threads '" + (threads - 1) + "'"
-        else ""
-      } \
+      ~{if threads > 1 then "--threads '" + (threads - 1) + "'" else ""} \
       --by 500 \
       --no-per-base \
       --use-median \
@@ -162,9 +159,7 @@ task mosdepth {
     File region_bed_index = "~{sample_id}.~{ref_name}.mosdepth.regions.bed.gz.csi"
     File depth_distribution_plot = "~{sample_id}.~{ref_name}.mosdepth.depth_distribution.png"
     String stat_depth_mean = read_string("mean_depth.txt")
-    String inferred_sex = if (infer_sex)
-      then read_string("inferred_sex.txt")
-      else ""
+    String inferred_sex = if (infer_sex) then read_string("inferred_sex.txt") else ""
   }
 
   runtime {
@@ -172,7 +167,7 @@ task mosdepth {
     cpu: threads
     memory: "~{mem_gb} GiB"
     disk: "~{disk_size} GB"
-    disks: "local-disk ~{disk_size} HDD"
+    disks: "local-disk ~{disk_size} SSD"
     preemptible: runtime_attributes.preemptible_tries
     maxRetries: runtime_attributes.max_retries
     zones: runtime_attributes.zones

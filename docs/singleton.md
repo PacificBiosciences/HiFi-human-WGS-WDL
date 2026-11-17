@@ -45,6 +45,7 @@ flowchart TD
     deepvariant["DeepVariant"]
     sawfish_discover["Sawfish discover"]
     sawfish_call["Sawfish call"]
+    fibertools["fibertools add-nucleosomes\n(if run_fibertools)"]
   end
   subgraph "`**Phasing and Downstream**`"
     hiphase["HiPhase"]
@@ -71,6 +72,7 @@ flowchart TD
   pbsamoa_merge --> deepvariant
   pbsamoa_merge --> sawfish_discover
   pbsamoa_merge --> hiphase
+  pbsamoa_merge --> fibertools --> hiphase
   deepvariant --> sawfish_discover
   deepvariant --> hiphase
   sawfish_discover --> sawfish_call --> hiphase
@@ -92,15 +94,17 @@ flowchart TD
 | String | sample_id | Unique identifier for the sample | Alphanumeric characters, periods, dashes, and underscores are allowed. |
 | Array\[File\] | hifi_reads | Array of paths to hifi_reads in unaligned BAM format. | |
 | Array\[File\]? | fail_reads | Array of paths to fail_reads in unaligned BAM format (optional) | If provided, these reads will be aligned to the bait-captured regions. |
-| String | ref_name | Reference genome to use for this workflow run<br/><br/>`["GRCh38", "GRCh38_GIABv3"]`<br/><br/>Default: `"GRCh38"` | |
+| String | ref_name | Reference genome to use for this workflow run<br/><br/>`["GRCh38", "GRCh38_GIABv3"]`<br/><br/>Default: `"GRCh38_GIABv3"` | |
 | File? | trgt_tandem_repeat_bed_override | Optional BED file to override the default TRGT tandem repeat catalog | |
 | File? | methbat_region_tsv_override | Optional TSV file to override the default MethBat methylation profiling regions | |
 | Boolean | use_alignment_chunking | Whether to chunk BAM files for alignment. If false, all reads will be aligned in a single chunk.<br/><br/>Default: `true` | |
+| Int | pbsamoa_merge_mem_gb | pbsamoa merge memory<br/><br/>Default: `32` | |
 | Boolean | use_gpu | Use GPU when possible<br/><br/>Default: `false` | [GPU support](./gpu.md#gpu-support) |
 | Boolean | use_parabricks_deepvariant | Use Parabricks DeepVariant implementation<br/><br/>Default: `false` | If both `use_parabricks_deepvariant` and `use_gpu` are set to `true`, Parabricks DeepVariant will be used instead of standard DeepVariant.<br/><br/>[Parabricks DeepVariant](./parabricks.md#parabricks-deepvariant-subworkflow) |
-| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP", "Azure", "AWS-HealthOmics", "HPC"]` | |
-| String? | zones | Zones where compute will take place; required if backend is set to 'GCP' | [Determining available zones in GCP](./backend-gcp.md#determining-available-zones) |
-| String? | cpuPlatform | Minimum CPU platform to use for tasks on GCP | Optional, only necessary in certain zones lacking n1 nodes. |
+| Boolean | run_fibertools | Run fibertools to add nucleosome and MSP annotations to the aligned BAM<br/><br/>Default: `false` | If `true`, the nucleosome-tagged BAM replaces the plain aligned BAM everywhere downstream of alignment (phasing, TRGT, methylation, etc.); DeepVariant/Sawfish/etc. still run against the untagged BAM. |
+| String | backend | Backend where the workflow will be executed<br/><br/>`["GCP-Batch", "Azure", "AWS-HealthOmics", "HPC"]` | |
+| String? | zones | Zones where compute will take place; required if backend is set to 'GCP-Batch' | [Determining available zones in GCP-Batch](./backend-gcp-batch.md#determining-available-zones) |
+| String? | cpuPlatform | Minimum CPU platform to use for tasks on GCP-Batch | Optional; defaults to `"Intel Cascade Lake"`. |
 | String? | gpuType | GPU type to use; required if use_gpu is set to `true` for cloud backends; must match backend | [Available GPU types](./gpu.md#gpu-types) |
 | String? | container_registry | Container registry where workflow images are hosted.<br/><br/>Default: `"quay.io/pacbio"` | If omitted, [PacBio's public Quay.io registry](https://quay.io/organization/pacbio) will be used.<br/><br/>Custom container_registry must be set if backend is set to 'AWS-HealthOmics'. |
 | Boolean | preemptible | Where possible, run tasks preemptibly<br/><br/>`[true, false]`<br/><br/>Default: `true` | If set to `true`, run tasks preemptibly where possible. If set to `false`, on-demand VMs will be used for every task. Ignored if backend is set to HPC. |
